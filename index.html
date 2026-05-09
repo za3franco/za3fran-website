@@ -679,92 +679,46 @@ body.lang-fr .wa-tip.fr { display: block; }
       <h2 class="st en">Get a first read<br>on your <em>concept.</em></h2>
       <h2 class="st fr">Première lecture<br>de votre <em>concept.</em></h2>
       <div class="div"></div>
-      <p class="slead en" style="margin-bottom:1.5rem;">Answer 5 quick questions and receive an instant concept score — completely free. See where your concept stands before investing further.</p>
-      <p class="slead fr" style="margin-bottom:1.5rem;">Répondez à 5 questions rapides et recevez un score de concept instantané — entièrement gratuit. Voyez où se situe votre concept avant d'investir davantage.</p>
+      <p class="slead en" style="margin-bottom:1.5rem;">Answer 10 questions and receive a scored concept analysis — completely free. Delivered to your inbox in under 60 seconds.</p>
+      <p class="slead fr" style="margin-bottom:1.5rem;">Répondez à 10 questions et recevez une analyse scorée de votre concept — entièrement gratuit. Dans votre boîte mail en moins de 60 secondes.</p>
       <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="en">Want the full picture? The <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for €199.</p>
-      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="fr">Vous voulez une analyse complète ? Le <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> livre une analyse stratégique de 20 pages — pour 199€.</p>
+      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="fr">Vous voulez une analyse complète ? Le <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> livre une analyse stratégique de 20 pages avec données de marché locales, intelligence concurrentielle et modélisation financière — pour 199€.</p>
     </div>
     <div class="reveal d1">
-      <div class="scard-widget">
-        <div class="prog" id="prog">
-          <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
-          <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div><div class="pd" id="pd4"></div>
-        </div>
-        <div id="steps">
-          <div class="step active" id="st0">
-            <p class="step-q en">What type of concept are you working on?</p>
-            <p class="step-q fr">Sur quel type de concept travaillez-vous ?</p>
-            <div class="step-opts">
-              <button class="sopt en" onclick="pick(0,20)">Restaurant / Café</button>
-              <button class="sopt fr" onclick="pick(0,20)">Restaurant / Café</button>
-              <button class="sopt en" onclick="pick(0,18)">Hotel F&B concept</button>
-              <button class="sopt fr" onclick="pick(0,18)">Concept F&B hôtelier</button>
-              <button class="sopt en" onclick="pick(0,15)">Fast casual / Street food</button>
-              <button class="sopt fr" onclick="pick(0,15)">Fast casual / Street food</button>
-              <button class="sopt en" onclick="pick(0,10)">Other / Still exploring</button>
-              <button class="sopt fr" onclick="pick(0,10)">Autre / Encore en exploration</button>
+      <div class="scard-widget" style="padding:2.5rem;">
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;font-weight:500;" class="en">What you'll receive</p>
+          <p style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;font-weight:500;" class="fr">Ce que vous recevrez</p>
+          <div style="display:flex;flex-direction:column;gap:0.85rem;">
+            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">A concept score out of 100 with 5 sub-scores</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">Un score de concept sur 100 avec 5 sous-scores</span>
             </div>
-          </div>
-          <div class="step" id="st1">
-            <p class="step-q en">How clearly defined is your concept?</p>
-            <p class="step-q fr">À quel point votre concept est-il défini ?</p>
-            <div class="step-opts">
-              <button class="sopt en" onclick="pick(1,25)">Very clear — I can describe it in one sentence</button>
-              <button class="sopt fr" onclick="pick(1,25)">Très clair — je peux le décrire en une phrase</button>
-              <button class="sopt en" onclick="pick(1,17)">Mostly clear — still refining details</button>
-              <button class="sopt fr" onclick="pick(1,17)">Assez clair — quelques détails à affiner</button>
-              <button class="sopt en" onclick="pick(1,8)">Early stage — still exploring</button>
-              <button class="sopt fr" onclick="pick(1,8)">Phase initiale — encore en exploration</button>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">What's working and what needs sharpening</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">Ce qui fonctionne et ce qui doit être affiné</span>
             </div>
-          </div>
-          <div class="step" id="st2">
-            <p class="step-q en">Do you know your target customer?</p>
-            <p class="step-q fr">Connaissez-vous votre client cible ?</p>
-            <div class="step-opts">
-              <button class="sopt en" onclick="pick(2,20)">Yes — specific profile and spending habits</button>
-              <button class="sopt fr" onclick="pick(2,20)">Oui — profil précis et habitudes de dépense</button>
-              <button class="sopt en" onclick="pick(2,12)">Broadly — I have a general idea</button>
-              <button class="sopt fr" onclick="pick(2,12)">Globalement — j'ai une idée générale</button>
-              <button class="sopt en" onclick="pick(2,4)">Not yet — still to define</button>
-              <button class="sopt fr" onclick="pick(2,4)">Pas encore — reste à définir</button>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">5 critical questions every operator must answer</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">5 questions critiques que tout opérateur doit adresser</span>
             </div>
-          </div>
-          <div class="step" id="st3">
-            <p class="step-q en">Have you analysed your competition?</p>
-            <p class="step-q fr">Avez-vous analysé la concurrence ?</p>
-            <div class="step-opts">
-              <button class="sopt en" onclick="pick(3,20)">Yes — I know the direct competitors</button>
-              <button class="sopt fr" onclick="pick(3,20)">Oui — je connais les concurrents directs</button>
-              <button class="sopt en" onclick="pick(3,11)">Partially — rough idea only</button>
-              <button class="sopt fr" onclick="pick(3,11)">Partiellement — idée approximative</button>
-              <button class="sopt en" onclick="pick(3,3)">No — not yet</button>
-              <button class="sopt fr" onclick="pick(3,3)">Non — pas encore</button>
-            </div>
-          </div>
-          <div class="step" id="st4">
-            <p class="step-q en">What is your budget situation?</p>
-            <p class="step-q fr">Quelle est votre situation budgétaire ?</p>
-            <div class="step-opts">
-              <button class="sopt en" onclick="pick(4,15)">Secured — funds are in place</button>
-              <button class="sopt fr" onclick="pick(4,15)">Sécurisé — les fonds sont disponibles</button>
-              <button class="sopt en" onclick="pick(4,10)">In progress — partially secured</button>
-              <button class="sopt fr" onclick="pick(4,10)">En cours — partiellement sécurisé</button>
-              <button class="sopt en" onclick="pick(4,4)">Not yet — still at concept stage</button>
-              <button class="sopt fr" onclick="pick(4,4)">Pas encore — au stade du concept</button>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">Your single biggest blind spot — named directly</span>
+              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">Votre principal angle mort — nommé directement</span>
             </div>
           </div>
         </div>
-        <div class="sres" id="sres">
-          <div class="sring"><div class="sring-n" id="srn">0</div><div class="sring-l">/ 100</div></div>
-          <p class="sres-msg" id="srm"></p>
-          <div class="email-row">
-            <input class="email-inp" type="email" id="semail" placeholder="your@email.com">
-            <button class="email-btn en" onclick="subSC()">Get Full Report →</button>
-            <button class="email-btn fr" onclick="subSC()">Rapport complet →</button>
-          </div>
-          <p class="upsell en">Full 20-page analysis available for <a href="#validator">€199 →</a></p>
-          <p class="upsell fr">Analyse complète de 20 pages pour <a href="#validator">199€ →</a></p>
+        <div style="height:0.5px;background:var(--border);margin-bottom:2rem;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+          <span style="font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;" class="en">Free · Under 4 minutes · No account needed</span>
+          <span style="font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;" class="fr">Gratuit · Moins de 4 min · Sans inscription</span>
         </div>
+        <a href="/scorecard" style="display:block;background:var(--copper);color:var(--black);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.5rem;text-align:center;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e0a040'" onmouseout="this.style.background='var(--copper)'" class="en">Get My Free Scorecard →</a>
+        <a href="/scorecard" style="display:block;background:var(--copper);color:var(--black);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.5rem;text-align:center;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e0a040'" onmouseout="this.style.background='var(--copper)'" class="fr">Obtenir mon Scorecard gratuit →</a>
       </div>
     </div>
   </div>
