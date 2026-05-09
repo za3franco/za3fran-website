@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Concept Scorecard — Za3fran</title>
+  <meta name="description" content="Get your free F&B concept scored by a senior operator. Instant AI-powered analysis. No fluff." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --charcoal: #1a1a1a;
+      --copper: #C9862A;
+      --copper-light: #e0a040;
+      --navy: #0F1F3D;
+      --white: #FAFAF7;
+      --muted: #888880;
+      --border: rgba(201,134,42,0.18);
+      --surface: rgba(255,255,255,0.03);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-img { height: 36px; width: auto; }
+
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+
+    .lang-toggle {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .lang-btn.active {
+      background: var(--copper);
+      color: var(--black);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 140px 40px 60px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 28px;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--copper);
+      opacity: 0.5;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--copper);
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 20px;
+      line-height: 1.7;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .hero-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-meta span::before {
+      content: '—';
+      color: var(--copper);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    /* ── FORM WRAPPER ── */
+    .form-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 48px;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--charcoal);
+      border: 1px solid rgba(201,134,42,0.2);
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .step-dot.active {
+      background: var(--copper);
+      border-color: var(--copper);
+      box-shadow: 0 0 8px rgba(201,134,42,0.4);
+    }
+
+    .step-dot.done {
+      background: rgba(201,134,42,0.4);
+      border-color: rgba(201,134,42,0.4);
+    }
+
+    .step-line {
+      width: 40px;
+      height: 1px;
+      background: rgba(201,134,42,0.15);
+      flex-shrink: 0;
+    }
+
+    /* ── QUESTION BLOCK ── */
+    .question-block {
+      display: none;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .question-block.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-number {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .question-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      color: var(--white);
+    }
+
+    .question-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* ── OPTION GRID ── */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .options-grid.two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .option-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      padding: 14px 18px;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      line-height: 1.4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--copper);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .option-btn span { position: relative; z-index: 1; }
+
+    .option-btn:hover {
+      border-color: rgba(201,134,42,0.5);
+      color: var(--white);
+    }
+
+    .option-btn:hover::before { opacity: 0.08; }
+
+    .option-btn.selected {
+      border-color: var(--copper);
+      color: var(--copper);
+    }
+
+    .option-btn.selected::before { opacity: 0.12; }
+
+    /* ── TEXT INPUT ── */
+    .text-input-wrap {
+      margin-bottom: 36px;
+    }
+
+    .text-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      padding: 16px 20px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .text-input::placeholder { color: rgba(136,136,128,0.5); }
+
+    .text-input:focus { border-color: rgba(201,134,42,0.5); }
+
+    /* ── CONTACT FIELDS ── */
+    .contact-fields {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .contact-fields .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 500;
+    }
+
+    /* ── NAV BUTTONS ── */
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .btn-back {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 400;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-back:hover { border-color: rgba(255,255,255,0.25); color: var(--white); }
+
+    .btn-next {
+      background: var(--copper);
+      border: none;
+      color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 14px 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+
+    .btn-next:hover { background: var(--copper-light); }
+
+    .btn-next:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .btn-submit {
+      background: var(--copper);
+      border: none;
+      color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 16px 40px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover { background: var(--copper-light); }
+
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── LOADING STATE ── */
+    .loading-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .loading-screen.active { display: block; }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(201,134,42,0.15);
+      border-top-color: var(--copper);
+      border-radius: 50%;
+      margin: 0 auto 32px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      margin-bottom: 12px;
+    }
+
+    .loading-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .loading-steps {
+      margin: 32px auto 0;
+      max-width: 320px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .loading-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      opacity: 0.3;
+      transition: opacity 0.5s;
+    }
+
+    .loading-step.done { opacity: 1; color: var(--white); }
+
+    .loading-step-icon {
+      width: 20px;
+      height: 20px;
+      border: 1px solid rgba(201,134,42,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      color: var(--copper);
+    }
+
+    /* ── SUCCESS STATE ── */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .success-screen.active { display: block; }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--copper);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      font-size: 1.3rem;
+      color: var(--copper);
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      margin-bottom: 16px;
+    }
+
+    .success-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 440px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .success-divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 280px;
+      margin: 0 auto 32px;
+    }
+
+    .success-cta-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 16px;
+    }
+
+    .success-cta {
+      display: inline-block;
+      border: 1px solid var(--copper);
+      color: var(--copper);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 12px 28px;
+      text-decoration: none;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .success-cta:hover { background: var(--copper); color: var(--black); }
+
+    /* ── ERROR ── */
+    .error-msg {
+      display: none;
+      background: rgba(220,60,60,0.08);
+      border: 1px solid rgba(220,60,60,0.25);
+      color: #f87171;
+      font-size: 0.82rem;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .error-msg.active { display: block; }
+
+    /* ── VALIDATION ── */
+    .field-error {
+      font-size: 0.75rem;
+      color: #f87171;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .text-input.invalid { border-color: rgba(248,113,113,0.5); }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px 40px 48px;
+      font-size: 0.72rem;
+      color: rgba(136,136,128,0.4);
+      letter-spacing: 0.04em;
+    }
+
+    .page-footer a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-footer a:hover { color: var(--muted); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .site-header { padding: 16px 20px; }
+      .hero { padding: 120px 20px 48px; }
+      .form-wrapper { padding: 36px 20px 60px; }
+      .options-grid.two-col { grid-template-columns: 1fr; }
+      .contact-fields .row { grid-template-columns: 1fr; }
+      .nav-row { flex-direction: column; align-items: stretch; }
+      .btn-back { order: 2; text-align: center; }
+      .btn-next, .btn-submit { order: 1; margin: 0; text-align: center; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <a href="https://za3fran.io" class="logo-link">
+      <img src="assets/logo.png" alt="Za3fran" class="logo-img" onerror="this.style.display='none'" />
+      <span class="logo-text">Za3fran</span>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span data-i18n="eyebrow">Free Diagnostic Tool</span>
+    </div>
+    <h1>
+      <span data-i18n="h1a">How strong is</span><br/>
+      <em data-i18n="h1b">your concept?</em>
+    </h1>
+    <p class="hero-sub" data-i18n="hero_sub">
+      Answer 7 questions. Get a scored analysis of your F&amp;B concept — written by a senior operator's logic, delivered to your inbox in under 60 seconds.
+    </p>
+    <div class="hero-meta">
+      <span data-i18n="meta1">Free, always</span>
+      <span data-i18n="meta2">No account needed</span>
+      <span data-i18n="meta3">Under 3 minutes</span>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- FORM -->
+  <div class="form-wrapper">
+
+    <!-- Step Indicator -->
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step-dot active" id="dot-0"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-1"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-4"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-5"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-6"></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block active" id="q1">
+      <div class="question-number" data-i18n="q_num_1">Question 1 of 7</div>
+      <div class="question-label" data-i18n="q1_label">What type of concept are you working on?</div>
+      <div class="question-hint" data-i18n="q1_hint">Choose the option that best describes your format.</div>
+      <div class="options-grid" id="q1-options">
+        <button class="option-btn" data-value="casual_restaurant" onclick="selectOption('q1','casual_restaurant',this)"><span data-i18n="q1_a">Casual restaurant (sit-down, mid-range)</span></button>
+        <button class="option-btn" data-value="fine_dining" onclick="selectOption('q1','fine_dining',this)"><span data-i18n="q1_b">Fine dining</span></button>
+        <button class="option-btn" data-value="cafe_bistro" onclick="selectOption('q1','cafe_bistro',this)"><span data-i18n="q1_c">Café / bistro / brunch</span></button>
+        <button class="option-btn" data-value="fast_casual" onclick="selectOption('q1','fast_casual',this)"><span data-i18n="q1_d">Fast casual / counter service</span></button>
+        <button class="option-btn" data-value="hotel_fb" onclick="selectOption('q1','hotel_fb',this)"><span data-i18n="q1_e">Hotel F&amp;B</span></button>
+        <button class="option-btn" data-value="bar_lounge" onclick="selectOption('q1','bar_lounge',this)"><span data-i18n="q1_f">Bar / lounge / cocktail-led</span></button>
+        <button class="option-btn" data-value="beach_club" onclick="selectOption('q1','beach_club',this)"><span data-i18n="q1_g">Beach club / day club</span></button>
+        <button class="option-btn" data-value="other" onclick="selectOption('q1','other',this)"><span data-i18n="q1_h">Other / hybrid</span></button>
+      </div>
+      <div class="nav-row">
+        <div></div>
+        <button class="btn-next" id="q1-next" disabled onclick="goNext(1)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block" id="q2">
+      <div class="question-number" data-i18n="q_num_2">Question 2 of 7</div>
+      <div class="question-label" data-i18n="q2_label">Where will it be located?</div>
+      <div class="question-hint" data-i18n="q2_hint">Country, city, or neighbourhood — as specific or broad as you like.</div>
+      <div class="text-input-wrap">
+        <input type="text" class="text-input" id="q2-input" placeholder="e.g. Casablanca, Morocco — Gauthier district" data-i18n-placeholder="q2_placeholder" oninput="validateText('q2')" />
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(2)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q2-next" disabled onclick="goNext(2)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block" id="q3">
+      <div class="question-number" data-i18n="q_num_3">Question 3 of 7</div>
+      <div class="question-label" data-i18n="q3_label">How clearly defined is your concept?</div>
+      <div class="question-hint" data-i18n="q3_hint">Be honest — this helps us give you a more accurate read.</div>
+      <div class="options-grid two-col" id="q3-options">
+        <button class="option-btn" data-value="clear" onclick="selectOption('q3','clear',this)"><span data-i18n="q3_a">I can describe it in one clear sentence</span></button>
+        <button class="option-btn" data-value="broad" onclick="selectOption('q3','broad',this)"><span data-i18n="q3_b">I have the broad strokes — still refining details</span></button>
+        <button class="option-btn" data-value="exploring" onclick="selectOption('q3','exploring',this)"><span data-i18n="q3_c">I have ideas — still exploring directions</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(3)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q3-next" disabled onclick="goNext(3)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block" id="q4">
+      <div class="question-number" data-i18n="q_num_4">Question 4 of 7</div>
+      <div class="question-label" data-i18n="q4_label">What's your target average ticket per guest?</div>
+      <div class="question-hint" data-i18n="q4_hint">Approximate figures, all-in per person including drinks.</div>
+      <div class="options-grid" id="q4-options">
+        <button class="option-btn" data-value="under_100" onclick="selectOption('q4','under_100',this)"><span data-i18n="q4_a">Under 100 MAD / under €10</span></button>
+        <button class="option-btn" data-value="100_250" onclick="selectOption('q4','100_250',this)"><span data-i18n="q4_b">100–250 MAD / €10–25</span></button>
+        <button class="option-btn" data-value="250_500" onclick="selectOption('q4','250_500',this)"><span data-i18n="q4_c">250–500 MAD / €25–50</span></button>
+        <button class="option-btn" data-value="500_1000" onclick="selectOption('q4','500_1000',this)"><span data-i18n="q4_d">500–1,000 MAD / €50–100</span></button>
+        <button class="option-btn" data-value="over_1000" onclick="selectOption('q4','over_1000',this)"><span data-i18n="q4_e">Over 1,000 MAD / over €100</span></button>
+        <button class="option-btn" data-value="not_sure" onclick="selectOption('q4','not_sure',this)"><span data-i18n="q4_f">Not sure yet</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(4)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q4-next" disabled onclick="goNext(4)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block" id="q5">
+      <div class="question-number" data-i18n="q_num_5">Question 5 of 7</div>
+      <div class="question-label" data-i18n="q5_label">How well do you know your target customer?</div>
+      <div class="question-hint" data-i18n="q5_hint">Not who you hope they'll be — who you've actually thought through.</div>
+      <div class="options-grid two-col" id="q5-options">
+        <button class="option-btn" data-value="specific" onclick="selectOption('q5','specific',this)"><span data-i18n="q5_a">Specific profile — age, occasion, spending habits</span></button>
+        <button class="option-btn" data-value="broad" onclick="selectOption('q5','broad',this)"><span data-i18n="q5_b">Broad idea — general demographic</span></button>
+        <button class="option-btn" data-value="working_out" onclick="selectOption('q5','working_out',this)"><span data-i18n="q5_c">Still working it out</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(5)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q5-next" disabled onclick="goNext(5)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block" id="q6">
+      <div class="question-number" data-i18n="q_num_6">Question 6 of 7</div>
+      <div class="question-label" data-i18n="q6_label">How well do you know the competitive landscape?</div>
+      <div class="question-hint" data-i18n="q6_hint">Field research, not theory.</div>
+      <div class="options-grid two-col" id="q6-options">
+        <button class="option-btn" data-value="deep" onclick="selectOption('q6','deep',this)"><span data-i18n="q6_a">I've physically visited 3+ direct competitors</span></button>
+        <button class="option-btn" data-value="rough" onclick="selectOption('q6','rough',this)"><span data-i18n="q6_b">Rough idea — no deep research yet</span></button>
+        <button class="option-btn" data-value="none" onclick="selectOption('q6','none',this)"><span data-i18n="q6_c">I haven't analysed it</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(6)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q6-next" disabled onclick="goNext(6)" data-i18n="btn_next">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q7 (optional) -->
+    <div class="question-block" id="q7">
+      <div class="question-number" data-i18n="q_num_7">Question 7 of 7 <span style="color:var(--muted);font-size:0.85em;" data-i18n="optional">(optional)</span></div>
+      <div class="question-label" data-i18n="q7_label">Where are you in the journey?</div>
+      <div class="question-hint" data-i18n="q7_hint">Helps us tailor the analysis to where you actually are.</div>
+      <div class="options-grid two-col" id="q7-options">
+        <button class="option-btn" data-value="exploring" onclick="selectOption('q7','exploring',this)"><span data-i18n="q7_a">Just exploring an idea</span></button>
+        <button class="option-btn" data-value="refining" onclick="selectOption('q7','refining',this)"><span data-i18n="q7_b">Refining concept, no commitments yet</span></button>
+        <button class="option-btn" data-value="planning" onclick="selectOption('q7','planning',this)"><span data-i18n="q7_c">Site secured, planning underway</span></button>
+        <button class="option-btn" data-value="operating" onclick="selectOption('q7','operating',this)"><span data-i18n="q7_d">Already operating, looking to optimise</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(7)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" id="q7-next" onclick="goNext(7)" data-i18n="btn_next_skip">Continue (or skip) →</button>
+      </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="question-block" id="qContact">
+      <div class="question-number" data-i18n="contact_num">Almost there</div>
+      <div class="question-label" data-i18n="contact_label">Where should we send your scorecard?</div>
+      <div class="question-hint" data-i18n="contact_hint">Your report will be in your inbox within 60 seconds. No spam. Ever.</div>
+
+      <div class="error-msg" id="contactError"></div>
+
+      <div class="contact-fields">
+        <div class="contact-fields .row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label class="field-label" for="field-name" data-i18n="label_name">First name</label>
+            <input type="text" class="text-input" id="field-name" autocomplete="given-name" />
+          </div>
+          <div>
+            <label class="field-label" for="field-email" data-i18n="label_email">Email</label>
+            <input type="email" class="text-input" id="field-email" autocomplete="email" />
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack('contact')" data-i18n="btn_back">← Back</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+          <span data-i18n="btn_submit">Get My Scorecard</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-spinner"></div>
+      <div class="loading-title" data-i18n="loading_title">Analysing your concept...</div>
+      <div class="loading-sub" data-i18n="loading_sub">A senior operator's logic is reviewing your answers. This takes about 30 seconds.</div>
+      <div class="loading-steps">
+        <div class="loading-step" id="lstep1">
+          <div class="loading-step-icon">1</div>
+          <span data-i18n="lstep1">Scoring your concept framework</span>
+        </div>
+        <div class="loading-step" id="lstep2">
+          <div class="loading-step-icon">2</div>
+          <span data-i18n="lstep2">Identifying market positioning</span>
+        </div>
+        <div class="loading-step" id="lstep3">
+          <div class="loading-step-icon">3</div>
+          <span data-i18n="lstep3">Pinpointing your blind spot</span>
+        </div>
+        <div class="loading-step" id="lstep4">
+          <div class="loading-step-icon">4</div>
+          <span data-i18n="lstep4">Preparing your report</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✓</div>
+      <div class="success-title" data-i18n="success_title">Your scorecard is on its way.</div>
+      <div class="success-sub" data-i18n="success_sub">Check your inbox — it should arrive within the next 60 seconds. Check your spam folder if you don't see it.</div>
+      <div class="success-divider"></div>
+      <div class="success-cta-label" data-i18n="success_cta_label">Want deeper answers?</div>
+      <a href="https://za3fran.io/#validator" class="success-cta" data-i18n="success_cta">Explore the Concept Validator →</a>
+    </div>
+
+  </div><!-- /form-wrapper -->
+
+  <footer class="page-footer">
+    <a href="https://za3fran.io">Za3fran.io</a> &nbsp;·&nbsp;
+    <span data-i18n="footer_tagline">F&amp;B Intelligence. Built for operators.</span>
+  </footer>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // TRANSLATIONS
+    // ─────────────────────────────────────────────
+    const i18n = {
+      en: {
+        eyebrow: 'Free Diagnostic Tool',
+        h1a: 'How strong is',
+        h1b: 'your concept?',
+        hero_sub: 'Answer 7 questions. Get a scored analysis of your F&B concept — written by a senior operator\'s logic, delivered to your inbox in under 60 seconds.',
+        meta1: 'Free, always',
+        meta2: 'No account needed',
+        meta3: 'Under 3 minutes',
+        q_num_1: 'Question 1 of 7',
+        q1_label: 'What type of concept are you working on?',
+        q1_hint: 'Choose the option that best describes your format.',
+        q1_a: 'Casual restaurant (sit-down, mid-range)',
+        q1_b: 'Fine dining',
+        q1_c: 'Café / bistro / brunch',
+        q1_d: 'Fast casual / counter service',
+        q1_e: 'Hotel F&B',
+        q1_f: 'Bar / lounge / cocktail-led',
+        q1_g: 'Beach club / day club',
+        q1_h: 'Other / hybrid',
+        q_num_2: 'Question 2 of 7',
+        q2_label: 'Where will it be located?',
+        q2_hint: 'Country, city, or neighbourhood — as specific or broad as you like.',
+        q2_placeholder: 'e.g. Casablanca, Morocco — Gauthier district',
+        q_num_3: 'Question 3 of 7',
+        q3_label: 'How clearly defined is your concept?',
+        q3_hint: 'Be honest — this helps us give you a more accurate read.',
+        q3_a: 'I can describe it in one clear sentence',
+        q3_b: 'I have the broad strokes — still refining details',
+        q3_c: 'I have ideas — still exploring directions',
+        q_num_4: 'Question 4 of 7',
+        q4_label: 'What\'s your target average ticket per guest?',
+        q4_hint: 'Approximate figures, all-in per person including drinks.',
+        q4_a: 'Under 100 MAD / under €10',
+        q4_b: '100–250 MAD / €10–25',
+        q4_c: '250–500 MAD / €25–50',
+        q4_d: '500–1,000 MAD / €50–100',
+        q4_e: 'Over 1,000 MAD / over €100',
+        q4_f: 'Not sure yet',
+        q_num_5: 'Question 5 of 7',
+        q5_label: 'How well do you know your target customer?',
+        q5_hint: 'Not who you hope they\'ll be — who you\'ve actually thought through.',
+        q5_a: 'Specific profile — age, occasion, spending habits',
+        q5_b: 'Broad idea — general demographic',
+        q5_c: 'Still working it out',
+        q_num_6: 'Question 6 of 7',
+        q6_label: 'How well do you know the competitive landscape?',
+        q6_hint: 'Field research, not theory.',
+        q6_a: 'I\'ve physically visited 3+ direct competitors',
+        q6_b: 'Rough idea — no deep research yet',
+        q6_c: 'I haven\'t analysed it',
+        q_num_7: 'Question 7 of 7',
+        optional: '(optional)',
+        q7_label: 'Where are you in the journey?',
+        q7_hint: 'Helps us tailor the analysis to where you actually are.',
+        q7_a: 'Just exploring an idea',
+        q7_b: 'Refining concept, no commitments yet',
+        q7_c: 'Site secured, planning underway',
+        q7_d: 'Already operating, looking to optimise',
+        contact_num: 'Almost there',
+        contact_label: 'Where should we send your scorecard?',
+        contact_hint: 'Your report will be in your inbox within 60 seconds. No spam. Ever.',
+        label_name: 'First name',
+        label_email: 'Email',
+        btn_next: 'Continue →',
+        btn_next_skip: 'Continue (or skip) →',
+        btn_back: '← Back',
+        btn_submit: 'Get My Scorecard',
+        loading_title: 'Analysing your concept...',
+        loading_sub: 'A senior operator\'s logic is reviewing your answers. This takes about 30 seconds.',
+        lstep1: 'Scoring your concept framework',
+        lstep2: 'Identifying market positioning',
+        lstep3: 'Pinpointing your blind spot',
+        lstep4: 'Preparing your report',
+        success_title: 'Your scorecard is on its way.',
+        success_sub: 'Check your inbox — it should arrive within the next 60 seconds. Check your spam folder if you don\'t see it.',
+        success_cta_label: 'Want deeper answers?',
+        success_cta: 'Explore the Concept Validator →',
+        footer_tagline: 'F&B Intelligence. Built for operators.',
+        err_name: 'Please enter your first name.',
+        err_email: 'Please enter a valid email address.',
+        err_generic: 'Something went wrong. Please try again.',
+      },
+      fr: {
+        eyebrow: 'Outil de diagnostic gratuit',
+        h1a: 'Quelle est la solidité',
+        h1b: 'de votre concept ?',
+        hero_sub: 'Répondez à 7 questions. Recevez une analyse scorée de votre concept F&B — rédigée avec la logique d\'un opérateur senior, dans votre boîte mail en moins de 60 secondes.',
+        meta1: 'Gratuit, toujours',
+        meta2: 'Sans inscription',
+        meta3: 'Moins de 3 minutes',
+        q_num_1: 'Question 1 sur 7',
+        q1_label: 'Quel type de concept développez-vous ?',
+        q1_hint: 'Choisissez l\'option qui décrit le mieux votre format.',
+        q1_a: 'Restaurant casual (assis, gamme moyenne)',
+        q1_b: 'Fine dining',
+        q1_c: 'Café / bistro / brunch',
+        q1_d: 'Fast casual / comptoir',
+        q1_e: 'F&B hôtelier',
+        q1_f: 'Bar / lounge / cocktails',
+        q1_g: 'Beach club / day club',
+        q1_h: 'Autre / hybride',
+        q_num_2: 'Question 2 sur 7',
+        q2_label: 'Où sera-t-il implanté ?',
+        q2_hint: 'Pays, ville ou quartier — aussi précis ou général que vous souhaitez.',
+        q2_placeholder: 'Ex. Casablanca, Maroc — quartier Gauthier',
+        q_num_3: 'Question 3 sur 7',
+        q3_label: 'À quel point votre concept est-il défini ?',
+        q3_hint: 'Soyez honnête — cela nous permet de vous donner une analyse plus juste.',
+        q3_a: 'Je peux le décrire en une phrase claire',
+        q3_b: 'J\'ai les grandes lignes — encore en cours de précision',
+        q3_c: 'J\'ai des idées — encore en phase d\'exploration',
+        q_num_4: 'Question 4 sur 7',
+        q4_label: 'Quel est votre ticket moyen cible par couvert ?',
+        q4_hint: 'Montant approximatif tout compris par personne, boissons incluses.',
+        q4_a: 'Moins de 100 MAD / moins de 10 €',
+        q4_b: '100–250 MAD / 10–25 €',
+        q4_c: '250–500 MAD / 25–50 €',
+        q4_d: '500–1 000 MAD / 50–100 €',
+        q4_e: 'Plus de 1 000 MAD / plus de 100 €',
+        q4_f: 'Pas encore déterminé',
+        q_num_5: 'Question 5 sur 7',
+        q5_label: 'À quel point connaissez-vous votre client cible ?',
+        q5_hint: 'Pas qui vous espérez attirer — qui vous avez réellement étudié.',
+        q5_a: 'Profil précis — âge, occasion, habitudes de dépense',
+        q5_b: 'Idée générale — démographie large',
+        q5_c: 'Encore en train d\'y réfléchir',
+        q_num_6: 'Question 6 sur 7',
+        q6_label: 'À quel point connaissez-vous le paysage concurrentiel ?',
+        q6_hint: 'Terrain, pas théorie.',
+        q6_a: 'J\'ai physiquement visité 3+ concurrents directs',
+        q6_b: 'Idée approximative — pas de recherche approfondie',
+        q6_c: 'Je ne l\'ai pas analysé',
+        q_num_7: 'Question 7 sur 7',
+        optional: '(optionnel)',
+        q7_label: 'Où en êtes-vous dans votre parcours ?',
+        q7_hint: 'Nous aide à adapter l\'analyse à votre situation réelle.',
+        q7_a: 'Simple exploration d\'une idée',
+        q7_b: 'Concept en cours de définition, sans engagement',
+        q7_c: 'Site trouvé, planification en cours',
+        q7_d: 'Déjà en activité, cherche à optimiser',
+        contact_num: 'Presque terminé',
+        contact_label: 'Où devons-nous envoyer votre scorecard ?',
+        contact_hint: 'Votre rapport sera dans votre boîte mail dans les 60 secondes. Aucun spam. Jamais.',
+        label_name: 'Prénom',
+        label_email: 'Email',
+        btn_next: 'Continuer →',
+        btn_next_skip: 'Continuer (ou passer) →',
+        btn_back: '← Retour',
+        btn_submit: 'Recevoir mon Scorecard',
+        loading_title: 'Analyse de votre concept en cours...',
+        loading_sub: 'La logique d\'un opérateur senior examine vos réponses. Cela prend environ 30 secondes.',
+        lstep1: 'Scoring du cadre conceptuel',
+        lstep2: 'Identification du positionnement marché',
+        lstep3: 'Identification de votre angle mort',
+        lstep4: 'Préparation de votre rapport',
+        success_title: 'Votre scorecard est en route.',
+        success_sub: 'Vérifiez votre boîte mail — il devrait arriver dans les 60 secondes. Pensez à vérifier vos spams si vous ne le voyez pas.',
+        success_cta_label: 'Vous voulez des réponses plus précises ?',
+        success_cta: 'Découvrir le Concept Validator →',
+        footer_tagline: 'Intelligence F&B. Conçu pour les opérateurs.',
+        err_name: 'Veuillez saisir votre prénom.',
+        err_email: 'Veuillez saisir une adresse email valide.',
+        err_generic: 'Une erreur s\'est produite. Veuillez réessayer.',
+      }
+    };
+
+    // ─────────────────────────────────────────────
+    // STATE
+    // ─────────────────────────────────────────────
+    let currentLang = 'en';
+    let answers = { q1: null, q2: '', q3: null, q4: null, q5: null, q6: null, q7: null };
+    const stepOrder = ['q1','q2','q3','q4','q5','q6','q7','qContact'];
+
+    // ─────────────────────────────────────────────
+    // LANGUAGE
+    // ─────────────────────────────────────────────
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[lang][key] !== undefined) el.innerHTML = i18n[lang][key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (i18n[lang][key] !== undefined) el.placeholder = i18n[lang][key];
+      });
+    }
+
+    // Auto-detect from browser
+    (function() {
+      const bl = navigator.language || 'en';
+      if (bl.startsWith('fr')) setLang('fr');
+    })();
+
+    // ─────────────────────────────────────────────
+    // STEP MANAGEMENT
+    // ─────────────────────────────────────────────
+    let currentStep = 0;
+
+    function showStep(index) {
+      stepOrder.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', i === index);
+      });
+      updateDots(index);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateDots(activeIndex) {
+      for (let i = 0; i <= 6; i++) {
+        const dot = document.getElementById('dot-' + i);
+        if (!dot) continue;
+        dot.classList.remove('active', 'done');
+        if (i < activeIndex) dot.classList.add('done');
+        else if (i === activeIndex) dot.classList.add('active');
+      }
+    }
+
+    function goNext(stepNum) {
+      const stepId = 'q' + stepNum;
+      const nextIndex = stepOrder.indexOf(stepId) + 1;
+      currentStep = nextIndex;
+      showStep(nextIndex);
+    }
+
+    function goBack(stepRef) {
+      const stepId = stepRef === 'contact' ? 'qContact' : 'q' + stepRef;
+      const prevIndex = stepOrder.indexOf(stepId) - 1;
+      currentStep = prevIndex;
+      showStep(prevIndex);
+    }
+
+    // ─────────────────────────────────────────────
+    // OPTION SELECTION
+    // ─────────────────────────────────────────────
+    function selectOption(questionId, value, btn) {
+      answers[questionId] = value;
+      document.querySelectorAll('#' + questionId + '-options .option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      const nextBtn = document.getElementById(questionId + '-next');
+      if (nextBtn) nextBtn.disabled = false;
+    }
+
+    // ─────────────────────────────────────────────
+    // TEXT VALIDATION
+    // ─────────────────────────────────────────────
+    function validateText(questionId) {
+      const input = document.getElementById(questionId + '-input');
+      const val = input.value.trim();
+      answers[questionId] = val;
+      const nextBtn = document.getElementById(questionId + '-next');
+      if (nextBtn) nextBtn.disabled = val.length < 2;
+    }
+
+    // ─────────────────────────────────────────────
+    // SUBMIT
+    // ─────────────────────────────────────────────
+    async function submitForm() {
+      const name = document.getElementById('field-name').value.trim();
+      const email = document.getElementById('field-email').value.trim();
+      const errEl = document.getElementById('contactError');
+
+      errEl.classList.remove('active');
+
+      if (!name) {
+        errEl.textContent = i18n[currentLang].err_name;
+        errEl.classList.add('active');
+        return;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errEl.textContent = i18n[currentLang].err_email;
+        errEl.classList.add('active');
+        return;
+      }
+
+      // Hide form, show loading
+      document.getElementById('qContact').classList.remove('active');
+      document.getElementById('stepIndicator').style.display = 'none';
+      document.getElementById('loadingScreen').classList.add('active');
+
+      // Animate loading steps
+      const steps = ['lstep1','lstep2','lstep3','lstep4'];
+      steps.forEach((id, i) => {
+        setTimeout(() => {
+          document.getElementById(id).classList.add('done');
+        }, i * 7000);
+      });
+
+      // Build payload
+      const payload = {
+        name,
+        email,
+        lang: currentLang,
+        answers: {
+          conceptType: answers.q1,
+          location: answers.q2,
+          conceptClarity: answers.q3,
+          targetTicket: answers.q4,
+          customerKnowledge: answers.q5,
+          competitorKnowledge: answers.q6,
+          journeyStage: answers.q7,
+        }
+      };
+
+      try {
+        const response = await fetch('/api/scorecard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('API error ' + response.status);
+        }
+
+        // Show success
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.getElementById('successScreen').classList.add('active');
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.getElementById('qContact').classList.add('active');
+        document.getElementById('stepIndicator').style.display = 'flex';
+        errEl.textContent = i18n[currentLang].err_generic;
+        errEl.classList.add('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
