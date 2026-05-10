@@ -1,6 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/scorecard", "destination": "/scorecard.html" }
+    { "source": "/scorecard", "destination": "/scorecard.html" },
+    { "source": "/validator", "destination": "/validator.html" },
+    { "source": "/validator/success", "destination": "/validator-success.html" }
   ]
 }
