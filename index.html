@@ -11,85 +11,42 @@
 <!-- EmailJS SDK for waitlist auto-response emails -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- Currency localisation: detects visitor country via IP, updates all price displays -->
+<!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
 <script>
 (function(){
-  // Country-to-currency mapping
-  // MAD: Morocco + North Africa
-  // EUR: Europe + Turkey
-  // USD: everything else
-  var MAD_COUNTRIES = ['MA','DZ','TN','LY','EG','MR'];
-  var EUR_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO','IS','AL','BA','ME','MK','RS','TR'];
-
-  // Price strings per currency
   var PRICES = {
     MAD: { en: 'MAD 1,990', fr: '1 990 MAD' },
-    EUR: { en: '€199',      fr: '199€'      },
-    USD: { en: '$219',      fr: '$219'      }
+    EUR: { en: '€199',  fr: '199€'  },
+    USD: { en: '$219',       fr: '$219'       }
   };
-
-  // Button label strings per currency
   var BTN_PRICES = {
     MAD: { en: 'Get Your Report — MAD 1,990', fr: 'Votre rapport — 1 990 MAD' },
-    EUR: { en: 'Get Your Report — €199',      fr: 'Votre rapport — 199€'      },
-    USD: { en: 'Get Your Report — $219',      fr: 'Votre rapport — $219'      }
+    EUR: { en: 'Get Your Report — €199',  fr: 'Votre rapport — 199€'  },
+    USD: { en: 'Get Your Report — $219',       fr: 'Votre rapport — $219'       }
   };
 
   function setCurrency(currency) {
-    // Store for later use (payment flow)
     window.ZA3FRAN_CURRENCY = currency;
-
-    // Update all elements with data-price attribute
-    var priceEls = document.querySelectorAll('[data-price]');
-    priceEls.forEach(function(el) {
-      var lang = el.getAttribute('data-price'); // 'en' or 'fr'
-      el.textContent = PRICES[currency][lang];
+    document.querySelectorAll('[data-price]').forEach(function(el) {
+      el.textContent = PRICES[currency][el.getAttribute('data-price')];
     });
-
-    // Update all elements with data-btn-price attribute
-    var btnEls = document.querySelectorAll('[data-btn-price]');
-    btnEls.forEach(function(el) {
-      var lang = el.getAttribute('data-btn-price');
-      el.textContent = BTN_PRICES[currency][lang];
+    document.querySelectorAll('[data-btn-price]').forEach(function(el) {
+      el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
     });
-  }
-
-  function resolveCurrency(country_code) {
-    var country = (country_code || 'XX').toUpperCase();
-    if (MAD_COUNTRIES.indexOf(country) !== -1) return 'MAD';
-    if (EUR_COUNTRIES.indexOf(country) !== -1) return 'EUR';
-    return 'USD';
   }
 
   function detectCurrency() {
-    // Primary: ipwho.is (free, no key, reliable)
-    fetch('https://ipwho.is/')
+    // Calls our own Vercel serverless function — server-side IP lookup, never blocked by client proxies
+    fetch('/api/currency')
       .then(function(r){ return r.json(); })
       .then(function(data){
-        if (data && data.country_code) {
-          setCurrency(resolveCurrency(data.country_code));
-        } else {
-          throw new Error('no country');
-        }
+        setCurrency(data.currency || 'EUR');
       })
       .catch(function(){
-        // Fallback: ip-api.com (free tier, no key needed)
-        fetch('https://ip-api.com/json/?fields=countryCode')
-          .then(function(r){ return r.json(); })
-          .then(function(data){
-            if (data && data.countryCode) {
-              setCurrency(resolveCurrency(data.countryCode));
-            } else {
-              setCurrency('EUR');
-            }
-          })
-          .catch(function(){
-            setCurrency('EUR');
-          });
+        setCurrency('EUR');
       });
   }
 
-  // Run after DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', detectCurrency);
   } else {
