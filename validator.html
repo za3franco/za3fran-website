@@ -489,28 +489,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
           <label class="v-label fr">Clientèle cible principale <span class="req">*</span></label>
           <div class="v-pills" id="f-audience">
             <input type="checkbox" class="v-pill" id="aud-locals" name="audience" value="locals">
-            <label class="v-pill-label en" for="aud-locals">Local residents</label>
-            <label class="v-pill-label fr" for="aud-locals" style="display:none">Résidents locaux</label>
+            <label class="v-pill-label" for="aud-locals" data-en="Local residents" data-fr="Résidents locaux">Local residents</label>
 
             <input type="checkbox" class="v-pill" id="aud-tourists" name="audience" value="tourists">
-            <label class="v-pill-label en" for="aud-tourists">Tourists</label>
-            <label class="v-pill-label fr" for="aud-tourists" style="display:none">Touristes</label>
+            <label class="v-pill-label" for="aud-tourists" data-en="Tourists" data-fr="Touristes">Tourists</label>
 
             <input type="checkbox" class="v-pill" id="aud-expats" name="audience" value="expats">
-            <label class="v-pill-label en" for="aud-expats">Expats</label>
-            <label class="v-pill-label fr" for="aud-expats" style="display:none">Expatriés</label>
+            <label class="v-pill-label" for="aud-expats" data-en="Expats" data-fr="Expatriés">Expats</label>
 
             <input type="checkbox" class="v-pill" id="aud-corporate" name="audience" value="corporate">
-            <label class="v-pill-label en" for="aud-corporate">Corporate / Business</label>
-            <label class="v-pill-label fr" for="aud-corporate" style="display:none">Corporate / Affaires</label>
+            <label class="v-pill-label" for="aud-corporate" data-en="Corporate / Business" data-fr="Corporate / Affaires">Corporate / Business</label>
 
             <input type="checkbox" class="v-pill" id="aud-affluent" name="audience" value="affluent_locals">
-            <label class="v-pill-label en" for="aud-affluent">Affluent locals</label>
-            <label class="v-pill-label fr" for="aud-affluent" style="display:none">Clientèle locale aisée</label>
+            <label class="v-pill-label" for="aud-affluent" data-en="Affluent locals" data-fr="Clientèle locale aisée">Affluent locals</label>
 
             <input type="checkbox" class="v-pill" id="aud-families" name="audience" value="families">
-            <label class="v-pill-label en" for="aud-families">Families</label>
-            <label class="v-pill-label fr" for="aud-families" style="display:none">Familles</label>
+            <label class="v-pill-label" for="aud-families" data-en="Families" data-fr="Familles">Families</label>
           </div>
           <span class="v-err" id="err-audience"></span>
         </div>
@@ -524,7 +518,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         <h2 class="v-section-title en">Financial <em>parameters</em></h2>
         <h2 class="v-section-title fr">Paramètres <em>financiers</em></h2>
       </div>
-      <div class="v-row three">
+      <div class="v-row">
         <div class="v-field">
           <label class="v-label en" for="f-budget">Estimated investment budget <span class="req">*</span></label>
           <label class="v-label fr" for="f-budget">Budget d'investissement estimé <span class="req">*</span></label>
@@ -542,6 +536,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
             <option value="over_1m" class="fr">Plus de 10M MAD</option>
           </select>
         </div>
+      </div>
+      <div class="v-row two">
         <div class="v-field">
           <label class="v-label en" for="f-ticket">Target average ticket per person <span class="req">*</span></label>
           <label class="v-label fr" for="f-ticket">Ticket moyen cible par personne <span class="req">*</span></label>
@@ -677,8 +673,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <div class="v-form-err" id="form-err"></div>
       <button type="submit" class="btn-submit" id="submit-btn">
         <div class="spinner"></div>
-        <span class="btn-label en">Proceed to payment →</span>
-        <span class="btn-label fr">Procéder au paiement →</span>
+        <span class="btn-label en">Review my submission →</span>
+        <span class="btn-label fr">Vérifier ma soumission →</span>
       </button>
       <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.5);margin-top:1rem;line-height:1.6;">
         <span class="en">Secure payment via Stripe · Your data is used solely to generate your report · Report delivered within 3 minutes of payment confirmation</span>
@@ -687,254 +683,254 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     </div>
 
   </form>
+</div>
 
-  <!-- REVIEW SCREEN -->
-  <div class="v-review" id="v-review">
-    <div class="v-review-header">
-      <span class="v-review-eyebrow en">Step 2 of 2 — Review your submission</span>
-      <span class="v-review-eyebrow fr">Étape 2 sur 2 — Vérifiez votre soumission</span>
-      <h2 class="v-review-title en">Everything<br><em>looks right?</em></h2>
-      <h2 class="v-review-title fr">Tout est<br><em>correct ?</em></h2>
-      <p class="v-review-notice en"><strong>Important:</strong> your report is generated once from these exact inputs. Take a moment to review everything below before proceeding to payment. You can edit any section using the buttons on the right.</p>
-      <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois à partir de ces informations exactes. Prenez un moment pour vérifier ci-dessous avant de procéder au paiement. Vous pouvez modifier chaque section via les boutons à droite.</p>
+<!-- REVIEW SCREEN -->
+<div class="v-review" id="v-review">
+  <div class="v-review-header">
+    <span class="v-review-eyebrow en">Step 2 of 2 — Review your submission</span>
+    <span class="v-review-eyebrow fr">Étape 2 sur 2 — Vérifiez votre soumission</span>
+    <h2 class="v-review-title en">Everything<br><em>looks right?</em></h2>
+    <h2 class="v-review-title fr">Tout est<br><em>correct ?</em></h2>
+    <p class="v-review-notice en"><strong>Important:</strong> your report is generated once from these exact inputs. Take a moment to review everything below before proceeding to payment. You can edit any section using the buttons on the right.</p>
+    <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois à partir de ces informations exactes. Prenez un moment pour vérifier ci-dessous avant de procéder au paiement. Vous pouvez modifier chaque section via les boutons à droite.</p>
+  </div>
+
+  <!-- Block 1: Contact -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">01 — Your details</span>
+      <span class="v-rblock-title fr">01 — Vos coordonnées</span>
+      <button class="v-rblock-edit en" onclick="editSection(1)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(1)">Modifier ↗</button>
     </div>
-
-    <!-- Block 1: Contact -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">01 — Your details</span>
-        <span class="v-rblock-title fr">01 — Vos coordonnées</span>
-        <button class="v-rblock-edit en" onclick="editSection(1)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(1)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Full name</span>
-            <span class="v-ritem-label fr">Nom complet</span>
-            <span class="v-ritem-val" id="r-name"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Email</span>
-            <span class="v-ritem-label fr">Email</span>
-            <span class="v-ritem-val" id="r-email"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Country</span>
-            <span class="v-ritem-label fr">Pays</span>
-            <span class="v-ritem-val" id="r-country"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Role</span>
-            <span class="v-ritem-label fr">Rôle</span>
-            <span class="v-ritem-val" id="r-role"></span>
-          </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Full name</span>
+          <span class="v-ritem-label fr">Nom complet</span>
+          <span class="v-ritem-val" id="r-name"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Email</span>
+          <span class="v-ritem-label fr">Email</span>
+          <span class="v-ritem-val" id="r-email"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Country</span>
+          <span class="v-ritem-label fr">Pays</span>
+          <span class="v-ritem-val" id="r-country"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Role</span>
+          <span class="v-ritem-label fr">Rôle</span>
+          <span class="v-ritem-val" id="r-role"></span>
         </div>
       </div>
-    </div>
-
-    <!-- Block 2: Concept -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">02 — Your concept</span>
-        <span class="v-rblock-title fr">02 — Votre concept</span>
-        <button class="v-rblock-edit en" onclick="editSection(2)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(2)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Concept name</span>
-            <span class="v-ritem-label fr">Nom du concept</span>
-            <span class="v-ritem-val" id="r-concept-name"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Type</span>
-            <span class="v-ritem-label fr">Type</span>
-            <span class="v-ritem-val" id="r-type"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Cuisine / Format</span>
-            <span class="v-ritem-label fr">Cuisine / Format</span>
-            <span class="v-ritem-val" id="r-cuisine"></span>
-          </div>
-        </div>
-        <div class="v-rrow full">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Concept description</span>
-            <span class="v-ritem-label fr">Description du concept</span>
-            <span class="v-ritem-val long" id="r-description"></span>
-          </div>
-        </div>
-        <div class="v-rrow full">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Differentiation</span>
-            <span class="v-ritem-label fr">Différenciation</span>
-            <span class="v-ritem-val long" id="r-differentiation"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block 3: Location & Market -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">03 — Location &amp; market</span>
-        <span class="v-rblock-title fr">03 — Localisation &amp; marché</span>
-        <button class="v-rblock-edit en" onclick="editSection(3)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(3)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">City</span>
-            <span class="v-ritem-label fr">Ville</span>
-            <span class="v-ritem-val" id="r-city"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Neighbourhood</span>
-            <span class="v-ritem-label fr">Quartier</span>
-            <span class="v-ritem-val" id="r-neighbourhood"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Target audience</span>
-            <span class="v-ritem-label fr">Clientèle cible</span>
-            <span class="v-ritem-val" id="r-audience"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block 4: Financials -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">04 — Financial parameters</span>
-        <span class="v-rblock-title fr">04 — Paramètres financiers</span>
-        <button class="v-rblock-edit en" onclick="editSection(4)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(4)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Investment budget</span>
-            <span class="v-ritem-label fr">Budget d'investissement</span>
-            <span class="v-ritem-val" id="r-budget"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Target ticket / person</span>
-            <span class="v-ritem-label fr">Ticket moyen cible</span>
-            <span class="v-ritem-val" id="r-ticket"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Covers per day</span>
-            <span class="v-ritem-label fr">Couverts par jour</span>
-            <span class="v-ritem-val" id="r-covers"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Seating capacity</span>
-            <span class="v-ritem-label fr">Capacité d'accueil</span>
-            <span class="v-ritem-val" id="r-seats"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block 5: Competition -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">05 — Competitive landscape</span>
-        <span class="v-rblock-title fr">05 — Paysage concurrentiel</span>
-        <button class="v-rblock-edit en" onclick="editSection(5)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(5)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow full">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Competitors</span>
-            <span class="v-ritem-label fr">Concurrents</span>
-            <span class="v-ritem-val long" id="r-competitors"></span>
-          </div>
-        </div>
-        <div class="v-rrow full">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Market gap</span>
-            <span class="v-ritem-label fr">Vide du marché</span>
-            <span class="v-ritem-val long" id="r-gap"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block 6: Context -->
-    <div class="v-rblock">
-      <div class="v-rblock-head">
-        <span class="v-rblock-title en">06 — Project context</span>
-        <span class="v-rblock-title fr">06 — Contexte du projet</span>
-        <button class="v-rblock-edit en" onclick="editSection(6)">Edit ↗</button>
-        <button class="v-rblock-edit fr" onclick="editSection(6)">Modifier ↗</button>
-      </div>
-      <div class="v-rblock-body">
-        <div class="v-rrow">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Current stage</span>
-            <span class="v-ritem-label fr">Stade actuel</span>
-            <span class="v-ritem-val" id="r-stage"></span>
-          </div>
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Opening timeline</span>
-            <span class="v-ritem-label fr">Calendrier d'ouverture</span>
-            <span class="v-ritem-val" id="r-timeline"></span>
-          </div>
-        </div>
-        <div class="v-rrow full">
-          <div class="v-ritem">
-            <span class="v-ritem-label en">Additional context</span>
-            <span class="v-ritem-label fr">Contexte additionnel</span>
-            <span class="v-ritem-val long" id="r-context"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Confirm & Pay -->
-    <div class="v-review-confirm">
-      <div class="v-review-total">
-        <div class="v-review-total-left">
-          <span class="v-review-total-label en">Total · One-time payment</span>
-          <span class="v-review-total-label fr">Total · Paiement unique</span>
-          <span class="v-review-total-desc en">20-page strategic report · Delivered in under 3 minutes</span>
-          <span class="v-review-total-desc fr">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
-        </div>
-        <span class="v-review-total-price" id="review-price">€199</span>
-      </div>
-      <div class="v-form-err" id="review-err"></div>
-      <button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
-        <div class="spinner"></div>
-        <span class="btn-label en">Confirm &amp; proceed to payment →</span>
-        <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
-      </button>
-      <button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
-      <button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
-      <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
-        <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
-        <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
-      </p>
     </div>
   </div>
 
-  <!-- SUCCESS STATE -->
-  <div class="v-success" id="v-success">
-    <div class="v-success-icon">✦</div>
-    <h2 class="v-success-h en">Your report is<br><em>on its way.</em></h2>
-    <h2 class="v-success-h fr">Votre rapport<br><em>est en route.</em></h2>
-    <div class="v-div" style="margin:1.5rem auto;"></div>
-    <p class="v-success-p en">Check your inbox — your 20-page strategic analysis will arrive within 3 minutes. Check your spam folder if you don't see it.</p>
-    <p class="v-success-p fr">Consultez votre boîte mail — votre analyse stratégique de 20 pages arrivera dans 3 minutes. Vérifiez vos spams si vous ne la voyez pas.</p>
-    <a href="/" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);text-decoration:none;">
-      <span class="en">← Return to Za3fran.io</span>
-      <span class="fr">← Retour sur Za3fran.io</span>
-    </a>
+  <!-- Block 2: Concept -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">02 — Your concept</span>
+      <span class="v-rblock-title fr">02 — Votre concept</span>
+      <button class="v-rblock-edit en" onclick="editSection(2)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(2)">Modifier ↗</button>
+    </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Concept name</span>
+          <span class="v-ritem-label fr">Nom du concept</span>
+          <span class="v-ritem-val" id="r-concept-name"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Type</span>
+          <span class="v-ritem-label fr">Type</span>
+          <span class="v-ritem-val" id="r-type"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Cuisine / Format</span>
+          <span class="v-ritem-label fr">Cuisine / Format</span>
+          <span class="v-ritem-val" id="r-cuisine"></span>
+        </div>
+      </div>
+      <div class="v-rrow full">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Concept description</span>
+          <span class="v-ritem-label fr">Description du concept</span>
+          <span class="v-ritem-val long" id="r-description"></span>
+        </div>
+      </div>
+      <div class="v-rrow full">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Differentiation</span>
+          <span class="v-ritem-label fr">Différenciation</span>
+          <span class="v-ritem-val long" id="r-differentiation"></span>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Block 3: Location & Market -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">03 — Location &amp; market</span>
+      <span class="v-rblock-title fr">03 — Localisation &amp; marché</span>
+      <button class="v-rblock-edit en" onclick="editSection(3)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(3)">Modifier ↗</button>
+    </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">City</span>
+          <span class="v-ritem-label fr">Ville</span>
+          <span class="v-ritem-val" id="r-city"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Neighbourhood</span>
+          <span class="v-ritem-label fr">Quartier</span>
+          <span class="v-ritem-val" id="r-neighbourhood"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Target audience</span>
+          <span class="v-ritem-label fr">Clientèle cible</span>
+          <span class="v-ritem-val" id="r-audience"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block 4: Financials -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">04 — Financial parameters</span>
+      <span class="v-rblock-title fr">04 — Paramètres financiers</span>
+      <button class="v-rblock-edit en" onclick="editSection(4)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(4)">Modifier ↗</button>
+    </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Investment budget</span>
+          <span class="v-ritem-label fr">Budget d'investissement</span>
+          <span class="v-ritem-val" id="r-budget"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Target ticket / person</span>
+          <span class="v-ritem-label fr">Ticket moyen cible</span>
+          <span class="v-ritem-val" id="r-ticket"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Covers per day</span>
+          <span class="v-ritem-label fr">Couverts par jour</span>
+          <span class="v-ritem-val" id="r-covers"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Seating capacity</span>
+          <span class="v-ritem-label fr">Capacité d'accueil</span>
+          <span class="v-ritem-val" id="r-seats"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block 5: Competition -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">05 — Competitive landscape</span>
+      <span class="v-rblock-title fr">05 — Paysage concurrentiel</span>
+      <button class="v-rblock-edit en" onclick="editSection(5)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(5)">Modifier ↗</button>
+    </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow full">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Competitors</span>
+          <span class="v-ritem-label fr">Concurrents</span>
+          <span class="v-ritem-val long" id="r-competitors"></span>
+        </div>
+      </div>
+      <div class="v-rrow full">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Market gap</span>
+          <span class="v-ritem-label fr">Vide du marché</span>
+          <span class="v-ritem-val long" id="r-gap"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block 6: Context -->
+  <div class="v-rblock">
+    <div class="v-rblock-head">
+      <span class="v-rblock-title en">06 — Project context</span>
+      <span class="v-rblock-title fr">06 — Contexte du projet</span>
+      <button class="v-rblock-edit en" onclick="editSection(6)">Edit ↗</button>
+      <button class="v-rblock-edit fr" onclick="editSection(6)">Modifier ↗</button>
+    </div>
+    <div class="v-rblock-body">
+      <div class="v-rrow">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Current stage</span>
+          <span class="v-ritem-label fr">Stade actuel</span>
+          <span class="v-ritem-val" id="r-stage"></span>
+        </div>
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Opening timeline</span>
+          <span class="v-ritem-label fr">Calendrier d'ouverture</span>
+          <span class="v-ritem-val" id="r-timeline"></span>
+        </div>
+      </div>
+      <div class="v-rrow full">
+        <div class="v-ritem">
+          <span class="v-ritem-label en">Additional context</span>
+          <span class="v-ritem-label fr">Contexte additionnel</span>
+          <span class="v-ritem-val long" id="r-context"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm & Pay -->
+  <div class="v-review-confirm">
+    <div class="v-review-total">
+      <div class="v-review-total-left">
+        <span class="v-review-total-label en">Total · One-time payment</span>
+        <span class="v-review-total-label fr">Total · Paiement unique</span>
+        <span class="v-review-total-desc en">20-page strategic report · Delivered in under 3 minutes</span>
+        <span class="v-review-total-desc fr">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+      </div>
+      <span class="v-review-total-price" id="review-price">€199</span>
+    </div>
+    <div class="v-form-err" id="review-err"></div>
+    <button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
+      <div class="spinner"></div>
+      <span class="btn-label en">Confirm &amp; proceed to payment →</span>
+      <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
+    </button>
+    <button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
+    <button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
+    <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
+      <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
+      <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
+    </p>
+  </div>
+</div>
+
+<!-- SUCCESS STATE -->
+<div class="v-success" id="v-success">
+  <div class="v-success-icon">✦</div>
+  <h2 class="v-success-h en">Your report is<br><em>on its way.</em></h2>
+  <h2 class="v-success-h fr">Votre rapport<br><em>est en route.</em></h2>
+  <div class="v-div" style="margin:1.5rem auto;"></div>
+  <p class="v-success-p en">Check your inbox — your 20-page strategic analysis will arrive within 3 minutes. Check your spam folder if you don't see it.</p>
+  <p class="v-success-p fr">Consultez votre boîte mail — votre analyse stratégique de 20 pages arrivera dans 3 minutes. Vérifiez vos spams si vous ne la voyez pas.</p>
+  <a href="/" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);text-decoration:none;">
+    <span class="en">← Return to Za3fran.io</span>
+    <span class="fr">← Retour sur Za3fran.io</span>
+  </a>
 </div>
 
 <script>
@@ -944,12 +940,9 @@ function setLang(l){
   document.getElementById('btn-en').classList.toggle('active', l==='en');
   document.getElementById('btn-fr').classList.toggle('active', l==='fr');
 
-  // Update pill labels for audience (special handling — bilingual labels side by side)
-  document.querySelectorAll('.v-pill-label.en').forEach(el => {
-    el.style.display = l === 'fr' ? 'none' : '';
-  });
-  document.querySelectorAll('.v-pill-label.fr').forEach(el => {
-    el.style.display = l === 'fr' ? '' : 'none';
+  // Update pill labels using data attributes
+  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
+    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
   });
 
   localStorage.setItem('za3fran_lang', l);
@@ -1140,21 +1133,27 @@ function populateReview(data) {
 }
 
 // ── EDIT SECTION (go back to form, scroll to section) ──
+function showForm() {
+  const review = document.getElementById('v-review');
+  review.classList.remove('show');
+  review.style.display = 'none';
+  document.getElementById('validator-form').style.display = '';
+  document.querySelector('.v-form-wrap').style.display = '';
+  document.querySelector('.v-hero').style.display = '';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
 function editSection(num) {
-  document.getElementById('v-review').classList.remove('show');
-  document.getElementById('validator-form').parentElement.style.display = '';
-  window.scrollTo({top: 0, behavior: 'instant'});
+  showForm();
   setTimeout(() => {
     const targetId = SECTION_IDS[num];
     const el = document.getElementById(targetId);
     if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
-  }, 100);
+  }, 200);
 }
 
 function backToForm() {
-  document.getElementById('v-review').classList.remove('show');
-  document.getElementById('validator-form').parentElement.style.display = '';
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  showForm();
 }
 
 // ── FORM SUBMIT → SHOW REVIEW ──
@@ -1175,11 +1174,14 @@ document.getElementById('validator-form').addEventListener('submit', function(e)
 
   // Collect and show review
   const data = collectData();
-  populateReview(data);
-  document.getElementById('validator-form').parentElement.style.display = 'none';
+  try { populateReview(data); } catch(e) { console.error('populateReview error:', e); }
+  document.getElementById('validator-form').style.display = 'none';
+  document.querySelector('.v-form-wrap').style.display = 'none';
+  document.querySelector('.v-hero').style.display = 'none';
   const review = document.getElementById('v-review');
+  review.style.display = 'block';
   review.classList.add('show');
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({top: 0, behavior: 'instant'});
 });
 
 // ── CONFIRM & PAY ──
@@ -1204,7 +1206,8 @@ async function proceedToPayment() {
     if(result.checkoutUrl){
       window.location.href = result.checkoutUrl;
     } else {
-      document.getElementById('v-review').classList.remove('show');
+      const rev = document.getElementById('v-review');
+      rev.classList.remove('show'); rev.style.display = 'none';
       document.getElementById('v-success').classList.add('show');
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
