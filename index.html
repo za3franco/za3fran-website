@@ -10,6 +10,75 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <!-- EmailJS SDK for waitlist auto-response emails -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- Currency localisation: detects visitor country via IP, updates all price displays -->
+<script>
+(function(){
+  // Country-to-currency mapping
+  // MAD: Morocco + North Africa
+  // EUR: Europe + Turkey
+  // USD: everything else
+  var MAD_COUNTRIES = ['MA','DZ','TN','LY','EG','MR'];
+  var EUR_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO','IS','AL','BA','ME','MK','RS','TR'];
+
+  // Price strings per currency
+  var PRICES = {
+    MAD: { en: 'MAD 1,990', fr: '1 990 MAD' },
+    EUR: { en: '€199',      fr: '199€'      },
+    USD: { en: '$219',      fr: '$219'      }
+  };
+
+  // Button label strings per currency
+  var BTN_PRICES = {
+    MAD: { en: 'Get Your Report — MAD 1,990', fr: 'Votre rapport — 1 990 MAD' },
+    EUR: { en: 'Get Your Report — €199',      fr: 'Votre rapport — 199€'      },
+    USD: { en: 'Get Your Report — $219',      fr: 'Votre rapport — $219'      }
+  };
+
+  function setCurrency(currency) {
+    // Store for later use (payment flow)
+    window.ZA3FRAN_CURRENCY = currency;
+
+    // Update all elements with data-price attribute
+    var priceEls = document.querySelectorAll('[data-price]');
+    priceEls.forEach(function(el) {
+      var lang = el.getAttribute('data-price'); // 'en' or 'fr'
+      el.textContent = PRICES[currency][lang];
+    });
+
+    // Update all elements with data-btn-price attribute
+    var btnEls = document.querySelectorAll('[data-btn-price]');
+    btnEls.forEach(function(el) {
+      var lang = el.getAttribute('data-btn-price');
+      el.textContent = BTN_PRICES[currency][lang];
+    });
+  }
+
+  function detectCurrency() {
+    fetch('https://ipapi.co/json/')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var country = (data && data.country_code) ? data.country_code : 'XX';
+        var currency = 'EUR'; // default
+        if (MAD_COUNTRIES.indexOf(country) !== -1) currency = 'MAD';
+        else if (EUR_COUNTRIES.indexOf(country) !== -1) currency = 'EUR';
+        else currency = 'USD';
+        setCurrency(currency);
+      })
+      .catch(function(){
+        // On any error, fall back to EUR silently
+        setCurrency('EUR');
+      });
+  }
+
+  // Run after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', detectCurrency);
+  } else {
+    detectCurrency();
+  }
+})();
+</script>
 <style>
 :root{--black:#0a0a0a;--charcoal:#1a1a1a;--copper:#C9862A;--copper-light:#E4A84C;--copper-dark:#9E6618;--navy:#0F1F3D;--navy-mid:#1A3060;--white:#FAFAF7;--muted:#888880;--border:rgba(201,134,42,0.2);--border-light:rgba(201,134,42,0.08);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -681,8 +750,8 @@ body.lang-fr .wa-tip.fr { display: block; }
       <div class="div"></div>
       <p class="slead en" style="margin-bottom:1.5rem;">Answer 10 questions and receive a scored concept analysis — completely free. Delivered to your inbox in under 60 seconds.</p>
       <p class="slead fr" style="margin-bottom:1.5rem;">Répondez à 10 questions et recevez une analyse scorée de votre concept — entièrement gratuit. Dans votre boîte mail en moins de 60 secondes.</p>
-      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="en">Want the full picture? The <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for €199.</p>
-      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="fr">Vous voulez une analyse complète ? Le <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> livre une analyse stratégique de 20 pages avec données de marché locales, intelligence concurrentielle et modélisation financière — pour 199€.</p>
+      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="en">Want the full picture? The <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for <strong style="color:var(--copper);font-weight:400;" data-price="en">€199</strong>.</p>
+      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="fr">Vous voulez une analyse complète ? Le <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> livre une analyse stratégique de 20 pages avec données de marché locales, intelligence concurrentielle et modélisation financière — pour <strong style="color:var(--copper);font-weight:400;" data-price="fr">199€</strong>.</p>
     </div>
     <div class="reveal d1">
       <div class="scard-widget" style="padding:2.5rem;">
@@ -753,8 +822,8 @@ body.lang-fr .wa-tip.fr { display: block; }
         <li class="fr" style="font-size:0.85rem;color:rgba(250,250,247,0.55);"><span style="color:var(--copper);margin-right:0.6rem;">✦</span>Couvre le Maroc, l'Afrique et au-delà</li>
       </ul>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-        <a href="#contact" class="btn-p en">Get Your Report — €199</a>
-        <a href="#contact" class="btn-p fr">Votre rapport — 199€</a>
+        <a href="#contact" class="btn-p en" data-btn-price="en">Get Your Report — €199</a>
+        <a href="#contact" class="btn-p fr" data-btn-price="fr">Votre rapport — 199€</a>
         <a href="#scorecard" class="btn-s en">Try Free Scorecard First</a>
         <a href="#scorecard" class="btn-s fr">Score gratuit d'abord</a>
       </div>
@@ -1191,3 +1260,4 @@ async function submitWL(){
 </script>
 </body>
 </html>
+
