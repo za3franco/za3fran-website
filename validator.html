@@ -94,11 +94,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 
 /* ── FIELDS ── */
 .v-row{display:grid;gap:1.25rem;margin-bottom:1.25rem;}
-.v-row.two{grid-template-columns:1fr 1fr;}
-.v-row.three{grid-template-columns:1fr 1fr 1fr;}
+.v-row.two{grid-template-columns:1fr 1fr;align-items:start;}
+.v-row.three{grid-template-columns:1fr 1fr 1fr;align-items:start;}
 .v-field{display:flex;flex-direction:column;gap:0.5rem;}
 .v-label{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--muted);display:flex;align-items:center;gap:0.5rem;}
+  color:var(--muted);display:flex;align-items:center;gap:0.5rem;min-height:2.2rem;flex-wrap:wrap;}
 .v-label .req{color:var(--copper);font-size:0.65rem;}
 .v-label .opt{color:rgba(136,136,128,0.5);font-size:0.62rem;letter-spacing:0.08em;
   text-transform:none;font-style:italic;}
@@ -1229,3 +1229,4 @@ document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
 </script>
 </body>
 </html>
+
