@@ -193,6 +193,61 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .v-success-h em{font-style:italic;color:var(--copper);}
 .v-success-p{font-size:0.9rem;line-height:1.8;color:rgba(250,250,247,0.55);margin-bottom:2rem;}
 
+/* ── REVIEW SCREEN ── */
+.v-review{display:none;max-width:860px;margin:0 auto;padding:0 4rem 8rem;}
+.v-review.show{display:block;}
+.v-review-header{text-align:center;padding:3rem 0 3rem;border-bottom:0.5px solid var(--border);margin-bottom:3rem;}
+.v-review-eyebrow{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--copper);display:block;margin-bottom:1rem;}
+.v-review-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);
+  font-weight:300;line-height:1.1;margin-bottom:0.75rem;}
+.v-review-title em{font-style:italic;color:var(--copper);}
+.v-review-notice{font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.45);
+  max-width:520px;margin:0 auto;padding:1rem 1.5rem;
+  border:0.5px solid rgba(201,134,42,0.15);background:rgba(201,134,42,0.03);}
+.v-review-notice strong{color:rgba(201,134,42,0.8);font-weight:400;}
+.v-rblock{margin-bottom:2.5rem;border:0.5px solid var(--border);}
+.v-rblock-head{display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;background:var(--charcoal);border-bottom:0.5px solid var(--border);}
+.v-rblock-title{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);}
+.v-rblock-edit{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);background:none;border:0.5px solid var(--border);
+  padding:0.3rem 0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;}
+.v-rblock-edit:hover{border-color:var(--copper);color:var(--copper);}
+.v-rblock-body{padding:1.5rem;}
+.v-rrow{display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem;margin-bottom:0.75rem;}
+.v-rrow.full{grid-template-columns:1fr;}
+.v-ritem{display:flex;flex-direction:column;gap:0.3rem;}
+.v-ritem-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.v-ritem-val{font-size:0.88rem;font-weight:300;color:var(--white);line-height:1.6;}
+.v-ritem-val.long{color:rgba(250,250,247,0.7);font-size:0.82rem;}
+.v-ritem-empty{font-size:0.82rem;color:rgba(136,136,128,0.4);font-style:italic;}
+.v-review-confirm{border-top:0.5px solid var(--border);padding-top:3rem;}
+.v-review-total{display:flex;align-items:center;justify-content:space-between;
+  padding:1.5rem 2rem;background:var(--charcoal);border:0.5px solid var(--border);
+  margin-bottom:1.5rem;}
+.v-review-total-left{display:flex;flex-direction:column;gap:0.3rem;}
+.v-review-total-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+.v-review-total-desc{font-size:0.78rem;color:rgba(250,250,247,0.4);}
+.v-review-total-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;
+  font-weight:300;color:var(--copper);}
+.btn-confirm{width:100%;font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;
+  padding:1.25rem 2rem;background:var(--copper);color:var(--black);border:none;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;
+  transition:background 0.2s,transform 0.15s;display:flex;align-items:center;
+  justify-content:center;gap:0.75rem;}
+.btn-confirm:hover:not(:disabled){background:var(--copper-light);transform:translateY(-1px);}
+.btn-confirm:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-confirm .spinner{width:16px;height:16px;border:2px solid rgba(10,10,10,0.3);
+  border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.btn-confirm.loading .spinner{display:block;}
+.btn-back{display:block;text-align:center;margin-top:1rem;font-size:0.72rem;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
+  background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:color 0.2s;width:100%;padding:0.5rem;}
+.btn-back:hover{color:var(--copper);}
+
 /* ── DIVIDER ── */
 .v-div{width:40px;height:0.5px;background:var(--copper);margin:1.5rem 0;}
 
@@ -633,6 +688,240 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 
   </form>
 
+  <!-- REVIEW SCREEN -->
+  <div class="v-review" id="v-review">
+    <div class="v-review-header">
+      <span class="v-review-eyebrow en">Step 2 of 2 — Review your submission</span>
+      <span class="v-review-eyebrow fr">Étape 2 sur 2 — Vérifiez votre soumission</span>
+      <h2 class="v-review-title en">Everything<br><em>looks right?</em></h2>
+      <h2 class="v-review-title fr">Tout est<br><em>correct ?</em></h2>
+      <p class="v-review-notice en"><strong>Important:</strong> your report is generated once from these exact inputs. Take a moment to review everything below before proceeding to payment. You can edit any section using the buttons on the right.</p>
+      <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois à partir de ces informations exactes. Prenez un moment pour vérifier ci-dessous avant de procéder au paiement. Vous pouvez modifier chaque section via les boutons à droite.</p>
+    </div>
+
+    <!-- Block 1: Contact -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">01 — Your details</span>
+        <span class="v-rblock-title fr">01 — Vos coordonnées</span>
+        <button class="v-rblock-edit en" onclick="editSection(1)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(1)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Full name</span>
+            <span class="v-ritem-label fr">Nom complet</span>
+            <span class="v-ritem-val" id="r-name"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Email</span>
+            <span class="v-ritem-label fr">Email</span>
+            <span class="v-ritem-val" id="r-email"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Country</span>
+            <span class="v-ritem-label fr">Pays</span>
+            <span class="v-ritem-val" id="r-country"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Role</span>
+            <span class="v-ritem-label fr">Rôle</span>
+            <span class="v-ritem-val" id="r-role"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 2: Concept -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">02 — Your concept</span>
+        <span class="v-rblock-title fr">02 — Votre concept</span>
+        <button class="v-rblock-edit en" onclick="editSection(2)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(2)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Concept name</span>
+            <span class="v-ritem-label fr">Nom du concept</span>
+            <span class="v-ritem-val" id="r-concept-name"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Type</span>
+            <span class="v-ritem-label fr">Type</span>
+            <span class="v-ritem-val" id="r-type"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Cuisine / Format</span>
+            <span class="v-ritem-label fr">Cuisine / Format</span>
+            <span class="v-ritem-val" id="r-cuisine"></span>
+          </div>
+        </div>
+        <div class="v-rrow full">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Concept description</span>
+            <span class="v-ritem-label fr">Description du concept</span>
+            <span class="v-ritem-val long" id="r-description"></span>
+          </div>
+        </div>
+        <div class="v-rrow full">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Differentiation</span>
+            <span class="v-ritem-label fr">Différenciation</span>
+            <span class="v-ritem-val long" id="r-differentiation"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 3: Location & Market -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">03 — Location &amp; market</span>
+        <span class="v-rblock-title fr">03 — Localisation &amp; marché</span>
+        <button class="v-rblock-edit en" onclick="editSection(3)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(3)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">City</span>
+            <span class="v-ritem-label fr">Ville</span>
+            <span class="v-ritem-val" id="r-city"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Neighbourhood</span>
+            <span class="v-ritem-label fr">Quartier</span>
+            <span class="v-ritem-val" id="r-neighbourhood"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Target audience</span>
+            <span class="v-ritem-label fr">Clientèle cible</span>
+            <span class="v-ritem-val" id="r-audience"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 4: Financials -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">04 — Financial parameters</span>
+        <span class="v-rblock-title fr">04 — Paramètres financiers</span>
+        <button class="v-rblock-edit en" onclick="editSection(4)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(4)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Investment budget</span>
+            <span class="v-ritem-label fr">Budget d'investissement</span>
+            <span class="v-ritem-val" id="r-budget"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Target ticket / person</span>
+            <span class="v-ritem-label fr">Ticket moyen cible</span>
+            <span class="v-ritem-val" id="r-ticket"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Covers per day</span>
+            <span class="v-ritem-label fr">Couverts par jour</span>
+            <span class="v-ritem-val" id="r-covers"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Seating capacity</span>
+            <span class="v-ritem-label fr">Capacité d'accueil</span>
+            <span class="v-ritem-val" id="r-seats"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 5: Competition -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">05 — Competitive landscape</span>
+        <span class="v-rblock-title fr">05 — Paysage concurrentiel</span>
+        <button class="v-rblock-edit en" onclick="editSection(5)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(5)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow full">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Competitors</span>
+            <span class="v-ritem-label fr">Concurrents</span>
+            <span class="v-ritem-val long" id="r-competitors"></span>
+          </div>
+        </div>
+        <div class="v-rrow full">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Market gap</span>
+            <span class="v-ritem-label fr">Vide du marché</span>
+            <span class="v-ritem-val long" id="r-gap"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 6: Context -->
+    <div class="v-rblock">
+      <div class="v-rblock-head">
+        <span class="v-rblock-title en">06 — Project context</span>
+        <span class="v-rblock-title fr">06 — Contexte du projet</span>
+        <button class="v-rblock-edit en" onclick="editSection(6)">Edit ↗</button>
+        <button class="v-rblock-edit fr" onclick="editSection(6)">Modifier ↗</button>
+      </div>
+      <div class="v-rblock-body">
+        <div class="v-rrow">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Current stage</span>
+            <span class="v-ritem-label fr">Stade actuel</span>
+            <span class="v-ritem-val" id="r-stage"></span>
+          </div>
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Opening timeline</span>
+            <span class="v-ritem-label fr">Calendrier d'ouverture</span>
+            <span class="v-ritem-val" id="r-timeline"></span>
+          </div>
+        </div>
+        <div class="v-rrow full">
+          <div class="v-ritem">
+            <span class="v-ritem-label en">Additional context</span>
+            <span class="v-ritem-label fr">Contexte additionnel</span>
+            <span class="v-ritem-val long" id="r-context"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm & Pay -->
+    <div class="v-review-confirm">
+      <div class="v-review-total">
+        <div class="v-review-total-left">
+          <span class="v-review-total-label en">Total · One-time payment</span>
+          <span class="v-review-total-label fr">Total · Paiement unique</span>
+          <span class="v-review-total-desc en">20-page strategic report · Delivered in under 3 minutes</span>
+          <span class="v-review-total-desc fr">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+        </div>
+        <span class="v-review-total-price" id="review-price">€199</span>
+      </div>
+      <div class="v-form-err" id="review-err"></div>
+      <button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
+        <div class="spinner"></div>
+        <span class="btn-label en">Confirm &amp; proceed to payment →</span>
+        <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
+      </button>
+      <button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
+      <button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
+      <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
+        <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
+        <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
+      </p>
+    </div>
+  </div>
+
   <!-- SUCCESS STATE -->
   <div class="v-success" id="v-success">
     <div class="v-success-icon">✦</div>
@@ -774,10 +1063,103 @@ function collectData(){
   };
 }
 
-// ── FORM SUBMIT ──
-document.getElementById('validator-form').addEventListener('submit', async function(e){
-  e.preventDefault();
+// ── LABEL MAPS (for readable review display) ──
+const TYPE_LABELS = {
+  restaurant_casual:'Casual dining restaurant',restaurant_fine:'Fine dining',
+  cafe_brunch:'Café / Brunch',fast_casual:'Fast casual / QSR',
+  bar_lounge:'Bar / Lounge',beach_club:'Beach club / Pool club',
+  rooftop:'Rooftop / Terrace',dark_kitchen:'Dark kitchen',
+  food_hall:'Food hall',hotel_fb:'Hotel F&B outlet',other:'Other'
+};
+const BUDGET_LABELS = {
+  under_50k:'Under $50,000','50_150k':'$50k–$150k',
+  '150_500k':'$150k–$500k','500k_1m':'$500k–$1M',over_1m:'Over $1M'
+};
+const STAGE_LABELS = {
+  idea:'Early idea / Concept phase',planning:'Business planning',
+  funding:'Seeking funding',location:'Location scouting',
+  build:'Under construction',prelaunch:'Pre-launch',existing:'Existing — repositioning'
+};
+const TIMELINE_LABELS = {
+  under_3m:'Under 3 months','3_6m':'3–6 months',
+  '6_12m':'6–12 months',over_1y:'Over 1 year',undefined_:'Not yet defined'
+};
+const ROLE_LABELS = {
+  founder:'Founder / Entrepreneur',investor:'Investor',
+  operator:'Existing operator',consultant:'Consultant',other:'Other'
+};
+const COUNTRY_LABELS = {
+  MA:'Morocco',DZ:'Algeria',TN:'Tunisia',EG:'Egypt',SN:'Senegal',
+  CI:"Côte d'Ivoire",CM:'Cameroon',NG:'Nigeria',KE:'Kenya',ZA:'South Africa',
+  AE:'UAE',SA:'Saudi Arabia',FR:'France',BE:'Belgium',CH:'Switzerland',
+  GB:'United Kingdom',OTHER:'Other'
+};
 
+// ── SECTION ANCHOR MAP (edit button scrolls to section) ──
+const SECTION_IDS = {
+  1: 'f-name', 2: 'f-concept-name', 3: 'f-city',
+  4: 'f-budget', 5: 'f-competitors', 6: 'f-stage'
+};
+
+// ── POPULATE REVIEW SCREEN ──
+function populateReview(data) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(!val || val.trim() === '') {
+      el.innerHTML = '<span class="v-ritem-empty">' + (isFr() ? 'Non renseigné' : 'Not provided') + '</span>';
+    } else {
+      el.textContent = val;
+    }
+  };
+  set('r-name',           data.name);
+  set('r-email',          data.email);
+  set('r-country',        COUNTRY_LABELS[data.country] || data.country);
+  set('r-role',           ROLE_LABELS[data.role] || data.role);
+  set('r-concept-name',   data.concept_name);
+  set('r-type',           TYPE_LABELS[data.type] || data.type);
+  set('r-cuisine',        data.cuisine);
+  set('r-description',    data.description);
+  set('r-differentiation',data.differentiation);
+  set('r-city',           data.city);
+  set('r-neighbourhood',  data.neighbourhood);
+  set('r-audience',       (data.audience||[]).join(', '));
+  set('r-budget',         BUDGET_LABELS[data.budget] || data.budget);
+  set('r-ticket',         data.ticket);
+  set('r-covers',         data.covers);
+  set('r-seats',          data.seats);
+  set('r-competitors',    data.competitors);
+  set('r-gap',            data.market_gap);
+  set('r-stage',          STAGE_LABELS[data.stage] || data.stage);
+  set('r-timeline',       TIMELINE_LABELS[data.timeline] || TIMELINE_LABELS[data.timeline + '_'] || data.timeline);
+  set('r-context',        data.additional);
+  // Update price
+  const p = PRICE_DISPLAY[CURRENCY];
+  const rp = document.getElementById('review-price');
+  if(rp) rp.textContent = p;
+}
+
+// ── EDIT SECTION (go back to form, scroll to section) ──
+function editSection(num) {
+  document.getElementById('v-review').classList.remove('show');
+  document.getElementById('validator-form').parentElement.style.display = '';
+  window.scrollTo({top: 0, behavior: 'instant'});
+  setTimeout(() => {
+    const targetId = SECTION_IDS[num];
+    const el = document.getElementById(targetId);
+    if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }, 100);
+}
+
+function backToForm() {
+  document.getElementById('v-review').classList.remove('show');
+  document.getElementById('validator-form').parentElement.style.display = '';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── FORM SUBMIT → SHOW REVIEW ──
+document.getElementById('validator-form').addEventListener('submit', function(e){
+  e.preventDefault();
   const errEl = document.getElementById('form-err');
   errEl.classList.remove('show');
 
@@ -786,40 +1168,46 @@ document.getElementById('validator-form').addEventListener('submit', async funct
       ? 'Veuillez compléter tous les champs obligatoires.'
       : 'Please complete all required fields.';
     errEl.classList.add('show');
-    // Scroll to first error
     const firstErr = document.querySelector('.v-input.error, .v-select.error, .v-textarea.error');
     if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 
-  const btn = document.getElementById('submit-btn');
+  // Collect and show review
+  const data = collectData();
+  populateReview(data);
+  document.getElementById('validator-form').parentElement.style.display = 'none';
+  const review = document.getElementById('v-review');
+  review.classList.add('show');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+
+// ── CONFIRM & PAY ──
+async function proceedToPayment() {
+  const btn = document.getElementById('confirm-btn');
+  const errEl = document.getElementById('review-err');
+  errEl.classList.remove('show');
   btn.disabled = true;
   btn.classList.add('loading');
 
   const data = collectData();
 
   // ← STRIPE CHECKOUT will be wired here in the next step
-  // For now: save submission to Supabase and show success (pre-payment placeholder)
   try {
     const res = await fetch('/api/submit-validator', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-
     if(!res.ok) throw new Error('submission failed');
-
     const result = await res.json();
-
     if(result.checkoutUrl){
-      // Redirect to Stripe checkout
       window.location.href = result.checkoutUrl;
     } else {
-      // Fallback — show success (should not happen in production)
-      document.getElementById('validator-form').style.display = 'none';
+      document.getElementById('v-review').classList.remove('show');
       document.getElementById('v-success').classList.add('show');
+      window.scrollTo({top: 0, behavior: 'smooth'});
     }
-
   } catch(err){
     errEl.textContent = isFr()
       ? "Une erreur s'est produite. Réessayez ou contactez hello@za3fran.io."
@@ -828,7 +1216,7 @@ document.getElementById('validator-form').addEventListener('submit', async funct
     btn.disabled = false;
     btn.classList.remove('loading');
   }
-});
+}
 
 // Remove error state on input
 document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
