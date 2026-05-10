@@ -54,20 +54,38 @@
     });
   }
 
+  function resolveCurrency(country_code) {
+    var country = (country_code || 'XX').toUpperCase();
+    if (MAD_COUNTRIES.indexOf(country) !== -1) return 'MAD';
+    if (EUR_COUNTRIES.indexOf(country) !== -1) return 'EUR';
+    return 'USD';
+  }
+
   function detectCurrency() {
-    fetch('https://ipapi.co/json/')
+    // Primary: ipwho.is (free, no key, reliable)
+    fetch('https://ipwho.is/')
       .then(function(r){ return r.json(); })
       .then(function(data){
-        var country = (data && data.country_code) ? data.country_code : 'XX';
-        var currency = 'EUR'; // default
-        if (MAD_COUNTRIES.indexOf(country) !== -1) currency = 'MAD';
-        else if (EUR_COUNTRIES.indexOf(country) !== -1) currency = 'EUR';
-        else currency = 'USD';
-        setCurrency(currency);
+        if (data && data.country_code) {
+          setCurrency(resolveCurrency(data.country_code));
+        } else {
+          throw new Error('no country');
+        }
       })
       .catch(function(){
-        // On any error, fall back to EUR silently
-        setCurrency('EUR');
+        // Fallback: ip-api.com (free tier, no key needed)
+        fetch('https://ip-api.com/json/?fields=countryCode')
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            if (data && data.countryCode) {
+              setCurrency(resolveCurrency(data.countryCode));
+            } else {
+              setCurrency('EUR');
+            }
+          })
+          .catch(function(){
+            setCurrency('EUR');
+          });
       });
   }
 
@@ -1260,4 +1278,5 @@ async function submitWL(){
 </script>
 </body>
 </html>
+
 
