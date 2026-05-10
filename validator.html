@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Za3fran — Concept Validator</title>
+<meta name="description" content="Submit your F&B concept for a 20-page strategic analysis. Real market data, competitor intelligence, financial modelling. Delivered in under 3 minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;--charcoal:#1a1a1a;--copper:#C9862A;--copper-light:#E4A84C;
+  --copper-dark:#9E6618;--navy:#0F1F3D;--navy-mid:#1A3060;--white:#FAFAF7;
+  --muted:#888880;--border:rgba(201,134,42,0.2);--border-light:rgba(201,134,42,0.08);
+  --error:#e05a5a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:400;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:var(--copper-dark);border-radius:2px;}
+
+/* ── LANGUAGE ── */
+.en,.fr{display:none;}
+body .en{display:block;}
+body .fr{display:none;}
+body.lang-fr .fr{display:block;}
+body.lang-fr .en{display:none;}
+.en-inline,.fr-inline{display:none;}
+body .en-inline{display:inline;}
+body .fr-inline{display:none;}
+body.lang-fr .fr-inline{display:inline;}
+body.lang-fr .en-inline{display:none;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:1.25rem 4rem;background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;}
+.nav-mark{width:36px;height:36px;flex-shrink:0;}
+.nav-mark img{width:100%;height:100%;object-fit:contain;display:block;}
+.nav-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--white);}
+.nav-name span{color:var(--copper);}
+.nav-right{display:flex;align-items:center;gap:1.5rem;}
+.nav-back{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:var(--copper);}
+.nav-lang{display:flex;border:0.5px solid var(--border);}
+.lang-btn{font-size:0.65rem;letter-spacing:0.1em;padding:0.35rem 0.65rem;
+  background:none;border:none;cursor:pointer;color:var(--muted);
+  transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.lang-btn.active{background:var(--copper);color:var(--black);}
+
+/* ── HERO ── */
+.v-hero{padding:10rem 4rem 5rem;position:relative;overflow:hidden;text-align:center;}
+.v-hero-bg{position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(201,134,42,0.06) 0%,transparent 70%);}
+.v-hero-grid{position:absolute;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(201,134,42,0.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(201,134,42,0.03) 1px,transparent 1px);
+  background-size:60px 60px;}
+.v-hero-content{position:relative;z-index:1;max-width:720px;margin:0 auto;}
+.v-eyebrow{display:inline-block;font-size:0.65rem;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--copper);margin-bottom:1.75rem;
+  padding:0.4rem 1rem;border:0.5px solid var(--border);}
+.v-h1{font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.05;font-weight:300;margin-bottom:1rem;}
+.v-h1 em{font-style:italic;color:var(--copper);}
+.v-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2vw,1.5rem);
+  font-weight:300;font-style:italic;color:var(--muted);margin-bottom:2.5rem;}
+.v-what{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap;margin-bottom:3rem;}
+.v-what-item{display:flex;flex-direction:column;align-items:center;gap:0.4rem;}
+.v-what-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--copper);}
+.v-what-label{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.v-price-band{display:inline-flex;align-items:center;gap:1rem;padding:1rem 2rem;
+  border:0.5px solid var(--border);background:rgba(201,134,42,0.04);}
+.v-price-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.v-price-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--copper);}
+.v-price-divider{width:0.5px;height:32px;background:var(--border);}
+.v-price-desc{font-size:0.78rem;color:rgba(250,250,247,0.45);max-width:180px;line-height:1.5;}
+
+/* ── FORM CONTAINER ── */
+.v-form-wrap{max-width:860px;margin:0 auto;padding:0 4rem 8rem;}
+.v-section{margin-bottom:3.5rem;}
+.v-section-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:0.5px solid var(--border);}
+.v-section-num{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;
+  color:rgba(201,134,42,0.25);line-height:1;flex-shrink:0;}
+.v-section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;}
+.v-section-title em{font-style:italic;color:var(--copper);}
+
+/* ── FIELDS ── */
+.v-row{display:grid;gap:1.25rem;margin-bottom:1.25rem;}
+.v-row.two{grid-template-columns:1fr 1fr;}
+.v-row.three{grid-template-columns:1fr 1fr 1fr;}
+.v-field{display:flex;flex-direction:column;gap:0.5rem;}
+.v-label{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:0.5rem;}
+.v-label .req{color:var(--copper);font-size:0.65rem;}
+.v-label .opt{color:rgba(136,136,128,0.5);font-size:0.62rem;letter-spacing:0.08em;
+  text-transform:none;font-style:italic;}
+.v-input,.v-select,.v-textarea{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:0.5px solid rgba(201,134,42,0.2);
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.88rem;
+  font-weight:300;padding:0.85rem 1rem;outline:none;
+  transition:border-color 0.2s,background 0.2s;
+  -webkit-appearance:none;appearance:none;}
+.v-input::placeholder,.v-textarea::placeholder{color:rgba(136,136,128,0.5);}
+.v-input:focus,.v-select:focus,.v-textarea:focus{
+  border-color:var(--copper);background:rgba(201,134,42,0.04);}
+.v-input.error,.v-select.error,.v-textarea.error{border-color:var(--error);}
+.v-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C9862A' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+.v-select option{background:var(--charcoal);color:var(--white);}
+.v-textarea{resize:vertical;min-height:120px;line-height:1.7;}
+.v-hint{font-size:0.72rem;color:rgba(136,136,128,0.6);line-height:1.5;margin-top:0.25rem;}
+.v-err{font-size:0.72rem;color:var(--error);margin-top:0.25rem;display:none;}
+.v-err.show{display:block;}
+
+/* ── RADIO / CHECKBOX GROUPS ── */
+.v-options{display:flex;flex-direction:column;gap:0.5rem;}
+.v-options.inline{flex-direction:row;flex-wrap:wrap;gap:0.5rem;}
+.v-opt{display:flex;align-items:center;gap:0.75rem;cursor:pointer;}
+.v-opt input[type=radio],.v-opt input[type=checkbox]{display:none;}
+.v-opt-box{width:16px;height:16px;border:0.5px solid rgba(201,134,42,0.3);
+  flex-shrink:0;transition:all 0.2s;position:relative;}
+.v-opt input[type=radio]+.v-opt-box{border-radius:50%;}
+.v-opt input:checked+.v-opt-box{background:var(--copper);border-color:var(--copper);}
+.v-opt input:checked+.v-opt-box::after{content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:6px;height:6px;background:var(--black);border-radius:50%;}
+.v-opt input[type=checkbox]:checked+.v-opt-box::after{content:'✓';
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:9px;color:var(--black);border-radius:0;}
+.v-opt-label{font-size:0.85rem;font-weight:300;color:rgba(250,250,247,0.7);
+  transition:color 0.2s;}
+.v-opt:hover .v-opt-label{color:var(--white);}
+.v-opt input:checked~.v-opt-label{color:var(--white);}
+
+/* Pill-style options */
+.v-pills{display:flex;flex-wrap:wrap;gap:0.5rem;}
+.v-pill{display:none;}
+.v-pill-label{padding:0.5rem 1rem;border:0.5px solid rgba(201,134,42,0.2);
+  font-size:0.78rem;color:rgba(250,250,247,0.55);cursor:pointer;
+  transition:all 0.2s;user-select:none;}
+.v-pill:checked+.v-pill-label{border-color:var(--copper);color:var(--white);
+  background:rgba(201,134,42,0.08);}
+.v-pill-label:hover{border-color:rgba(201,134,42,0.5);color:rgba(250,250,247,0.8);}
+
+/* ── SUBMIT AREA ── */
+.v-submit-wrap{border-top:0.5px solid var(--border);padding-top:3rem;margin-top:3rem;}
+.v-submit-summary{background:var(--charcoal);border:0.5px solid var(--border);
+  padding:2rem;margin-bottom:2rem;}
+.v-summary-title{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--copper);margin-bottom:1.25rem;}
+.v-summary-items{display:flex;flex-direction:column;gap:0.65rem;}
+.v-summary-item{display:flex;gap:0.6rem;font-size:0.82rem;
+  color:rgba(250,250,247,0.55);line-height:1.5;}
+.v-summary-item::before{content:'✦';color:var(--copper);font-size:0.6rem;
+  flex-shrink:0;margin-top:0.25rem;}
+.v-total{display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 0 0;margin-top:1.25rem;border-top:0.5px solid var(--border);}
+.v-total-label{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.v-total-price{font-family:'Cormorant Garamond',serif;font-size:2.2rem;
+  font-weight:300;color:var(--copper);}
+.v-form-err{color:var(--error);font-size:0.82rem;margin-bottom:1rem;display:none;}
+.v-form-err.show{display:block;}
+.btn-submit{width:100%;font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;
+  padding:1.25rem 2rem;background:var(--copper);color:var(--black);border:none;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;
+  transition:background 0.2s,transform 0.15s;display:flex;align-items:center;
+  justify-content:center;gap:0.75rem;}
+.btn-submit:hover:not(:disabled){background:var(--copper-light);transform:translateY(-1px);}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-submit .spinner{width:16px;height:16px;border:2px solid rgba(10,10,10,0.3);
+  border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.btn-submit.loading .spinner{display:block;}
+.btn-submit.loading .btn-label{opacity:0.6;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── SUCCESS STATE ── */
+.v-success{display:none;text-align:center;padding:6rem 4rem;max-width:640px;margin:0 auto;}
+.v-success.show{display:block;}
+.v-success-icon{width:72px;height:72px;border:0.5px solid var(--copper);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;
+  font-size:1.5rem;}
+.v-success-h{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;
+  margin-bottom:1rem;line-height:1.2;}
+.v-success-h em{font-style:italic;color:var(--copper);}
+.v-success-p{font-size:0.9rem;line-height:1.8;color:rgba(250,250,247,0.55);margin-bottom:2rem;}
+
+/* ── DIVIDER ── */
+.v-div{width:40px;height:0.5px;background:var(--copper);margin:1.5rem 0;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .v-hero{padding:8rem 1.5rem 3rem;}
+  .v-form-wrap{padding:0 1.5rem 5rem;}
+  .v-row.two,.v-row.three{grid-template-columns:1fr;}
+  .v-what{gap:1.5rem;}
+  .v-price-band{flex-direction:column;text-align:center;gap:0.5rem;}
+  .v-price-divider{display:none;}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.fade-up{animation:fadeUp 0.6s ease both;}
+.d1{animation-delay:0.1s;}.d2{animation-delay:0.2s;}.d3{animation-delay:0.3s;}
+</style>
+</head>
+<body id="body">
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-mark">
+      <img src="assets/za3fran-mark.svg" alt="Za3fran" onerror="this.style.display='none'">
+    </div>
+    <span class="nav-name">Za3fran<span>.io</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="/#validator" class="nav-back en">← Back to site</a>
+    <a href="/#validator" class="nav-back fr">← Retour au site</a>
+    <div class="nav-lang">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">FR</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="v-hero">
+  <div class="v-hero-bg"></div>
+  <div class="v-hero-grid"></div>
+  <div class="v-hero-content">
+    <div class="v-eyebrow fade-up en">Za3fran Digital · Concept Validator</div>
+    <div class="v-eyebrow fade-up fr">Za3fran Digital · Validateur de Concept</div>
+    <h1 class="v-h1 fade-up d1 en">Your concept.<br><em>Validated.</em></h1>
+    <h1 class="v-h1 fade-up d1 fr">Votre concept.<br><em>Validé.</em></h1>
+    <p class="v-sub fade-up d2 en">A 20-page strategic analysis built on real data — delivered to your inbox.</p>
+    <p class="v-sub fade-up d2 fr">Une analyse stratégique de 20 pages sur données réelles — dans votre boîte mail.</p>
+    <div class="v-what fade-up d2">
+      <div class="v-what-item">
+        <span class="v-what-num">20</span>
+        <span class="v-what-label en">Page report</span>
+        <span class="v-what-label fr">Pages de rapport</span>
+      </div>
+      <div class="v-what-item">
+        <span class="v-what-num">&lt;3</span>
+        <span class="v-what-label en">Minutes delivery</span>
+        <span class="v-what-label fr">Minutes de livraison</span>
+      </div>
+      <div class="v-what-item">
+        <span class="v-what-num">6</span>
+        <span class="v-what-label en">Strategic sections</span>
+        <span class="v-what-label fr">Sections stratégiques</span>
+      </div>
+    </div>
+    <div class="v-price-band fade-up d3">
+      <span class="v-price-label en">One-time fee</span>
+      <span class="v-price-label fr">Frais uniques</span>
+      <div class="v-price-divider"></div>
+      <span class="v-price-val" id="hero-price">€199</span>
+      <div class="v-price-divider"></div>
+      <span class="v-price-desc en">Full report · Secure payment · Instant delivery</span>
+      <span class="v-price-desc fr">Rapport complet · Paiement sécurisé · Livraison instantanée</span>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="v-form-wrap">
+  <form id="validator-form" novalidate>
+
+    <!-- SECTION 1: CONTACT -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">01</span>
+        <h2 class="v-section-title en">Your <em>details</em></h2>
+        <h2 class="v-section-title fr">Vos <em>coordonnées</em></h2>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-name">Full name <span class="req">*</span></label>
+          <label class="v-label fr" for="f-name">Nom complet <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-name" placeholder="Arnaud Martin" required>
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-email">Email address <span class="req">*</span></label>
+          <label class="v-label fr" for="f-email">Adresse email <span class="req">*</span></label>
+          <input class="v-input" type="email" id="f-email" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-country">Country <span class="req">*</span></label>
+          <label class="v-label fr" for="f-country">Pays <span class="req">*</span></label>
+          <select class="v-select" id="f-country" required>
+            <option value="" disabled selected></option>
+            <option value="MA">Morocco / Maroc</option>
+            <option value="DZ">Algeria / Algérie</option>
+            <option value="TN">Tunisia / Tunisie</option>
+            <option value="EG">Egypt / Égypte</option>
+            <option value="SN">Senegal / Sénégal</option>
+            <option value="CI">Côte d'Ivoire</option>
+            <option value="CM">Cameroon / Cameroun</option>
+            <option value="NG">Nigeria</option>
+            <option value="KE">Kenya</option>
+            <option value="ZA">South Africa / Afrique du Sud</option>
+            <option value="AE">UAE / Émirats Arabes Unis</option>
+            <option value="SA">Saudi Arabia / Arabie Saoudite</option>
+            <option value="FR">France</option>
+            <option value="BE">Belgium / Belgique</option>
+            <option value="CH">Switzerland / Suisse</option>
+            <option value="GB">United Kingdom</option>
+            <option value="OTHER">Other / Autre</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-role">Your role <span class="req">*</span></label>
+          <label class="v-label fr" for="f-role">Votre rôle <span class="req">*</span></label>
+          <select class="v-select" id="f-role" required>
+            <option value="" disabled selected></option>
+            <option value="founder" class="en">Founder / Entrepreneur</option>
+            <option value="founder" class="fr">Fondateur / Entrepreneur</option>
+            <option value="investor">Investor / Investisseur</option>
+            <option value="operator" class="en">Existing operator</option>
+            <option value="operator" class="fr">Opérateur existant</option>
+            <option value="consultant">Consultant</option>
+            <option value="other" class="en">Other</option>
+            <option value="other" class="fr">Autre</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: CONCEPT -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">02</span>
+        <h2 class="v-section-title en">Your <em>concept</em></h2>
+        <h2 class="v-section-title fr">Votre <em>concept</em></h2>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-concept-name">Concept name <span class="req">*</span> <span class="opt en">(working title is fine)</span><span class="opt fr">(titre provisoire accepté)</span></label>
+          <label class="v-label fr" for="f-concept-name">Nom du concept <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-concept-name" placeholder="e.g. Dar Zitoun, The Marble Club...">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-type">Type of establishment <span class="req">*</span></label>
+          <label class="v-label fr" for="f-type">Type d'établissement <span class="req">*</span></label>
+          <select class="v-select" id="f-type" required>
+            <option value="" disabled selected></option>
+            <option value="restaurant_casual" class="en">Casual dining restaurant</option>
+            <option value="restaurant_casual" class="fr">Restaurant casual dining</option>
+            <option value="restaurant_fine" class="en">Fine dining restaurant</option>
+            <option value="restaurant_fine" class="fr">Restaurant gastronomique</option>
+            <option value="cafe_brunch" class="en">Café / Brunch spot</option>
+            <option value="cafe_brunch" class="fr">Café / Brunch</option>
+            <option value="fast_casual" class="en">Fast casual / QSR</option>
+            <option value="fast_casual" class="fr">Fast casual / Restauration rapide</option>
+            <option value="bar_lounge" class="en">Bar / Lounge</option>
+            <option value="bar_lounge" class="fr">Bar / Lounge</option>
+            <option value="beach_club" class="en">Beach club / Pool club</option>
+            <option value="beach_club" class="fr">Beach club / Pool club</option>
+            <option value="rooftop" class="en">Rooftop / Terrace venue</option>
+            <option value="rooftop" class="fr">Rooftop / Terrasse</option>
+            <option value="dark_kitchen" class="en">Dark kitchen / Delivery only</option>
+            <option value="dark_kitchen" class="fr">Dark kitchen / Livraison uniquement</option>
+            <option value="food_hall" class="en">Food hall / Market stall</option>
+            <option value="food_hall" class="fr">Food hall / Stand de marché</option>
+            <option value="hotel_fb" class="en">Hotel F&B outlet</option>
+            <option value="hotel_fb" class="fr">Point de vente F&B hôtelier</option>
+            <option value="other" class="en">Other</option>
+            <option value="other" class="fr">Autre</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-cuisine">Cuisine / Format <span class="req">*</span></label>
+          <label class="v-label fr" for="f-cuisine">Cuisine / Format <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-cuisine" placeholder="e.g. Modern Moroccan, Italian, Pan-Asian...">
+        </div>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-description">Describe your concept <span class="req">*</span></label>
+          <label class="v-label fr" for="f-description">Décrivez votre concept <span class="req">*</span></label>
+          <textarea class="v-textarea" id="f-description" rows="5"
+            placeholder="What is the concept? What experience does it create? What problem does it solve for the customer? Be as specific as possible — this is the foundation of your report."></textarea>
+          <span class="v-hint en">Minimum 100 characters. The more detail you provide, the sharper the analysis.</span>
+          <span class="v-hint fr">Minimum 100 caractères. Plus vous êtes précis, plus l'analyse sera pertinente.</span>
+        </div>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-differentiation">What makes it different? <span class="req">*</span></label>
+          <label class="v-label fr" for="f-differentiation">Qu'est-ce qui le différencie ? <span class="req">*</span></label>
+          <textarea class="v-textarea" id="f-differentiation" rows="4"
+            placeholder="What does your concept offer that nothing else in the market currently provides? Why will customers choose you over existing options?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: LOCATION & MARKET -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">03</span>
+        <h2 class="v-section-title en">Location &amp; <em>market</em></h2>
+        <h2 class="v-section-title fr">Localisation &amp; <em>marché</em></h2>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-city">City <span class="req">*</span></label>
+          <label class="v-label fr" for="f-city">Ville <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-city" placeholder="Casablanca, Marrakech, Dakar...">
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-neighbourhood">Neighbourhood / District <span class="opt en">(if known)</span><span class="opt fr">(si connu)</span></label>
+          <label class="v-label fr" for="f-neighbourhood">Quartier / Zone <span class="opt fr">(si connu)</span></label>
+          <input class="v-input" type="text" id="f-neighbourhood" placeholder="Maarif, Gueliz, Plateau...">
+        </div>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en">Primary target audience <span class="req">*</span></label>
+          <label class="v-label fr">Clientèle cible principale <span class="req">*</span></label>
+          <div class="v-pills" id="f-audience">
+            <input type="checkbox" class="v-pill" id="aud-locals" name="audience" value="locals">
+            <label class="v-pill-label en" for="aud-locals">Local residents</label>
+            <label class="v-pill-label fr" for="aud-locals" style="display:none">Résidents locaux</label>
+
+            <input type="checkbox" class="v-pill" id="aud-tourists" name="audience" value="tourists">
+            <label class="v-pill-label en" for="aud-tourists">Tourists</label>
+            <label class="v-pill-label fr" for="aud-tourists" style="display:none">Touristes</label>
+
+            <input type="checkbox" class="v-pill" id="aud-expats" name="audience" value="expats">
+            <label class="v-pill-label en" for="aud-expats">Expats</label>
+            <label class="v-pill-label fr" for="aud-expats" style="display:none">Expatriés</label>
+
+            <input type="checkbox" class="v-pill" id="aud-corporate" name="audience" value="corporate">
+            <label class="v-pill-label en" for="aud-corporate">Corporate / Business</label>
+            <label class="v-pill-label fr" for="aud-corporate" style="display:none">Corporate / Affaires</label>
+
+            <input type="checkbox" class="v-pill" id="aud-affluent" name="audience" value="affluent_locals">
+            <label class="v-pill-label en" for="aud-affluent">Affluent locals</label>
+            <label class="v-pill-label fr" for="aud-affluent" style="display:none">Clientèle locale aisée</label>
+
+            <input type="checkbox" class="v-pill" id="aud-families" name="audience" value="families">
+            <label class="v-pill-label en" for="aud-families">Families</label>
+            <label class="v-pill-label fr" for="aud-families" style="display:none">Familles</label>
+          </div>
+          <span class="v-err" id="err-audience"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: FINANCIALS -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">04</span>
+        <h2 class="v-section-title en">Financial <em>parameters</em></h2>
+        <h2 class="v-section-title fr">Paramètres <em>financiers</em></h2>
+      </div>
+      <div class="v-row three">
+        <div class="v-field">
+          <label class="v-label en" for="f-budget">Estimated investment budget <span class="req">*</span></label>
+          <label class="v-label fr" for="f-budget">Budget d'investissement estimé <span class="req">*</span></label>
+          <select class="v-select" id="f-budget" required>
+            <option value="" disabled selected></option>
+            <option value="under_50k" class="en">Under $50,000</option>
+            <option value="under_50k" class="fr">Moins de 500 000 MAD</option>
+            <option value="50_150k" class="en">$50,000 – $150,000</option>
+            <option value="50_150k" class="fr">500k – 1,5M MAD</option>
+            <option value="150_500k" class="en">$150,000 – $500,000</option>
+            <option value="150_500k" class="fr">1,5M – 5M MAD</option>
+            <option value="500k_1m" class="en">$500,000 – $1M</option>
+            <option value="500k_1m" class="fr">5M – 10M MAD</option>
+            <option value="over_1m" class="en">Over $1M</option>
+            <option value="over_1m" class="fr">Plus de 10M MAD</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-ticket">Target average ticket per person <span class="req">*</span></label>
+          <label class="v-label fr" for="f-ticket">Ticket moyen cible par personne <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-ticket" placeholder="e.g. 250 MAD, €35, $40...">
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-covers">Target covers per day <span class="req">*</span></label>
+          <label class="v-label fr" for="f-covers">Couverts cibles par jour <span class="req">*</span></label>
+          <input class="v-input" type="text" id="f-covers" placeholder="e.g. 80, 120–150...">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-seats">Seating capacity <span class="opt en">(approximate)</span><span class="opt fr">(approximatif)</span></label>
+          <label class="v-label fr" for="f-seats">Capacité d'accueil <span class="opt fr">(approximatif)</span></label>
+          <input class="v-input" type="text" id="f-seats" placeholder="e.g. 60 inside + 40 terrace...">
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-opening">Target opening hours / days</label>
+          <label class="v-label fr" for="f-opening">Horaires / jours d'ouverture cibles</label>
+          <input class="v-input" type="text" id="f-opening" placeholder="e.g. Lunch & dinner, 7 days...">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: COMPETITION -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">05</span>
+        <h2 class="v-section-title en">Competitive <em>landscape</em></h2>
+        <h2 class="v-section-title fr">Paysage <em>concurrentiel</em></h2>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-competitors">Who are your main competitors? <span class="opt en">(name 2–3 if you can)</span></label>
+          <label class="v-label fr" for="f-competitors">Qui sont vos principaux concurrents ? <span class="opt fr">(nommez 2–3 si possible)</span></label>
+          <textarea class="v-textarea" id="f-competitors" rows="3"
+            placeholder="e.g. Le Cabestan, Bo&Zin, Bagatelle — or describe the type of venues you're competing with if you don't have specific names yet."></textarea>
+        </div>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-gap">What gap in the market are you filling? <span class="req">*</span></label>
+          <label class="v-label fr" for="f-gap">Quel vide du marché comblez-vous ? <span class="req">*</span></label>
+          <textarea class="v-textarea" id="f-gap" rows="4"
+            placeholder="What do customers in your target market currently want but can't find? Why does your concept solve a real unmet need?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6: CONTEXT -->
+    <div class="v-section">
+      <div class="v-section-header">
+        <span class="v-section-num">06</span>
+        <h2 class="v-section-title en">Project <em>context</em></h2>
+        <h2 class="v-section-title fr">Contexte <em>du projet</em></h2>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label en" for="f-stage">Current stage <span class="req">*</span></label>
+          <label class="v-label fr" for="f-stage">Stade actuel <span class="req">*</span></label>
+          <select class="v-select" id="f-stage" required>
+            <option value="" disabled selected></option>
+            <option value="idea" class="en">Early idea / Concept phase</option>
+            <option value="idea" class="fr">Idée initiale / Phase concept</option>
+            <option value="planning" class="en">Business planning in progress</option>
+            <option value="planning" class="fr">Business plan en cours</option>
+            <option value="funding" class="en">Seeking funding / investors</option>
+            <option value="funding" class="fr">Recherche de financement</option>
+            <option value="location" class="en">Location scouting / lease negotiation</option>
+            <option value="location" class="fr">Recherche de local / négociation bail</option>
+            <option value="build" class="en">Under construction / fit-out</option>
+            <option value="build" class="fr">En construction / aménagement</option>
+            <option value="prelaunch" class="en">Pre-launch (opening within 3 months)</option>
+            <option value="prelaunch" class="fr">Pré-lancement (ouverture dans 3 mois)</option>
+            <option value="existing" class="en">Existing operation — repositioning</option>
+            <option value="existing" class="fr">Établissement existant — repositionnement</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label en" for="f-timeline">Target opening timeline <span class="req">*</span></label>
+          <label class="v-label fr" for="f-timeline">Calendrier d'ouverture cible <span class="req">*</span></label>
+          <select class="v-select" id="f-timeline" required>
+            <option value="" disabled selected></option>
+            <option value="under_3m" class="en">Under 3 months</option>
+            <option value="under_3m" class="fr">Moins de 3 mois</option>
+            <option value="3_6m" class="en">3–6 months</option>
+            <option value="3_6m" class="fr">3–6 mois</option>
+            <option value="6_12m" class="en">6–12 months</option>
+            <option value="6_12m" class="fr">6–12 mois</option>
+            <option value="over_1y" class="en">More than 1 year</option>
+            <option value="over_1y" class="fr">Plus d'un an</option>
+            <option value="undefined" class="en">Not yet defined</option>
+            <option value="undefined" class="fr">Pas encore défini</option>
+          </select>
+        </div>
+      </div>
+      <div class="v-row">
+        <div class="v-field">
+          <label class="v-label en" for="f-context">Anything else we should know? <span class="opt en">(optional but valuable)</span><span class="opt fr">(optionnel mais précieux)</span></label>
+          <label class="v-label fr" for="f-context">Autre chose à nous communiquer ? <span class="opt fr">(optionnel mais précieux)</span></label>
+          <textarea class="v-textarea" id="f-context" rows="4"
+            placeholder="Previous F&B experience, key challenges you're anticipating, specific questions you want the report to address, local context we should factor in..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="v-submit-wrap">
+      <div class="v-submit-summary">
+        <div class="v-summary-title en">What you'll receive</div>
+        <div class="v-summary-title fr">Ce que vous recevrez</div>
+        <div class="v-summary-items">
+          <div class="v-summary-item en">Market fit analysis — real competitor data for your specific city and format</div>
+          <div class="v-summary-item fr">Analyse d'adéquation marché — données concurrentielles réelles pour votre ville et format</div>
+          <div class="v-summary-item en">Financial viability assessment — ticket benchmarking, revenue modelling, break-even analysis</div>
+          <div class="v-summary-item fr">Évaluation de viabilité financière — benchmark ticket, modélisation revenus, seuil de rentabilité</div>
+          <div class="v-summary-item en">Competitive white space — where the real opportunity is, and where the risk lies</div>
+          <div class="v-summary-item fr">Espaces concurrentiels — où est la vraie opportunité, et où se situent les risques</div>
+          <div class="v-summary-item en">Strategic recommendations — 5 specific actions to strengthen your concept before launch</div>
+          <div class="v-summary-item fr">Recommandations stratégiques — 5 actions concrètes pour renforcer votre concept avant ouverture</div>
+          <div class="v-summary-item en">Risk register — the 3 biggest threats to your concept, with mitigation strategies</div>
+          <div class="v-summary-item fr">Registre des risques — les 3 principales menaces avec stratégies de mitigation</div>
+          <div class="v-summary-item en">Delivered as a private web report — readable on any device, printable as PDF</div>
+          <div class="v-summary-item fr">Livré en rapport web privé — lisible sur tout appareil, imprimable en PDF</div>
+        </div>
+        <div class="v-total">
+          <span class="v-total-label en">Total · One-time payment</span>
+          <span class="v-total-label fr">Total · Paiement unique</span>
+          <span class="v-total-price" id="submit-price">€199</span>
+        </div>
+      </div>
+      <div class="v-form-err" id="form-err"></div>
+      <button type="submit" class="btn-submit" id="submit-btn">
+        <div class="spinner"></div>
+        <span class="btn-label en">Proceed to payment →</span>
+        <span class="btn-label fr">Procéder au paiement →</span>
+      </button>
+      <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.5);margin-top:1rem;line-height:1.6;">
+        <span class="en">Secure payment via Stripe · Your data is used solely to generate your report · Report delivered within 3 minutes of payment confirmation</span>
+        <span class="fr">Paiement sécurisé via Stripe · Vos données servent uniquement à générer votre rapport · Rapport livré dans les 3 minutes suivant la confirmation</span>
+      </p>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS STATE -->
+  <div class="v-success" id="v-success">
+    <div class="v-success-icon">✦</div>
+    <h2 class="v-success-h en">Your report is<br><em>on its way.</em></h2>
+    <h2 class="v-success-h fr">Votre rapport<br><em>est en route.</em></h2>
+    <div class="v-div" style="margin:1.5rem auto;"></div>
+    <p class="v-success-p en">Check your inbox — your 20-page strategic analysis will arrive within 3 minutes. Check your spam folder if you don't see it.</p>
+    <p class="v-success-p fr">Consultez votre boîte mail — votre analyse stratégique de 20 pages arrivera dans 3 minutes. Vérifiez vos spams si vous ne la voyez pas.</p>
+    <a href="/" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);text-decoration:none;">
+      <span class="en">← Return to Za3fran.io</span>
+      <span class="fr">← Retour sur Za3fran.io</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── LANGUAGE ──
+function setLang(l){
+  document.getElementById('body').classList.toggle('lang-fr', l==='fr');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-fr').classList.toggle('active', l==='fr');
+
+  // Update pill labels for audience (special handling — bilingual labels side by side)
+  document.querySelectorAll('.v-pill-label.en').forEach(el => {
+    el.style.display = l === 'fr' ? 'none' : '';
+  });
+  document.querySelectorAll('.v-pill-label.fr').forEach(el => {
+    el.style.display = l === 'fr' ? '' : 'none';
+  });
+
+  localStorage.setItem('za3fran_lang', l);
+}
+
+// Restore language preference
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if(saved === 'fr') setLang('fr');
+  else setLang('en');
+})();
+
+// ── CURRENCY ──
+var CURRENCY = 'EUR';
+var PRICE_DISPLAY = { MAD: 'MAD 1,990', EUR: '€199', USD: '$219' };
+
+fetch('/api/currency')
+  .then(r => r.json())
+  .then(data => {
+    CURRENCY = data.currency || 'EUR';
+    const p = PRICE_DISPLAY[CURRENCY];
+    document.getElementById('hero-price').textContent = p;
+    document.getElementById('submit-price').textContent = p;
+  })
+  .catch(() => {});
+
+// ── VALIDATION ──
+function isFr(){ return document.getElementById('body').classList.contains('lang-fr'); }
+
+function validateForm(){
+  let valid = true;
+  const required = ['f-name','f-email','f-country','f-role','f-concept-name',
+    'f-type','f-cuisine','f-description','f-differentiation','f-city',
+    'f-budget','f-ticket','f-covers','f-gap','f-stage','f-timeline'];
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const val = el.value.trim();
+    if(!val){
+      el.classList.add('error');
+      valid = false;
+    } else {
+      el.classList.remove('error');
+    }
+  });
+
+  // Email format
+  const email = document.getElementById('f-email');
+  if(email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){
+    email.classList.add('error');
+    valid = false;
+  }
+
+  // Description min length
+  const desc = document.getElementById('f-description');
+  if(desc.value.trim().length < 100){
+    desc.classList.add('error');
+    valid = false;
+  }
+
+  // Audience — at least one pill checked
+  const audienceChecked = document.querySelectorAll('[name="audience"]:checked');
+  const errAudience = document.getElementById('err-audience');
+  if(audienceChecked.length === 0){
+    errAudience.textContent = isFr() ? 'Sélectionnez au moins une option.' : 'Please select at least one.';
+    errAudience.classList.add('show');
+    valid = false;
+  } else {
+    errAudience.classList.remove('show');
+  }
+
+  return valid;
+}
+
+function collectData(){
+  const audience = Array.from(document.querySelectorAll('[name="audience"]:checked')).map(e=>e.value);
+  return {
+    // Contact
+    name:           document.getElementById('f-name').value.trim(),
+    email:          document.getElementById('f-email').value.trim(),
+    country:        document.getElementById('f-country').value,
+    role:           document.getElementById('f-role').value,
+    // Concept
+    concept_name:   document.getElementById('f-concept-name').value.trim(),
+    type:           document.getElementById('f-type').value,
+    cuisine:        document.getElementById('f-cuisine').value.trim(),
+    description:    document.getElementById('f-description').value.trim(),
+    differentiation:document.getElementById('f-differentiation').value.trim(),
+    // Location & Market
+    city:           document.getElementById('f-city').value.trim(),
+    neighbourhood:  document.getElementById('f-neighbourhood').value.trim(),
+    audience:       audience,
+    // Financials
+    budget:         document.getElementById('f-budget').value,
+    ticket:         document.getElementById('f-ticket').value.trim(),
+    covers:         document.getElementById('f-covers').value.trim(),
+    seats:          document.getElementById('f-seats').value.trim(),
+    opening_hours:  document.getElementById('f-opening').value.trim(),
+    // Competition
+    competitors:    document.getElementById('f-competitors').value.trim(),
+    market_gap:     document.getElementById('f-gap').value.trim(),
+    // Context
+    stage:          document.getElementById('f-stage').value,
+    timeline:       document.getElementById('f-timeline').value,
+    additional:     document.getElementById('f-context').value.trim(),
+    // Meta
+    currency:       CURRENCY,
+    language:       isFr() ? 'fr' : 'en',
+    submitted_at:   new Date().toISOString()
+  };
+}
+
+// ── FORM SUBMIT ──
+document.getElementById('validator-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+
+  const errEl = document.getElementById('form-err');
+  errEl.classList.remove('show');
+
+  if(!validateForm()){
+    errEl.textContent = isFr()
+      ? 'Veuillez compléter tous les champs obligatoires.'
+      : 'Please complete all required fields.';
+    errEl.classList.add('show');
+    // Scroll to first error
+    const firstErr = document.querySelector('.v-input.error, .v-select.error, .v-textarea.error');
+    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const data = collectData();
+
+  // ← STRIPE CHECKOUT will be wired here in the next step
+  // For now: save submission to Supabase and show success (pre-payment placeholder)
+  try {
+    const res = await fetch('/api/submit-validator', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if(!res.ok) throw new Error('submission failed');
+
+    const result = await res.json();
+
+    if(result.checkoutUrl){
+      // Redirect to Stripe checkout
+      window.location.href = result.checkoutUrl;
+    } else {
+      // Fallback — show success (should not happen in production)
+      document.getElementById('validator-form').style.display = 'none';
+      document.getElementById('v-success').classList.add('show');
+    }
+
+  } catch(err){
+    errEl.textContent = isFr()
+      ? "Une erreur s'est produite. Réessayez ou contactez hello@za3fran.io."
+      : 'Something went wrong. Please try again or contact hello@za3fran.io.';
+    errEl.classList.add('show');
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+});
+
+// Remove error state on input
+document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
+  el.addEventListener('input', () => el.classList.remove('error'));
+  el.addEventListener('change', () => el.classList.remove('error'));
+});
+</script>
+</body>
+</html>
