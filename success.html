@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Za3fran — Payment Confirmed</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0F1F3D;
+    font-family: 'DM Sans', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    background: #FAFAF7;
+    border-radius: 4px;
+    padding: 64px 56px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #C9862A;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888880;
+    margin-bottom: 48px;
+  }
+  .check {
+    width: 64px;
+    height: 64px;
+    background: #C9862A;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 600;
+    color: #0F1F3D;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .subtitle {
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.75;
+    margin-bottom: 40px;
+  }
+  .info-box {
+    background: #f7f7f5;
+    border-left: 3px solid #C9862A;
+    padding: 20px 24px;
+    text-align: left;
+    border-radius: 2px;
+    margin-bottom: 40px;
+  }
+  .info-box p {
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.75;
+    margin: 0;
+  }
+  .steps { text-align: left; margin-bottom: 40px; }
+  .step { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+  .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: #0F1F3D;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #C9862A;
+    margin-top: 1px;
+  }
+  .step-text { font-size: 14px; color: #1a1a1a; line-height: 1.7; }
+  hr { border: none; border-top: 1px solid #e8e8e4; margin-bottom: 24px; }
+  .footer-note { font-size: 13px; color: #888880; line-height: 1.7; }
+  .footer-note a { color: #C9862A; text-decoration: none; }
+  @media (max-width: 520px) {
+    .card { padding: 40px 24px; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="logo">Za3fran</div>
+  <div class="logo-sub">Concept Validator</div>
+
+  <div class="check">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  </div>
+
+  <h1>Payment confirmed.<br>Your report is being prepared.</h1>
+
+  <p class="subtitle">
+    Our system is now analysing your submission and generating your personalised Concept Validation Report. This takes 2–4 minutes.
+  </p>
+
+  <div class="info-box">
+    <p><strong>Check your email.</strong> You'll receive your report link and a unique access code at the address you provided. The email comes from <strong>hello@za3fran.io</strong> — check your spam folder if you don't see it within 5 minutes.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Open the email from Za3fran — subject: <em>"Your Za3fran report is ready"</em></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Click the <strong>View my report</strong> button in the email</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Enter the <strong>8-character access code</strong> shown in the email to unlock your report</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">Save your report as PDF via your browser's Print → Save as PDF function</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <p class="footer-note">
+    Report not arrived after 10 minutes? Email <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> with your concept name and we'll resolve it immediately.<br><br>
+    © Za3fran Consulting · <a href="https://za3fran.io">za3fran.io</a>
+  </p>
+
+</div>
+</body>
+</html>
