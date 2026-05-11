@@ -67,6 +67,7 @@ function buildReportPrompt(submission) {
   }
 
   return `Generate a Concept Validation Report for the following F&B concept submission. Follow all instructions in your system prompt exactly. Do not truncate any section. Write the full report to its complete required depth.
+Today's date: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SUBMISSION DATA
