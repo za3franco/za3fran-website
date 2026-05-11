@@ -3,7 +3,7 @@
   "rewrites": [
     { "source": "/scorecard", "destination": "/scorecard.html" },
     { "source": "/validator", "destination": "/validator.html" },
-    { "source": "/validator/success", "destination": "/validator/success.html" },
+    { "source": "/validator/success", "destination": "/validator-success.html" },
     { "source": "/report/:id", "destination": "/api/report-viewer?id=:id" }
   ]
 }
