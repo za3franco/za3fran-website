@@ -1,12 +1,14 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/currency", "destination": "/api/currency.js" },
+    { "source": "/api/scorecard", "destination": "/api/scorecard.js" },
+    { "source": "/api/submit-validator", "destination": "/api/submit-validator.js" },
+    { "source": "/api/webhook-validator", "destination": "/api/webhook-validator.js" },
+    { "source": "/api/report-viewer", "destination": "/api/report-viewer.js" },
     { "source": "/scorecard", "destination": "/scorecard.html" },
     { "source": "/validator", "destination": "/validator.html" },
     { "source": "/validator/success", "destination": "/validator-success.html" },
-    { "source": "/report/:id", "destination": "/api/report-viewer?id=:id" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" }
+    { "source": "/report/:id", "destination": "/api/report-viewer.js?id=:id" }
   ]
 }
