@@ -171,6 +171,10 @@ FORMAT RULES:
   .callout { page-break-inside: avoid; }
   .recommendation { page-break-inside: avoid; }
   .risk-block { page-break-inside: avoid; }
+  - Every <section> element must have style="page-break-inside:avoid;" inline.
+- Every h2 heading must have style="page-break-after:avoid;" inline.
+- Body text paragraphs use style="text-align:justify;hyphens:auto;-webkit-hyphens:auto;"
+- Headings, scores, table cells, labels — always left-aligned, never justified.
 - Do not truncate or abbreviate any section. Write each section to its full required depth.
 
 Color palette:
