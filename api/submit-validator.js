@@ -7,9 +7,9 @@ import Stripe from 'stripe';
 
 // ── PRICE MAP: currency code → Stripe price ID ──
 const PRICE_IDS = {
-  EUR: 'price_1TVTjYIqDwcwTTU9267YFO9X', // €199
-  USD: 'price_1TVTkjIqDwcwTTU9bfCkrJUM', // $219
-  MAD: 'price_1TVTmLIqDwcwTTU9UVNjCmDu', // MAD 1990
+  EUR: 'price_1TVxvDIqDwcwTTU9ZEbw1pQr', // TEST
+  USD: 'price_1TVxvDIqDwcwTTU9ZEbw1pQr', // TEST
+  MAD: 'price_1TVxvDIqDwcwTTU9ZEbw1pQr', // TEST
 };
 
 const PRICE_FALLBACK = 'price_1TVTjYIqDwcwTTU9267YFO9X'; // EUR fallback
