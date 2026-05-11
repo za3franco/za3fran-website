@@ -1,5 +1,4 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/api/currency", "destination": "/api/currency.js" },
     { "source": "/api/scorecard", "destination": "/api/scorecard.js" },
