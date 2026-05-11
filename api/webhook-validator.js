@@ -161,6 +161,16 @@ FORMAT RULES:
 - No references to external stylesheets or class names from external files.
 - The document must render correctly in any modern browser with no additional dependencies except the Google Fonts import.
 - Print-ready: clean layout, clear hierarchy, page-break-safe sections.
+- Add this CSS block in the <head> for print and screen formatting:
+  body { text-align: justify; hyphens: auto; -webkit-hyphens: auto; orphans: 3; widows: 3; }
+  h1, h2, h3, p.logo, p.subtitle, .score, .verdict-label, th, td { text-align: left; }
+  section { page-break-inside: avoid; }
+  h2, h3 { page-break-after: avoid; }
+  table { page-break-inside: avoid; }
+  .this-week-box { page-break-inside: avoid; }
+  .callout { page-break-inside: avoid; }
+  .recommendation { page-break-inside: avoid; }
+  .risk-block { page-break-inside: avoid; }
 - Do not truncate or abbreviate any section. Write each section to its full required depth.
 
 Color palette:
