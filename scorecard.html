@@ -109,6 +109,15 @@
       .contact-fields > div { grid-template-columns: 1fr !important; }
     }
   </style>
+  <!-- Google Analytics GA4 — Za3fran -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X7Q3Q8ZKRE');
+  </script>
+
 </head>
 <body>
 
@@ -371,7 +380,7 @@
       <div class="success-sub" data-i18n="success_sub">Check your inbox — it should arrive within the next 60 seconds. Check your spam folder if you don't see it.</div>
       <div class="success-divider"></div>
       <div class="success-cta-label" data-i18n="success_cta_label">Want deeper answers?</div>
-      <a href="https://za3fran.io/#validator" class="success-cta" data-i18n="success_cta">Explore the Concept Validator →</a>
+      <a href="/validator" class="success-cta" data-i18n="success_cta" onclick="if(typeof gtag!=='undefined'){gtag('event','cta_click',{event_category:'conversion',event_label:'scorecard_to_validator_upsell'});}">Explore the Concept Validator →</a>
     </div>
 
   </div>
@@ -523,6 +532,13 @@
         document.getElementById('loadingScreen').classList.remove('active');
         document.getElementById('successScreen').classList.add('active');
         scrollToForm();
+        // GA4 — scorecard completed successfully
+        if(typeof gtag !== 'undefined') {
+          gtag('event', 'scorecard_completed', {
+            event_category: 'scorecard',
+            event_label: 'report_delivered'
+          });
+        }
       } catch (err) {
         console.error(err);
         document.getElementById('loadingScreen').classList.remove('active');
@@ -536,3 +552,4 @@
   </script>
 </body>
 </html>
+
