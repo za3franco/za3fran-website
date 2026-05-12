@@ -267,6 +267,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .fade-up{animation:fadeUp 0.6s ease both;}
 .d1{animation-delay:0.1s;}.d2{animation-delay:0.2s;}.d3{animation-delay:0.3s;}
 </style>
+  <!-- Google Analytics GA4 — Za3fran -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X7Q3Q8ZKRE');
+  </script>
+
 </head>
 <body id="body">
 
@@ -1172,6 +1181,14 @@ document.getElementById('validator-form').addEventListener('submit', function(e)
     return;
   }
 
+  // GA4 — form completed and submitted to review
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'form_submitted', {
+      event_category: 'validator',
+      event_label: 'review_screen_reached'
+    });
+  }
+
   // Collect and show review
   const data = collectData();
   try { populateReview(data); } catch(e) { console.error('populateReview error:', e); }
@@ -1193,6 +1210,15 @@ async function proceedToPayment() {
   btn.classList.add('loading');
 
   const data = collectData();
+
+  // GA4 — user clicked Confirm & Pay, about to redirect to Stripe
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'begin_checkout', {
+      event_category: 'conversion',
+      event_label: 'validator_checkout',
+      currency: data.currency || 'EUR'
+    });
+  }
 
   // ← STRIPE CHECKOUT will be wired here in the next step
   try {
@@ -1229,4 +1255,6 @@ document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
 </script>
 </body>
 </html>
+
+
 
