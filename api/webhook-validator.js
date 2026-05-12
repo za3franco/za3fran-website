@@ -14,6 +14,7 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { waitUntil } from '@vercel/functions';
 
 // ── Clients ──────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -239,6 +240,8 @@ Start with <!DOCTYPE html> and end with </html>.
 The document must be fully self-contained. Do not truncate any section.`;
 
 // ── Main handler ──────────────────────────────────────────────
+// Returns 200 to Stripe immediately, then processes the report async.
+// This prevents Stripe timeout errors — Claude takes 2-3 min, Stripe times out at 30s.
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -280,7 +283,18 @@ export default async function handler(req, res) {
     return res.status(200).json({ received: true, error: 'No email in session' });
   }
 
-  console.log(`Processing payment for: ${customerEmail}, session: ${session.id}`);
+  console.log(`Payment confirmed for: ${customerEmail}, session: ${session.id}`);
+
+  // ── Return 200 to Stripe immediately ─────────────────────────
+  // waitUntil keeps the Vercel function alive after the response is sent,
+  // so the 2-3 min Claude generation does not cause a Stripe timeout error.
+  waitUntil(processReport(customerEmail, session.id));
+  return res.status(200).json({ received: true });
+}
+
+// ── Async report processing (runs after 200 is returned to Stripe) ──
+async function processReport(customerEmail, sessionId) {
+  console.log(`[processReport] Starting for: ${customerEmail}, session: ${sessionId}`);
 
   // ── Step 3: Look up submission in Supabase ───────────────────
   // Find the most recent pending submission for this email
@@ -295,7 +309,8 @@ export default async function handler(req, res) {
   if (fetchError || !submissions || submissions.length === 0) {
     console.error('No matching submission found for:', customerEmail, fetchError);
     // Still return 200 to Stripe — don't retry
-    return res.status(200).json({ received: true, error: 'Submission not found' });
+    console.error('[processReport] Aborting: submission not found for', customerEmail);
+    return;
   }
 
   const submission = submissions[0];
@@ -349,7 +364,8 @@ export default async function handler(req, res) {
       .from('validator_submissions')
       .update({ status: 'report_error' })
       .eq('id', submission.id);
-    return res.status(200).json({ received: true, error: 'Report generation failed' });
+    console.error('[processReport] Aborting: report generation failed');
+    return;
   }
 
   // ── Step 5: Generate access code and store report ────────────
@@ -368,7 +384,8 @@ export default async function handler(req, res) {
 
   if (insertError) {
     console.error('Failed to store report in Supabase:', insertError);
-    return res.status(200).json({ received: true, error: 'Report storage failed' });
+    console.error('[processReport] Aborting: report storage failed');
+    return;
   }
 
   console.log(`Report stored. ID: ${reportId}, Access code: ${accessCode}`);
@@ -513,5 +530,5 @@ export default async function handler(req, res) {
   }
 
   console.log(`Webhook complete. Submission ${submission.id} processed successfully.`);
-  return res.status(200).json({ received: true, success: true, reportId });
+  console.log(`[processReport] Complete. reportId: ${reportId}`);
 }
