@@ -105,6 +105,15 @@
     h1 { font-size: 28px; }
   }
 </style>
+  <!-- Google Analytics GA4 — Za3fran -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X7Q3Q8ZKRE');
+  </script>
+
 </head>
 <body>
 <div class="card">
@@ -155,5 +164,15 @@
   </p>
 
 </div>
+
+  <script>
+    // GA4 — Purchase conversion event
+    // Fires when customer lands on the success page after Stripe payment
+    gtag('event', 'purchase_confirmed', {
+      event_category: 'conversion',
+      event_label: 'validator_purchase'
+    });
+  </script>
 </body>
 </html>
+
