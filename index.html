@@ -356,6 +356,15 @@ body.lang-fr .wa-tip.fr { display: block; }
 @media(max-width:1024px){nav{padding:1.25rem 2rem;}section{padding:5rem 2rem;}.numbar{padding:2.5rem 2rem;}.scard-inner,.val-inner,.plat-inner,.about-inner{grid-template-columns:1fr;gap:3rem;}.fg{grid-template-columns:1fr 1fr;gap:2rem;}.visual-band-inner{grid-template-columns:1fr 1fr;}.visual-band-inner .vb-panel:last-child{display:none;}}
 @media(max-width:768px){.nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--charcoal);flex-direction:column;padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);}.nav-links.open{display:flex;}.nav-toggle{display:flex;}.numbar{grid-template-columns:repeat(2,1fr);}.svc-grid,.tools-grid{grid-template-columns:1fr;}.astats{grid-template-columns:1fr;}.fg{grid-template-columns:1fr;}.fbot{flex-direction:column;gap:1rem;text-align:center;}.hero-h1{font-size:2.8rem;}.email-row{flex-direction:column;}.email-inp{border-right:0.5px solid var(--border);border-bottom:none;}.visual-band{height:200px;}.visual-band-inner{grid-template-columns:1fr;}.visual-band-inner .vb-panel:not(:first-child){display:none;}}
 </style>
+  <!-- Google Analytics GA4 — Za3fran -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X7Q3Q8ZKRE');
+  </script>
+
 </head>
 <body id="body">
 
@@ -1238,8 +1247,50 @@ async function submitWL(){
   }
 }
 </script>
+
+  <script>
+    // GA4 — CTA click tracking
+    document.addEventListener('DOMContentLoaded', function() {
+
+      // Track all clicks on validator CTA buttons (href="/validator")
+      document.querySelectorAll('a[href="/validator"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          gtag('event', 'cta_click', {
+            event_category: 'engagement',
+            event_label: 'validator_cta',
+            page_location: window.location.href
+          });
+        });
+      });
+
+      // Track scorecard CTA clicks (href="/scorecard")
+      document.querySelectorAll('a[href="/scorecard"], a[href*="scorecard"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          gtag('event', 'cta_click', {
+            event_category: 'engagement',
+            event_label: 'scorecard_cta',
+            page_location: window.location.href
+          });
+        });
+      });
+
+      // Track contact / Get Started nav click
+      document.querySelectorAll('a[href="#contact"], a[href*="contact"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          gtag('event', 'cta_click', {
+            event_category: 'engagement',
+            event_label: 'contact_click'
+          });
+        });
+      });
+
+    });
+  </script>
 </body>
 </html>
+
+
+
 
 
 
