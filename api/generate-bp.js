@@ -97,9 +97,12 @@ export default async function handler(req, res) {
 
     bpHtml = anthropicData.content[0].text.trim();
 
-    if (!bpHtml.startsWith('<!DOCTYPE') && !bpHtml.startsWith('<html')) {
-      throw new Error('Claude did not return valid HTML');
-    }
+// Strip markdown code fences if Claude wrapped the HTML
+bpHtml = bpHtml.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+
+if (!bpHtml.startsWith('<!DOCTYPE') && !bpHtml.startsWith('<html')) {
+  throw new Error('Claude did not return valid HTML. Got: ' + bpHtml.substring(0, 100));
+}
 
     console.log(`[generate-bp] HTML generated. ${bpHtml.length} chars`);
 
