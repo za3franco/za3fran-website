@@ -1,5 +1,9 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/webhook-validator.js":      { "maxDuration": 300 },
+    "api/webhook-business-plan.js":  { "maxDuration": 300 }
+  },
   "rewrites": [
     { "source": "/api/currency",               "destination": "/api/currency.js" },
     { "source": "/api/scorecard",              "destination": "/api/scorecard.js" },
