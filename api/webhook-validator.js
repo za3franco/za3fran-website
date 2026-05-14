@@ -6,15 +6,18 @@
 // 1. Receive checkout.session.completed from Stripe
 // 2. Verify Stripe signature
 // 3. Look up submission in Supabase by email
-// 4. Generate report via Claude API
-// 5. Store report HTML in validator_reports table
-// 6. Update submission: status → 'paid', set report_id
-// 7. Send delivery email via Brevo
+// 4. Generate report HTML via Claude API (unchanged)
+// 5. Extract report_json via Haiku (new — Phase 4)
+// 6. Store report HTML + report_json in validator_reports
+// 7. Create/upsert za3fran_user + za3fran_project records (new — Phase 4)
+// 8. Update submission: status → 'paid', set report_id
+// 9. Send delivery email via Brevo
 // =============================================================
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
+import { getModel } from '../lib/claude-config.js';  // ← PHASE 4 ADDITION
 
 // ── Clients ──────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -240,14 +243,11 @@ Start with <!DOCTYPE html> and end with </html>.
 The document must be fully self-contained. Do not truncate any section.`;
 
 // ── Main handler ──────────────────────────────────────────────
-// Returns 200 to Stripe immediately, then processes the report async.
-// This prevents Stripe timeout errors — Claude takes 2-3 min, Stripe times out at 30s.
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // ── Step 1: Read raw body and verify Stripe signature ────────
   let rawBody;
   try {
     rawBody = await getRawBody(req);
@@ -270,7 +270,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Webhook signature error: ${err.message}` });
   }
 
-  // ── Step 2: Only handle checkout.session.completed ───────────
   if (event.type !== 'checkout.session.completed') {
     return res.status(200).json({ received: true, skipped: true });
   }
@@ -285,19 +284,15 @@ export default async function handler(req, res) {
 
   console.log(`Payment confirmed for: ${customerEmail}, session: ${session.id}`);
 
-  // ── Return 200 to Stripe immediately ─────────────────────────
-  // waitUntil keeps the Vercel function alive after the response is sent,
-  // so the 2-3 min Claude generation does not cause a Stripe timeout error.
   waitUntil(processReport(customerEmail, session.id));
   return res.status(200).json({ received: true });
 }
 
-// ── Async report processing (runs after 200 is returned to Stripe) ──
+// ── Async report processing ───────────────────────────────────
 async function processReport(customerEmail, sessionId) {
   console.log(`[processReport] Starting for: ${customerEmail}, session: ${sessionId}`);
 
-  // ── Step 3: Look up submission in Supabase ───────────────────
-  // Find the most recent pending submission for this email
+  // ── Step 3: Look up submission ───────────────────────────────
   const { data: submissions, error: fetchError } = await supabase
     .from('validator_submissions')
     .select('*')
@@ -308,18 +303,18 @@ async function processReport(customerEmail, sessionId) {
 
   if (fetchError || !submissions || submissions.length === 0) {
     console.error('No matching submission found for:', customerEmail, fetchError);
-    // Still return 200 to Stripe — don't retry
-    console.error('[processReport] Aborting: submission not found for', customerEmail);
     return;
   }
 
   const submission = submissions[0];
   console.log(`Found submission: ${submission.id} for concept: ${submission.concept_name}`);
 
-  // ── Step 4: Generate report via Claude API ───────────────────
+  // ── Step 4: Generate report HTML via Claude ──────────────────
   let reportHtml;
+  const validatorModel = getModel('validator');  // ← PHASE 4: env-driven model
+
   try {
-    console.log('Calling Claude API for report generation...');
+    console.log(`Calling Claude (${validatorModel}) for report generation...`);
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -328,7 +323,7 @@ async function processReport(customerEmail, sessionId) {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-7',
+        model: validatorModel,
         max_tokens: 32000,
         system: SYSTEM_PROMPT,
         messages: [
@@ -356,16 +351,26 @@ async function processReport(customerEmail, sessionId) {
       throw new Error('Anthropic did not return valid HTML. Got: ' + reportHtml.substring(0, 200));
     }
 
-    console.log(`Report generated successfully. Length: ${reportHtml.length} chars`);
+    console.log(`Report HTML generated. Length: ${reportHtml.length} chars`);
   } catch (err) {
     console.error('Claude API report generation failed:', err);
-    // Mark submission as error so we can retry manually
     await supabase
       .from('validator_submissions')
       .update({ status: 'report_error' })
       .eq('id', submission.id);
-    console.error('[processReport] Aborting: report generation failed');
     return;
+  }
+
+  // ── Step 4b: Extract report_json via Haiku (PHASE 4 ADDITION) ─
+  // Runs a lean extraction call on the generated HTML.
+  // Failure is non-fatal — we save null and continue.
+  let reportJson = null;
+  try {
+    reportJson = await extractReportJson(reportHtml, submission);
+    console.log(`report_json extracted successfully.`);
+  } catch (err) {
+    console.error('[Phase 4] report_json extraction failed (non-fatal):', err.message);
+    // Report still saves and delivers — JSON can be backfilled later
   }
 
   // ── Step 5: Generate access code and store report ────────────
@@ -378,17 +383,70 @@ async function processReport(customerEmail, sessionId) {
       id: reportId,
       submission_id: submission.id,
       report_html: reportHtml,
+      report_json: reportJson,        // ← PHASE 4: null if extraction failed, populated if successful
       access_code: accessCode,
       created_at: new Date().toISOString(),
     });
 
   if (insertError) {
     console.error('Failed to store report in Supabase:', insertError);
-    console.error('[processReport] Aborting: report storage failed');
     return;
   }
 
   console.log(`Report stored. ID: ${reportId}, Access code: ${accessCode}`);
+
+  // ── Step 5b: Create user + project records (PHASE 4 ADDITION) ─
+  // Non-fatal — doesn't affect report delivery if it fails.
+  try {
+    // Upsert user record (email is unique key)
+    let userId = null;
+    const { data: existingUser } = await supabase
+      .from('za3fran_users')
+      .select('id')
+      .eq('email', customerEmail)
+      .single();
+
+    if (existingUser) {
+      userId = existingUser.id;
+    } else {
+      const { data: newUser } = await supabase
+        .from('za3fran_users')
+        .insert({
+          email: customerEmail,
+          name: submission.name || '',
+          default_currency: submission.currency || 'EUR',
+          default_language: submission.language || 'en',
+        })
+        .select('id')
+        .single();
+      userId = newUser?.id || null;
+    }
+
+    // Create project record (one per submission)
+    if (userId) {
+      const { data: existingProject } = await supabase
+        .from('za3fran_projects')
+        .select('id')
+        .eq('validator_submission_id', submission.id)
+        .single();
+
+      if (!existingProject) {
+        await supabase
+          .from('za3fran_projects')
+          .insert({
+            user_id: userId,
+            concept_name: submission.concept_name || 'Untitled',
+            validator_submission_id: submission.id,
+            currency: submission.currency || 'EUR',
+            language: submission.language || 'en',
+          });
+      }
+    }
+
+    console.log(`[Phase 4] User + project records created/verified for ${customerEmail}`);
+  } catch (err) {
+    console.error('[Phase 4] User/project creation failed (non-fatal):', err.message);
+  }
 
   // ── Step 6: Update submission record ─────────────────────────
   const { error: updateError } = await supabase
@@ -401,7 +459,6 @@ async function processReport(customerEmail, sessionId) {
 
   if (updateError) {
     console.error('Failed to update submission status:', updateError);
-    // Non-fatal — report is already stored, continue to email
   }
 
   // ── Step 7: Send delivery email via Brevo ────────────────────
@@ -409,7 +466,6 @@ async function processReport(customerEmail, sessionId) {
   const conceptName = submission.concept_name || 'your concept';
   const firstName = submission.name ? submission.name.split(' ')[0] : 'there';
 
-  // Detect language for bilingual email
   const isfrench = submission.language === 'fr' ||
     (submission.description && /[àâäéèêëîïôöùûüçœæ]/i.test(submission.description));
 
@@ -445,6 +501,10 @@ async function processReport(customerEmail, sessionId) {
 
       <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 8px;">Conservez ce code — vous en aurez besoin chaque fois que vous ouvrirez votre rapport.</p>
       <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 32px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
+
+      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+
+      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;"><strong>Prochaine étape :</strong> Votre Business Plan Essentials transforme ce rapport en plan d'affaires complet avec projections financières. <a href="${process.env.NEXT_PUBLIC_BASE_URL}/business-plan?code=${accessCode}" style="color:#C9862A;">Découvrir le Business Plan Essentials →</a></p>
 
       <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
 
@@ -488,6 +548,10 @@ async function processReport(customerEmail, sessionId) {
 
       <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
 
+      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;"><strong>Next step:</strong> Your Business Plan Essentials turns this report into a complete business plan with financial projections. <a href="${process.env.NEXT_PUBLIC_BASE_URL}/business-plan?code=${accessCode}" style="color:#C9862A;">Discover Business Plan Essentials →</a></p>
+
+      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+
       <p style="color:#1a1a1a;line-height:1.75;margin:0 0 8px;">To save your report as a PDF, open it in your browser and use Print → Save as PDF.</p>
       <p style="color:#888880;font-size:13px;margin:0;">Questions? Email us at <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
     </div>
@@ -509,7 +573,7 @@ async function processReport(customerEmail, sessionId) {
       body: JSON.stringify({
         sender: {
           name: 'Za3fran',
-          email: 'hello@za3fran.io', // ← must be verified sender in Brevo
+          email: 'hello@za3fran.io',
         },
         to: [{ email: customerEmail, name: submission.name || customerEmail }],
         subject: emailSubject,
@@ -520,15 +584,141 @@ async function processReport(customerEmail, sessionId) {
     if (!brevoResponse.ok) {
       const brevoError = await brevoResponse.json();
       console.error('Brevo email failed:', brevoError);
-      // Non-fatal — report is stored, operator can resend manually
     } else {
       console.log(`Delivery email sent to: ${customerEmail}`);
     }
   } catch (err) {
     console.error('Brevo email error:', err);
-    // Non-fatal — continue
   }
 
-  console.log(`Webhook complete. Submission ${submission.id} processed successfully.`);
   console.log(`[processReport] Complete. reportId: ${reportId}`);
+}
+
+// ── PHASE 4: Extract structured JSON from HTML via Haiku ──────
+// Non-fatal. If extraction fails, report_json is stored as null
+// and can be backfilled later when the Supabase row is reprocessed.
+async function extractReportJson(reportHtml, submission) {
+  // Build concept_snapshot directly from submission data (no extraction needed)
+  const audienceRaw = submission.audience;
+  let audienceArr = [];
+  if (Array.isArray(audienceRaw)) {
+    audienceArr = audienceRaw;
+  } else if (typeof audienceRaw === 'string') {
+    try { audienceArr = JSON.parse(audienceRaw); } catch { audienceArr = [audienceRaw]; }
+  }
+
+  const conceptSnapshot = {
+    concept_name:    submission.concept_name    || '',
+    type:            submission.concept_type    || '',
+    cuisine:         submission.cuisine         || '',
+    city:            submission.city            || '',
+    neighbourhood:   submission.neighbourhood   || '',
+    ticket:          submission.ticket          || '',
+    covers:          submission.covers          || '',
+    seats:           submission.seats           || '',
+    budget:          submission.budget          || '',
+    stage:           submission.stage           || '',
+    opening_hours:   submission.opening_hours   || '',
+    audience:        audienceArr,
+    description:     submission.description     || '',
+    differentiation: submission.differentiation || '',
+    market_gap:      submission.market_gap      || '',
+    competitors:     submission.competitors     || '',
+    additional:      submission.additional      || '',
+  };
+
+  const utilityModel = getModel('utility');
+  console.log(`[extractReportJson] Calling ${utilityModel} for JSON extraction...`);
+
+  const extractionResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01',
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+    },
+    body: JSON.stringify({
+      model: utilityModel,
+      max_tokens: 6000,
+      messages: [{
+        role: 'user',
+        content: `Extract structured data from this F&B concept validation report HTML.
+Return ONLY valid JSON. No markdown, no code fences, no explanation, no preamble.
+
+Required schema (fill every field from the HTML content):
+{
+  "overall": {
+    "score": <integer>,
+    "verdict": "<STRONG|VIABLE|FRAGILE|HIGH_RISK>",
+    "executive_summary": "<executive summary paragraph text, max 400 chars>"
+  },
+  "score_breakdown": [
+    {"section": 1, "label": "<section name>", "score": <integer>, "weight": <decimal e.g. 0.15>, "contribution": <decimal>},
+    {"section": 2, "label": "<section name>", "score": <integer>, "weight": <decimal>, "contribution": <decimal>},
+    {"section": 3, "label": "<section name>", "score": <integer>, "weight": <decimal>, "contribution": <decimal>},
+    {"section": 4, "label": "<section name>", "score": <integer>, "weight": <decimal>, "contribution": <decimal>},
+    {"section": 5, "label": "<section name>", "score": <integer>, "weight": <decimal>, "contribution": <decimal>},
+    {"section": 6, "label": "<section name>", "score": <integer>, "weight": <decimal>, "contribution": <decimal>}
+  ],
+  "sections": {
+    "s1_concept":    {"score": <integer>, "narrative": "<first para, max 300 chars>", "strength": "<strength text, max 200 chars>", "gap": "<gap text, max 200 chars>", "this_week": ["<action 1>", "<action 2>"]},
+    "s2_market":     {"score": <integer>, "narrative": "<first para, max 300 chars>", "this_week": ["<action 1>", "<action 2>"]},
+    "s3_competitive":{"score": <integer>, "narrative": "<first para, max 300 chars>", "competitors": [{"name": "", "type": "", "ticket": "", "threat_level": ""}], "this_week": ["<action 1>"]},
+    "s4_financial":  {
+      "score": <integer>,
+      "breakeven": {"monthly_revenue": <number, no currency symbol>, "daily_covers": <integer>},
+      "scenarios": {
+        "conservative": {"covers_day": <integer>, "monthly_revenue": <number>, "monthly_result": <number>},
+        "base":         {"covers_day": <integer>, "monthly_revenue": <number>, "monthly_result": <number>},
+        "optimistic":   {"covers_day": <integer>, "monthly_revenue": <number>, "monthly_result": <number>}
+      },
+      "alerts": [{"severity": "<HIGH|MEDIUM|LOW>", "title": "<alert title>", "body": "<alert text, max 200 chars>"}],
+      "this_week": ["<action 1>"]
+    },
+    "s5_strategy":   {"score": <integer>, "recommendations": [{"rank": 1, "title": "", "body": "<max 200 chars>"}], "this_week": ["<action 1>"]},
+    "s6_risks":      {"score": <integer>, "risks": [{"rank": 1, "title": "", "probability": "<HIGH|MEDIUM|LOW>", "impact": "<CRITICAL|HIGH|MEDIUM>", "mitigation": "<max 200 chars>"}], "this_week": ["<action 1>"]}
+  },
+  "action_plan": [
+    {"days": "<e.g. Jours 1-3>", "actions": ["<action text>"]}
+  ]
+}
+
+For monetary values in scenarios/breakeven: raw numbers only (e.g. 97900, not "97 900 MAD").
+For text fields: truncate to max length specified. Do not include HTML tags.
+If a field cannot be found in the HTML, use null for numbers and "" for strings.
+
+Report HTML (first 60000 chars):
+${reportHtml.substring(0, 60000)}`,
+      }],
+    }),
+  });
+
+  const extractionData = await extractionResponse.json();
+
+  if (!extractionResponse.ok || !extractionData.content?.[0]?.text) {
+    throw new Error('Extraction API error: ' + JSON.stringify(extractionData).substring(0, 200));
+  }
+
+  // Strip any accidental markdown fences
+  const jsonText = extractionData.content[0].text.trim()
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```\s*$/i, '');
+
+  const extracted = JSON.parse(jsonText);
+
+  return {
+    meta: {
+      concept_name: submission.concept_name || '',
+      generated_at: new Date().toISOString(),
+      language:     submission.language     || 'en',
+      currency:     submission.currency     || 'EUR',
+      model_used:   getModel('validator'),
+    },
+    concept_snapshot: conceptSnapshot,
+    overall:          extracted.overall         || {},
+    score_breakdown:  extracted.score_breakdown || [],
+    sections:         extracted.sections        || {},
+    action_plan:      extracted.action_plan     || [],
+  };
 }
