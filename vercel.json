@@ -15,12 +15,13 @@
     { "source": "/api/webhook-business-plan", "destination": "/api/webhook-business-plan.js" },
     { "source": "/api/generate-bp",           "destination": "/api/generate-bp.js" },
     { "source": "/api/test-bp-generate",      "destination": "/api/test-bp-generate.js" },
+    { "source": "/api/report-bp-viewer",      "destination": "/api/report-bp-viewer.js" },
     { "source": "/scorecard",                 "destination": "/scorecard.html" },
     { "source": "/validator",                 "destination": "/validator.html" },
     { "source": "/validator/success",         "destination": "/success.html" },
-    { "source": "/business-plan",             "destination": "/business-plan.html" },
     { "source": "/business-plan/success",     "destination": "/business-plan.html" },
     { "source": "/report/:id",                "destination": "/api/report-viewer.js?id=:id" },
-    { "source": "/business-plan/report/:id",  "destination": "/api/report-bp-viewer.js?id=:id" }
+    { "source": "/bp-report/:id",             "destination": "/api/report-bp-viewer.js?id=:id" },
+    { "source": "/business-plan",             "destination": "/business-plan.html" }
   ]
 }
