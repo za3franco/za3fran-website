@@ -84,7 +84,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model,
-        max_tokens: 16000,
+        max_tokens: 32000,
         messages: [{ role: 'user', content: buildBPPrompt(validatorReport.report_json, submission, currency, language) }],
       }),
     });
