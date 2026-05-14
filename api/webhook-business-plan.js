@@ -123,7 +123,7 @@ export default async function handler(req, res) {
 
     // ── 4. Send delivery email via Brevo ─────────────────────
     const BASE_URL  = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
-    const reportUrl = `${BASE_URL}/business-plan/report/${bpReportId}`;
+    const reportUrl = `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}`;
     const firstName = name ? name.split(' ')[0] : 'there';
     const isFr      = language === 'fr';
     const conceptName = meta.conceptName || 'your concept';
