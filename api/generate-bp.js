@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     console.log('[bp] Pass 1 done: ' + part1.length + ' chars');
 
     console.log('[bp] Pass 2 (Haiku, 12000 tokens)...');
-    part2 = await claude(prompt2(ctx), 12000, 150000);
+    part2 = await claude(prompt2(ctx), 16000, 150000);
     part2 = part2.replace(/<!DOCTYPE[^>]*>/gi,'').replace(/<\/?html[^>]*>/gi,'').replace(/<head[\s\S]*?<\/head>/gi,'').replace(/<\/?body[^>]*>/gi,'').trim();
     console.log('[bp] Pass 2 done: ' + part2.length + ' chars');
 
