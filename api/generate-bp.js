@@ -1,8 +1,7 @@
 // ============================================================
-// /api/generate-bp.js
-// On-demand BP generation. Called by report-bp-viewer.js when
-// output_html is null. Runs Claude synchronously — client waits.
-// maxDuration: 300 in vercel.json ensures 5-min window.
+// /api/generate-bp.js  (v3 — clean rewrite)
+// On-demand BP generation triggered by report-bp-viewer.js.
+// maxDuration: 300 set in vercel.json.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -21,7 +20,7 @@ export default async function handler(req, res) {
 
   const { data: bpRun, error: runError } = await supabase
     .from('business_plan_essentials_runs')
-    .select('id, output_html, output_json, currency, language, model_used, access_code')
+    .select('id, output_html, output_json, currency, language, model_used')
     .eq('id', bpRunId)
     .single();
 
@@ -29,6 +28,12 @@ export default async function handler(req, res) {
   if (bpRun.output_html) return res.status(200).json({ ready: true });
 
   const meta = bpRun.output_json || {};
+
+  // Prevent duplicate runs
+  if (meta.status === 'generating') {
+    return res.status(200).json({ status: 'generating' });
+  }
+
   await supabase.from('business_plan_essentials_runs')
     .update({ output_json: { ...meta, status: 'generating' } })
     .eq('id', bpRunId);
@@ -37,381 +42,234 @@ export default async function handler(req, res) {
   const submissionId      = meta.submission_id;
 
   if (!validatorReportId) {
-    return res.status(422).json({ error: 'Missing validator_report_id in output_json' });
+    return res.status(422).json({ error: 'Missing validator_report_id' });
   }
 
-  const { data: validatorReport } = await supabase
-    .from('validator_reports').select('report_json').eq('id', validatorReportId).single();
+  const { data: vrData } = await supabase
+    .from('validator_reports')
+    .select('report_json')
+    .eq('id', validatorReportId)
+    .single();
 
-  if (!validatorReport?.report_json) {
+  if (!vrData || !vrData.report_json) {
     return res.status(422).json({ error: 'Validator report_json not found' });
   }
 
   const { data: submission } = await supabase
-    .from('validator_submissions').select('*').eq('id', submissionId).single();
+    .from('validator_submissions')
+    .select('*')
+    .eq('id', submissionId)
+    .single();
 
   const currency = bpRun.currency || 'EUR';
   const language = bpRun.language || 'en';
   const model    = bpRun.model_used || getModel('essentials');
 
-  console.log(`[generate-bp] Calling Claude (${model}) for run ${bpRunId}...`);
+  console.log('[generate-bp] Calling Claude for run: ' + bpRunId);
 
   let bpHtml;
   try {
-    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    const controller = new AbortController();
+    const timer = setTimeout(function() { controller.abort(); }, 230000);
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
       },
       body: JSON.stringify({
-  model,
-  max_tokens: 24000,
-  messages: [{ role: 'user', content: buildBPPrompt(...) }],
-}),
-signal: AbortSignal.timeout(240000),
+        model: model,
+        max_tokens: 18000,
+        messages: [
+          { role: 'user', content: buildPrompt(vrData.report_json, submission, currency, language) }
+        ],
+      }),
     });
 
-    const anthropicData = await anthropicResponse.json();
+    clearTimeout(timer);
 
-    if (!anthropicResponse.ok || !anthropicData.content?.[0]?.text) {
-      throw new Error(`Claude API error: ${anthropicData.error?.message || JSON.stringify(anthropicData).substring(0, 200)}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.content || !data.content[0] || !data.content[0].text) {
+      var errMsg = (data.error && data.error.message) ? data.error.message : 'API error ' + response.status;
+      throw new Error(errMsg);
     }
 
-    bpHtml = anthropicData.content[0].text.trim();
+    bpHtml = data.content[0].text.trim();
     bpHtml = bpHtml.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
 
     if (!bpHtml.startsWith('<!DOCTYPE') && !bpHtml.startsWith('<html')) {
-      throw new Error('Claude did not return valid HTML. Got: ' + bpHtml.substring(0, 100));
+      throw new Error('Invalid HTML response: ' + bpHtml.substring(0, 100));
     }
 
-    console.log(`[generate-bp] HTML generated. ${bpHtml.length} chars`);
+    console.log('[generate-bp] Generated ' + bpHtml.length + ' chars');
 
   } catch (err) {
-    console.error('[generate-bp] Claude failed:', err.message);
+    console.error('[generate-bp] Error: ' + err.message);
     await supabase.from('business_plan_essentials_runs')
       .update({ output_json: { ...meta, status: 'error', error: err.message } })
       .eq('id', bpRunId);
-    return res.status(500).json({ error: 'Generation failed: ' + err.message });
+    return res.status(500).json({ error: err.message });
   }
 
-  const { error: saveError } = await supabase
+  const { error: saveErr } = await supabase
     .from('business_plan_essentials_runs')
-    .update({ output_html: bpHtml, output_json: { ...meta, status: 'complete' } })
+    .update({
+      output_html: bpHtml,
+      output_json: { ...meta, status: 'complete' },
+    })
     .eq('id', bpRunId);
 
-  if (saveError) {
-    console.error('[generate-bp] Save failed:', saveError.message);
-    return res.status(500).json({ error: 'Save failed: ' + saveError.message });
+  if (saveErr) {
+    console.error('[generate-bp] Save error: ' + saveErr.message);
+    return res.status(500).json({ error: 'Save failed' });
   }
 
-  console.log(`[generate-bp] Done. Run ${bpRunId} complete.`);
+  console.log('[generate-bp] Complete: ' + bpRunId);
   return res.status(200).json({ ready: true });
 }
 
-// ── PROMPT ────────────────────────────────────────────────────
-function buildBPPrompt(reportJson, submission, currency, language) {
-  const snap     = reportJson?.concept_snapshot || {};
-  const overall  = reportJson?.overall           || {};
-  const sections = reportJson?.sections          || {};
-  const sym      = { EUR: '€', MAD: 'MAD', USD: '$' }[currency] || '€';
-  const isFr     = language === 'fr';
-  const fin      = sections.s4_financial || {};
-  const be       = fin.breakeven          || {};
-  const sc       = fin.scenarios          || {};
-  const fmt      = (n) => n ? Number(n).toLocaleString(isFr ? 'fr-FR' : 'en-US') : 'N/A';
+function buildPrompt(reportJson, submission, currency, language) {
+  var snap    = reportJson && reportJson.concept_snapshot ? reportJson.concept_snapshot : {};
+  var overall = reportJson && reportJson.overall ? reportJson.overall : {};
+  var secs    = reportJson && reportJson.sections ? reportJson.sections : {};
+  var fin     = secs.s4_financial || {};
+  var be      = fin.breakeven || {};
+  var sc      = fin.scenarios || {};
+  var sym     = currency === 'MAD' ? 'MAD' : (currency === 'USD' ? '$' : '\u20ac');
+  var isFr    = language === 'fr';
 
-  return `${isFr
-    ? 'Tu es un expert senior en stratégie F&B et en rédaction de business plans professionnels pour investisseurs, banquiers et porteurs de projets dans la région MENA. Tu as 20 ans d\'expérience en conseil opérationnel F&B au Maroc, aux Émirats, en France et au Royaume-Uni.'
-    : 'You are a senior F&B strategy expert and professional business plan writer for investors, banks and project owners in the MENA region. You have 20 years of F&B consulting experience across Morocco, UAE, France and the UK.'}
+  function fmtNum(n) {
+    if (!n) return 'N/A';
+    return Number(n).toLocaleString(isFr ? 'fr-FR' : 'en-US');
+  }
 
-${isFr
-  ? 'Génère un BUSINESS PLAN ESSENTIALS complet, professionnel et substantiel pour le concept ci-dessous. Ce document doit être digne d\'être présenté à un banquier ou un investisseur. Chaque section doit apporter une valeur analytique réelle. Les projections financières sont des ESTIMATIONS DIRECTIONNELLES basées sur des benchmarks sectoriels, clairement étiquetées, mais détaillées et crédibles.'
-  : 'Generate a complete, professional, and substantive BUSINESS PLAN ESSENTIALS for the concept below. This document must be worthy of presentation to a banker or investor. Every section must deliver real analytical value. Financial projections are DIRECTIONAL ESTIMATES based on industry benchmarks, clearly labeled, but detailed and credible.'}
+  function scLine(s) {
+    if (!s) return 'N/A';
+    return s.covers_day + ' couverts/j \u2192 ' + sym + fmtNum(s.monthly_result) + '/mois';
+  }
 
-═══════════════════════════════════════════════════════════
-DONNÉES VALIDATOR
-═══════════════════════════════════════════════════════════
-CONCEPT: ${snap.concept_name || 'N/A'} · TYPE: ${snap.type || 'N/A'} · CUISINE: ${snap.cuisine || 'N/A'}
-VILLE: ${snap.city || 'N/A'}${snap.neighbourhood ? ` / ${snap.neighbourhood}` : ''}
-TICKET: ${snap.ticket || 'N/A'} ${currency} · COUVERTS/JOUR: ${snap.covers || 'N/A'} · PLACES: ${snap.seats || 'N/A'}
-BUDGET: ${snap.budget || 'N/A'} ${currency} · STADE: ${snap.stage || 'N/A'} · HORAIRES: ${snap.opening_hours || 'N/A'}
-AUDIENCE: ${Array.isArray(snap.audience) ? snap.audience.join(', ') : snap.audience || 'N/A'}
-DESCRIPTION: ${snap.description || 'N/A'}
-DIFFÉRENCIATION: ${snap.differentiation || 'N/A'}
-VIDE DE MARCHÉ: ${snap.market_gap || 'N/A'}
-CONCURRENTS: ${snap.competitors || 'N/A'}
-COMPLÉMENTAIRE: ${snap.additional || 'N/A'}
+  var audience = Array.isArray(snap.audience) ? snap.audience.join(', ') : (snap.audience || 'N/A');
+  var risks    = (secs.s6_risks && secs.s6_risks.risks ? secs.s6_risks.risks : []).map(function(r) { return r.title; }).filter(Boolean).join(' | ') || 'N/A';
+  var recs     = (secs.s5_strategy && secs.s5_strategy.recommendations ? secs.s5_strategy.recommendations : []).map(function(r) { return r.title; }).filter(Boolean).join(' | ') || 'N/A';
+  var market   = secs.s2_market && secs.s2_market.narrative ? secs.s2_market.narrative.substring(0, 500) : 'N/A';
+  var compet   = secs.s3_competitive && secs.s3_competitive.narrative ? secs.s3_competitive.narrative.substring(0, 400) : 'N/A';
+  var alerts   = (fin.alerts || []).map(function(a) { return a.title; }).filter(Boolean).join(' | ') || 'N/A';
+  var today    = new Date().toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-SCORE: ${overall.score || 'N/A'}/100 — ${overall.verdict || 'N/A'}
-RÉSUMÉ VALIDATOR: ${overall.executive_summary || 'N/A'}
+  var dataBlock = [
+    'CONCEPT: ' + (snap.concept_name || 'N/A') + '  TYPE: ' + (snap.type || 'N/A') + '  CUISINE: ' + (snap.cuisine || 'N/A'),
+    'VILLE: ' + (snap.city || 'N/A') + (snap.neighbourhood ? ' / ' + snap.neighbourhood : ''),
+    'TICKET: ' + (snap.ticket || 'N/A') + ' ' + currency + '  COUVERTS/JOUR: ' + (snap.covers || 'N/A') + '  PLACES: ' + (snap.seats || 'N/A'),
+    'BUDGET: ' + (snap.budget || 'N/A') + ' ' + currency + '  STADE: ' + (snap.stage || 'N/A'),
+    'HORAIRES: ' + (snap.opening_hours || 'N/A'),
+    'AUDIENCE: ' + audience,
+    'DESCRIPTION: ' + (snap.description || 'N/A'),
+    'DIFFERENTIATION: ' + (snap.differentiation || 'N/A'),
+    'VIDE MARCHE: ' + (snap.market_gap || 'N/A'),
+    'CONCURRENTS: ' + (snap.competitors || 'N/A'),
+    'VALIDATOR SCORE: ' + (overall.score || 'N/A') + '/100  VERDICT: ' + (overall.verdict || 'N/A'),
+    'RESUME VALIDATOR: ' + (overall.executive_summary || 'N/A'),
+    'POINT MORT: ' + sym + fmtNum(be.monthly_revenue) + '/mois  ' + (be.daily_covers || 'N/A') + ' couverts/jour',
+    'CONSERVATEUR: ' + scLine(sc.conservative),
+    'BASE: ' + scLine(sc.base),
+    'OPTIMISTE: ' + scLine(sc.optimistic),
+    'ALERTES: ' + alerts,
+    'MARCHE: ' + market,
+    'CONCURRENCE: ' + compet,
+    'RECOMMANDATIONS: ' + recs,
+    'RISQUES: ' + risks,
+    'DEVISE: ' + currency + ' (' + sym + ')  LANGUE: ' + language,
+    'DATE: ' + today,
+  ].join('\n');
 
-FINANCIER VALIDATOR:
-- Point mort: ${sym}${fmt(be.monthly_revenue)}/mois · ${be.daily_covers || 'N/A'} couverts/jour
-- Conservateur: ${sc.conservative ? `${sc.conservative.covers_day}c/j → ${sym}${fmt(sc.conservative.monthly_result)}/mois` : 'N/A'}
-- Base: ${sc.base ? `${sc.base.covers_day}c/j → ${sym}${fmt(sc.base.monthly_result)}/mois` : 'N/A'}
-- Optimiste: ${sc.optimistic ? `${sc.optimistic.covers_day}c/j → ${sym}${fmt(sc.optimistic.monthly_result)}/mois` : 'N/A'}
-- Alertes: ${(fin.alerts || []).map(a => a.title).filter(Boolean).join(' | ') || 'N/A'}
+  var intro = isFr
+    ? 'Tu es un expert senior en strategie F&B et redaction de business plans pour investisseurs et banquiers MENA. Genere un BUSINESS PLAN ESSENTIALS complet, professionnel et concis. Vise 15-18 pages HTML. Chaque section doit etre chiffree, specifique et actionnable — pas de remplissage.'
+    : 'You are a senior F&B strategy expert writing business plans for MENA investors and banks. Generate a complete, professional, concise BUSINESS PLAN ESSENTIALS. Target 15-18 HTML pages. Every section must be specific, data-driven and actionable — no padding.';
 
-MARCHÉ: ${sections.s2_market?.narrative?.substring(0, 500) || 'N/A'}
-CONCURRENCE: ${sections.s3_competitive?.narrative?.substring(0, 400) || 'N/A'}
-RECOMMANDATIONS: ${(sections.s5_strategy?.recommendations || []).map(r => r.title).filter(Boolean).join(' | ')}
-RISQUES: ${(sections.s6_risks?.risks || []).map(r => `${r.title} [${r.probability}]`).filter(Boolean).join(' | ')}
+  var finNote = isFr
+    ? 'ESTIMATIONS DIRECTIONNELLES — benchmarks sectoriels F&B MENA. A valider avec Financial Builder Za3fran.'
+    : 'DIRECTIONAL ESTIMATES — MENA F&B industry benchmarks. To validate with Za3fran Financial Builder.';
 
-DEVISE: ${currency} (${sym}) · LANGUE: ${language}
-DATE: ${new Date().toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-═══════════════════════════════════════════════════════════
+  var structure = isFr ? [
+    '1. PAGE DE COUVERTURE — fond #0a0a0a, nom concept grand Cormorant, sous-titre cuivre (format/cuisine/ville), badge score Validator (cercle cuivre, score/100, verdict), "Prepare par Za3fran Digital", date.',
 
-${isFr ? 'STRUCTURE — 14 SECTIONS DANS CET ORDRE EXACT:' : 'STRUCTURE — 14 SECTIONS IN THIS EXACT ORDER:'}
+    '2. BRIEF INVESTISSEUR (2 pages, standalone) — concu pour etre envoye seul a un banquier. Inclure: (a) Fiche concept tableau [Concept|Format|Cuisine|Localisation|Places|Ticket|Horaires|Stade]; (b) Opportunite de marche en 3 phrases precises; (c) Proposition de valeur en 4-5 bullets; (d) Resume financier tableau [Investissement total|Point mort|CA A1/A2/A3|EBITDA A1/A2/A3|Delai retour]; (e) Besoin de financement (montant, repartition fonds propres/dette, usage); (f) Profil de risque (3 risques, niveau, mitigation 1 ligne); (g) Badge score Za3fran.',
 
-━━━ SECTION 1 — ${isFr ? 'PAGE DE COUVERTURE' : 'COVER PAGE'} ━━━
-${isFr ? 'Fond #0a0a0a. Nom du concept grand Cormorant. Sous-titre cuivré (format/cuisine/ville). Badge score Validator (cercle cuivré, score/100, verdict). "Préparé par Za3fran Digital" + date. Design élégant investor-ready.' : 'Background #0a0a0a. Large Cormorant concept name. Copper subtitle (format/cuisine/city). Validator score badge (copper circle, score/100, verdict). "Prepared by Za3fran Digital" + date. Elegant investor-ready design.'}
+    '3. TABLE DES MATIERES',
 
-━━━ SECTION 2 — ${isFr ? 'BRIEF INVESTISSEUR (2 pages standalone)' : 'INVESTOR BRIEF (2-page standalone)'} ━━━
-${isFr
-  ? `Section conçue pour être envoyée seule à un banquier ou investisseur. 2 pages max. Inclure:
-(a) FICHE CONCEPT — tableau: Concept | Format | Cuisine | Localisation | Places | Ticket moyen | Horaires | Stade du projet
-(b) OPPORTUNITÉ DE MARCHÉ — 3 phrases précises: vide identifié, taille opportunité, timing
-(c) PROPOSITION DE VALEUR — 4–5 bullet points: ce qui rend ce concept unique et défendable
-(d) RÉSUMÉ FINANCIER — tableau compact: Investissement total (fourchette) | Point mort mensuel | CA A1/A2/A3 | EBITDA A1/A2/A3 | Délai de retour estimé
-(e) BESOIN DE FINANCEMENT — montant, répartition fonds propres/dette, usage des fonds (4 lignes)
-(f) PROFIL DE RISQUE — 3 risques, niveau (Élevé/Moyen/Faible), mitigation en une ligne chacun
-(g) SCORE DE VALIDATION — badge Za3fran (score/100, verdict, date)
-Style: sobre, factuel, tableaux. Un investisseur comprend le projet en 90 secondes.`
-  : `Section designed to be sent standalone to a banker or investor. 2 pages max. Include:
-(a) CONCEPT SHEET — table: Concept | Format | Cuisine | Location | Seats | Avg ticket | Hours | Project stage
-(b) MARKET OPPORTUNITY — 3 precise sentences: gap identified, opportunity size, timing
-(c) VALUE PROPOSITION — 4–5 bullet points: what makes this concept unique and defensible
-(d) FINANCIAL SUMMARY — compact table: Total investment (range) | Monthly break-even | Revenue Y1/Y2/Y3 | EBITDA Y1/Y2/Y3 | Estimated payback
-(e) FUNDING REQUIREMENT — amount, equity/debt split, use of funds (4 lines)
-(f) RISK PROFILE — 3 risks, level (High/Medium/Low), one-line mitigation each
-(g) VALIDATION SCORE — Za3fran badge (score/100, verdict, date)
-Style: sober, factual, table-centric. An investor understands the project in 90 seconds.`}
+    '4. RESUME EXECUTIF (400 mots) — memo de direction: marche, concept, modele economique, financement, potentiel, risques, prochaines etapes.',
 
-━━━ SECTION 3 — ${isFr ? 'TABLE DES MATIÈRES' : 'TABLE OF CONTENTS'} ━━━
+    '5. CONCEPT & POSITIONNEMENT — vision et raison d\'etre; identite de marque (nom, territoire visuel, tonalite); proposition de valeur detaillee; format operationnel et experience client; coherence positionnement prix/qualite.',
 
-━━━ SECTION 4 — ${isFr ? 'RÉSUMÉ EXÉCUTIF (500–600 mots)' : 'EXECUTIVE SUMMARY (500–600 words)'} ━━━
-${isFr ? 'Mémo de direction complet: contexte marché, concept, modèle économique, besoins financement, potentiel financier, risques, prochaines étapes. Ton professionnel et factuel — évaluation honnête, pas publicité.' : 'Complete management memo: market context, concept, business model, funding needs, financial potential, risks, next steps. Professional factual tone — honest assessment, not advertising.'}
+    '6. ANALYSE DE MARCHE & AUDIENCE CIBLE — dynamiques marche local city-specific; le vide de marche et pourquoi non adresse; 2-3 personas detailles (age, profession, habitudes dejeuner, sensibilite prix); signaux de demande concrets (livraison, comparables MENA); facteurs macro.',
 
-━━━ SECTION 5 — ${isFr ? 'CONCEPT & POSITIONNEMENT' : 'CONCEPT & POSITIONING'} ━━━
-${isFr
-  ? `- Vision et raison d'être (pourquoi maintenant, pourquoi ici)
-- Identité de marque: nom, territoire visuel, tonalité, positionnement aspirationnel
-- Proposition de valeur détaillée: ce que le client reçoit que nulle part ailleurs
-- Format opérationnel: modèle de service, flux client, expérience de bout en bout
-- Occasions de consommation principale et secondaire
-- Cohérence positionnement prix/qualité/expérience`
-  : `- Vision and rationale (why now, why here)
-- Brand identity: name, visual territory, tone, aspirational positioning
-- Detailed value proposition: what the customer receives that exists nowhere else
-- Operational format: service model, customer flow, end-to-end experience
-- Primary and secondary consumption occasions
-- Price/quality/experience positioning coherence`}
+    '7. PAYSAGE CONCURRENTIEL — tableau complet 6-8 acteurs [Nom|Type|Ticket|Meme client?|Force|Faiblesse|Menace]; concurrence directe ET informelle; sur quels axes ce concept gagne; defensibilite avantage (score 1-5); risque entrants capitalises; strategie fidelisation.',
 
-━━━ SECTION 6 — ${isFr ? 'ANALYSE DE MARCHÉ & AUDIENCE CIBLE' : 'MARKET ANALYSIS & TARGET AUDIENCE'} ━━━
-${isFr
-  ? `- Taille et dynamiques du marché F&B local (city-specific), tendances 2024–2026
-- Le vide de marché: pourquoi il existe, pourquoi non adressé
-- 2–3 personas détaillés: âge, profession, revenus, habitudes déjeuner, sensibilité prix, canaux découverte
-- Signaux de demande concrets (données livraison, observatoires, comparables MENA)
-- Facteurs macro: pouvoir d'achat, inflation alimentaire, évolution habitudes`
-  : `- Local F&B market size and dynamics (city-specific), 2024–2026 trends
-- The market gap: why it exists, why it hasn't been addressed
-- 2–3 detailed personas: age, profession, income, lunch habits, price sensitivity, discovery channels
-- Concrete demand signals (delivery data, market observatories, MENA comparables)
-- Macro factors: purchasing power, food inflation, habit evolution`}
+    '8. STRATEGIE MENU [ESTIMATION DIRECTIONNELLE] — architecture menu: sections et nb items; tableau [Section|Nb items|Fourchette prix ' + sym + '|Food cost cible %]; logique pricing; direction sourcing local + 2-3 fournisseurs regionaux nommes; 3-5 items signature directionnels (nom + concept); contraintes operationnelles cles.',
 
-━━━ SECTION 7 — ${isFr ? 'PAYSAGE CONCURRENTIEL' : 'COMPETITIVE LANDSCAPE'} ━━━
-${isFr
-  ? `- Tableau concurrentiel complet (6–8 acteurs): Nom | Type | Ticket moyen | Même client? | Force principale | Faiblesse | Menace
-- Concurrence directe ET indirecte (y compris restauration informelle)
-- Analyse différenciation: sur quels axes ce concept gagne réellement
-- Défendabilité avantage concurrentiel (score 1–5, justification)
-- Risque entrants capitalisés: qui, délai probable, impact
-- Stratégie de fossé concurrentiel: fidélisation, vitesse déploiement multi-sites`
-  : `- Full competitive table (6–8 players): Name | Type | Avg ticket | Same customer? | Key strength | Weakness | Threat
-- Direct AND indirect competition (including informal dining)
-- Differentiation analysis: on which axes this concept genuinely wins
-- Competitive advantage defensibility (score 1–5, justification)
-- Capitalised entrant risk: who, likely timeline, impact
-- Competitive moat strategy: loyalty, multi-site rollout speed`}
+    '9. MODELE OPERATIONNEL & STAFFING [ESTIMATION DIRECTIONNELLE] — modele de service et flux client; tableau staffing [Poste|ETP|Salaire ' + sym + '/mois|Total charges]; ratios productivite (couverts/serveur, tickets cuisine/h); gestion des pics; KPIs operationnels J+30.',
 
-━━━ SECTION 8 — ⚡ ${isFr ? 'STRATÉGIE MENU (ESTIMATION DIRECTIONNELLE — benchmarks sectoriels)' : 'MENU STRATEGY (DIRECTIONAL ESTIMATE — industry benchmarks)'} ━━━
-${isFr
-  ? `Encadré: "⚡ ESTIMATION DIRECTIONNELLE — À valider et détailler avec Menu Engineer Za3fran."
-- Architecture menu: sections, nombre d'items par section
-- Tableau structure: Section | Nb items | Fourchette prix (${sym}) | Food cost cible (%)
-- Logique pricing: ticket cible, composition typique (plat+boisson), marge brute visée
-- Direction qualité et sourcing: local vs import, saisonnalité, 2–3 pistes approvisionnement régional nommées
-- 3–5 items signature directionnels (nom + concept, pas de recette)
-- Contraintes opérationnelles clés: préparation amont, temps service, complexité cuisine`
-  : `Box: "⚡ DIRECTIONAL ESTIMATE — To be validated with Za3fran Menu Engineer."
-- Menu architecture: sections, items per section
-- Structure table: Section | Items | Price range (${sym}) | Target food cost (%)
-- Pricing logic: target ticket, typical composition (dish+drink), target gross margin
-- Quality and sourcing direction: local vs import, seasonality, 2–3 named regional sourcing leads
-- 3–5 directional signature items (name + concept, no recipe)
-- Key operational constraints: prep-ahead, service time, kitchen complexity`}
+    '10. PROJECTIONS FINANCIERES [ESTIMATIONS DIRECTIONNELLES — ' + finNote + '] — Cette section est la plus importante. Inclure:\n' +
+    '10A BUDGET DEMARRAGE: tableau ligne par ligne [Poste|Bas ' + sym + '|Haut ' + sym + '|Notes] — travaux/amenagement, equipements cuisine pro, mobilier/deco, IT/caisse, licences/autorisations, honoraires fiduciaire, fonds de roulement, marketing pre-ouverture, reserve tresorerie (min 3 mois charges fixes), contingence 8%, TOTAL; comparer au budget declare.\n' +
+    '10B CA ANNEES 1-3: tableau mensuel A1 (12 mois) [Mois|Couverts/j|Jours|CA ' + sym + '|Note] avec montee en charge realiste; recap A1/A2(+25%)/A3(+18%).\n' +
+    '10C P&L 3 ANS: tableau [Ligne|A1 ' + sym + '|A1%|A2 ' + sym + '|A2%|A3 ' + sym + '|A3%] — CA, cout matiere (30-34%), marge brute, masse salariale (28-32%), loyer (8-12%), energie (3-5%), emballages (2-4%), marketing (3-5%), amortissements, autres, EBITDA, resultat net.\n' +
+    '10D POINT MORT: reprendre donnees Validator + taux occupation + delai estimé + tableau sensibilite 3x3 [tickets -10%/base/+15% × couverts -20%/base/+30%].\n' +
+    '10E ROI: investissement retenu, flux cumules A1/A2/A3, point de retour (mois), comparaison alternatives investissement locales.\n' +
+    '10F FINANCEMENT: montant total, repartition fonds propres/dette recommandee, cout dette (taux marche local PME), impact cashflow, 2-3 institutions de financement locales a contacter.',
 
-━━━ SECTION 9 — ⚡ ${isFr ? 'MODÈLE OPÉRATIONNEL & STAFFING (DIRECTIONNEL)' : 'OPERATIONAL MODEL & STAFFING (DIRECTIONAL)'} ━━━
-${isFr
-  ? `Encadré: "⚡ ESTIMATION DIRECTIONNELLE — À valider avec Plan de Staffing Za3fran."
-- Modèle de service: flux client détaillé, temps de rotation cible
-- Tableau staffing: Poste | Nb ETP | Salaire mensuel benchmark (${sym}) | Masse salariale totale
-- Ratios de productivité: couverts/serveur/service, tickets cuisine/heure
-- Organisation cuisine: brigade recommandée (postes, rôles)
-- Gestion des pics: stratégie déjeuner vs dîner, saisonnalité hebdomadaire
-- KPIs opérationnels à piloter dès J+30`
-  : `Box: "⚡ DIRECTIONAL ESTIMATE — To be validated with Za3fran Staffing Plan."
-- Service model: detailed customer flow, target rotation time
-- Staffing table: Position | FTE | Benchmark monthly salary (${sym}) | Total payroll
-- Productivity ratios: covers/server/service, kitchen tickets/hour
-- Kitchen organisation: recommended brigade (positions, roles)
-- Peak management: lunch vs dinner strategy, weekly seasonality
-- Operational KPIs to monitor from D+30`}
+    '11. MARKETING & CALENDRIER PRE-OUVERTURE [ESTIMATION DIRECTIONNELLE] — positionnement marque; mix canaux avec budget indicatif (Instagram, TikTok, livraison, micro-influenceurs 8K-50K, presse); plan contenu J-90/J-60/J-30/J-0; evenement lancement; strategie retention; KPIs; tableau 6 mois [Periode|Actions cles|Budget ' + sym + '].',
 
-━━━ SECTION 10 — ⚡ ${isFr ? `PROJECTIONS FINANCIÈRES — TOUTES VALEURS EN ${currency} (${sym})` : `FINANCIAL PROJECTIONS — ALL VALUES IN ${currency} (${sym})`} ━━━
-${isFr
-  ? `Encadré: "⚡ ESTIMATIONS DIRECTIONNELLES — Benchmarks sectoriels F&B MENA. À remplacer par projections modélisées avec Financial Builder Za3fran."
-CETTE SECTION EST LA PLUS IMPORTANTE DU DOCUMENT. 6 sous-sections obligatoires:
+    '12. ANALYSE DES RISQUES — tableau [Risque|Probabilite|Impact|Score|Mitigation]; 6 risques (financier, operationnel, marche, concurrentiel, reglementaire, humain); paragraphe d\'analyse specifique a CE concept dans CETTE ville; plan de contingence pour risque #1.',
 
-10A — BUDGET D'INVESTISSEMENT DE DÉMARRAGE
-Tableau ligne par ligne: Poste | Estimation basse (${sym}) | Estimation haute (${sym}) | Notes
-Postes obligatoires: Travaux & aménagement · Équipement cuisine professionnel · Mobilier & décoration · Informatique & caisse · Licences & autorisations · Honoraires fiduciaire & conseil · Fonds de roulement initial · Marketing pré-ouverture · Réserve de trésorerie (min. 3 mois charges fixes) · Contingence (8%) · TOTAL (fourchette basse / haute)
-Comparer au budget déclaré + analyse de l'écart
+    '13. RECOMMANDATIONS & PROCHAINES ETAPES — 5 actions 30 jours (issues du Validator); ce que ce plan ne peut pas encore dire; encadre "Approfondissez avec Za3fran" (fond navy): Menu Engineer (menu coute avec food cost reel), Financial Builder (modele financier complet base sur vos donnees reelles), Business Plan Pro (business plan niveau financement bancaire, donnees modelisees).',
 
-10B — PRÉVISIONS CA ANNÉES 1–3
-Tableau mensuel A1 (12 mois): Mois | Couverts/jour | Jours exploitation | CA (${sym}) | Commentaire
-(Montée en charge: M1–2 = conservateur, M3–6 = montée vers base, M7–12 = base atteint)
-Tableau récap A1/A2/A3: Couverts/jour moyen | Jours exploitation | CA annuel (${sym}) | Croissance
+    '14. ANNEXES — tableau recap scores Validator; note methodologique; glossaire.',
+  ].join('\n\n') : [
+    '1. COVER PAGE — dark #0a0a0a background, large Cormorant concept name, copper subtitle (format/cuisine/city), Validator score badge (copper circle, score/100, verdict), "Prepared by Za3fran Digital", date.',
 
-10C — COMPTE DE RÉSULTAT PRÉVISIONNEL 3 ANS
-Tableau P&L: Ligne | A1 (${sym}) | A1 (%) | A2 (${sym}) | A2 (%) | A3 (${sym}) | A3 (%)
-Lignes: CA · Coût matière (benchmark 30–34%) · Marge brute · Masse salariale chargée (28–32%) · Loyer & charges (8–12%) · Énergie & fluides (3–5%) · Emballages & consommables (2–4%) · Marketing (3–5%) · Amortissements · Autres charges · EBITDA · Résultat net
+    '2. INVESTOR BRIEF (2 pages, standalone) — designed to be sent alone to a banker. Include: (a) Concept sheet table [Concept|Format|Cuisine|Location|Seats|Ticket|Hours|Stage]; (b) Market opportunity in 3 precise sentences; (c) Value proposition 4-5 bullets; (d) Financial summary table [Total investment|Break-even|Revenue Y1/Y2/Y3|EBITDA Y1/Y2/Y3|Payback]; (e) Funding requirement (amount, equity/debt split, use of funds); (f) Risk profile (3 risks, level, 1-line mitigation); (g) Za3fran score badge.',
 
-10D — ANALYSE DU POINT MORT
-- Reprendre données Validator: ${sym}${fmt(be.monthly_revenue)}/mois · ${be.daily_covers || 'N/A'} couverts/jour
-- Taux d'occupation au point mort vs capacité totale
-- Délai estimé pour atteindre le point mort (mois depuis ouverture)
-- TABLEAU DE SENSIBILITÉ (matrice 3×3): tickets (-10% / base / +15%) × couverts/jour (-20% / base / +30%) → résultat mensuel (${sym})
+    '3. TABLE OF CONTENTS',
 
-10E — RETOUR SUR INVESTISSEMENT
-- Investissement retenu (milieu de fourchette 10A)
-- Flux trésorerie cumulés A1/A2/A3
-- Point de ROI (mois)
-- Comparaison avec alternatives d'investissement locales (immobilier locatif, obligations)
+    '4. EXECUTIVE SUMMARY (400 words) — management memo: market, concept, business model, funding, potential, risks, next steps.',
 
-10F — STRUCTURE DE FINANCEMENT RECOMMANDÉE
-- Montant total à financer
-- Recommandation: % fonds propres / % dette bancaire
-- Coût de la dette estimé (taux marché PME local)
-- Impact sur cashflow mensuel (remboursement estimé)
-- Institutions de financement à contacter en priorité (nommer 2–3 institutions locales pertinentes)`
-  : `Box: "⚡ DIRECTIONAL ESTIMATES — MENA F&B industry benchmarks. To be replaced by modelled projections with Za3fran Financial Builder."
-THIS IS THE MOST IMPORTANT SECTION. 6 mandatory sub-sections:
+    '5. CONCEPT & POSITIONING — vision and rationale; brand identity (name, visual territory, tone); detailed value proposition; operational format and customer experience; price/quality/experience coherence.',
 
-10A — STARTUP INVESTMENT BUDGET
-Line-by-line table: Item | Low estimate (${sym}) | High estimate (${sym}) | Notes
-Required items: Works & fit-out · Professional kitchen equipment · Furniture & décor · IT & POS · Licenses & permits · Legal & advisory fees · Initial working capital · Pre-opening marketing · Cash reserve (min. 3 months fixed costs) · Contingency (8%) · TOTAL (low/high range)
-Compare to stated budget + gap analysis
+    '6. MARKET ANALYSIS & TARGET AUDIENCE — local market dynamics (city-specific); the market gap and why it exists; 2-3 detailed personas (age, profession, lunch habits, price sensitivity); concrete demand signals (delivery, MENA comparables); macro factors.',
 
-10B — REVENUE PROJECTIONS YEARS 1–3
-Monthly Y1 table (12 months): Month | Covers/day | Trading days | Revenue (${sym}) | Comment
-(Ramp-up: M1–2 = conservative, M3–6 = ramp to base, M7–12 = base achieved)
-Summary table Y1/Y2/Y3: Avg covers/day | Trading days | Annual revenue (${sym}) | Growth
+    '7. COMPETITIVE LANDSCAPE — complete table 6-8 players [Name|Type|Ticket|Same customer?|Strength|Weakness|Threat]; direct AND informal competition; on which axes this concept wins; defensibility score (1-5); capitalised entrant risk; loyalty strategy.',
 
-10C — PROJECTED P&L 3 YEARS
-P&L table: Line | Y1 (${sym}) | Y1 (%) | Y2 (${sym}) | Y2 (%) | Y3 (${sym}) | Y3 (%)
-Lines: Revenue · Food cost (benchmark 30–34%) · Gross margin · Total payroll incl. charges (28–32%) · Rent & occupancy (8–12%) · Energy & utilities (3–5%) · Packaging (2–4%) · Marketing (3–5%) · Depreciation · Other · EBITDA · Net result
+    '8. MENU STRATEGY [DIRECTIONAL ESTIMATE] — menu architecture: sections and item count; table [Section|Items|Price range ' + sym + '|Target food cost %]; pricing logic; local sourcing direction + 2-3 named regional suppliers; 3-5 directional signature items (name + concept); key operational constraints.',
 
-10D — BREAK-EVEN ANALYSIS
-- Validator data: ${sym}${fmt(be.monthly_revenue)}/month · ${be.daily_covers || 'N/A'} covers/day
-- Occupancy rate at break-even vs total capacity
-- Estimated months to break-even from opening
-- SENSITIVITY TABLE (3×3 matrix): tickets (-10% / base / +15%) × covers/day (-20% / base / +30%) → monthly result (${sym})
+    '9. OPERATIONAL MODEL & STAFFING [DIRECTIONAL ESTIMATE] — service model and customer flow; staffing table [Position|FTE|Salary ' + sym + '/month|Total incl. charges]; productivity ratios (covers/server, kitchen tickets/h); peak management; operational KPIs D+30.',
 
-10E — RETURN ON INVESTMENT
-- Investment retained (midpoint of 10A range)
-- Cumulative cash flows Y1/Y2/Y3
-- ROI breakeven point (months)
-- Comparison with local investment alternatives
+    '10. FINANCIAL PROJECTIONS [DIRECTIONAL ESTIMATES — ' + finNote + '] — This is the most important section. Include:\n' +
+    '10A STARTUP BUDGET: line-by-line table [Item|Low ' + sym + '|High ' + sym + '|Notes] — fit-out/works, professional kitchen equipment, furniture/decor, IT/POS, licenses/permits, legal fees, working capital, pre-opening marketing, cash reserve (min 3 months fixed costs), contingency 8%, TOTAL; compare to stated budget.\n' +
+    '10B REVENUE Y1-Y3: monthly Y1 table (12 months) [Month|Covers/day|Trading days|Revenue ' + sym + '|Note] with realistic ramp-up; summary Y1/Y2(+25%)/Y3(+18%).\n' +
+    '10C 3-YEAR P&L: table [Line|Y1 ' + sym + '|Y1%|Y2 ' + sym + '|Y2%|Y3 ' + sym + '|Y3%] — Revenue, food cost (30-34%), gross margin, payroll incl. charges (28-32%), rent (8-12%), energy (3-5%), packaging (2-4%), marketing (3-5%), depreciation, other, EBITDA, net result.\n' +
+    '10D BREAK-EVEN: carry from Validator + occupancy rate + estimated months + 3x3 sensitivity table [tickets -10%/base/+15% x covers -20%/base/+30%].\n' +
+    '10E ROI: retained investment, cumulative flows Y1/Y2/Y3, payback point (months), comparison with local investment alternatives.\n' +
+    '10F FUNDING: total amount, recommended equity/debt split, cost of debt (local SME rate), cashflow impact, 2-3 local financing institutions to contact.',
 
-10F — RECOMMENDED FUNDING STRUCTURE
-- Total amount to finance
-- Recommendation: % equity / % bank debt
-- Estimated cost of debt (local SME market rate)
-- Impact on monthly cashflow
-- Priority financing institutions (name 2–3 relevant local institutions)`}
+    '11. MARKETING & PRE-OPENING TIMELINE [DIRECTIONAL ESTIMATE] — brand positioning; channel mix with indicative budget (Instagram, TikTok, delivery, micro-influencers 8K-50K, press); content plan D-90/D-60/D-30/D-0; launch event; retention strategy; KPIs; 6-month table [Period|Key actions|Budget ' + sym + '].',
 
-━━━ SECTION 11 — ⚡ ${isFr ? 'STRATÉGIE MARKETING & CALENDRIER PRÉ-OUVERTURE (DIRECTIONNEL)' : 'MARKETING STRATEGY & PRE-OPENING TIMELINE (DIRECTIONAL)'} ━━━
-${isFr
-  ? `Encadré: "⚡ ESTIMATION DIRECTIONNELLE — À personnaliser avec Marketing Builder Za3fran."
-- Positionnement de marque et territoire de communication (ton, visuels, messages clés)
-- Mix canaux avec budget indicatif: Instagram · TikTok · Plateformes livraison · Micro-influenceurs (4–6 profils, 8K–50K abonnés) · Relations presse locale
-- Plan contenu pré-ouverture: J-90 / J-60 / J-30 / J-0 (actions concrètes à chaque étape)
-- Événement de lancement: format, cible invités, budget indicatif
-- Stratégie rétention post-ouverture: comment transformer l'essai en habitude
-- KPIs marketing: taux conversion réseau→visite, CAC, taux réachat
-- Tableau calendrier 6 mois: Période | Actions clés | Responsable | Budget indicatif (${sym})`
-  : `Box: "⚡ DIRECTIONAL ESTIMATE — To be personalised with Za3fran Marketing Builder."
-- Brand positioning and communication territory (tone, visuals, key messages)
-- Channel mix with indicative budget: Instagram · TikTok · Delivery platforms · Micro-influencers (4–6 profiles, 8K–50K followers) · Local press
-- Pre-opening content plan: D-90 / D-60 / D-30 / D-0 (concrete actions at each stage)
-- Launch event: format, guest target, indicative budget
-- Post-opening retention strategy: how to convert first visit into habit
-- Marketing KPIs: social-to-visit conversion, CAC, repurchase rate
-- 6-month timeline table: Period | Key actions | Owner | Indicative budget (${sym})`}
+    '12. RISK ANALYSIS — table [Risk|Probability|Impact|Score|Mitigation]; 6 risks (financial, operational, market, competitive, regulatory, human); analysis paragraph specific to THIS concept in THIS city; contingency plan for risk #1.',
 
-━━━ SECTION 12 — ${isFr ? 'ANALYSE DES RISQUES' : 'RISK ANALYSIS'} ━━━
-${isFr
-  ? `- Matrice des risques: Risque | Probabilité | Impact | Score | Mitigation principale
-- Minimum 6 risques: financier, opérationnel, marché, concurrentiel, réglementaire, humain
-- Pour chaque risque: paragraphe d'analyse spécifique à CE concept dans CETTE ville + plan de mitigation concret avec actions nommées
-- Signaux d'alerte à surveiller (triggers de matérialisation du risque)
-- Plan de contingence détaillé pour le risque #1`
-  : `- Risk matrix: Risk | Probability | Impact | Score | Main mitigation
-- Minimum 6 risks: financial, operational, market, competitive, regulatory, human
-- For each risk: analysis paragraph specific to THIS concept in THIS city + concrete mitigation with named actions
-- Warning signals to monitor
-- Detailed contingency plan for risk #1`}
+    '13. RECOMMENDATIONS & NEXT STEPS — 5 actions in 30 days (from Validator); what this plan cannot yet tell you; "Go deeper with Za3fran" box (navy background): Menu Engineer (costed menu with real food cost), Financial Builder (complete financial model from your real data), Business Plan Pro (bank-financing-grade plan with modelled data).',
 
-━━━ SECTION 13 — ${isFr ? 'RECOMMANDATIONS & PROCHAINES ÉTAPES' : 'RECOMMENDATIONS & NEXT STEPS'} ━━━
-${isFr
-  ? `- 5 actions prioritaires dans les 30 prochains jours (issues du Validator)
-- Ce que ce plan vous dit de faire — et ce qu'il ne peut pas encore vous dire
-- Encadré "Approfondissez avec Za3fran" (fond navy, texte blanc):
-  • Menu Engineer — Architecture menu coûtée avec prix de vente réels, food cost et mix produit optimisé
-  • Financial Builder — Modèle financier complet basé sur vos données réelles (P&L détaillé, trésorerie, sensibilités)
-  • Business Plan Pro — Business plan niveau financement bancaire, données modélisées, assemblement de tous les outils Za3fran`
-  : `- 5 priority actions in the next 30 days (from Validator)
-- What this plan tells you to do — and what it cannot yet tell you
-- "Go deeper with Za3fran" box (navy background, white text):
-  • Menu Engineer — Costed menu architecture with real selling prices, food cost and optimised product mix
-  • Financial Builder — Complete financial model based on your real data (detailed P&L, cash flow, sensitivities)
-  • Business Plan Pro — Bank-financing-grade business plan with modelled data, assembling all Za3fran tool outputs`}
+    '14. APPENDICES — Validator score summary table; methodology note; glossary.',
+  ].join('\n\n');
 
-━━━ SECTION 14 — ${isFr ? 'ANNEXES' : 'APPENDICES'} ━━━
-${isFr
-  ? `- Récapitulatif données Validator (tableau: section, sous-score, pondération, contribution, total)
-- Note méthodologique: comment ce document a été généré, définition des estimations directionnelles, limites d'usage
-- Glossaire des termes financiers et opérationnels`
-  : `- Validator data summary (table: section, sub-score, weight, contribution, total)
-- Methodology note: how this document was generated, definition of directional estimates, usage limitations
-- Glossary of financial and operational terms`}
+  var design = isFr
+    ? 'DESIGN HTML: Document HTML complet auto-contenu. Polices Google Fonts: Cormorant Garamond (titres) + DM Sans (corps). Couleurs: background #FAFAF7, texte #1a1a1a, accent #C9862A, muted #888880, navy #0F1F3D. Page couverture et Brief Investisseur: fond #0a0a0a accents cuivre. Encadres ESTIMATION DIRECTIONNELLE: fond #fff8f0 bordure gauche 3px #C9862A. Encadre Za3fran prochaines etapes: fond #0F1F3D texte blanc. Tableaux: bordures #e8e8e4 rangees alternees en-tetes navy. Max-width 860px centre. Footer chaque section: "Za3fran Digital · Business Plan Essentials · ' + today + '". @media print page-break sur sections majeures. RETOURNE UNIQUEMENT le HTML complet. Commence par <!DOCTYPE html>.'
+    : 'HTML DESIGN: Complete self-contained HTML. Google Fonts: Cormorant Garamond (headings) + DM Sans (body). Colors: background #FAFAF7, text #1a1a1a, accent #C9862A, muted #888880, navy #0F1F3D. Cover and Investor Brief: #0a0a0a background copper accents. DIRECTIONAL ESTIMATE boxes: #fff8f0 background 3px #C9862A left border. Za3fran next steps box: #0F1F3D background white text. Tables: #e8e8e4 borders alternating rows navy headers. Max-width 860px centered. Footer each section: "Za3fran Digital · Business Plan Essentials · ' + today + '". @media print page-break on major sections. RETURN ONLY the complete HTML. Start with <!DOCTYPE html>.';
 
-═══════════════════════════════════════════════════════════
-DESIGN HTML — INSTRUCTIONS
-═══════════════════════════════════════════════════════════
-Document HTML COMPLET et AUTO-CONTENU. Polices: Cormorant Garamond (titres) + DM Sans (corps) via Google Fonts.
-Couleurs: Background #FAFAF7 · Texte #1a1a1a · Accent #C9862A · Muted #888880 · Navy #0F1F3D
-Page couverture & Brief Investisseur: fond #0a0a0a, accents cuivrés
-Encadrés ⚡: fond #fff8f0, bordure gauche 3px #C9862A
-Encadré "Prochaines étapes": fond #0F1F3D, texte blanc, accent cuivré
-Tableaux: bordures 1px #e8e8e4, alternance rangées (#F5F4F0/blanc), en-têtes navy (#0F1F3D) texte blanc
-Section headers: numéro grand Cormorant cuivré (opacity 0.25) + titre navy
-Max-width 860px centré · @media print page-break-before sections majeures
-Footer chaque section: "Za3fran Digital · Business Plan Essentials · [date]"
-
-Retourne UNIQUEMENT le code HTML complet. Commence par <!DOCTYPE html>.`;
+  return intro + '\n\n' +
+    '=== DONNEES VALIDATOR / VALIDATOR DATA ===\n' + dataBlock + '\n\n' +
+    '=== STRUCTURE (14 sections) ===\n' + structure + '\n\n' +
+    design;
 }
