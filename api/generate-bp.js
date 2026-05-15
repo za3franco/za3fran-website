@@ -116,7 +116,7 @@ export default async function handler(req, res) {
     // ── PASS 1: Sections 1-7 with full HTML/CSS wrapper ─────
     console.log('[generate-bp] Pass 1 starting...');
     var prompt1 = buildPromptPart1(ctx, currency, language);
-    part1Html = await callClaude(prompt1, 11000, 145000);
+    part1Html = await callClaude(prompt1, 11000, 145000, getModel('utility'));
     part1Html = part1Html.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
 
     if (!part1Html.startsWith('<!DOCTYPE') && !part1Html.startsWith('<html')) {
