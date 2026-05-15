@@ -66,10 +66,11 @@ export default async function handler(req, res) {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
       },
       body: JSON.stringify({
-        model,
-        max_tokens: 32000,
-        messages: [{ role: 'user', content: buildBPPrompt(validatorReport.report_json, submission, currency, language) }],
-      }),
+  model,
+  max_tokens: 24000,
+  messages: [{ role: 'user', content: buildBPPrompt(...) }],
+}),
+signal: AbortSignal.timeout(240000),
     });
 
     const anthropicData = await anthropicResponse.json();
