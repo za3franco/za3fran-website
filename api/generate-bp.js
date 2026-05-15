@@ -70,7 +70,7 @@ export default async function handler(req, res) {
   let bpHtml;
   try {
     const controller = new AbortController();
-    const timer = setTimeout(function() { controller.abort(); }, 230000);
+    const timer = setTimeout(function() { controller.abort(); }, 270000);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
