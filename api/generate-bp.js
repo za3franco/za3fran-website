@@ -83,7 +83,7 @@ export default async function handler(req, res) {
     console.log('[bp] P3 ok: '+p3.length+'c');
 
     console.log('[bp] P4 s11-14 (7000t)...');
-    p4 = frag(await ai(buildP4(ctx), 7000, 80000));
+    p4 = frag(await ai(buildP4(ctx), 10000, 100000));
     console.log('[bp] P4 ok: '+p4.length+'c');
 
   } catch(err) {
