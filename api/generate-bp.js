@@ -75,7 +75,8 @@ export default async function handler(req, res) {
   console.log('[generate-bp] Starting two-pass generation for: ' + bpRunId);
 
   // ── Helper: call Claude with timeout ──────────────────────
-  async function callClaude(prompt, maxTokens, timeoutMs) {
+  async function callClaude(prompt, maxTokens, timeoutMs, modelOverride) {
+    var useModel = modelOverride || model;
     var controller = new AbortController();
     var timer = setTimeout(function() { controller.abort(); }, timeoutMs);
     try {
@@ -88,7 +89,7 @@ export default async function handler(req, res) {
           'x-api-key': process.env.ANTHROPIC_API_KEY,
         },
         body: JSON.stringify({
-          model: model,
+          model: useModel,
           max_tokens: maxTokens,
           messages: [{ role: 'user', content: prompt }],
         }),
@@ -126,7 +127,7 @@ export default async function handler(req, res) {
     // ── PASS 2: Sections 8-14 as HTML fragment ───────────────
     console.log('[generate-bp] Pass 2 starting...');
     var prompt2 = buildPromptPart2(ctx, currency, language);
-    part2Fragment = await callClaude(prompt2, 11000, 145000);
+    part2Fragment = await callClaude(prompt2, 16000, 90000, getModel('utility'));
     part2Fragment = part2Fragment.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
     // Strip any accidental HTML wrapper from part 2
     part2Fragment = part2Fragment.replace(/<!DOCTYPE[^>]*>/gi, '').replace(/<\/?html[^>]*>/gi, '').replace(/<head[\s\S]*?<\/head>/gi, '').replace(/<\/?body[^>]*>/gi, '').trim();
