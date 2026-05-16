@@ -48,7 +48,7 @@ export default async function handler(req, res) {
   var fullText = '';
   try {
     var ctrl = new AbortController();
-    var timer = setTimeout(function() { ctrl.abort(); }, 260000);
+    var timer = setTimeout(function() { ctrl.abort(); }, 280000);
 
     var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
