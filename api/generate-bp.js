@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: HAIKU,
-        max_tokens: 28000,
+        max_tokens: 32000,
         stream: true,
         messages: [{ role: 'user', content: prompt }],
       }),
