@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     var r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST', signal: ctrl.signal,
       headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': process.env.ANTHROPIC_API_KEY },
-      body: JSON.stringify({ model: HAIKU, max_tokens: 26000, stream: true, messages: [{ role: 'user', content: buildPrompt(ctx) }] }),
+      body: JSON.stringify({ model: HAIKU, max_tokens: 32000, stream: true, messages: [{ role: 'user', content: buildPrompt(ctx) }] }),
     });
 
     if (!r.ok) { clearTimeout(timer); var e = await r.json(); throw new Error('API ' + r.status + ': ' + JSON.stringify((e.error||{}).message||'')); }
@@ -194,7 +194,12 @@ function buildPrompt(c) {
   // --- SECTIONS (calibrated structure per page budget) ---
   var sections = fr ? [
 
-    '1. PAGE DE COUVERTURE [1 page pleine, classe CSS "cover-section"]: fond #0a0a0a pleine largeur. Nom du concept TRES GRAND en Cormorant Garamond blanc (5-6rem). Sous-titre couleur cuivre #C9862A (format / cuisine / ville). Badge score: cercle cuivre 130px de bord, '+c.ov.score+'/100 en grand, "'+c.ov.verdict+'" en sous-texte uppercase. En bas: "Prepare par Za3fran Digital" + date '+c.today+', en gris clair.',
+    '1. PAGE DE COUVERTURE [section 1, classe CSS exacte "cover-section"]: <section class="cover-section"> pleine page, fond #0a0a0a, flex centre. CINQ elements DANS L\'ORDRE EXACT:\n'
+    +'(1) <h1>'+(c.snap.concept_name||'')+'</h1> en Cormorant Garamond blanc tres grand (5-6rem, letter-spacing -2px).\n'
+    +'(2) <p class="subtitle"> en MAJUSCULES TOTALES avec separateurs " \u00b7 " (ex: "FAST-CASUAL \u00b7 MAROCAIN MODERNE \u00b7 CASABLANCA"). Couleur cuivre #C9862A, 1.3rem, letter-spacing 1px, margin-bottom 3rem.\n'
+    +'(3) <div class="badge-score"> cercle cuivre 130x130px (border 3px solid #C9862A, border-radius 50%, flex column center, padding 0.5rem). CONTIENT TROIS sous-elements DANS CET ORDRE: <div class="score-number">'+c.ov.score+'</div> (Cormorant 2.8rem cuivre); <div class="score-status">'+(c.ov.verdict||'').toUpperCase()+'</div> en MAJUSCULES (DM Sans 0.85rem cuivre, letter-spacing 1.5px); <div class="score-label">/ 100</div> (DM Sans 0.75rem cuivre, margin-top 0.2rem).\n'
+    +'(4) <div class="cover-footer"> (classe "cover-footer" UNIQUEMENT \u2014 PAS "cover-section" dans le footer; margin-top 3rem, color #999, text-align center, font-size 0.95rem): contenir <p>Pr\u00e9par\u00e9 par Za3fran Digital</p> et <p>'+c.today+'</p>.\n'
+    +'IMPERATIF: "Pr\u00e9par\u00e9 par Za3fran Digital" avec accents corrects, EN FRANCAIS \u2014 jamais "Prepared by".',
 
     '2. BRIEF INVESTISSEUR [2 pages — section autonome impression separee]: AVANT le h2, inserer <div class="section-number">Section 2</div>. Titre h2 "Brief Investisseur". STRUCTURE OBLIGATOIRE (cette section doit remplir 2 pages complets):\n'
     +'(a) h3 "Fiche Concept" + tableau 8 lignes [Parametre|Valeur]: Concept, Format, Cuisine, Ville (+quartier si dispo), Nombre de places, Ticket moyen, Horaires, Stade de developpement.\n'
@@ -268,7 +273,11 @@ function buildPrompt(c) {
 
   ].join('\n\n') : [
 
-    '1. COVER PAGE [1 full page, CSS class "cover-section"]: full-width #0a0a0a background. Concept name VERY LARGE in white Cormorant Garamond (5-6rem). Copper #C9862A subtitle (format / cuisine / city). Score badge: copper circle 130px border, '+c.ov.score+'/100 large, "'+c.ov.verdict+'" uppercase below. Bottom: "Prepared by Za3fran Digital" + date '+c.today+' in light gray.',
+    '1. COVER PAGE [section 1, exact CSS class "cover-section"]: <section class="cover-section"> full-page, #0a0a0a background, centered flex. FIVE elements IN EXACT ORDER:\n'
+    +'(1) <h1>'+(c.snap.concept_name||'')+'</h1> very large (white Cormorant Garamond 5-6rem, letter-spacing -2px).\n'
+    +'(2) <p class="subtitle"> in TOTAL UPPERCASE with " \u00b7 " separators (e.g. "FAST-CASUAL \u00b7 MODERN MOROCCAN \u00b7 CASABLANCA"). Copper #C9862A, 1.3rem, letter-spacing 1px, margin-bottom 3rem.\n'
+    +'(3) <div class="badge-score"> copper circle 130x130px (border 3px solid #C9862A, border-radius 50%, flex column center, padding 0.5rem). CONTAINS THREE sub-elements IN THIS ORDER: <div class="score-number">'+c.ov.score+'</div> (Cormorant 2.8rem copper); <div class="score-status">'+(c.ov.verdict||'').toUpperCase()+'</div> UPPERCASE (DM Sans 0.85rem copper, letter-spacing 1.5px); <div class="score-label">/ 100</div> (DM Sans 0.75rem copper, margin-top 0.2rem).\n'
+    +'(4) <div class="cover-footer"> (class "cover-footer" ONLY \u2014 NOT "cover-section" inside footer; margin-top 3rem, color #999, text-align center, font-size 0.95rem): contains <p>Prepared by Za3fran Digital</p> and <p>'+c.today+'</p>.',
 
     '2. INVESTOR BRIEF [2 pages — standalone section for separate printing]: BEFORE h2, insert <div class="section-number">Section 2</div>. Title h2 "Investor Brief". MANDATORY STRUCTURE (must fill 2 complete pages):\n'
     +'(a) h3 "Concept Sheet" + 8-row table [Parameter|Value]: Concept, Format, Cuisine, City (+neighbourhood if avail), Number of seats, Average ticket, Hours, Development stage.\n'
