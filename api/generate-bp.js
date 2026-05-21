@@ -166,7 +166,7 @@ function buildPrompt(c) {
       + '- Section 5 (Concept & Positionnement): 1 page (~350 mots structures).\n'
       + '- Section 6 (Marche & Audience): 1 page (~200 mots + tableau personas).\n'
       + '- Section 7 (Paysage Concurrentiel): 1.5 pages (tableau 6 acteurs + analyse).\n'
-      + '- Section 8 (Strategie Menu): 1.5 pages.\n'
+      + '- Section 8 (Strategie Menu): 1 page.\n'
       + '- Section 9 (Operationnel & Staffing): 1.5 pages.\n'
       + '- Section 10 (Projections Financieres): 3 pages.\n'
       + '- Section 11 (Marketing & Pre-Ouverture): 1.5 pages.\n'
@@ -182,7 +182,7 @@ function buildPrompt(c) {
       + '- Section 5 (Concept & Positioning): 1 page (~350 structured words).\n'
       + '- Section 6 (Market & Audience): 1 page (~200 words + personas table).\n'
       + '- Section 7 (Competitive Landscape): 1.5 pages (6-player table + analysis).\n'
-      + '- Section 8 (Menu Strategy): 1.5 pages.\n'
+      + '- Section 8 (Menu Strategy): 1 page.\n'
       + '- Section 9 (Operations & Staffing): 1.5 pages.\n'
       + '- Section 10 (Financial Projections): 3 pages.\n'
       + '- Section 11 (Marketing & Pre-Opening): 1.5 pages.\n'
@@ -210,11 +210,11 @@ function buildPrompt(c) {
 
     '3. TABLE DES MATIERES [1 page]: AVANT h2, <div class="section-number">Section 3</div>. h2 "Table des Matieres". Liste numerotee <ol> de 13 entrees (sections 2 a 14): pour chacune, format "Titre de section — description 8-12 mots du contenu". Densite cible: remplir la page (les descriptions etoffent la liste pour eviter blanc).',
 
-    '4. RESUME EXECUTIF [1 page ~350-400 mots]: AVANT h2, <div class="section-number">Section 4</div>. h2 "Resume Executif". QUATRE paragraphes denses (80-100 mots chacun), pas de bullets:\n'
-    +'P1 — Marche et opportunite: validation marche, vide structurel, audience cible, taille demande.\n'
-    +'P2 — Concept et positionnement: proposition unique, identite, differenciation cle vs concurrents.\n'
-    +'P3 — Modele economique: investissement, CA A1, EBITDA %, point mort, delai retour, robustesse financiere.\n'
-    +'P4 — Verdict et recommandation: score Validator '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 risques cles, recommandation finale (lancement direct ou phase ghost kitchen prealable).',
+    '4. RESUME EXECUTIF [1 page ~350-400 mots, format avec sous-titres comme section 5]: AVANT h2, <div class="section-number">Section 4</div>. h2 "Resume Executif". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 80-100 mots:\n'
+    +'h3 "Marche & Opportunite" + paragraphe — validation marche, vide structurel, audience cible, taille demande.\n'
+    +'h3 "Concept & Positionnement" + paragraphe — proposition unique, identite, differenciation cle vs concurrents.\n'
+    +'h3 "Modele Economique" + paragraphe — investissement, CA A1, EBITDA %, point mort, delai retour, robustesse financiere.\n'
+    +'h3 "Verdict & Recommandation" + paragraphe — score Validator '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 risques cles, recommandation finale (lancement direct ou phase ghost kitchen prealable).',
 
     '5. CONCEPT & POSITIONNEMENT [1 page ~350 mots structures]: AVANT h2, <div class="section-number">Section 5</div>. h2 "Concept & Positionnement". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 80-90 mots:\n'
     +'h3 "Vision" + paragraphe — raison d\'etre du concept, ce qu\'il apporte au marche local.\n'
@@ -230,17 +230,17 @@ function buildPrompt(c) {
     +'(a) Tableau 6 acteurs concurrents [Acteur|Type|Ticket '+sym+'|Meme client?|Force|Faiblesse|Menace ZOCO]. Mix: 1 fast-casual international (ex: Sushi Shop), 1 fast-food, 1 restaurant traditionnel premium, 1 restaurant traditionnel moyen, 1 informel/street, 1 nouvel entrant hypothetique meme segment.\n'
     +'(b) h3 "Differenciation du Concept" + 1 paragraphe 150-180 mots structurant 4 differenciateurs cles numerotes (1) cuisine X en moins de Y minutes vs informel, (2) qualite et tracabilite vs fast-food, (3) experience coherente vs traditionnel lent, (4) positionnement premium urbain. Format: prose dense, pas bullets.',
 
-    '8. STRATEGIE MENU [ESTIMATION DIRECTIONNELLE — 1.5 pages]: AVANT h2, <div class="section-number">Section 8</div>. h2 "Strategie Menu".\n'
-    +'(a) Encadre <div class="estimate-box"> avec <h4>Strategie Menu — Directionnel</h4> + paragraphe (40-50 mots): "Structure menu et fourchettes prix basees sur benchmarks F&B '+(c.snap.cuisine||'')+'. A affiner avec chef cuisinier post-recrutement et tests laboratoires fournisseurs."\n'
+    '8. STRATEGIE MENU [ESTIMATION DIRECTIONNELLE — 1 page]: AVANT h2, <div class="section-number">Section 8</div>. h2 "Strategie Menu".\n'
+    +'(a) Encadre <div class="estimate-box"> avec <h4>Strategie Menu — Directionnel</h4> + paragraphe (40-50 mots): "Structure menu et fourchettes prix basees sur benchmarks F&B '+(c.snap.cuisine||'')+'. A affiner avec chef cuisinier post-recrutement. Sourcing fournisseurs detaille dans le module Menu Engineer."\n'
     +'(b) h3 "Structure Menu Estimee" + tableau 6 lignes [Section|Nb items|Prix moyen '+sym+'|Food cost %|Notes] — items principaux (ex: Bols), specialites (ex: Tajines), Salades & sides, Boissons, Desserts, MOYENNE TOTAL.\n'
-    +'(c) h3 "Items Signature" + 3 plats sous forme <ul> ou <ol>. Pour chaque: nom en gras + description 35-45 mots (ingredients core, technique de preparation, sourcing indicatif).\n'
-    +'(d) h3 "Fournisseurs Regionaux Identifies" + 2 fournisseurs nommes sous forme <ul>: nom + localisation + type d\'engagement + traceabilite (25-30 mots chacun).',
+    +'(c) h3 "Items Signature" + 3 plats sous forme <ul>. Pour chaque: nom en gras + description 35-45 mots (ingredients core, technique de preparation, prix indicatif). NE PAS inclure de section fournisseurs (traite dans Menu Engineer).',
 
-    '9. MODELE OPERATIONNEL & STAFFING [ESTIMATION DIRECTIONNELLE — 1.5 pages]: AVANT h2, <div class="section-number">Section 9</div>. h2 "Modele Operationnel & Staffing".\n'
+    '9. MODELE OPERATIONNEL & STAFFING [ESTIMATION DIRECTIONNELLE — 1.5 pages, equilibre: p1 staffing, p2 ratios+KPIs]: AVANT h2, <div class="section-number">Section 9</div>. h2 "Modele Operationnel & Staffing".\n'
     +'(a) Encadre <div class="estimate-box"> avec <h4>Staffing — Directionnel</h4> + paragraphe (40 mots): "Staffing benchmarke sur formats similaires fast-casual MENA. A ajuster apres recrutement chef et test ghost kitchen 90j."\n'
     +'(b) h3 "Structure Staffing" + tableau 8 lignes [Poste|ETP|Salaire/mois '+sym+'|Total '+sym+'|Notes] — Chef cuisinier, Commis cuisine, Shift manager/service, Serveurs/caisse, Nettoyage/logistique, TOTAL BRUT, Charges sociales (~35%), TOTAL CHARGE.\n'
-    +'(c) h3 "Ratios Productivite" + <ul> de 4 bullets: CA/ETP/an, Couverts/ETP/jour, Temps moyen service, Masse salariale / CA %.\n'
-    +'(d) h3 "Top 3 KPIs Operationnels J+30" + tableau 3 lignes [KPI|Cible J+30|Methode de mesure] — Couverts/jour atteints, Temps service moyen, Satisfaction client (NPS).',
+    +'(c) APRES le tableau staffing, INSERER <div class="page-break"></div> (saut de page force pour equilibre visuel: staffing seul sur page 1).\n'
+    +'(d) h3 "Ratios Productivite" + <ul> de 4 bullets: CA/ETP/an, Couverts/ETP/jour, Temps moyen service, Masse salariale / CA %.\n'
+    +'(e) h3 "Top 3 KPIs Operationnels J+30" + tableau 3 lignes [KPI|Cible J+30|Methode de mesure] — Couverts/jour atteints, Temps service moyen, Satisfaction client (NPS).',
 
     '10. PROJECTIONS FINANCIERES [3 pages — classe CSS "financial-section"]: AVANT h2, <div class="section-number">Section 10</div>. h2 "Projections Financieres". Sous h2, paragraphe italique 50-60 mots: "Estimations directionnelles basees sur benchmarks F&B casual MENA. Ratios cibles: food cost 30-34%, masse salariale 28-32%, loyer 8-12% CA. A affiner sur donnees operationnelles reelles post-lancement ghost kitchen."\n\n'
     +'CINQ sous-sections, CHACUNE dans un <div class="estimate-box"> contenant <h4>Titre</h4> + paragraphe description (25-35 mots) PUIS son tableau associe directement apres l\'encadre:\n\n'
@@ -256,9 +256,10 @@ function buildPrompt(c) {
     +'(c) h3 "Mix Canaux Indicatif (A1)" + <ul> de 4 bullets (20-30 mots chacun): Digital (Instagram/TikTok/LinkedIn), RP & influenceurs locaux, Terrain & activation, Email & CRM. Inclure % budget par canal.\n'
     +'(d) h3 "Top 3 KPIs Marketing" + tableau 3 lignes [KPI|Cible J+30|Methode]: Followers reseaux, Base email engagee, Clients repeat.',
 
-    '12. ANALYSE DES RISQUES [2 pages]: AVANT h2, <div class="section-number">Section 12</div>. h2 "Analyse des Risques". Sous h2, paragraphe italique 25 mots: "6 risques majeurs identifies. Matrice probabilite x impact. Chaque risque: mitigation strategique + plan contingence."\n'
-    +'(a) h3 "Tableau Recapitulatif Risques" + tableau 6 lignes [Risque|Probabilite|Impact|Score /10|Mitigation cle 1 ligne]. 6 risques: budget aménagement, premier entrant erode, concurrence prix informelle, retards reglementaires, turnover chef, baisse trafic macro/insecurite.\n'
-    +'(b) h3 "Detail Risques & Mitigations" + 6 blocs <div class="risk-block">, un par risque. Chaque bloc contient: <h4>Risque N: Titre</h4> + ligne en gras "Probabilite: X | Impact: Y | Score: Z/10" + 1 paragraphe contexte (50-60 mots) + h5 "Mitigation & Contingence" + liste <ol> de 3-5 actions concretes numerotees + 1 ligne "Plan B:" finale.',
+    '12. ANALYSE DES RISQUES [2 pages, format synthetise]: AVANT h2, <div class="section-number">Section 12</div>. h2 "Analyse des Risques". Sous h2, paragraphe italique 25 mots: "6 risques identifies au total. Detail des 3 risques critiques ci-dessous. Score = Probabilite x Impact."\n'
+    +'(a) h3 "Tableau Recapitulatif Risques" + tableau 6 lignes [Risque|Probabilite|Impact|Score /10|Mitigation cle 1 ligne]. Les 6 risques: budget aménagement, premier entrant erode, concurrence prix informelle, retards reglementaires, turnover chef, baisse trafic macro/insecurite.\n'
+    +'(b) h3 "Detail des 3 Risques Critiques" + 3 blocs <div class="risk-block"> UNIQUEMENT (les 3 risques au plus haut score). Chaque bloc CONCIS: <h4>Risque N: Titre</h4> + ligne en gras "Probabilite: X | Impact: Y | Score: Z/10" + 1 paragraphe contexte court (40-50 mots) + h5 "Mitigation & Contingence" + liste <ol> de 3 actions concretes + 1 ligne "Plan B:" finale.\n'
+    +'(c) h3 "Autres Risques a Surveiller" + 1 paragraphe court (40-60 mots) listant les 3 risques restants (scores les plus bas) avec mitigation cle resumee. Format: "Risque X: mitigation 8-12 mots. Risque Y: ... Risque Z: ...".',
 
     '13. RECOMMANDATIONS & PROCHAINES ETAPES [1 page]: AVANT h2, <div class="section-number">Section 13</div>. h2 "Recommandations & Prochaines Etapes".\n'
     +'(a) Paragraphe d\'introduction 30-40 mots resumant verdict Validator '+c.ov.score+'/100 et axes prioritaires.\n'
@@ -288,11 +289,11 @@ function buildPrompt(c) {
 
     '3. TABLE OF CONTENTS [1 page]: BEFORE h2, <div class="section-number">Section 3</div>. h2 "Table of Contents". Numbered <ol> of 13 entries (sections 2 to 14): format each "Section title — 8-12 word description". Density target: fill the page.',
 
-    '4. EXECUTIVE SUMMARY [1 page ~350-400 words]: BEFORE h2, <div class="section-number">Section 4</div>. h2 "Executive Summary". FOUR dense paragraphs (80-100 words each), no bullets:\n'
-    +'P1 — Market opportunity: validation, structural gap, target audience, demand size.\n'
-    +'P2 — Concept & positioning: unique proposition, identity, key differentiation vs competitors.\n'
-    +'P3 — Business model: investment, Y1 revenue, EBITDA %, break-even, payback, financial robustness.\n'
-    +'P4 — Verdict & recommendation: Validator score '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 key risks, final recommendation.',
+    '4. EXECUTIVE SUMMARY [1 page ~350-400 words, structured with sub-headings like section 5]: BEFORE h2, <div class="section-number">Section 4</div>. h2 "Executive Summary". FOUR sub-sections, each with h3 + 80-100 word paragraph:\n'
+    +'h3 "Market & Opportunity" + paragraph — validation, structural gap, target audience, demand size.\n'
+    +'h3 "Concept & Positioning" + paragraph — unique proposition, identity, key differentiation vs competitors.\n'
+    +'h3 "Business Model" + paragraph — investment, Y1 revenue, EBITDA %, break-even, payback, financial robustness.\n'
+    +'h3 "Verdict & Recommendation" + paragraph — Validator score '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 key risks, final recommendation.',
 
     '5. CONCEPT & POSITIONING [1 page ~350 structured words]: BEFORE h2, <div class="section-number">Section 5</div>. h2 "Concept & Positioning". FOUR sub-sections, each with h3 + 80-90 word paragraph:\n'
     +'h3 "Vision" + paragraph.\n'
@@ -308,17 +309,17 @@ function buildPrompt(c) {
     +'(a) 6-player table [Player|Type|Ticket '+sym+'|Same customer?|Strength|Weakness|Threat to concept]. Mix: 1 international fast-casual, 1 fast-food, 1 premium traditional, 1 mid traditional, 1 informal/street, 1 hypothetical new entrant.\n'
     +'(b) h3 "Concept Differentiation" + 1 paragraph 150-180 words structured around 4 key differentiators numbered.',
 
-    '8. MENU STRATEGY [DIRECTIONAL ESTIMATE — 1.5 pages]: BEFORE h2, <div class="section-number">Section 8</div>. h2 "Menu Strategy".\n'
-    +'(a) <div class="estimate-box"> with <h4>Menu Strategy — Directional</h4> + paragraph 40-50 words.\n'
+    '8. MENU STRATEGY [DIRECTIONAL ESTIMATE — 1 page]: BEFORE h2, <div class="section-number">Section 8</div>. h2 "Menu Strategy".\n'
+    +'(a) <div class="estimate-box"> with <h4>Menu Strategy — Directional</h4> + paragraph 40-50 words (mention supplier sourcing is covered in the Menu Engineer module).\n'
     +'(b) h3 "Estimated Menu Structure" + 6-row table [Section|Items|Avg price '+sym+'|Food cost %|Notes].\n'
-    +'(c) h3 "Signature Items" + 3 dishes as <ul>: bold name + 35-45 word description.\n'
-    +'(d) h3 "Identified Regional Suppliers" + 2 named suppliers as <ul>.',
+    +'(c) h3 "Signature Items" + 3 dishes as <ul>: bold name + 35-45 word description (ingredients, technique, indicative price). DO NOT include a suppliers section (handled in Menu Engineer).',
 
-    '9. OPERATIONAL MODEL & STAFFING [DIRECTIONAL ESTIMATE — 1.5 pages]: BEFORE h2, <div class="section-number">Section 9</div>. h2 "Operational Model & Staffing".\n'
+    '9. OPERATIONAL MODEL & STAFFING [DIRECTIONAL ESTIMATE — 1.5 pages, balanced: p1 staffing, p2 ratios+KPIs]: BEFORE h2, <div class="section-number">Section 9</div>. h2 "Operational Model & Staffing".\n'
     +'(a) <div class="estimate-box"> with <h4>Staffing — Directional</h4> + paragraph 40 words.\n'
     +'(b) h3 "Staffing Structure" + 8-row table [Position|FTE|Monthly salary '+sym+'|Total '+sym+'|Notes] ending in TOTAL GROSS, Social charges (~35%), TOTAL LOADED.\n'
-    +'(c) h3 "Productivity Ratios" + <ul> of 4 bullets.\n'
-    +'(d) h3 "Top 3 Operational KPIs D+30" + 3-row table.',
+    +'(c) AFTER the staffing table, INSERT <div class="page-break"></div> (forced page break for visual balance: staffing alone on page 1).\n'
+    +'(d) h3 "Productivity Ratios" + <ul> of 4 bullets.\n'
+    +'(e) h3 "Top 3 Operational KPIs D+30" + 3-row table.',
 
     '10. FINANCIAL PROJECTIONS [3 pages — CSS class "financial-section"]: BEFORE h2, <div class="section-number">Section 10</div>. h2 "Financial Projections". Italic sub-paragraph 50-60 words on benchmarks.\n'
     +'FIVE sub-sections, EACH in <div class="estimate-box"> with <h4>Title</h4> + 25-35 word description, THEN its table:\n\n'
@@ -334,9 +335,10 @@ function buildPrompt(c) {
     +'(c) h3 "Indicative Channel Mix (Y1)" + <ul> of 4 bullets.\n'
     +'(d) h3 "Top 3 Marketing KPIs" + 3-row table.',
 
-    '12. RISK ANALYSIS [2 pages]: BEFORE h2, <div class="section-number">Section 12</div>. h2 "Risk Analysis". Italic sub-paragraph 25 words.\n'
-    +'(a) h3 "Risk Summary Table" + 6-row table [Risk|Probability|Impact|Score /10|Key mitigation 1 line].\n'
-    +'(b) h3 "Detailed Risks & Mitigations" + 6 <div class="risk-block">, one per risk. Each: <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + 50-60 word context paragraph + h5 "Mitigation & Contingency" + <ol> of 3-5 numbered actions + final "Plan B:" line.',
+    '12. RISK ANALYSIS [2 pages, synthesized format]: BEFORE h2, <div class="section-number">Section 12</div>. h2 "Risk Analysis". Italic sub-paragraph 25 words: "6 risks identified total. Detail of the 3 critical risks below. Score = Probability x Impact."\n'
+    +'(a) h3 "Risk Summary Table" + 6-row table [Risk|Probability|Impact|Score /10|Key mitigation 1 line]. ALL 6 risks listed.\n'
+    +'(b) h3 "Detail of 3 Critical Risks" + 3 <div class="risk-block"> ONLY (the 3 highest-scored risks). Each COMPACT block: <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + short 40-50 word context paragraph + h5 "Mitigation & Contingency" + <ol> of 3 numbered actions + final "Plan B:" line.\n'
+    +'(c) h3 "Other Risks to Monitor" + 1 short paragraph (40-60 words) listing the 3 remaining (lowest-scored) risks with summarized key mitigation. Format: "Risk X: mitigation 8-12 words. Risk Y: ... Risk Z: ...".',
 
     '13. RECOMMENDATIONS & NEXT STEPS [1 page]: BEFORE h2, <div class="section-number">Section 13</div>. h2 "Recommendations & Next Steps".\n'
     +'(a) Intro paragraph 30-40 words.\n'
