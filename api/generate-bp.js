@@ -158,12 +158,12 @@ function buildPrompt(c) {
 
   // --- PAGE BUDGETS ---
   var budgets = fr
-    ? '\n\nBUDGET DE PAGES A4 PAR SECTION (RESPECTER STRICTEMENT — total cible 17-19 pages, densite ~85% par page):\n'
+    ? '\n\nBUDGET DE PAGES A4 PAR SECTION (RESPECTER STRICTEMENT — total cible 18-21 pages, densite ~85% par page):\n'
       + '- Section 1 (Cover): 1 page fixe.\n'
       + '- Section 2 (Brief Investisseur): 2 pages.\n'
       + '- Section 3 (Table des Matieres): 1 page.\n'
-      + '- Section 4 (Resume Executif): 1 page (~350-400 mots).\n'
-      + '- Section 5 (Concept & Positionnement): 1 page (~350 mots structures).\n'
+      + '- Section 4 (Resume Executif): 1 page STRICT (~290-320 mots).\n'
+      + '- Section 5 (Concept & Positionnement): 1 page STRICT (~290-320 mots structures).\n'
       + '- Section 6 (Marche & Audience): 1 page (~200 mots + tableau personas).\n'
       + '- Section 7 (Paysage Concurrentiel): 1.5 pages (tableau 6 acteurs + analyse).\n'
       + '- Section 8 (Strategie Menu): 1 page.\n'
@@ -172,14 +172,14 @@ function buildPrompt(c) {
       + '- Section 11 (Marketing & Pre-Ouverture): 1.5 pages.\n'
       + '- Section 12 (Analyse des Risques): 2 pages.\n'
       + '- Section 13 (Recommandations): 1 page.\n'
-      + '- Section 14 (Annexes): 1 page.\n'
+      + '- Section 14 (Annexes): 2 pages (scores+methodo p1, glossaire p2).\n'
       + 'Chaque section doit remplir son budget a au moins 80%. Densite cible: 85% (eviter blancs en fin de page). Tableaux: respecter le nombre exact de lignes specifie.'
-    : '\n\nA4 PAGE BUDGETS PER SECTION (STRICT — total target 17-19 pages, ~85% density per page):\n'
+    : '\n\nA4 PAGE BUDGETS PER SECTION (STRICT — total target 18-21 pages, ~85% density per page):\n'
       + '- Section 1 (Cover): 1 fixed page.\n'
       + '- Section 2 (Investor Brief): 2 pages.\n'
       + '- Section 3 (Table of Contents): 1 page.\n'
-      + '- Section 4 (Executive Summary): 1 page (~350-400 words).\n'
-      + '- Section 5 (Concept & Positioning): 1 page (~350 structured words).\n'
+      + '- Section 4 (Executive Summary): 1 page STRICT (~290-320 words).\n'
+      + '- Section 5 (Concept & Positioning): 1 page STRICT (~290-320 structured words).\n'
       + '- Section 6 (Market & Audience): 1 page (~200 words + personas table).\n'
       + '- Section 7 (Competitive Landscape): 1.5 pages (6-player table + analysis).\n'
       + '- Section 8 (Menu Strategy): 1 page.\n'
@@ -188,7 +188,7 @@ function buildPrompt(c) {
       + '- Section 11 (Marketing & Pre-Opening): 1.5 pages.\n'
       + '- Section 12 (Risk Analysis): 2 pages.\n'
       + '- Section 13 (Recommendations): 1 page.\n'
-      + '- Section 14 (Appendices): 1 page.\n'
+      + '- Section 14 (Appendices): 2 pages (scores+methodology p1, glossary p2).\n'
       + 'Each section must fill its budget at least 80%. Target density: 85% (avoid trailing blanks). Tables: respect exact row counts specified.';
 
   // --- SECTIONS (calibrated structure per page budget) ---
@@ -205,18 +205,18 @@ function buildPrompt(c) {
     +'(a) h3 "Fiche Concept" + tableau 8 lignes [Parametre|Valeur]: Concept, Format, Cuisine, Ville (+quartier si dispo), Nombre de places, Ticket moyen, Horaires, Stade de developpement.\n'
     +'(b) h3 "Opportunite Marche" + 1 paragraphe dense 80-100 mots: validation marche, vide structurel identifie, signaux demande.\n'
     +'(c) h3 "Proposition de Valeur" + liste <ul> de 4 bullets percutants (15-20 mots chacun).\n'
-    +'(d) h3 "Tableau Financier Resume" + tableau 9 lignes [Indicateur|Valeur]: Investissement (fourchette '+sym+'), Budget declare ('+(c.snap.budget||'N/A')+' '+cur+'), Ecart estime %, Point mort mensuel ('+sym+c.fmt(c.be.monthly_revenue)+' = '+(c.be.daily_covers||'N/A')+' cv/j), CA A1, EBITDA A1 (% CA), CA A2, EBITDA A2 (% CA), CA A3, EBITDA A3 (% CA), Delai retour estime.\n'
+    +'(d) h3 "Tableau Financier Resume" + tableau 11 lignes [Indicateur|Valeur]: Investissement (fourchette '+sym+'), Budget declare ('+(c.snap.budget||'N/A')+' '+cur+'), Ecart estime %, Point mort mensuel ('+sym+c.fmt(c.be.monthly_revenue)+' = '+(c.be.daily_covers||'N/A')+' cv/j), CA A1, EBITDA A1 (% CA), CA A2, EBITDA A2 (% CA), CA A3, EBITDA A3 (% CA), Delai retour estime.\n'
     +'(e) h3 "Top 3 Risques" + tableau 3 lignes [Risque|Niveau|Mitigation cle 1 ligne]. Niveaux: CRITIQUE (rouge), MOYEN (orange), ou ELEVE.',
 
     '3. TABLE DES MATIERES [1 page]: AVANT h2, <div class="section-number">Section 3</div>. h2 "Table des Matieres". Liste numerotee <ol> de 13 entrees (sections 2 a 14): pour chacune, format "Titre de section — description 8-12 mots du contenu". Densite cible: remplir la page (les descriptions etoffent la liste pour eviter blanc).',
 
-    '4. RESUME EXECUTIF [1 page ~350-400 mots, format avec sous-titres comme section 5]: AVANT h2, <div class="section-number">Section 4</div>. h2 "Resume Executif". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 80-100 mots:\n'
+    '4. RESUME EXECUTIF [1 page STRICT ~290-320 mots, format avec sous-titres comme section 5]: AVANT h2, <div class="section-number">Section 4</div>. h2 "Resume Executif". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 70-80 mots:\n'
     +'h3 "Marche & Opportunite" + paragraphe — validation marche, vide structurel, audience cible, taille demande.\n'
     +'h3 "Concept & Positionnement" + paragraphe — proposition unique, identite, differenciation cle vs concurrents.\n'
     +'h3 "Modele Economique" + paragraphe — investissement, CA A1, EBITDA %, point mort, delai retour, robustesse financiere.\n'
     +'h3 "Verdict & Recommandation" + paragraphe — score Validator '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 risques cles, recommandation finale (lancement direct ou phase ghost kitchen prealable).',
 
-    '5. CONCEPT & POSITIONNEMENT [1 page ~350 mots structures]: AVANT h2, <div class="section-number">Section 5</div>. h2 "Concept & Positionnement". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 80-90 mots:\n'
+    '5. CONCEPT & POSITIONNEMENT [1 page STRICT ~290-320 mots structures]: AVANT h2, <div class="section-number">Section 5</div>. h2 "Concept & Positionnement". QUATRE sous-sections, chacune avec h3 + 1 paragraphe 70-80 mots:\n'
     +'h3 "Vision" + paragraphe — raison d\'etre du concept, ce qu\'il apporte au marche local.\n'
     +'h3 "Identite de Marque" + paragraphe — nom, signification, ton de voix, references visuelles, ambiance.\n'
     +'h3 "Proposition de Valeur" + paragraphe — promesse client core, 3 piliers differenciants.\n'
@@ -228,12 +228,12 @@ function buildPrompt(c) {
 
     '7. PAYSAGE CONCURRENTIEL [1.5 pages]: AVANT h2, <div class="section-number">Section 7</div>. h2 "Paysage Concurrentiel".\n'
     +'(a) Tableau 6 acteurs concurrents [Acteur|Type|Ticket '+sym+'|Meme client?|Force|Faiblesse|Menace ZOCO]. Mix: 1 fast-casual international (ex: Sushi Shop), 1 fast-food, 1 restaurant traditionnel premium, 1 restaurant traditionnel moyen, 1 informel/street, 1 nouvel entrant hypothetique meme segment.\n'
-    +'(b) h3 "Differenciation du Concept" + 1 paragraphe 150-180 mots structurant 4 differenciateurs cles numerotes (1) cuisine X en moins de Y minutes vs informel, (2) qualite et tracabilite vs fast-food, (3) experience coherente vs traditionnel lent, (4) positionnement premium urbain. Format: prose dense, pas bullets.',
+    +'(b) APRES le tableau concurrents, INSERER <div class="page-break"></div> (le tableau seul sur la 1re page de la section). PUIS h3 "Differenciation du Concept" + 1 paragraphe 150-180 mots structurant 4 differenciateurs cles numerotes (1) cuisine X en moins de Y minutes vs informel, (2) qualite et tracabilite vs fast-food, (3) experience coherente vs traditionnel lent, (4) positionnement premium urbain. Format: prose dense, pas bullets.',
 
     '8. STRATEGIE MENU [ESTIMATION DIRECTIONNELLE — 1 page]: AVANT h2, <div class="section-number">Section 8</div>. h2 "Strategie Menu".\n'
-    +'(a) Encadre <div class="estimate-box"> avec <h4>Strategie Menu — Directionnel</h4> + paragraphe (40-50 mots): "Structure menu et fourchettes prix basees sur benchmarks F&B '+(c.snap.cuisine||'')+'. A affiner avec chef cuisinier post-recrutement. Sourcing fournisseurs detaille dans le module Menu Engineer."\n'
+    +'(a) Encadre <div class="estimate-box"> avec <h4>Strategie Menu — Directionnel</h4> + paragraphe (30-35 mots): "Structure menu et fourchettes prix basees sur benchmarks F&B '+(c.snap.cuisine||'')+'. A affiner avec chef cuisinier post-recrutement. Sourcing fournisseurs detaille dans le module Menu Engineer."\n'
     +'(b) h3 "Structure Menu Estimee" + tableau 6 lignes [Section|Nb items|Prix moyen '+sym+'|Food cost %|Notes] — items principaux (ex: Bols), specialites (ex: Tajines), Salades & sides, Boissons, Desserts, MOYENNE TOTAL.\n'
-    +'(c) h3 "Items Signature" + 3 plats sous forme <ul>. Pour chaque: nom en gras + description 35-45 mots (ingredients core, technique de preparation, prix indicatif). NE PAS inclure de section fournisseurs (traite dans Menu Engineer).',
+    +'(c) h3 "Items Signature" + 3 plats sous forme <ul>. Pour chaque: nom en gras + description 25-30 mots (ingredients core, technique de preparation, prix indicatif). NE PAS inclure de section fournisseurs (traite dans Menu Engineer).',
 
     '9. MODELE OPERATIONNEL & STAFFING [ESTIMATION DIRECTIONNELLE — 1.5 pages, equilibre: p1 staffing, p2 ratios+KPIs]: AVANT h2, <div class="section-number">Section 9</div>. h2 "Modele Operationnel & Staffing".\n'
     +'(a) Encadre <div class="estimate-box"> avec <h4>Staffing — Directionnel</h4> + paragraphe (40 mots): "Staffing benchmarke sur formats similaires fast-casual MENA. A ajuster apres recrutement chef et test ghost kitchen 90j."\n'
@@ -243,12 +243,12 @@ function buildPrompt(c) {
     +'(e) h3 "Top 3 KPIs Operationnels J+30" + tableau 3 lignes [KPI|Cible J+30|Methode de mesure] — Couverts/jour atteints, Temps service moyen, Satisfaction client (NPS).',
 
     '10. PROJECTIONS FINANCIERES [3 pages — classe CSS "financial-section"]: AVANT h2, <div class="section-number">Section 10</div>. h2 "Projections Financieres". Sous h2, paragraphe italique 50-60 mots: "Estimations directionnelles basees sur benchmarks F&B casual MENA. Ratios cibles: food cost 30-34%, masse salariale 28-32%, loyer 8-12% CA. A affiner sur donnees operationnelles reelles post-lancement ghost kitchen."\n\n'
-    +'CINQ sous-sections, CHACUNE dans un <div class="estimate-box"> contenant <h4>Titre</h4> + paragraphe description (25-35 mots) PUIS son tableau associe directement apres l\'encadre:\n\n'
-    +'10A. BUDGET DEMARRAGE — encadre + tableau 12 lignes [Poste|Bas '+sym+'|Haut '+sym+'|Notes]: Travaux & amenagement, Equipements cuisine pro, Mobilier & decoration, IT/Caisse/POS, Licences & autorisations, Fiduciaire & conseil, Fonds de roulement (3 mois), Marketing pre-ouverture, Reserve tresorerie (3 mois min), Contingence 8%, TOTAL INVESTISSEMENT, Comparaison budget annonce '+(c.snap.budget||'N/A')+' '+cur+' (ecart % calcule).\n\n'
-    +'10B. CHIFFRE D\'AFFAIRES PREVISIONNEL — encadre + DEUX tableaux: (1) trimestriel A1, 5 lignes [Trimestre|Couverts/jour|Jours ouverture|CA trimestriel '+sym+']: Q1 ramp-up, Q2 acceleration, Q3 stabilisation, Q4 croisiere, A1 TOTAL; (2) recap multi-annees, 3 lignes [Annee|CA annuel '+sym+'|Croissance %|Hypothese couverts/jour moyen]: A1, A2 (+25%), A3 (+18%).\n\n'
-    +'10C. COMPTE DE RESULTAT (P&L) 3 ANS — encadre + tableau P&L 12 lignes [Ligne|A1 '+sym+'|A1 %|A2 '+sym+'|A2 %|A3 '+sym+'|A3 %]: Chiffre d\'Affaires, Cout matiere premiere (30-34%), Marge brute, Masse salariale (28-32%), Loyer (8-12%), Energie (3-5%), Emballages & transport (2-4%), Marketing & promotion (3-5%), Assurance & divers (1-2%), Amortissements, EBITDA, Resultat net.\n\n'
-    +'10D. ANALYSE SENSIBILITE POINT MORT — encadre + tableau 4 lignes (en-tete + 3 lignes scenarios) [Scenario|Ticket -10%|Ticket Base|Ticket +15%]: Couverts -20%, Couverts Base, Couverts +30%. Chaque cellule = point mort mensuel en '+sym+'. Sous le tableau, 1 ligne synthese: "Point mort conservateur: X '+sym+'/mois = Y couverts/jour. Atteint en QZ A1."\n\n'
-    +'10E. ROI & FINANCEMENT — encadre + DEUX tableaux: (1) Parametres ROI, 5 lignes [Parametre|Valeur]: Investissement retenu (mediane 10A), EBITDA cumule A1-A3, Delai retour (annees), ROI A3 (%), ROIC annualise base EBITDA A3. (2) Structure financement proposee, 3 lignes [Source|Montant '+sym+'|%|Notes]: Fonds propres (entrepreneur), Credit bancaire (12-15 ans, TAEG indicatif), TOTAL. Sous: h3 "Institutions de Financement a Contacter ('+city+')" + tableau 3 lignes [Banque|Produit F&B|Criteres cles] — 3 institutions reelles locales avec produit pertinent.',
+    +'CINQ sous-sections, CHACUNE dans un <div class="estimate-box"> contenant <h4>Titre</h4> + paragraphe description (25-35 mots) PUIS son tableau associe directement apres l\'encadre. ORDRE EXACT ET MISE EN PAGE: 10A seule sur page 1; 10B+10C ensemble sur page 2; 10D(P&L)+10E ensemble sur page 3.\n\n'
+    +'10A. BUDGET DEMARRAGE — encadre + tableau 12 lignes [Poste|Bas '+sym+'|Haut '+sym+'|Notes]: Travaux & amenagement, Equipements cuisine pro, Mobilier & decoration, IT/Caisse/POS, Licences & autorisations, Fiduciaire & conseil, Fonds de roulement (3 mois), Marketing pre-ouverture, Reserve tresorerie (3 mois min), Contingence 8%, TOTAL INVESTISSEMENT, Comparaison budget annonce '+(c.snap.budget||'N/A')+' '+cur+' (ecart % calcule). APRES ce tableau 10A, INSERER <div class="page-break"></div>.\n\n'
+    +'10B. CHIFFRE D\'AFFAIRES PREVISIONNEL — encadre + DEUX tableaux: (1) trimestriel A1, 5 lignes [Trimestre|Couverts/jour|Jours ouverture|CA trimestriel '+sym+']: Q1 ramp-up, Q2 acceleration, Q3 stabilisation, Q4 croisiere, A1 TOTAL; (2) recap multi-annees, 3 lignes [Annee|CA annuel '+sym+'|Croissance %|Hypothese couverts/jour moyen]: A1, A2 (+25%), A3 (+18%). 1re colonne: ecrire "Annee 1"/"Annee 2"/"Annee 3" dans <span class="nw">...</span> (une seule ligne).\n\n'
+    +'10C. ANALYSE SENSIBILITE POINT MORT — encadre + tableau 4 lignes (en-tete + 3 lignes scenarios) [Scenario|Ticket -10%|Ticket Base|Ticket +15%]: Couverts -20%, Couverts Base, Couverts +30%. Chaque cellule = point mort mensuel en '+sym+'. Sous le tableau, 1 ligne synthese: "Point mort conservateur: X '+sym+'/mois = Y couverts/jour. Atteint en QZ A1." APRES cette ligne synthese, INSERER <div class="page-break"></div>.\n\n'
+    +'10D. COMPTE DE RESULTAT (P&L) 3 ANS — encadre + tableau P&L 12 lignes [Ligne|A1 '+sym+'|A1 %|A2 '+sym+'|A2 %|A3 '+sym+'|A3 %]: Chiffre d\'Affaires, Cout matiere premiere (30-34%), Marge brute, Masse salariale (28-32%), Loyer (8-12%), Energie (3-5%), Emballages & transport (2-4%), Marketing & promotion (3-5%), Assurance & divers (1-2%), Amortissements, EBITDA, Resultat net.\n\n'
+    +'10E. ROI & FINANCEMENT — encadre + DEUX tableaux: (1) Parametres ROI, 5 lignes [Parametre|Valeur]: Investissement retenu (mediane 10A), EBITDA cumule A1-A3, Delai retour (annees), ROI A3 (%), ROIC annualise base EBITDA A3. (2) Structure financement proposee, 3 lignes [Source|Montant '+sym+'|%|Notes]: Fonds propres (entrepreneur), Credit bancaire (12-15 ans, TAEG indicatif), TOTAL. NE PAS inclure de tableau "Institutions de Financement" (reserve au Business Plan Pro). 10D et 10E doivent tenir ensemble sur la 3e page.',
 
     '11. MARKETING & PRE-OUVERTURE [ESTIMATION DIRECTIONNELLE — 1.5 pages]: AVANT h2, <div class="section-number">Section 11</div>. h2 "Marketing & Pre-Ouverture".\n'
     +'(a) Encadre <div class="estimate-box"> avec <h4>Marketing — Directionnel</h4> + paragraphe 35-45 mots: "Timeline J-90 a J-0. Budget total 40-60k '+sym+'. Mix digital + RP + activation terrain. Audience cible: professionnels '+(c.snap.neighbourhood||c.snap.city||'urbains')+' 25-45 ans."\n'
@@ -258,18 +258,18 @@ function buildPrompt(c) {
 
     '12. ANALYSE DES RISQUES [2 pages, format synthetise]: AVANT h2, <div class="section-number">Section 12</div>. h2 "Analyse des Risques". Sous h2, paragraphe italique 25 mots: "6 risques identifies au total. Detail des 3 risques critiques ci-dessous. Score = Probabilite x Impact."\n'
     +'(a) h3 "Tableau Recapitulatif Risques" + tableau 6 lignes [Risque|Probabilite|Impact|Score /10|Mitigation cle 1 ligne]. Les 6 risques: budget aménagement, premier entrant erode, concurrence prix informelle, retards reglementaires, turnover chef, baisse trafic macro/insecurite.\n'
-    +'(b) h3 "Detail des 3 Risques Critiques" + 3 blocs <div class="risk-block"> UNIQUEMENT (les 3 risques au plus haut score). Chaque bloc CONCIS: <h4>Risque N: Titre</h4> + ligne en gras "Probabilite: X | Impact: Y | Score: Z/10" + 1 paragraphe contexte court (40-50 mots) + h5 "Mitigation & Contingence" + liste <ol> de 3 actions concretes + 1 ligne "Plan B:" finale.\n'
+    +'(b) h3 "Detail des 3 Risques Critiques" + 3 blocs <div class="risk-block"> UNIQUEMENT (les 3 risques au plus haut score). Chaque bloc TRES CONCIS: <h4>Risque N: Titre</h4> + ligne en gras "Probabilite: X | Impact: Y | Score: Z/10" + 1 paragraphe contexte court (30-35 mots MAX) + h5 "Mitigation & Contingence" + liste <ol> de 3 actions concretes (15-18 mots chacune MAX) + 1 ligne "Plan B:" finale (15-18 mots MAX). APRES le 1er bloc (Risque 1), INSERER <div class="page-break"></div> (Risque 1 + tableau recap sur page 1; Risques 2-3 + autres risques sur page 2).\n'
     +'(c) h3 "Autres Risques a Surveiller" + 1 paragraphe court (40-60 mots) listant les 3 risques restants (scores les plus bas) avec mitigation cle resumee. Format: "Risque X: mitigation 8-12 mots. Risque Y: ... Risque Z: ...".',
 
     '13. RECOMMANDATIONS & PROCHAINES ETAPES [1 page]: AVANT h2, <div class="section-number">Section 13</div>. h2 "Recommandations & Prochaines Etapes".\n'
     +'(a) Paragraphe d\'introduction 30-40 mots resumant verdict Validator '+c.ov.score+'/100 et axes prioritaires.\n'
     +'(b) h3 "5 Actions Prioritaires J+30" + tableau 5 lignes [#|Action|Proprietaire|Livrable|Delai]. Issues des recommandations Validator.\n'
-    +'(c) <div class="za3fran-box"> avec h3 "Services Za3fran Digital — Prochaines Etapes" (couleur cuivre #C9862A) + texte introductif court "Le concept est viable mais necessite X approfondissements critiques avant investissement immobilier. Za3fran Digital propose:" + 3 services en <ol>, chacun: nom en gras + 1 ligne objectif + 1 ligne processus + 1 ligne livrable + investissement indicatif. Services: (1) Menu Engineer, (2) Financial Builder Pro, (3) Business Plan Bancaire Pro. Finir par 1 ligne "Package complet 3 services: '+sym+'X-Y. Duree 60 jours." + ligne contact "Contact: hello@za3fran.io | WhatsApp: +212 648 960 306".',
+    +'(c) <div class="za3fran-box"> LEGER ET PUNCHY (call-to-action, PAS de details lourds) avec h3 "Services Za3fran Digital — Prochaines Etapes" (couleur cuivre #C9862A) + 1 ligne accroche courte (max 20 mots) "Concept viable. Pour securiser l\'investissement, approfondissez avec Za3fran Digital:" + 3 services en <ul> AERE, chacun sur 1 SEULE ligne: nom en gras + benefice court (8-12 mots). Services: (1) Menu Engineer, (2) Financial Builder Pro, (3) Business Plan Bancaire Pro. Finir par 1 ligne mise en avant "Package complet: '+sym+'X-Y \u00b7 60 jours" + 1 ligne contact "hello@za3fran.io | WhatsApp +212 648 960 306". TOUTE la section 13 (intro + tableau 5 actions + cet encadre) DOIT tenir sur 1 SEULE page.',
 
     '14. ANNEXES [1 page]: AVANT h2, <div class="section-number">Section 14</div>. h2 "Annexes".\n'
-    +'(a) h3 "Scores Validator — Detail" + tableau 7 lignes [Critere|Score /10|Observation 1 ligne]: Marche (demande validee), Avantage competitif, Modele economique, Financement & budget, Equipe & execution, Timing & risques, SCORE GLOBAL (avec verdict).\n'
-    +'(b) h3 "Note Methodologique" + <ol> de 3 bullets concis: benchmarks utilises (ratios F&B MENA), scenario base (hypotheses CA), limitations (donnees post-launch a integrer).\n'
-    +'(c) h3 "Glossaire" + tableau 10 lignes [Terme|Definition courte 12-18 mots]: Fast-Casual, Ghost Kitchen, Food Cost %, EBITDA, Point Mort, Couvert (CV), Ticket Moyen, ROI, Ramp-up, NPS.\n'
+    +'(a) h3 "Scores Validator — Detail" + tableau 7 lignes [Critere|Score /10|Observation]: Marche (demande validee), Avantage competitif, Modele economique, Financement & budget, Equipe & execution, Timing & risques, SCORE GLOBAL (avec verdict). Colonne Observation: 1 SEULE ligne, 8-12 mots MAX.\n'
+    +'(b) h3 "Note Methodologique" + <ol> de 3 bullets concis (20-25 mots chacun MAX): benchmarks utilises (ratios F&B MENA), scenario base (hypotheses CA), limitations (donnees post-launch a integrer).\n'
+    +'(c) AVANT le h3 Glossaire, INSERER <div class="page-break"></div> (scores + note methodo sur la 1re page de la section; glossaire + footer sur la derniere page). PUIS h3 "Glossaire" + tableau 10 lignes [Terme|Definition courte 12-15 mots]: Fast-Casual, Ghost Kitchen, Food Cost %, EBITDA, Point Mort, Couvert (CV), Ticket Moyen, ROI, Ramp-up, NPS.\n'
     +'(d) Footer minimal en fin de section: <div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #e8e8e4; text-align: center; font-size: 0.85rem; color: #999;"> contenant 3 lignes <p>: nom du document, "Prepare par Za3fran Digital | '+c.today+'", copyright "Document confidentiel — Usage interne. Reproduction interdite sans autorisation ecrite."',
 
   ].join('\n\n') : [
@@ -284,18 +284,18 @@ function buildPrompt(c) {
     +'(a) h3 "Concept Sheet" + 8-row table [Parameter|Value]: Concept, Format, Cuisine, City (+neighbourhood if avail), Number of seats, Average ticket, Hours, Development stage.\n'
     +'(b) h3 "Market Opportunity" + 1 dense paragraph 80-100 words: market validation, structural gap, demand signals.\n'
     +'(c) h3 "Value Proposition" + <ul> of 4 punchy bullets (15-20 words each).\n'
-    +'(d) h3 "Financial Summary Table" + 9-row table [Metric|Value]: Investment range '+sym+', Declared budget ('+(c.snap.budget||'N/A')+' '+cur+'), Estimated gap %, Monthly break-even ('+sym+c.fmt(c.be.monthly_revenue)+' = '+(c.be.daily_covers||'N/A')+' cv/d), Y1 Revenue, Y1 EBITDA (% rev), Y2 Revenue, Y2 EBITDA, Y3 Revenue, Y3 EBITDA, Estimated payback.\n'
+    +'(d) h3 "Financial Summary Table" + 11-row table [Metric|Value]: Investment range '+sym+', Declared budget ('+(c.snap.budget||'N/A')+' '+cur+'), Estimated gap %, Monthly break-even ('+sym+c.fmt(c.be.monthly_revenue)+' = '+(c.be.daily_covers||'N/A')+' cv/d), Y1 Revenue, Y1 EBITDA (% rev), Y2 Revenue, Y2 EBITDA, Y3 Revenue, Y3 EBITDA, Estimated payback.\n'
     +'(e) h3 "Top 3 Risks" + 3-row table [Risk|Level|Key mitigation 1 line]. Levels: CRITICAL (red), MEDIUM (orange), HIGH.',
 
     '3. TABLE OF CONTENTS [1 page]: BEFORE h2, <div class="section-number">Section 3</div>. h2 "Table of Contents". Numbered <ol> of 13 entries (sections 2 to 14): format each "Section title — 8-12 word description". Density target: fill the page.',
 
-    '4. EXECUTIVE SUMMARY [1 page ~350-400 words, structured with sub-headings like section 5]: BEFORE h2, <div class="section-number">Section 4</div>. h2 "Executive Summary". FOUR sub-sections, each with h3 + 80-100 word paragraph:\n'
+    '4. EXECUTIVE SUMMARY [1 page STRICT ~290-320 words, structured with sub-headings like section 5]: BEFORE h2, <div class="section-number">Section 4</div>. h2 "Executive Summary". FOUR sub-sections, each with h3 + 70-80 word paragraph:\n'
     +'h3 "Market & Opportunity" + paragraph — validation, structural gap, target audience, demand size.\n'
     +'h3 "Concept & Positioning" + paragraph — unique proposition, identity, key differentiation vs competitors.\n'
     +'h3 "Business Model" + paragraph — investment, Y1 revenue, EBITDA %, break-even, payback, financial robustness.\n'
     +'h3 "Verdict & Recommendation" + paragraph — Validator score '+c.ov.score+'/100, '+(c.ov.verdict||'')+', 3 key risks, final recommendation.',
 
-    '5. CONCEPT & POSITIONING [1 page ~350 structured words]: BEFORE h2, <div class="section-number">Section 5</div>. h2 "Concept & Positioning". FOUR sub-sections, each with h3 + 80-90 word paragraph:\n'
+    '5. CONCEPT & POSITIONING [1 page STRICT ~290-320 structured words]: BEFORE h2, <div class="section-number">Section 5</div>. h2 "Concept & Positioning". FOUR sub-sections, each with h3 + 70-80 word paragraph:\n'
     +'h3 "Vision" + paragraph.\n'
     +'h3 "Brand Identity" + paragraph.\n'
     +'h3 "Value Proposition" + paragraph.\n'
@@ -307,7 +307,7 @@ function buildPrompt(c) {
 
     '7. COMPETITIVE LANDSCAPE [1.5 pages]: BEFORE h2, <div class="section-number">Section 7</div>. h2 "Competitive Landscape".\n'
     +'(a) 6-player table [Player|Type|Ticket '+sym+'|Same customer?|Strength|Weakness|Threat to concept]. Mix: 1 international fast-casual, 1 fast-food, 1 premium traditional, 1 mid traditional, 1 informal/street, 1 hypothetical new entrant.\n'
-    +'(b) h3 "Concept Differentiation" + 1 paragraph 150-180 words structured around 4 key differentiators numbered.',
+    +'(b) AFTER the competitors table, INSERT <div class="page-break"></div> (table alone on the section first page). THEN h3 "Concept Differentiation" + 1 paragraph 150-180 words structured around 4 key differentiators numbered.',
 
     '8. MENU STRATEGY [DIRECTIONAL ESTIMATE — 1 page]: BEFORE h2, <div class="section-number">Section 8</div>. h2 "Menu Strategy".\n'
     +'(a) <div class="estimate-box"> with <h4>Menu Strategy — Directional</h4> + paragraph 30-35 words (mention supplier sourcing is covered in the Menu Engineer module).\n'
@@ -322,12 +322,12 @@ function buildPrompt(c) {
     +'(e) h3 "Top 3 Operational KPIs D+30" + 3-row table.',
 
     '10. FINANCIAL PROJECTIONS [3 pages — CSS class "financial-section"]: BEFORE h2, <div class="section-number">Section 10</div>. h2 "Financial Projections". Italic sub-paragraph 50-60 words on benchmarks.\n'
-    +'FIVE sub-sections, EACH in <div class="estimate-box"> with <h4>Title</h4> + 25-35 word description, THEN its table:\n\n'
-    +'10A. STARTUP BUDGET — box + 12-row table [Item|Low '+sym+'|High '+sym+'|Notes]: Fit-out, Kitchen equipment, Furniture/decor, IT/POS, Licenses, Legal fees, Working capital (3 months), Pre-opening marketing, Cash reserve (3 months min), Contingency 8%, TOTAL, Gap vs declared budget '+(c.snap.budget||'N/A')+' '+cur+'.\n\n'
-    +'10B. REVENUE PROJECTIONS — box + TWO tables: (1) quarterly Y1 5-row [Quarter|Covers/day|Trading days|Quarterly revenue '+sym+']; (2) multi-year recap 3-row [Year|Annual revenue '+sym+'|Growth %|Avg covers/day].\n\n'
-    +'10C. 3-YEAR P&L — box + 12-row P&L table [Line|Y1 '+sym+'|Y1%|Y2 '+sym+'|Y2%|Y3 '+sym+'|Y3%]: Revenue, Food cost (30-34%), Gross margin, Payroll (28-32%), Rent (8-12%), Energy (3-5%), Packaging (2-4%), Marketing (3-5%), Insurance (1-2%), Depreciation, EBITDA, Net result.\n\n'
-    +'10D. BREAK-EVEN SENSITIVITY — box + 4-row table [Scenario|Ticket -10%|Ticket Base|Ticket +15%]: Covers -20%, Covers Base, Covers +30%. Each cell = monthly break-even '+sym+'.\n\n'
-    +'10E. ROI & FUNDING — box + TWO tables: (1) ROI Parameters 5-row; (2) Financing structure 3-row [Source|Amount '+sym+'|%|Notes]. + h3 "Financing Institutions to Contact ('+city+')" + 3-row table with 3 real local banks.',
+    +'FIVE sub-sections, EACH in <div class="estimate-box"> with <h4>Title</h4> + 25-35 word description, THEN its table. EXACT ORDER AND LAYOUT: 10A alone on page 1; 10B+10C together on page 2; 10D(P&L)+10E together on page 3.\n\n'
+    +'10A. STARTUP BUDGET — box + 12-row table [Item|Low '+sym+'|High '+sym+'|Notes]: Fit-out, Kitchen equipment, Furniture/decor, IT/POS, Licenses, Legal fees, Working capital (3 months), Pre-opening marketing, Cash reserve (3 months min), Contingency 8%, TOTAL, Gap vs declared budget '+(c.snap.budget||'N/A')+' '+cur+'. AFTER this 10A table, INSERT <div class="page-break"></div>.\n\n'
+    +'10B. REVENUE PROJECTIONS — box + TWO tables: (1) quarterly Y1 5-row [Quarter|Covers/day|Trading days|Quarterly revenue '+sym+']; (2) multi-year recap 3-row [Year|Annual revenue '+sym+'|Growth %|Avg covers/day]. First column: write "Year 1"/"Year 2"/"Year 3" inside <span class="nw">...</span> (single line).\n\n'
+    +'10C. BREAK-EVEN SENSITIVITY — box + 4-row table [Scenario|Ticket -10%|Ticket Base|Ticket +15%]: Covers -20%, Covers Base, Covers +30%. Each cell = monthly break-even '+sym+'. One synthesis line below the table. AFTER that line, INSERT <div class="page-break"></div>.\n\n'
+    +'10D. 3-YEAR P&L — box + 12-row P&L table [Line|Y1 '+sym+'|Y1%|Y2 '+sym+'|Y2%|Y3 '+sym+'|Y3%]: Revenue, Food cost (30-34%), Gross margin, Payroll (28-32%), Rent (8-12%), Energy (3-5%), Packaging (2-4%), Marketing (3-5%), Insurance (1-2%), Depreciation, EBITDA, Net result.\n\n'
+    +'10E. ROI & FUNDING — box + TWO tables: (1) ROI Parameters 5-row; (2) Financing structure 3-row [Source|Amount '+sym+'|%|Notes]. DO NOT include a "Financing Institutions" table (reserved for Business Plan Pro). 10D and 10E must fit together on page 3.',
 
     '11. MARKETING & PRE-OPENING [DIRECTIONAL ESTIMATE — 1.5 pages]: BEFORE h2, <div class="section-number">Section 11</div>. h2 "Marketing & Pre-Opening".\n'
     +'(a) <div class="estimate-box"> with <h4>Marketing — Directional</h4> + paragraph 35-45 words.\n'
@@ -337,24 +337,24 @@ function buildPrompt(c) {
 
     '12. RISK ANALYSIS [2 pages, synthesized format]: BEFORE h2, <div class="section-number">Section 12</div>. h2 "Risk Analysis". Italic sub-paragraph 25 words: "6 risks identified total. Detail of the 3 critical risks below. Score = Probability x Impact."\n'
     +'(a) h3 "Risk Summary Table" + 6-row table [Risk|Probability|Impact|Score /10|Key mitigation 1 line]. ALL 6 risks listed.\n'
-    +'(b) h3 "Detail of 3 Critical Risks" + 3 <div class="risk-block"> ONLY (the 3 highest-scored risks). Each COMPACT block: <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + short 40-50 word context paragraph + h5 "Mitigation & Contingency" + <ol> of 3 numbered actions + final "Plan B:" line.\n'
+    +'(b) h3 "Detail of 3 Critical Risks" + 3 <div class="risk-block"> ONLY (the 3 highest-scored risks). Each VERY COMPACT block: <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + short 30-35 word context paragraph MAX + h5 "Mitigation & Contingency" + <ol> of 3 numbered actions (15-18 words each MAX) + final "Plan B:" line (15-18 words MAX). AFTER the 1st block (Risk 1), INSERT <div class="page-break"></div> (Risk 1 + summary table on page 1; Risks 2-3 + other risks on page 2).\n'
     +'(c) h3 "Other Risks to Monitor" + 1 short paragraph (40-60 words) listing the 3 remaining (lowest-scored) risks with summarized key mitigation. Format: "Risk X: mitigation 8-12 words. Risk Y: ... Risk Z: ...".',
 
     '13. RECOMMENDATIONS & NEXT STEPS [1 page]: BEFORE h2, <div class="section-number">Section 13</div>. h2 "Recommendations & Next Steps".\n'
     +'(a) Intro paragraph 30-40 words.\n'
     +'(b) h3 "5 Priority Actions D+30" + 5-row table [#|Action|Owner|Deliverable|Deadline].\n'
-    +'(c) <div class="za3fran-box"> with copper h3 "Za3fran Digital Services — Next Steps" + intro line + 3 services in <ol>: (1) Menu Engineer, (2) Financial Builder Pro, (3) Bank-Grade Business Plan Pro. Each: bold name + 1-line objective + 1-line process + 1-line deliverable + indicative investment. End with package price + duration + contact "Contact: hello@za3fran.io | WhatsApp: +212 648 960 306".',
+    +'(c) <div class="za3fran-box"> LIGHT AND PUNCHY (call-to-action, NO heavy detail) with copper h3 "Za3fran Digital Services — Next Steps" + 1 short hook line (max 20 words) + 3 services in an AIRY <ul>, each on ONE line only: bold name + short benefit (8-12 words): (1) Menu Engineer, (2) Financial Builder Pro, (3) Bank-Grade Business Plan Pro. End with one highlighted line "Full package: '+sym+'X-Y \u00b7 60 days" + one contact line "hello@za3fran.io | WhatsApp +212 648 960 306". The WHOLE of section 13 (intro + 5-action table + this box) MUST fit on a single page.',
 
     '14. APPENDICES [1 page]: BEFORE h2, <div class="section-number">Section 14</div>. h2 "Appendices".\n'
-    +'(a) h3 "Validator Scores — Detail" + 7-row table [Criterion|Score /10|Observation 1 line].\n'
-    +'(b) h3 "Methodology Note" + <ol> of 3 concise bullets.\n'
-    +'(c) h3 "Glossary" + 10-row table [Term|Short definition 12-18 words].\n'
+    +'(a) h3 "Validator Scores — Detail" + 7-row table [Criterion|Score /10|Observation]. Observation column: 1 line only, 8-12 words MAX.\n'
+    +'(b) h3 "Methodology Note" + <ol> of 3 concise bullets (20-25 words each MAX).\n'
+    +'(c) BEFORE the Glossary h3, INSERT <div class="page-break"></div> (scores + methodology note on the section first page; glossary + footer on the last page). THEN h3 "Glossary" + 10-row table [Term|Short definition 12-15 words].\n'
     +'(d) Minimal footer: <div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #e8e8e4; text-align: center; font-size: 0.85rem; color: #999;"> with 3 <p> lines: document name, "Prepared by Za3fran Digital | '+c.today+'", "Confidential — Internal use only. No reproduction without written permission."',
 
   ].join('\n\n');
 
   // --- PRINT CSS (simplified — content is calibrated, less hackery needed) ---
-  var printCSS = '@media print { @page { margin: 1cm; size: A4; } html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: white !important; } section { display: block !important; width: 100% !important; min-height: 0 !important; max-height: none !important; height: auto !important; padding: 0.5rem 0 !important; margin: 0 !important; page-break-before: auto !important; page-break-inside: avoid !important; page-break-after: auto !important; break-inside: avoid !important; } section > p { page-break-inside: avoid !important; break-inside: avoid !important; } .cover-section { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; min-height: 100vh !important; height: 100vh !important; page-break-before: avoid !important; page-break-after: always !important; break-after: page !important; padding: 3rem 2rem !important; background: #0a0a0a !important; color: white !important; } section:nth-of-type(2) { page-break-before: always !important; page-break-after: always !important; break-before: page !important; break-after: page !important; } section:nth-of-type(3) { page-break-before: always !important; page-break-after: always !important; break-before: page !important; break-after: page !important; } .financial-section { background: transparent !important; } .section-number { page-break-after: avoid !important; break-after: avoid !important; } section > *:nth-child(-n+4) { page-break-after: avoid !important; break-after: avoid !important; } table { page-break-inside: avoid !important; break-inside: avoid !important; margin: 1rem 0 !important; } thead { display: table-header-group !important; } tr { page-break-inside: avoid !important; break-inside: avoid !important; } h1, h2, h3, h4, h5 { page-break-after: avoid !important; break-after: avoid !important; } .estimate-box, .za3fran-box { page-break-inside: avoid !important; break-inside: avoid !important; margin: 1rem 0 !important; } .risk-block { page-break-inside: auto !important; break-inside: auto !important; margin: 1rem 0 !important; } .estimate-box { page-break-after: avoid !important; break-after: avoid !important; } .estimate-box + table { page-break-before: avoid !important; break-before: avoid !important; } h3 + ul, h3 + ol, h3 + table { page-break-before: avoid !important; break-before: avoid !important; } ul, ol { page-break-inside: avoid !important; break-inside: avoid !important; } p { orphans: 3; widows: 3; } section > div[style*="border-top"] { margin-top: 1rem !important; padding-top: 0.5rem !important; page-break-before: avoid !important; break-before: avoid !important; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }';
+  var printCSS = '@media print { @page { margin: 1cm; size: A4; } html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: white !important; } section { display: block !important; width: 100% !important; min-height: 0 !important; max-height: none !important; height: auto !important; padding: 0.5rem 0 !important; margin: 0 !important; page-break-before: auto !important; page-break-inside: avoid !important; page-break-after: auto !important; break-inside: avoid !important; } section > p { page-break-inside: avoid !important; break-inside: avoid !important; } .cover-section { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; min-height: 100vh !important; height: 100vh !important; page-break-before: avoid !important; page-break-after: always !important; break-after: page !important; padding: 3rem 2rem !important; background: #0a0a0a !important; color: white !important; } section:nth-of-type(2) { page-break-before: always !important; page-break-after: always !important; break-before: page !important; break-after: page !important; } section:nth-of-type(3) { page-break-before: always !important; page-break-after: always !important; break-before: page !important; break-after: page !important; } .financial-section { background: transparent !important; } .financial-section table td, .financial-section table th { padding: 0.4rem 0.55rem !important; font-size: 0.82rem !important; line-height: 1.3 !important; } .section-number { page-break-after: avoid !important; break-after: avoid !important; } section > *:nth-child(-n+4) { page-break-after: avoid !important; break-after: avoid !important; } table { page-break-inside: avoid !important; break-inside: avoid !important; margin: 1rem 0 !important; table-layout: auto !important; } td.num, th.num { white-space: nowrap !important; } .nw { white-space: nowrap !important; } thead { display: table-header-group !important; } tr { page-break-inside: avoid !important; break-inside: avoid !important; } h1, h2, h3, h4, h5 { page-break-after: avoid !important; break-after: avoid !important; } .estimate-box, .za3fran-box { page-break-inside: avoid !important; break-inside: avoid !important; margin: 1rem 0 !important; } .risk-block { page-break-inside: avoid !important; break-inside: avoid !important; margin: 1rem 0 !important; } .estimate-box { page-break-after: avoid !important; break-after: avoid !important; } .estimate-box + table, .estimate-box + ul, .estimate-box + ol { page-break-before: avoid !important; break-before: avoid !important; } h3 + ul, h3 + ol, h3 + table, h4 + ul, h4 + ol, h4 + table, h4 + p { page-break-before: avoid !important; break-before: avoid !important; } ul, ol { page-break-inside: avoid !important; break-inside: avoid !important; } .page-break { display: block !important; height: 0 !important; page-break-after: always !important; break-after: page !important; } p { orphans: 3; widows: 3; } section > div[style*="border-top"] { margin-top: 1rem !important; padding-top: 0.5rem !important; page-break-before: avoid !important; break-before: avoid !important; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }';
 
   // --- DESIGN INSTRUCTION (with explicit class taxonomy) ---
   var design = fr
@@ -367,7 +367,7 @@ function buildPrompt(c) {
       + '(e) encadres ESTIMATION DIRECTIONNELLE = <div class="estimate-box"> avec fond #fff8f0, bordure gauche 3px solid #C9862A, padding 1rem, contenant <h4> + <p> description. '
       + '(f) blocs risques section 12 = <div class="risk-block"> avec fond blanc, bordure gauche 4px solid #C9862A, padding 1rem 1.5rem. '
       + '(g) encadre Za3fran section 13 = <div class="za3fran-box"> avec fond #0F1F3D, texte blanc, padding 1.5rem 2rem. '
-      + 'Tableaux: bordure exterieure 1px #e8e8e4, en-tetes <thead> fond #0F1F3D texte blanc, rangees alternees fond #f9f9f7, padding cellules 0.7rem 1rem. '
+      + 'Tableaux: bordure exterieure 1px #e8e8e4, en-tetes <thead> fond #0F1F3D texte blanc, rangees alternees fond #f9f9f7, padding cellules 0.7rem 1rem. REGLE TABLEAUX (STRICT): tout montant/nombre/pourcentage dans <td class="num"> (ne se coupe jamais). Toute expression entre parentheses dans une cellule = <span class="nw">(texte)</span> (jamais coupee sur 2 lignes). Formater les montants avec espaces insecables comme separateurs de milliers. 1re colonne (libelles) peut passer sur 2 lignes proprement; colonnes de montants assez larges pour 1 ligne. '
       + 'Body max-width 860px, margin 0 auto, padding 0 2rem. '
       + 'Pas de wrapper .section-content (contenu direct dans section). '
       + printCSS
@@ -381,7 +381,7 @@ function buildPrompt(c) {
       + '(e) DIRECTIONAL ESTIMATE boxes = <div class="estimate-box"> with #fff8f0 background, 3px solid #C9862A left border, padding 1rem, containing <h4> + <p>. '
       + '(f) risk blocks section 12 = <div class="risk-block"> with white background, 4px solid #C9862A left border, padding 1rem 1.5rem. '
       + '(g) Za3fran box section 13 = <div class="za3fran-box"> with #0F1F3D background, white text, padding 1.5rem 2rem. '
-      + 'Tables: 1px #e8e8e4 outer border, <thead> with #0F1F3D background white text, alternating rows #f9f9f7, cell padding 0.7rem 1rem. '
+      + 'Tables: 1px #e8e8e4 outer border, <thead> with #0F1F3D background white text, alternating rows #f9f9f7, cell padding 0.7rem 1rem. TABLE RULES (STRICT): every amount/number/percentage in <td class="num"> (never wraps). Any parenthetical inside a cell = <span class="nw">(text)</span> (never splits across two lines). Format amounts with non-breaking spaces as thousand separators. First column (labels) may wrap onto 2 clean lines; amount columns wide enough for one line. '
       + 'Body max-width 860px, margin 0 auto, padding 0 2rem. '
       + 'No .section-content wrapper (content direct in section). '
       + printCSS
