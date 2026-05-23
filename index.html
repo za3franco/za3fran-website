@@ -25,24 +25,48 @@
     USD: { en: 'Get Your Report — $219',       fr: 'Votre rapport — $219'            }
   };
   var VAL_PRICES = {
-    MAD: { en: 'Validate My Concept — MAD 1,990', fr: 'Valider mon concept — 1 990 MAD' },
+    MAD: { en: 'Validate My Concept — MAD 1,990', fr: 'Valider mon concept — 1 990 MAD' },
     EUR: { en: 'Validate My Concept — €199',  fr: 'Valider mon concept — 199€'       },
     USD: { en: 'Validate My Concept — $219',       fr: 'Valider mon concept — $219'            }
   };
-
-  function setCurrency(currency) {
-    window.ZA3FRAN_CURRENCY = currency;
-    document.querySelectorAll('[data-price]').forEach(function(el) {
-      el.textContent = PRICES[currency][el.getAttribute('data-price')];
-    });
-    document.querySelectorAll('[data-btn-price]').forEach(function(el) {
-      el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
-    });
-    document.querySelectorAll('[data-val-price]').forEach(function(el) {
-      el.textContent = VAL_PRICES[currency][el.getAttribute('data-val-price')];
-    });
-  }
-
+  var BUNDLE_PRICES = {
+    MAD: { en: 'Validator + Business Plan — MAD 6,990', fr: 'Validator + Business Plan — 6 990 MAD' },
+    EUR: { en: 'Validator + Business Plan — €699',      fr: 'Validator + Business Plan — 699€'      },
+    USD: { en: 'Validator + Business Plan — 749′,fr:′Validator+BusinessPlan—749749',      fr: 'Validator + Business Plan — 749
+749′,fr:′Validator+BusinessPlan—749'      }
+  };
+  var BP_PRICES = {
+    MAD: { en: 'MAD 6,990', fr: '6 990 MAD' },
+    EUR: { en: '€699',      fr: '699€'       },
+    USD: { en: '$749',      fr: '$749'       }
+  };
+  var BP_SAVE = {
+    MAD: { en: 'save MAD 990', fr: 'économisez 990 MAD' },
+    EUR: { en: 'save €99',     fr: 'économisez 99€'     },
+    USD: { en: 'save 99′,fr:′eˊconomisez9999',     fr: 'économisez 99
+99′,fr:′eˊconomisez99'     }
+  };
+function setCurrency(currency) {
+window.ZA3FRAN_CURRENCY = currency;
+document.querySelectorAll('[data-price]').forEach(function(el) {
+el.textContent = PRICES[currency][el.getAttribute('data-price')];
+});
+document.querySelectorAll('[data-btn-price]').forEach(function(el) {
+el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
+});
+document.querySelectorAll('[data-val-price]').forEach(function(el) {
+el.textContent = VAL_PRICES[currency][el.getAttribute('data-val-price')];
+});
+document.querySelectorAll('[data-bundle-price]').forEach(function(el) {
+el.textContent = BUNDLE_PRICES[currency][el.getAttribute('data-bundle-price')];
+});
+document.querySelectorAll('[data-bp-price]').forEach(function(el) {
+el.textContent = BP_PRICES[currency][el.getAttribute('data-bp-price')];
+});
+document.querySelectorAll('[data-bp-save]').forEach(function(el) {
+el.textContent = BP_SAVE[currency][el.getAttribute('data-bp-save')];
+});
+}
   function detectCurrency() {
     fetch('/api/currency')
       .then(function(r){ return r.json(); })
