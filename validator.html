@@ -1014,7 +1014,332 @@ function setLang(l){
   document.getElementById('body').classList.toggle('lang-fr', l==='fr');
   document.getElementById('btn-en').classList.toggle('active', l==='en');
   document.getElementById('btn-fr').classList.toggle('active', l==='fr');
+  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
+    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if(saved === 'fr') setLang('fr');
+  else setLang('en');
+})();
 
+// ── CURRENCY ──
+var CURRENCY = 'EUR';
+
+// Price map per currency
+var PRICES = {
+  validator: { EUR: '€199', MAD: 'MAD 1 990', USD: '$219' },
+  bundle:    { EUR: '€699', MAD: 'MAD 6 990', USD: '$749' },
+  bundleList:{ EUR: '€798', MAD: 'MAD 7 980', USD: '$868' },  // crossed-out list price
+  validatorOnly: { EUR: '€199', MAD: 'MAD 1 990', USD: '$219' },
+};
+
+var BUNDLE_SAVE = { EUR: 'Save €99', MAD: 'Économisez MAD 990', USD: 'Save $99' };
+
+fetch('/api/currency')
+  .then(r => r.json())
+  .then(data => {
+    CURRENCY = data.currency || 'EUR';
+    updatePriceDisplays();
+  })
+  .catch(() => {});
+
+function updatePriceDisplays() {
+  const c = CURRENCY;
+  // Hero and submit area (Validator-only price)
+  const vp = PRICES.validator[c] || PRICES.validator.EUR;
+  const el1 = document.getElementById('hero-price');
+  const el2 = document.getElementById('submit-price');
+  if(el1) el1.textContent = vp;
+  if(el2) el2.textContent = vp;
+
+  // Bundle toggle option prices
+  const elV = document.getElementById('price-validator-opt');
+  const elB = document.getElementById('price-bundle-opt');
+  const elBL = document.getElementById('price-bundle-list');
+  if(elV) elV.textContent = PRICES.validator[c] || PRICES.validator.EUR;
+  if(elB) elB.textContent = PRICES.bundle[c] || PRICES.bundle.EUR;
+  if(elBL) elBL.textContent = PRICES.bundleList[c] || PRICES.bundleList.EUR;
+
+  // Save badge text
+  document.querySelectorAll('.v-bundle-save').forEach(el => {
+    el.textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
+  });
+
+  // Review total (reflects current selection)
+  updateReviewTotal();
+}
+
+// ── PACKAGE SELECTION ──
+var PURCHASE_TYPE = 'validator';  // 'validator' or 'bundle'
+
+function selectPackage(type) {
+  PURCHASE_TYPE = type;
+  document.getElementById('opt-validator').classList.toggle('selected', type === 'validator');
+  document.getElementById('opt-bundle').classList.toggle('selected', type === 'bundle');
+  updateReviewTotal();
+}
+
+function updateReviewTotal() {
+  const c = CURRENCY;
+  const price = PURCHASE_TYPE === 'bundle'
+    ? (PRICES.bundle[c] || PRICES.bundle.EUR)
+    : (PRICES.validator[c] || PRICES.validator.EUR);
+  const rp = document.getElementById('review-price');
+  if(rp) rp.textContent = price;
+
+  // Update desc line
+  const descEn = document.getElementById('review-total-desc-en');
+  const descFr = document.getElementById('review-total-desc-fr');
+  const isFrLang = isFr();
+  if(PURCHASE_TYPE === 'bundle') {
+    if(descEn) descEn.textContent = 'Validator + Business Plan Essentials · Two reports · Two access codes';
+    if(descFr) descFr.textContent = 'Validator + Business Plan Essentials · Deux rapports · Deux codes d\'accès';
+  } else {
+    if(descEn) descEn.textContent = '20-page strategic report · Delivered in under 3 minutes';
+    if(descFr) descFr.textContent = 'Rapport stratégique 20 pages · Livré en moins de 3 minutes';
+  }
+  if(descEn) descEn.style.display = isFrLang ? 'none' : 'block';
+  if(descFr) descFr.style.display = isFrLang ? 'block' : 'none';
+}
+
+// ── VALIDATION ──
+function isFr(){ return document.getElementById('body').classList.contains('lang-fr'); }
+
+function validateForm(){
+  let valid = true;
+  const required = ['f-name','f-email','f-country','f-role','f-concept-name',
+    'f-type','f-cuisine','f-description','f-differentiation','f-city',
+    'f-budget','f-ticket','f-covers','f-gap','f-stage','f-timeline'];
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const val = el.value.trim();
+    if(!val){ el.classList.add('error'); valid = false; }
+    else { el.classList.remove('error'); }
+  });
+
+  const email = document.getElementById('f-email');
+  if(email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){
+    email.classList.add('error'); valid = false;
+  }
+
+  const desc = document.getElementById('f-description');
+  if(desc.value.trim().length < 100){ desc.classList.add('error'); valid = false; }
+
+  const audienceChecked = document.querySelectorAll('[name="audience"]:checked');
+  const errAudience = document.getElementById('err-audience');
+  if(audienceChecked.length === 0){
+    errAudience.textContent = isFr() ? 'Sélectionnez au moins une option.' : 'Please select at least one.';
+    errAudience.classList.add('show'); valid = false;
+  } else {
+    errAudience.classList.remove('show');
+  }
+
+  return valid;
+}
+
+function collectData(){
+  const audience = Array.from(document.querySelectorAll('[name="audience"]:checked')).map(e=>e.value);
+  return {
+    name:           document.getElementById('f-name').value.trim(),
+    email:          document.getElementById('f-email').value.trim(),
+    country:        document.getElementById('f-country').value,
+    role:           document.getElementById('f-role').value,
+    concept_name:   document.getElementById('f-concept-name').value.trim(),
+    type:           document.getElementById('f-type').value,
+    cuisine:        document.getElementById('f-cuisine').value.trim(),
+    description:    document.getElementById('f-description').value.trim(),
+    differentiation:document.getElementById('f-differentiation').value.trim(),
+    city:           document.getElementById('f-city').value.trim(),
+    neighbourhood:  document.getElementById('f-neighbourhood').value.trim(),
+    audience:       audience,
+    budget:         document.getElementById('f-budget').value,
+    ticket:         document.getElementById('f-ticket').value.trim(),
+    covers:         document.getElementById('f-covers').value.trim(),
+    seats:          document.getElementById('f-seats').value.trim(),
+    opening_hours:  document.getElementById('f-opening').value.trim(),
+    competitors:    document.getElementById('f-competitors').value.trim(),
+    market_gap:     document.getElementById('f-gap').value.trim(),
+    stage:          document.getElementById('f-stage').value,
+    timeline:       document.getElementById('f-timeline').value,
+    additional:     document.getElementById('f-context').value.trim(),
+    currency:       CURRENCY,
+    language:       isFr() ? 'fr' : 'en',
+    purchase_type:  PURCHASE_TYPE,   // ← new: 'validator' or 'bundle'
+    submitted_at:   new Date().toISOString()
+  };
+}
+
+// ── LABEL MAPS ──
+const TYPE_LABELS = {
+  restaurant_casual:'Casual dining restaurant',restaurant_fine:'Fine dining',
+  cafe_brunch:'Café / Brunch',fast_casual:'Fast casual / QSR',
+  bar_lounge:'Bar / Lounge',beach_club:'Beach club / Pool club',
+  rooftop:'Rooftop / Terrace',dark_kitchen:'Dark kitchen',
+  food_hall:'Food hall',hotel_fb:'Hotel F&B outlet',other:'Other'
+};
+const BUDGET_LABELS = {
+  under_50k:'Under $50,000','50_150k':'$50k–$150k',
+  '150_500k':'$150k–$500k','500k_1m':'$500k–$1M',over_1m:'Over $1M'
+};
+const STAGE_LABELS = {
+  idea:'Early idea / Concept phase',planning:'Business planning',
+  funding:'Seeking funding',location:'Location scouting',
+  build:'Under construction',prelaunch:'Pre-launch',existing:'Existing — repositioning'
+};
+const TIMELINE_LABELS = {
+  under_3m:'Under 3 months','3_6m':'3–6 months',
+  '6_12m':'6–12 months',over_1y:'Over 1 year',undefined_:'Not yet defined'
+};
+const ROLE_LABELS = {
+  founder:'Founder / Entrepreneur',investor:'Investor',
+  operator:'Existing operator',consultant:'Consultant',other:'Other'
+};
+const COUNTRY_LABELS = {
+  MA:'Morocco',DZ:'Algeria',TN:'Tunisia',EG:'Egypt',SN:'Senegal',
+  CI:"Côte d'Ivoire",CM:'Cameroon',NG:'Nigeria',KE:'Kenya',ZA:'South Africa',
+  AE:'UAE',SA:'Saudi Arabia',FR:'France',BE:'Belgium',CH:'Switzerland',
+  GB:'United Kingdom',OTHER:'Other'
+};
+const SECTION_IDS = {
+  1:'f-name',2:'f-concept-name',3:'f-city',4:'f-budget',5:'f-competitors',6:'f-stage'
+};
+
+function populateReview(data) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(!val || (typeof val === 'string' && val.trim() === '')) {
+      el.innerHTML = '<span class="v-ritem-empty">' + (isFr() ? 'Non renseigné' : 'Not provided') + '</span>';
+    } else { el.textContent = val; }
+  };
+  set('r-name',            data.name);
+  set('r-email',           data.email);
+  set('r-country',         COUNTRY_LABELS[data.country] || data.country);
+  set('r-role',            ROLE_LABELS[data.role] || data.role);
+  set('r-concept-name',    data.concept_name);
+  set('r-type',            TYPE_LABELS[data.type] || data.type);
+  set('r-cuisine',         data.cuisine);
+  set('r-description',     data.description);
+  set('r-differentiation', data.differentiation);
+  set('r-city',            data.city);
+  set('r-neighbourhood',   data.neighbourhood);
+  set('r-audience',        (data.audience||[]).join(', '));
+  set('r-budget',          BUDGET_LABELS[data.budget] || data.budget);
+  set('r-ticket',          data.ticket);
+  set('r-covers',          data.covers);
+  set('r-seats',           data.seats);
+  set('r-competitors',     data.competitors);
+  set('r-gap',             data.market_gap);
+  set('r-stage',           STAGE_LABELS[data.stage] || data.stage);
+  set('r-timeline',        TIMELINE_LABELS[data.timeline] || TIMELINE_LABELS[data.timeline + '_'] || data.timeline);
+  set('r-context',         data.additional);
+  // Reset to validator-only on each review open
+  selectPackage('validator');
+  updateReviewTotal();
+}
+
+function showForm() {
+  const review = document.getElementById('v-review');
+  review.classList.remove('show'); review.style.display = 'none';
+  document.getElementById('validator-form').style.display = '';
+  document.querySelector('.v-form-wrap').style.display = '';
+  document.querySelector('.v-hero').style.display = '';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function editSection(num) {
+  showForm();
+  setTimeout(() => {
+    const el = document.getElementById(SECTION_IDS[num]);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 200);
+}
+
+function backToForm() { showForm(); }
+
+// ── FORM SUBMIT → SHOW REVIEW ──
+document.getElementById('validator-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const errEl = document.getElementById('form-err');
+  errEl.classList.remove('show');
+
+  if(!validateForm()){
+    errEl.textContent = isFr()
+      ? 'Veuillez compléter tous les champs obligatoires.'
+      : 'Please complete all required fields.';
+    errEl.classList.add('show');
+    const firstErr = document.querySelector('.v-input.error, .v-select.error, .v-textarea.error');
+    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'form_submitted', { event_category:'validator', event_label:'review_screen_reached' });
+  }
+
+  const data = collectData();
+  try { populateReview(data); } catch(e) { console.error('populateReview error:', e); }
+  document.getElementById('validator-form').style.display = 'none';
+  document.querySelector('.v-form-wrap').style.display = 'none';
+  document.querySelector('.v-hero').style.display = 'none';
+  const review = document.getElementById('v-review');
+  review.style.display = 'block'; review.classList.add('show');
+  window.scrollTo({top:0, behavior:'instant'});
+});
+
+// ── CONFIRM & PAY ──
+async function proceedToPayment() {
+  const btn   = document.getElementById('confirm-btn');
+  const errEl = document.getElementById('review-err');
+  errEl.classList.remove('show');
+  btn.disabled = true; btn.classList.add('loading');
+
+  const data = collectData();
+
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'begin_checkout', {
+      event_category: 'conversion',
+      event_label: PURCHASE_TYPE === 'bundle' ? 'bundle_checkout' : 'validator_checkout',
+      currency: data.currency || 'EUR'
+    });
+  }
+
+  try {
+    const res = await fetch('/api/submit-validator', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error('submission failed');
+    const result = await res.json();
+    if(result.checkoutUrl){
+      window.location.href = result.checkoutUrl;
+    } else {
+      const rev = document.getElementById('v-review');
+      rev.classList.remove('show'); rev.style.display = 'none';
+      document.getElementById('v-success').classList.add('show');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  } catch(err){
+    errEl.textContent = isFr()
+      ? "Une erreur s'est produite. Réessayez ou contactez hello@za3fran.io."
+      : 'Something went wrong. Please try again or contact hello@za3fran.io.';
+    errEl.classList.add('show');
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+}
+
+// Remove error state on input
+document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
+  el.addEventListener('input', () => el.classList.remove('error'));
+  el.addEventListener('change', () => el.classList.remove('error'));
+});
+</script>
   // Update pill labels using data attributes
   document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
     el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
