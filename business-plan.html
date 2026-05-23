@@ -67,11 +67,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hero-pills{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem;}
 .pill{font-size:0.7rem;letter-spacing:0.12em;padding:0.4rem 1rem;
   border:0.5px solid var(--border);color:rgba(250,250,247,0.5);text-transform:uppercase;}
-.price-block{display:inline-flex;align-items:center;gap:1rem;padding:1rem 2rem;
-  border:0.5px solid var(--border);background:rgba(201,134,42,0.04);}
-.price-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;
-  color:var(--copper);}
-.price-note{font-size:0.78rem;color:rgba(250,250,247,0.4);max-width:180px;line-height:1.5;}
 
 /* WHAT'S INCLUDED */
 .included{max-width:1100px;margin:0 auto;padding:5rem 4rem;}
@@ -185,8 +180,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="eyebrow en">Za3fran Digital · Business Plan Essentials</div>
-    <div class="eyebrow fr">Za3fran Digital · Business Plan Essentials</div>
+    <div class="eyebrow">Za3fran Digital · Business Plan Essentials</div>
     <h1 class="en">Your concept, <em>formalized.</em></h1>
     <h1 class="fr">Votre concept, <em>formalisé.</em></h1>
     <p class="hero-sub en">A complete, investor-ready business plan generated from your Validator data.</p>
@@ -201,10 +195,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <span class="pill fr">Bilingue EN/FR</span>
       <span class="pill fr">Livré en 5 min</span>
     </div>
-    <div class="price-block">
-      <div class="price-val" id="hero-price">€599</div>
-      <div class="price-note en">One-time · Standalone product</div>
-      <div class="price-note fr">Paiement unique · Produit standalone</div>
+    <!-- Price block: returning client €499 + bundle callout -->
+    <div style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:0.75rem;padding:1.5rem 2rem;border:0.5px solid var(--border);background:rgba(201,134,42,0.04);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--copper);" id="hero-price">€499</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="en">for existing Validator clients</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="fr">pour les clients Validator existants</span>
+      </div>
+      <div style="height:0.5px;width:100%;background:rgba(201,134,42,0.15);"></div>
+      <div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:rgba(201,134,42,0.6);" id="hero-bundle-price">€699</span>
+        <span style="font-size:0.72rem;color:rgba(250,250,247,0.35);" class="en">bundled with Concept Validator — <span id="hero-save">save €99</span></span>
+        <span style="font-size:0.72rem;color:rgba(250,250,247,0.35);" class="fr">avec le Concept Validator — <span id="hero-save-fr">économisez 99€</span></span>
+        <a href="/validator" style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="en">Start with bundle →</a>
+        <a href="/validator" style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="fr">Commencer avec le bundle →</a>
+      </div>
     </div>
   </div>
 </div>
@@ -217,7 +222,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     <p class="en">Everything generated directly from your Validator submission — no additional forms, no extra inputs.</p>
     <p class="fr">Tout est généré directement depuis votre soumission Validator — aucun formulaire ni saisie supplémentaire.</p>
   </div>
-
   <div class="grid-3">
     <div class="card">
       <div class="card-icon">✦</div>
@@ -295,8 +299,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         <div class="step-num">02</div>
         <h4 class="en">Pay once</h4>
         <h4 class="fr">Payez une fois</h4>
-        <p class="en">Secure Stripe payment. <span id="step2-price" class="en-inline">€599</span><span id="step2-price-fr" class="fr-inline">€599</span> one-time, no subscription.</p>
-        <p class="fr">Paiement Stripe sécurisé. <span id="step2-price-fr2">€599</span> paiement unique, sans abonnement.</p>
+        <p class="en">Secure Stripe payment. <span id="step2-price">€499</span> one-time for existing Validator clients. No subscription.</p>
+        <p class="fr">Paiement Stripe sécurisé. <span id="step2-price-fr">499€</span> paiement unique pour les clients Validator existants. Sans abonnement.</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
@@ -312,12 +316,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 <!-- CHECKOUT -->
 <div class="checkout" id="checkout-section">
   <div class="checkout-box" id="checkout-box">
-    <span class="checkout-eyebrow en">Step 1 of 1 — Enter your access code & pay</span>
-    <span class="checkout-eyebrow fr">Étape 1 sur 1 — Saisissez votre code d'accès & payez</span>
+
+    <!-- New user callout -->
+    <div style="background:rgba(201,134,42,0.05);border:0.5px solid rgba(201,134,42,0.25);padding:1.25rem 1.5rem;margin-bottom:2rem;">
+      <p style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);margin-bottom:0.5rem;" class="en">First time? Start with the bundle</p>
+      <p style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);margin-bottom:0.5rem;" class="fr">Première fois ? Commencez avec le bundle</p>
+      <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="en">Haven't done the Concept Validator yet? Get both together — Validator + Business Plan Essentials for <strong style="color:var(--copper);" id="box-bundle-price">€699</strong> (save €99).</p>
+      <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="fr">Pas encore fait le Concept Validator ? Obtenez les deux ensemble — Validator + Business Plan Essentials pour <strong style="color:var(--copper);" id="box-bundle-price-fr">699€</strong> (économisez 99€).</p>
+      <a href="/validator" style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="en">Get Validator + Business Plan →</a>
+      <a href="/validator" style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="fr">Obtenir Validator + Business Plan →</a>
+    </div>
+
+    <!-- Divider with label -->
+    <div style="height:0.5px;background:var(--border);margin-bottom:2rem;position:relative;">
+      <span style="position:absolute;top:-0.6rem;left:50%;transform:translateX(-50%);background:var(--charcoal);padding:0 0.75rem;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);" class="en">Already have a Validator report?</span>
+      <span style="position:absolute;top:-0.6rem;left:50%;transform:translateX(-50%);background:var(--charcoal);padding:0 0.75rem;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);" class="fr">Vous avez déjà un rapport Validator ?</span>
+    </div>
+
+    <span class="checkout-eyebrow en">Enter your access code & pay</span>
+    <span class="checkout-eyebrow fr">Saisissez votre code d'accès & payez</span>
     <h2 class="en">Get your <em>Business Plan</em></h2>
     <h2 class="fr">Obtenez votre <em>Business Plan</em></h2>
-    <p class="checkout-sub en">Enter the access code from your Concept Validator delivery email. Your concept data will be retrieved automatically.</p>
-    <p class="checkout-sub fr">Saisissez le code d'accès de votre email de livraison du Concept Validator. Vos données seront récupérées automatiquement.</p>
+    <p class="checkout-sub en">Enter the access code from your Concept Validator delivery email. Your concept data will be retrieved automatically. <strong style="color:rgba(201,134,42,0.7);font-weight:400;">Returning client rate: <span id="checkout-returning">€499</span></strong></p>
+    <p class="checkout-sub fr">Saisissez le code d'accès de votre email de livraison du Concept Validator. Vos données seront récupérées automatiquement. <strong style="color:rgba(201,134,42,0.7);font-weight:400;">Tarif fidélité : <span id="checkout-returning-fr">499€</span></strong></p>
 
     <div class="field">
       <label class="label en" for="f-code">Validator access code <span style="color:var(--copper)">*</span></label>
@@ -333,7 +354,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         <div class="price-label en">Total · One-time payment</div>
         <div class="price-label fr">Total · Paiement unique</div>
       </div>
-      <div class="price-display" id="checkout-price">€599</div>
+      <div class="price-display" id="checkout-price">€499</div>
     </div>
 
     <div class="err-msg" id="err-msg"></div>
@@ -379,18 +400,31 @@ function isFr(){ return document.getElementById('body').classList.contains('lang
 
 // ── CURRENCY ──
 var CURRENCY = 'EUR';
-var PRICE_DISPLAY = { EUR: '€599', MAD: 'MAD 5 990', USD: '$649' };
+var PRICE_RETURNING = { EUR: '€499',      MAD: 'MAD 4 990', USD: '$549' };
+var PRICE_BUNDLE    = { EUR: '€699',      MAD: 'MAD 6 990', USD: '$749' };
+var PRICE_SAVE_EN   = { EUR: 'save €99',  MAD: 'save MAD 990', USD: 'save $99' };
+var PRICE_SAVE_FR   = { EUR: 'économisez 99€', MAD: 'économisez 990 MAD', USD: 'économisez 99$' };
 
 fetch('/api/currency')
   .then(r => r.json())
   .then(data => {
     CURRENCY = data.currency || 'EUR';
-    const p = PRICE_DISPLAY[CURRENCY];
-    document.getElementById('hero-price').textContent = p;
-    document.getElementById('checkout-price').textContent = p;
-    if(document.getElementById('step2-price'))   document.getElementById('step2-price').textContent = p;
-    if(document.getElementById('step2-price-fr')) document.getElementById('step2-price-fr').textContent = p;
-    if(document.getElementById('step2-price-fr2')) document.getElementById('step2-price-fr2').textContent = p;
+    const p   = PRICE_RETURNING[CURRENCY];
+    const pb  = PRICE_BUNDLE[CURRENCY];
+    const ps  = PRICE_SAVE_EN[CURRENCY];
+    const psf = PRICE_SAVE_FR[CURRENCY];
+    const el  = (id) => document.getElementById(id);
+    if(el('hero-price'))           el('hero-price').textContent = p;
+    if(el('hero-bundle-price'))    el('hero-bundle-price').textContent = pb;
+    if(el('hero-save'))            el('hero-save').textContent = ps;
+    if(el('hero-save-fr'))         el('hero-save-fr').textContent = psf;
+    if(el('checkout-price'))       el('checkout-price').textContent = p;
+    if(el('checkout-returning'))   el('checkout-returning').textContent = p;
+    if(el('checkout-returning-fr'))el('checkout-returning-fr').textContent = p;
+    if(el('box-bundle-price'))     el('box-bundle-price').textContent = pb;
+    if(el('box-bundle-price-fr'))  el('box-bundle-price-fr').textContent = pb;
+    if(el('step2-price'))          el('step2-price').textContent = p;
+    if(el('step2-price-fr'))       el('step2-price-fr').textContent = p;
   })
   .catch(() => {});
 
@@ -400,8 +434,7 @@ fetch('/api/currency')
   const code = params.get('code');
   if(code) {
     const inp = document.getElementById('f-code');
-    if(inp) { inp.value = code.toUpperCase(); }
-    // Scroll to checkout
+    if(inp) inp.value = code.toUpperCase();
     setTimeout(() => {
       document.getElementById('checkout-section')?.scrollIntoView({ behavior:'smooth', block:'center' });
     }, 500);
@@ -410,9 +443,9 @@ fetch('/api/currency')
 
 // ── PAYMENT ──
 async function proceedToPayment() {
-  const btn    = document.getElementById('pay-btn');
-  const errEl  = document.getElementById('err-msg');
-  const code   = document.getElementById('f-code').value.toUpperCase().trim();
+  const btn   = document.getElementById('pay-btn');
+  const errEl = document.getElementById('err-msg');
+  const code  = document.getElementById('f-code').value.toUpperCase().trim();
   errEl.classList.remove('show');
 
   if(!code || code.length < 6) {
@@ -432,8 +465,8 @@ async function proceedToPayment() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         accessCode: code,
-        currency: CURRENCY,
-        language: isFr() ? 'fr' : 'en',
+        currency:   CURRENCY,
+        language:   isFr() ? 'fr' : 'en',
       }),
     });
 
@@ -463,11 +496,12 @@ async function proceedToPayment() {
   }
 }
 
-// ── Handle Stripe success redirect (from success_url) ──
+// ── Handle Stripe success redirect ──
 (function(){
   const params = new URLSearchParams(window.location.search);
   if(params.get('session_id')) {
-    document.getElementById('checkout-box')?.style && (document.getElementById('checkout-box').style.display = 'none');
+    const box = document.getElementById('checkout-box');
+    if(box) box.style.display = 'none';
     document.getElementById('v-success').classList.add('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -480,3 +514,4 @@ document.getElementById('f-code').addEventListener('input', function() {
 </script>
 </body>
 </html>
+
