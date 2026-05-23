@@ -15,58 +15,65 @@
 <script>
 (function(){
   var PRICES = {
-    MAD: { en: 'MAD 1,990', fr: '1 990 MAD' },
-    EUR: { en: '€199',  fr: '199€'       },
-    USD: { en: '$219',       fr: '$219'            }
+    MAD: { en: 'MAD 1,990', fr: '1 990 MAD' },
+    EUR: { en: '€199',      fr: '199€'       },
+    USD: { en: '$219',      fr: '$219'       }
   };
   var BTN_PRICES = {
-    MAD: { en: 'Get Your Report — MAD 1,990', fr: 'Votre rapport — 1 990 MAD' },
-    EUR: { en: 'Get Your Report — €199',  fr: 'Votre rapport — 199€'       },
-    USD: { en: 'Get Your Report — $219',       fr: 'Votre rapport — $219'            }
+    MAD: { en: 'Get Your Report — MAD 1,990', fr: 'Votre rapport — 1 990 MAD' },
+    EUR: { en: 'Get Your Report — €199',      fr: 'Votre rapport — 199€'       },
+    USD: { en: 'Get Your Report — $219',      fr: 'Votre rapport — $219'       }
   };
   var VAL_PRICES = {
     MAD: { en: 'Validate My Concept — MAD 1,990', fr: 'Valider mon concept — 1 990 MAD' },
-    EUR: { en: 'Validate My Concept — €199',  fr: 'Valider mon concept — 199€'       },
-    USD: { en: 'Validate My Concept — $219',       fr: 'Valider mon concept — $219'            }
+    EUR: { en: 'Validate My Concept — €199',      fr: 'Valider mon concept — 199€'       },
+    USD: { en: 'Validate My Concept — $219',      fr: 'Valider mon concept — $219'       }
   };
-  var BUNDLE_PRICES = {
+  var BUNDLE_LABEL = {
     MAD: { en: 'Validator + Business Plan — MAD 6,990', fr: 'Validator + Business Plan — 6 990 MAD' },
     EUR: { en: 'Validator + Business Plan — €699',      fr: 'Validator + Business Plan — 699€'      },
-    USD: { en: 'Validator + Business Plan — 749′,fr:′Validator+BusinessPlan—749749',      fr: 'Validator + Business Plan — 749
-749′,fr:′Validator+BusinessPlan—749'      }
+    USD: { en: 'Validator + Business Plan — $749',      fr: 'Validator + Business Plan — $749'      }
   };
-  var BP_PRICES = {
-    MAD: { en: 'MAD 6,990', fr: '6 990 MAD' },
-    EUR: { en: '€699',      fr: '699€'       },
-    USD: { en: '$749',      fr: '$749'       }
+  var BP_TILE_PRICE = {
+    MAD: { en: 'MAD 6,990 with Validator · MAD 4,990 standalone', fr: '6 990 MAD avec Validator · 4 990 MAD seul' },
+    EUR: { en: '€699 with Validator · €499 standalone',           fr: '699€ avec Validator · 499€ seul'           },
+    USD: { en: '$749 with Validator · $549 standalone',           fr: '$749 avec Validator · $549 seul'           }
   };
-  var BP_SAVE = {
+  var VALIDATOR_PRICE = { MAD: 'MAD 1,990', EUR: '€199', USD: '$219' };
+  var BUNDLE_PRICE    = { MAD: 'MAD 6,990', EUR: '€699', USD: '$749' };
+  var BUNDLE_SAVE = {
     MAD: { en: 'save MAD 990', fr: 'économisez 990 MAD' },
     EUR: { en: 'save €99',     fr: 'économisez 99€'     },
-    USD: { en: 'save 99′,fr:′eˊconomisez9999',     fr: 'économisez 99
-99′,fr:′eˊconomisez99'     }
+    USD: { en: 'save $99',     fr: 'économisez 99$'     }
   };
-function setCurrency(currency) {
-window.ZA3FRAN_CURRENCY = currency;
-document.querySelectorAll('[data-price]').forEach(function(el) {
-el.textContent = PRICES[currency][el.getAttribute('data-price')];
-});
-document.querySelectorAll('[data-btn-price]').forEach(function(el) {
-el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
-});
-document.querySelectorAll('[data-val-price]').forEach(function(el) {
-el.textContent = VAL_PRICES[currency][el.getAttribute('data-val-price')];
-});
-document.querySelectorAll('[data-bundle-price]').forEach(function(el) {
-el.textContent = BUNDLE_PRICES[currency][el.getAttribute('data-bundle-price')];
-});
-document.querySelectorAll('[data-bp-price]').forEach(function(el) {
-el.textContent = BP_PRICES[currency][el.getAttribute('data-bp-price')];
-});
-document.querySelectorAll('[data-bp-save]').forEach(function(el) {
-el.textContent = BP_SAVE[currency][el.getAttribute('data-bp-save')];
-});
-}
+
+  function setCurrency(currency) {
+    window.ZA3FRAN_CURRENCY = currency;
+    document.querySelectorAll('[data-price]').forEach(function(el) {
+      el.textContent = PRICES[currency][el.getAttribute('data-price')];
+    });
+    document.querySelectorAll('[data-btn-price]').forEach(function(el) {
+      el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
+    });
+    document.querySelectorAll('[data-val-price]').forEach(function(el) {
+      el.textContent = VAL_PRICES[currency][el.getAttribute('data-val-price')];
+    });
+    document.querySelectorAll('[data-bundle-label]').forEach(function(el) {
+      el.textContent = BUNDLE_LABEL[currency][el.getAttribute('data-bundle-label')];
+    });
+    document.querySelectorAll('[data-bp-tile-price]').forEach(function(el) {
+      el.textContent = BP_TILE_PRICE[currency][el.getAttribute('data-bp-tile-price')];
+    });
+    var elBPV = document.getElementById('bp-val-price');
+    if(elBPV) elBPV.textContent = VALIDATOR_PRICE[currency];
+    var elBPB = document.getElementById('bp-bundle-price');
+    if(elBPB) elBPB.textContent = BUNDLE_PRICE[currency];
+    var elSaveEN = document.getElementById('bp-save-en');
+    if(elSaveEN) elSaveEN.textContent = BUNDLE_SAVE[currency].en;
+    var elSaveFR = document.getElementById('bp-save-fr');
+    if(elSaveFR) elSaveFR.textContent = BUNDLE_SAVE[currency].fr;
+  }
+
   function detectCurrency() {
     fetch('/api/currency')
       .then(function(r){ return r.json(); })
