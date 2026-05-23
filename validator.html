@@ -926,30 +926,72 @@ letter-spacing:0.08em;text-transform:uppercase;}
     </div>
   </div>
 
-  <!-- Confirm & Pay -->
-  <div class="v-review-confirm">
-    <div class="v-review-total">
-      <div class="v-review-total-left">
-        <span class="v-review-total-label en">Total · One-time payment</span>
-        <span class="v-review-total-label fr">Total · Paiement unique</span>
-        <span class="v-review-total-desc en">20-page strategic report · Delivered in under 3 minutes</span>
-        <span class="v-review-total-desc fr">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+ <!-- Confirm & Pay -->
+  <div class="v-review-confirm"> 
+    <!-- Bundle toggle -->
+<div style="margin-bottom:1.5rem;">
+  <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin:0 0 0.75rem;">
+    <span class="en">Choose your package</span>
+    <span class="fr">Choisissez votre offre</span>
+  </p>
+  <div class="v-bundle-toggle">
+    <!-- Option A: Validator only -->
+    <div class="v-bundle-option selected" id="opt-validator" onclick="selectPackage('validator')">
+      <div class="v-bundle-radio"></div>
+      <div class="v-bundle-content">
+        <div class="v-bundle-label en">Concept Validator only</div>
+        <div class="v-bundle-label fr">Concept Validator seul</div>
+        <div class="v-bundle-desc en">20-page strategic report · Market fit · Financial viability · Risk register</div>
+        <div class="v-bundle-desc fr">Rapport stratégique 20 pages · Adéquation marché · Viabilité financière · Registre des risques</div>
       </div>
-      <span class="v-review-total-price" id="review-price">€199</span>
+      <div class="v-bundle-price" id="price-validator-opt">€199</div>
     </div>
-    <div class="v-form-err" id="review-err"></div>
-    <button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
-      <div class="spinner"></div>
-      <span class="btn-label en">Confirm &amp; proceed to payment →</span>
-      <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
-    </button>
-    <button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
-    <button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
-    <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
-      <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
-      <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
-    </p>
+    <!-- Option B: Bundle -->
+    <div class="v-bundle-option" id="opt-bundle" onclick="selectPackage('bundle')">
+      <div class="v-bundle-radio"></div>
+      <div class="v-bundle-content">
+        <div class="v-bundle-label en">
+          Validator + Business Plan Essentials
+          <span class="v-bundle-save en">Save €99</span>
+          <span class="v-bundle-save fr">Économisez 99 €</span>
+        </div>
+        <div class="v-bundle-label fr">
+          Validator + Business Plan Essentials
+        </div>
+        <div class="v-bundle-desc en">Everything above + full business plan with benchmark financial projections, market strategy, operations model — ready to show investors</div>
+        <div class="v-bundle-desc fr">Tout ci-dessus + business plan complet avec projections financières benchmark, stratégie marché, modèle opérationnel — prêt à présenter aux investisseurs</div>
+        <div class="v-bundle-list en">✦ Validator report &nbsp;✦ Business Plan Essentials &nbsp;✦ Two separate access codes</div>
+        <div class="v-bundle-list fr">✦ Rapport Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ Deux codes d'accès distincts</div>
+      </div>
+      <div>
+        <div class="v-bundle-price" id="price-bundle-opt">€699</div>
+        <div style="font-size:0.68rem;color:var(--muted);text-decoration:line-through;text-align:right;" id="price-bundle-list">€798</div>
+      </div>
+    </div>
   </div>
+</div>
+
+<div class="v-review-total">
+  <div class="v-review-total-left">
+    <span class="v-review-total-label en">Total · One-time payment</span>
+    <span class="v-review-total-label fr">Total · Paiement unique</span>
+    <span class="v-review-total-desc" id="review-total-desc-en" style="display:block;">20-page strategic report · Delivered in under 3 minutes</span>
+    <span class="v-review-total-desc" id="review-total-desc-fr" style="display:none;">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+  </div>
+  <span class="v-review-total-price" id="review-price">€199</span>
+</div>
+<div class="v-form-err" id="review-err"></div>
+<button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
+  <div class="spinner"></div>
+  <span class="btn-label en">Confirm &amp; proceed to payment →</span>
+  <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
+</button>
+<button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
+<button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
+<p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
+  <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
+  <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
+</p>
 </div>
 
 <!-- SUCCESS STATE -->
