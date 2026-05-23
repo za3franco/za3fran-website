@@ -2,22 +2,26 @@
 // /api/webhook-validator.js
 // Za3fran Concept Validator — Stripe Webhook Handler
 //
-// Flow:
+// Flow (Validator only):
 // 1. Receive checkout.session.completed from Stripe
 // 2. Verify Stripe signature
 // 3. Look up submission in Supabase by email
-// 4. Generate report HTML via Claude API (unchanged)
-// 5. Extract report_json via Haiku (new — Phase 4)
+// 4. Generate report HTML via Claude API
+// 5. Extract report_json via Haiku
 // 6. Store report HTML + report_json in validator_reports
-// 7. Create/upsert za3fran_user + za3fran_project records (new — Phase 4)
+// 7. Create/upsert za3fran_user + za3fran_project records
 // 8. Update submission: status → 'paid', set report_id
 // 9. Send delivery email via Brevo
+//
+// Additional flow (Bundle = Validator + BP Essentials):
+// 10. Create pending BP run record in business_plan_essentials_runs
+// 11. Send single combined delivery email with both report links
 // =============================================================
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
-import { getModel } from '../lib/claude-config.js';  // ← PHASE 4 ADDITION
+import { getModel } from '../lib/claude-config.js';
 
 // ── Clients ──────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -27,11 +31,9 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// ── Vercel config: disable body parsing (required for Stripe sig verification) ──
+// ── Vercel config ─────────────────────────────────────────────
 export const config = {
-  api: {
-    bodyParser: false,
-  },
+  api: { bodyParser: false },
 };
 
 // ── Helper: read raw body ─────────────────────────────────────
@@ -39,19 +41,19 @@ async function getRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     req.on('data', (chunk) => chunks.push(chunk));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('end',  () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
 }
 
 // ── Helper: generate access code ─────────────────────────────
 function generateAccessCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no confusable chars
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
   for (let i = 0; i < 8; i++) {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
-  return code; // e.g. "K7XMQR4N"
+  return code;
 }
 
 // ── Helper: build Claude prompt ───────────────────────────────
@@ -118,7 +120,7 @@ Language:          ${submission.language || 'Not provided'}
 Generate the full report now. Return only the HTML document, nothing else. Do not stop or abbreviate any section.`;
 }
 
-// ── System prompt (imported inline for self-contained file) ───
+// ── System prompt ─────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are a senior F&B strategy analyst with 20 years of experience evaluating restaurant and food concepts across the MENA region, Europe, and North America. You have advised operators ranging from independent restaurants to multi-unit chains, ghost kitchen networks, and franchise groups. You have worked in Morocco, UAE, France, and the UK. You understand how concepts succeed and fail in emerging markets, and you do not confuse theoretical frameworks with operational reality.
 
 Your job is to produce a structured, rigorous Concept Validation Report for a food & beverage concept submitted by an operator or entrepreneur.
@@ -276,23 +278,24 @@ export default async function handler(req, res) {
 
   const session = event.data.object;
   const customerEmail = session.customer_details?.email || session.customer_email;
+  const purchaseType  = session.metadata?.purchase_type || 'validator';
 
   if (!customerEmail) {
     console.error('No email found in Stripe session:', session.id);
     return res.status(200).json({ received: true, error: 'No email in session' });
   }
 
-  console.log(`Payment confirmed for: ${customerEmail}, session: ${session.id}`);
+  console.log(`Payment confirmed for: ${customerEmail}, type: ${purchaseType}, session: ${session.id}`);
 
-  waitUntil(processReport(customerEmail, session.id));
+  waitUntil(processReport(customerEmail, session.id, purchaseType));
   return res.status(200).json({ received: true });
 }
 
 // ── Async report processing ───────────────────────────────────
-async function processReport(customerEmail, sessionId) {
-  console.log(`[processReport] Starting for: ${customerEmail}, session: ${sessionId}`);
+async function processReport(customerEmail, sessionId, purchaseType) {
+  console.log(`[processReport] Starting for: ${customerEmail}, type: ${purchaseType}`);
 
-  // ── Step 3: Look up submission ───────────────────────────────
+  // ── Step 1: Look up submission ───────────────────────────────
   const { data: submissions, error: fetchError } = await supabase
     .from('validator_submissions')
     .select('*')
@@ -309,12 +312,12 @@ async function processReport(customerEmail, sessionId) {
   const submission = submissions[0];
   console.log(`Found submission: ${submission.id} for concept: ${submission.concept_name}`);
 
-  // ── Step 4: Generate report HTML via Claude ──────────────────
+  // ── Step 2: Generate Validator report HTML via Claude ─────────
   let reportHtml;
-  const validatorModel = getModel('validator');  // ← PHASE 4: env-driven model
+  const validatorModel = getModel('validator');
 
   try {
-    console.log(`Calling Claude (${validatorModel}) for report generation...`);
+    console.log(`Calling Claude (${validatorModel}) for Validator report...`);
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -326,12 +329,7 @@ async function processReport(customerEmail, sessionId) {
         model: validatorModel,
         max_tokens: 32000,
         system: SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: buildReportPrompt(submission),
-          },
-        ],
+        messages: [{ role: 'user', content: buildReportPrompt(submission) }],
       }),
     });
 
@@ -341,7 +339,7 @@ async function processReport(customerEmail, sessionId) {
       throw new Error(`Anthropic API error: ${anthropicData.error?.message || JSON.stringify(anthropicData)}`);
     }
 
-    if (!anthropicData.content || !anthropicData.content[0] || !anthropicData.content[0].text) {
+    if (!anthropicData.content?.[0]?.text) {
       throw new Error('Anthropic API returned empty content');
     }
 
@@ -351,9 +349,9 @@ async function processReport(customerEmail, sessionId) {
       throw new Error('Anthropic did not return valid HTML. Got: ' + reportHtml.substring(0, 200));
     }
 
-    console.log(`Report HTML generated. Length: ${reportHtml.length} chars`);
+    console.log(`Validator report HTML generated. Length: ${reportHtml.length} chars`);
   } catch (err) {
-    console.error('Claude API report generation failed:', err);
+    console.error('Claude API Validator report generation failed:', err);
     await supabase
       .from('validator_submissions')
       .update({ status: 'report_error' })
@@ -361,45 +359,42 @@ async function processReport(customerEmail, sessionId) {
     return;
   }
 
-  // ── Step 4b: Extract report_json via Haiku (PHASE 4 ADDITION) ─
-  // Runs a lean extraction call on the generated HTML.
-  // Failure is non-fatal — we save null and continue.
+  // ── Step 3: Extract report_json via Haiku (non-fatal) ─────────
   let reportJson = null;
   try {
     reportJson = await extractReportJson(reportHtml, submission);
-    console.log(`report_json extracted successfully.`);
+    console.log('report_json extracted successfully.');
   } catch (err) {
     console.error('[Phase 4] report_json extraction failed (non-fatal):', err.message);
-    // Report still saves and delivers — JSON can be backfilled later
   }
 
-  // ── Step 5: Generate access code and store report ────────────
+  // ── Step 4: Save Validator report ─────────────────────────────
   const accessCode = generateAccessCode();
-  const reportId = `rpt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  const reportId   = `rpt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
   const { error: insertError } = await supabase
     .from('validator_reports')
     .insert({
-      id: reportId,
+      id:          reportId,
       submission_id: submission.id,
       report_html: reportHtml,
-      report_json: reportJson,        // ← PHASE 4: null if extraction failed, populated if successful
+      report_json: reportJson,
       access_code: accessCode,
-      created_at: new Date().toISOString(),
+      created_at:  new Date().toISOString(),
     });
 
   if (insertError) {
-    console.error('Failed to store report in Supabase:', insertError);
+    console.error('Failed to store Validator report in Supabase:', insertError);
     return;
   }
 
-  console.log(`Report stored. ID: ${reportId}, Access code: ${accessCode}`);
+  console.log(`Validator report stored. ID: ${reportId}, Code: ${accessCode}`);
 
-  // ── Step 5b: Create user + project records (PHASE 4 ADDITION) ─
-  // Non-fatal — doesn't affect report delivery if it fails.
+  // ── Step 5: Create/upsert user + project records ──────────────
+  let userId    = null;
+  let projectId = null;
+
   try {
-    // Upsert user record (email is unique key)
-    let userId = null;
     const { data: existingUser } = await supabase
       .from('za3fran_users')
       .select('id')
@@ -412,17 +407,16 @@ async function processReport(customerEmail, sessionId) {
       const { data: newUser } = await supabase
         .from('za3fran_users')
         .insert({
-          email: customerEmail,
-          name: submission.name || '',
-          default_currency: submission.currency || 'EUR',
-          default_language: submission.language || 'en',
+          email:             customerEmail,
+          name:              submission.name || '',
+          default_currency:  submission.currency || 'EUR',
+          default_language:  submission.language || 'en',
         })
         .select('id')
         .single();
       userId = newUser?.id || null;
     }
 
-    // Create project record (one per submission)
     if (userId) {
       const { data: existingProject } = await supabase
         .from('za3fran_projects')
@@ -430,138 +424,186 @@ async function processReport(customerEmail, sessionId) {
         .eq('validator_submission_id', submission.id)
         .single();
 
-      if (!existingProject) {
-        await supabase
+      if (existingProject) {
+        projectId = existingProject.id;
+      } else {
+        const { data: newProject } = await supabase
           .from('za3fran_projects')
           .insert({
-            user_id: userId,
-            concept_name: submission.concept_name || 'Untitled',
-            validator_submission_id: submission.id,
-            currency: submission.currency || 'EUR',
-            language: submission.language || 'en',
-          });
+            user_id:                  userId,
+            concept_name:             submission.concept_name || 'Untitled',
+            validator_submission_id:  submission.id,
+            currency:                 submission.currency || 'EUR',
+            language:                 submission.language || 'en',
+          })
+          .select('id')
+          .single();
+        projectId = newProject?.id || null;
       }
     }
 
-    console.log(`[Phase 4] User + project records created/verified for ${customerEmail}`);
+    console.log(`User + project records created/verified for ${customerEmail}`);
   } catch (err) {
-    console.error('[Phase 4] User/project creation failed (non-fatal):', err.message);
+    console.error('User/project creation failed (non-fatal):', err.message);
   }
 
-  // ── Step 6: Update submission record ─────────────────────────
-  const { error: updateError } = await supabase
+  // ── Step 6: Update submission status ──────────────────────────
+  await supabase
     .from('validator_submissions')
-    .update({
-      status: 'paid',
-      report_id: reportId,
-    })
+    .update({ status: 'paid', report_id: reportId })
     .eq('id', submission.id);
 
-  if (updateError) {
-    console.error('Failed to update submission status:', updateError);
+  // ── Step 7: If BUNDLE — create pending BP run record ──────────
+  let bpReportId   = null;
+  let bpAccessCode = null;
+
+  if (purchaseType === 'bundle') {
+    try {
+      bpAccessCode = generateAccessCode();
+      bpReportId   = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+      await supabase.from('business_plan_essentials_runs').insert({
+        id:          bpReportId,
+        project_id:  projectId,
+        output_html: null,
+        access_code: bpAccessCode,
+        currency:    submission.currency || 'EUR',
+        language:    submission.language || 'en',
+        model_used:  getModel('essentials'),
+        output_json: {
+          validator_report_id: reportId,
+          submission_id:       submission.id,
+          status:              'pending',
+        },
+      });
+
+      console.log(`[Bundle] BP pending record created: ${bpReportId} / ${bpAccessCode}`);
+    } catch (err) {
+      console.error('[Bundle] BP record creation failed (non-fatal):', err.message);
+      // Validator delivery still proceeds; BP can be re-triggered manually
+      bpReportId   = null;
+      bpAccessCode = null;
+    }
   }
 
-  // ── Step 7: Send delivery email via Brevo ────────────────────
-  const reportUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/report/${reportId}`;
+  // ── Step 8: Send delivery email ───────────────────────────────
+  const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
+  const reportUrl   = `${BASE_URL}/report/${reportId}`;
   const conceptName = submission.concept_name || 'your concept';
-  const firstName = submission.name ? submission.name.split(' ')[0] : 'there';
-
-  const isfrench = submission.language === 'fr' ||
+  const firstName   = submission.name ? submission.name.split(' ')[0] : 'there';
+  const isFr        = submission.language === 'fr' ||
     (submission.description && /[àâäéèêëîïôöùûüçœæ]/i.test(submission.description));
 
-  const emailSubject = isfrench
-    ? `Votre rapport Za3fran est prêt — ${conceptName}`
-    : `Your Za3fran report is ready — ${conceptName}`;
+  const isBundle = purchaseType === 'bundle' && bpReportId;
 
-  const emailHtml = isfrench ? `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f5f5f3;font-family:'DM Sans',Arial,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
+  const emailSubject = isFr
+    ? (isBundle
+        ? `Vos livrables Za3fran sont prêts — ${conceptName}`
+        : `Votre rapport Za3fran est prêt — ${conceptName}`)
+    : (isBundle
+        ? `Your Za3fran deliverables are ready — ${conceptName}`
+        : `Your Za3fran report is ready — ${conceptName}`);
 
-    <div style="background:#0F1F3D;padding:40px;text-align:center;">
-      <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
-      <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">Concept Validator</p>
-    </div>
+  // ── Bundle email includes both Validator + BP access ──────────
+  const bpUrl = bpReportId ? `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}` : null;
 
-    <div style="padding:48px 40px;">
-      <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre rapport de validation pour <strong>${conceptName}</strong> est prêt.</p>
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Pour accéder à votre rapport, cliquez sur le bouton ci-dessous et entrez votre code d'accès.</p>
-
-      <div style="text-align:center;margin:0 0 32px;">
-        <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;letter-spacing:0.5px;">Accéder à mon rapport →</a>
-      </div>
-
-      <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-        <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès</p>
-        <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
-      </div>
-
-      <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 8px;">Conservez ce code — vous en aurez besoin chaque fois que vous ouvrirez votre rapport.</p>
-      <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 32px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-
-      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
-
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;"><strong>Prochaine étape :</strong> Votre Business Plan Essentials transforme ce rapport en plan d'affaires complet avec projections financières. <a href="${process.env.NEXT_PUBLIC_BASE_URL}/business-plan?code=${accessCode}" style="color:#C9862A;">Découvrir le Business Plan Essentials →</a></p>
-
-      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
-
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 8px;">Pour enregistrer votre rapport en PDF, ouvrez-le dans votre navigateur et utilisez la fonction Imprimer → Enregistrer en PDF.</p>
-      <p style="color:#888880;font-size:13px;margin:0;">Des questions ? Écrivez-nous à <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
-    </div>
-
-    <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
-      <p style="color:#888880;font-size:12px;margin:0;">© Za3fran Consulting · <a href="https://za3fran.io" style="color:#C9862A;text-decoration:none;">za3fran.io</a></p>
-    </div>
+  const bundleSection_en = isBundle ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Business Plan Essentials</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Business Plan Essentials is ready to generate. Click below and enter your access code to start (generation takes 3–5 minutes).</p>
+  <div style="text-align:center;margin:0 0 24px;">
+    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Access my Business Plan →</a>
   </div>
-</body>
-</html>` : `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f5f5f3;font-family:'DM Sans',Arial,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
-
-    <div style="background:#0F1F3D;padding:40px;text-align:center;">
-      <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
-      <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">Concept Validator</p>
-    </div>
-
-    <div style="padding:48px 40px;">
-      <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your validation report for <strong>${conceptName}</strong> is ready.</p>
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Click the button below to access your report. You'll need your access code to open it.</p>
-
-      <div style="text-align:center;margin:0 0 32px;">
-        <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;letter-spacing:0.5px;">View my report →</a>
-      </div>
-
-      <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-        <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your access code</p>
-        <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
-      </div>
-
-      <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 8px;">Keep this code — you'll need it every time you open your report.</p>
-      <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 32px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-
-      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
-
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;"><strong>Next step:</strong> Your Business Plan Essentials turns this report into a complete business plan with financial projections. <a href="${process.env.NEXT_PUBLIC_BASE_URL}/business-plan?code=${accessCode}" style="color:#C9862A;">Discover Business Plan Essentials →</a></p>
-
-      <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
-
-      <p style="color:#1a1a1a;line-height:1.75;margin:0 0 8px;">To save your report as a PDF, open it in your browser and use Print → Save as PDF.</p>
-      <p style="color:#888880;font-size:13px;margin:0;">Questions? Email us at <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
-    </div>
-
-    <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
-      <p style="color:#888880;font-size:12px;margin:0;">© Za3fran Consulting · <a href="https://za3fran.io" style="color:#C9862A;text-decoration:none;">za3fran.io</a></p>
-    </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Business Plan access code</p>
+    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
   </div>
-</body>
-</html>`;
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
+
+  const bundleSection_fr = isBundle ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Business Plan Essentials</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre Business Plan Essentials est prêt à générer. Cliquez ci-dessous et entrez votre code d'accès pour démarrer (génération : 3–5 minutes).</p>
+  <div style="text-align:center;margin:0 0 24px;">
+    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Business Plan →</a>
+  </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Business Plan</p>
+    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
+  </div>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
+
+  // Upsell section for Validator-only buyers (points to BP standalone at €499)
+  const upsellSection_en = !isBundle ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Next step:</strong> Turn this report into a complete Business Plan with financial projections.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">€499</strong> <span style="text-decoration:line-through;color:#888880;">€599</span> — your exclusive returning-client rate.</p>
+  <div style="text-align:center;margin:0 0 8px;">
+    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Get my Business Plan — €499 →</a>
+  </div>` : '';
+
+  const upsellSection_fr = !isBundle ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Prochaine étape :</strong> Transformez ce rapport en Business Plan complet avec projections financières.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">499 €</strong> <span style="text-decoration:line-through;color:#888880;">599 €</span> — tarif fidélité exclusif.</p>
+  <div style="text-align:center;margin:0 0 8px;">
+    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Obtenir mon Business Plan — 499 € →</a>
+  </div>` : '';
+
+  const emailHtml = isFr ? `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f5f5f3;font-family:Arial,sans-serif;">
+<div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
+<div style="background:#0F1F3D;padding:40px;text-align:center;">
+  <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
+  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${isBundle ? 'Validator + Business Plan Essentials' : 'Concept Validator'}</p>
+</div>
+<div style="padding:48px 40px;">
+  <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre rapport de validation pour <strong>${conceptName}</strong> est prêt.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Cliquez ci-dessous et entrez votre code d'accès pour ouvrir votre rapport.</p>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mon rapport →</a>
+  </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Validator</p>
+    <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
+  </div>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
+  ${bundleSection_fr}
+  ${upsellSection_fr}
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:32px 0;">
+  <p style="color:#888880;font-size:13px;margin:0;">Questions ? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
+</div>
+<div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
+  <p style="color:#888880;font-size:12px;margin:0;">© Za3fran Consulting · <a href="https://za3fran.io" style="color:#C9862A;text-decoration:none;">za3fran.io</a></p>
+</div></div></body></html>`
+  : `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f5f5f3;font-family:Arial,sans-serif;">
+<div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
+<div style="background:#0F1F3D;padding:40px;text-align:center;">
+  <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
+  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${isBundle ? 'Validator + Business Plan Essentials' : 'Concept Validator'}</p>
+</div>
+<div style="padding:48px 40px;">
+  <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your validation report for <strong>${conceptName}</strong> is ready.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Click below and enter your access code to open your report.</p>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">View my report →</a>
+  </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Validator access code</p>
+    <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
+  </div>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
+  ${bundleSection_en}
+  ${upsellSection_en}
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:32px 0;">
+  <p style="color:#888880;font-size:13px;margin:0;">Questions? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
+</div>
+<div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
+  <p style="color:#888880;font-size:12px;margin:0;">© Za3fran Consulting · <a href="https://za3fran.io" style="color:#C9862A;text-decoration:none;">za3fran.io</a></p>
+</div></div></body></html>`;
 
   try {
     const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -571,12 +613,9 @@ async function processReport(customerEmail, sessionId) {
         'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
-        sender: {
-          name: 'Za3fran',
-          email: 'hello@za3fran.io',
-        },
-        to: [{ email: customerEmail, name: submission.name || customerEmail }],
-        subject: emailSubject,
+        sender:      { name: 'Za3fran', email: 'hello@za3fran.io' },
+        to:          [{ email: customerEmail, name: submission.name || customerEmail }],
+        subject:     emailSubject,
         htmlContent: emailHtml,
       }),
     });
@@ -591,14 +630,11 @@ async function processReport(customerEmail, sessionId) {
     console.error('Brevo email error:', err);
   }
 
-  console.log(`[processReport] Complete. reportId: ${reportId}`);
+  console.log(`[processReport] Complete. reportId: ${reportId}${isBundle ? `, bpReportId: ${bpReportId}` : ''}`);
 }
 
-// ── PHASE 4: Extract structured JSON from HTML via Haiku ──────
-// Non-fatal. If extraction fails, report_json is stored as null
-// and can be backfilled later when the Supabase row is reprocessed.
+// ── Extract structured JSON from HTML via Haiku ───────────────
 async function extractReportJson(reportHtml, submission) {
-  // Build concept_snapshot directly from submission data (no extraction needed)
   const audienceRaw = submission.audience;
   let audienceArr = [];
   if (Array.isArray(audienceRaw)) {
@@ -628,7 +664,7 @@ async function extractReportJson(reportHtml, submission) {
   };
 
   const utilityModel = getModel('utility');
-  console.log(`[extractReportJson] Calling ${utilityModel} for JSON extraction...`);
+  console.log(`[extractReportJson] Calling ${utilityModel}...`);
 
   const extractionResponse = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -699,7 +735,6 @@ ${reportHtml.substring(0, 60000)}`,
     throw new Error('Extraction API error: ' + JSON.stringify(extractionData).substring(0, 200));
   }
 
-  // Strip any accidental markdown fences
   const jsonText = extractionData.content[0].text.trim()
     .replace(/^```json\s*/i, '')
     .replace(/^```\s*/i, '')
