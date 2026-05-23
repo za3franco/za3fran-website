@@ -1,18 +1,10 @@
 // api/submit-validator.js
-// 1. Saves submission to Supabase (feedback loop)
-// 2. Creates Stripe checkout session
+// 1. Saves submission to Supabase
+// 2. Creates Stripe checkout session (Validator only OR Validator+BP bundle)
 // 3. Returns checkout URL to the frontend
 
 import Stripe from 'stripe';
-
-// ── PRICE MAP: currency code → Stripe price ID ──
-const PRICE_IDS = {
-  EUR: 'price_1TVTjYIqDwcwTTU9267YFO9X',
-  USD: 'price_1TVTkjIqDwcwTTU9bfCkrJUM',
-  MAD: 'price_1TVTmLIqDwcwTTU9UVNjCmDu'
-};
-
-const PRICE_FALLBACK = 'price_1TVTjYIqDwcwTTU9267YFO9X'; // EUR fallback
+import { getPriceId, normalizeCurrency } from '../lib/currency.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -28,10 +20,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  const currency = normalizeCurrency(data.currency || 'EUR');
+  // purchaseType: 'validator' (default) or 'bundle' (Validator + BP Essentials)
+  const purchaseType = data.purchase_type === 'bundle' ? 'bundle' : 'validator';
+
   // ── STEP 1: Save to Supabase ──
   try {
-    const supabaseUrl  = process.env.SUPABASE_URL;        // ← set in Vercel env vars
-    const supabaseKey  = process.env.SUPABASE_SERVICE_KEY; // ← set in Vercel env vars
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
     if (supabaseUrl && supabaseKey) {
       await fetch(`${supabaseUrl}/rest/v1/validator_submissions`, {
@@ -57,7 +53,7 @@ export default async function handler(req, res) {
           // Location
           city:            data.city,
           neighbourhood:   data.neighbourhood,
-          audience:        data.audience,   // array — stored as jsonb
+          audience:        data.audience,
           // Financials
           budget:          data.budget,
           ticket:          data.ticket,
@@ -72,38 +68,40 @@ export default async function handler(req, res) {
           timeline:        data.timeline,
           additional:      data.additional,
           // Meta
-          currency:        data.currency,
+          currency:        currency,
           language:        data.language,
-          status:          'pending_payment', // updated to 'paid' by webhook
+          purchase_type:   purchaseType,   // ← stored so webhook knows what was bought
+          status:          'pending_payment',
           submitted_at:    data.submitted_at || new Date().toISOString(),
         }),
       });
     }
   } catch (supabaseErr) {
-    // Log but don't block — payment can still proceed
     console.error('Supabase save error:', supabaseErr);
+    // Non-fatal — payment can still proceed
   }
 
   // ── STEP 2: Create Stripe checkout session ──
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // ← set in Vercel env vars
+    const stripe  = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://za3fran.io';
 
-    const currency  = data.currency || 'EUR';
-    const priceId   = PRICE_IDS[currency] || PRICE_FALLBACK;
-    const baseUrl   = process.env.NEXT_PUBLIC_BASE_URL || 'https://za3fran.io';
+    // Resolve correct price ID from lib/currency.js
+    // 'bundle' → Validator + BP bundle price
+    // 'validator' → Validator only price
+    const priceId = getPriceId(purchaseType, currency);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: data.email,
       metadata: {
-        // Pass key fields so the webhook can identify the submission
-        submitter_name:  data.name,
-        concept_name:    data.concept_name,
-        city:            data.city,
-        currency:        currency,
-        language:        data.language || 'en',
-        // Full submission stored in Supabase — use email as lookup key
+        submitter_name: data.name,
+        concept_name:   data.concept_name,
+        city:           data.city,
+        currency:       currency,
+        language:       data.language || 'en',
+        purchase_type:  purchaseType,  // ← webhook reads this to decide whether to chain BP
       },
       success_url: `${baseUrl}/validator/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/validator`,
