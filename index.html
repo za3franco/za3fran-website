@@ -900,44 +900,74 @@ body.lang-fr .wa-tip.fr { display: block; }
       <button onclick="openModal()" class="btn-o fr">Liste d'attente nouveaux outils</button>
     </div>
     <div class="tools-grid reveal d1">
-      <div class="tc">
-        <div class="tc-name en">Concept Validator</div><div class="tc-name fr">Validateur de Concept</div>
-        <div class="tc-desc en">Market fit, competitive analysis, financial viability. 20-page AI report in 3 minutes.</div>
-        <div class="tc-desc fr">Adéquation marché, analyse concurrentielle, viabilité. Rapport IA de 20 pages en 3 min.</div>
-        <span class="badge bl en">Available Now</span><span class="badge bl fr">Disponible</span>
-        <a href="/validator" class="wl-btn en" style="color:var(--copper);opacity:1;">Start validation →</a>
-        <a href="/validator" class="wl-btn fr" style="color:var(--copper);opacity:1;">Commencer →</a>
-      </div>
-      <div class="tc tc-locked">
-        <div class="tc-name en">Menu Engineer</div><div class="tc-name fr">Ingénieur de Menu</div>
-        <div class="tc-desc en">Recipe costing, margin analysis, menu mix optimisation.</div>
-        <div class="tc-desc fr">Costing recettes, analyse des marges, optimisation du mix menu.</div>
-        <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-        <button class="wl-btn en" onclick="openModal('Menu Engineer')">Notify me when live →</button>
-        <button class="wl-btn fr" onclick="openModal('Menu Engineer')">Me notifier →</button>
-      </div>
-      <div class="tc">
+
+  <!-- 1: Concept Validator — LIVE -->
+  <div class="tc">
+    <div class="tc-name en">Concept Validator</div><div class="tc-name fr">Validateur de Concept</div>
+    <div class="tc-desc en">Market fit, competitive analysis, financial viability. 20-page AI report in under 3 minutes.</div>
+    <div class="tc-desc fr">Adéquation marché, analyse concurrentielle, viabilité. Rapport IA de 20 pages en moins de 3 min.</div>
+    <span class="badge bl en">Available Now — €199</span><span class="badge bl fr">Disponible — 199€</span>
+    <a href="/validator" class="wl-btn en" style="color:var(--copper);opacity:1;">Start validation →</a>
+    <a href="/validator" class="wl-btn fr" style="color:var(--copper);opacity:1;">Commencer →</a>
+  </div>
+
+  <!-- 2: Business Plan Essentials — LIVE -->
+  <div class="tc">
     <div class="tc-name en">Business Plan Essentials</div><div class="tc-name fr">Business Plan Essentials</div>
-    <div class="tc-desc en">Complete investor-ready business plan with benchmark financial projections — generated from your Validator data.</div>
-    <div class="tc-desc fr">Business plan complet prêt investisseurs avec projections financières benchmark — généré depuis vos données Validator.</div>
+    <div class="tc-desc en">Investor-ready business plan with benchmark financials — generated directly from your Validator data. No extra forms.</div>
+    <div class="tc-desc fr">Business plan prêt investisseurs avec projections benchmark — généré depuis vos données Validator. Sans saisie supplémentaire.</div>
     <span class="badge bl en">Available Now</span><span class="badge bl fr">Disponible</span>
-    <div style="margin-top:0.65rem;display:flex;align-items:baseline;gap:0.4rem;">
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--copper);" data-bp-price="en">€699</span>
-      <span style="font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;" class="en">with Validator · or €499 standalone</span>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--copper);" data-bp-price="fr">699€</span>
-      <span style="font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;" class="fr">avec Validator · ou 499€ seul</span>
+    <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--muted);" class="en" data-bp-tile-price="en">€699 with Validator · €499 standalone</div>
+    <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--muted);" class="fr" data-bp-tile-price="fr">699€ avec Validator · 499€ seul</div>
+    <div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.65rem;">
+      <a href="/validator" class="wl-btn en" style="color:var(--copper);opacity:1;">New user: start with bundle →</a>
+      <a href="/validator" class="wl-btn fr" style="color:var(--copper);opacity:1;">Nouveau : commencer avec le bundle →</a>
+      <a href="/business-plan" class="wl-btn en" style="color:rgba(201,134,42,0.55);">Have a Validator code? Get BP →</a>
+      <a href="/business-plan" class="wl-btn fr" style="color:rgba(201,134,42,0.55);">Vous avez un code Validator ? →</a>
     </div>
-    <a href="/business-plan" class="wl-btn en" style="color:var(--copper);opacity:1;">Get my Business Plan →</a>
-    <a href="/business-plan" class="wl-btn fr" style="color:var(--copper);opacity:1;">Obtenir mon Business Plan →</a>
-  </div>      
-      <div class="tc tc-locked">
-        <div class="tc-name en">Marketing Strategy</div><div class="tc-name fr">Stratégie Marketing</div>
-        <div class="tc-desc en">Brand voice, content calendar, campaign briefs.</div>
-        <div class="tc-desc fr">Voix de marque, calendrier de contenu, briefs de campagne.</div>
-        <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-        <button class="wl-btn en" onclick="openModal('Marketing Strategy')">Notify me when live →</button>
-        <button class="wl-btn fr" onclick="openModal('Marketing Strategy')">Me notifier →</button>
-      </div>
+  </div>
+
+  <!-- 3: Menu Engineer — Coming Soon -->
+  <div class="tc tc-locked">
+    <div class="tc-name en">Menu Engineer</div><div class="tc-name fr">Ingénieur de Menu</div>
+    <div class="tc-desc en">Translate your validated concept into a costed menu architecture — recipe matrix, pricing strategy, local sourcing.</div>
+    <div class="tc-desc fr">Traduisez votre concept validé en architecture menu chiffrée — matrice recettes, stratégie prix, sourcing local.</div>
+    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
+    <button class="wl-btn en" onclick="openModal('Menu Engineer')">Notify me when live →</button>
+    <button class="wl-btn fr" onclick="openModal('Menu Engineer')">Me notifier →</button>
+  </div>
+
+  <!-- 4: Financial Builder — Coming Soon -->
+  <div class="tc tc-locked">
+    <div class="tc-name en">Financial Builder</div><div class="tc-name fr">Financial Builder</div>
+    <div class="tc-desc en">Investor-grade P&L modelling — startup costs, multi-scenario revenue projections, break-even, cash flow.</div>
+    <div class="tc-desc fr">Modélisation P&L investisseurs — coûts de lancement, projections multi-scénarios, point mort, flux de trésorerie.</div>
+    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
+    <button class="wl-btn en" onclick="openModal('Financial Builder')">Notify me when live →</button>
+    <button class="wl-btn fr" onclick="openModal('Financial Builder')">Me notifier →</button>
+  </div>
+
+  <!-- 5: Staffing & Marketing Builder — Coming Soon -->
+  <div class="tc tc-locked">
+    <div class="tc-name en">Staffing &amp; Marketing Plan</div><div class="tc-name fr">Staffing &amp; Plan Marketing</div>
+    <div class="tc-desc en">Right team structure, service model, and launch marketing plan — built from your concept and capacity data.</div>
+    <div class="tc-desc fr">Structure d'équipe, modèle de service et plan marketing de lancement — construits depuis votre concept et capacité.</div>
+    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
+    <button class="wl-btn en" onclick="openModal('Staffing & Marketing Plan')">Notify me when live →</button>
+    <button class="wl-btn fr" onclick="openModal('Staffing & Marketing Plan')">Me notifier →</button>
+  </div>
+
+  <!-- 6: Business Plan Pro — Coming Soon -->
+  <div class="tc tc-locked">
+    <div class="tc-name en">Business Plan Pro</div><div class="tc-name fr">Business Plan Pro</div>
+    <div class="tc-desc en">The full investor package — modeled financials from all upstream tools, not benchmark estimates. The complete project dossier.</div>
+    <div class="tc-desc fr">Le dossier investisseur complet — financiers modélisés depuis tous les outils amont, pas des estimations benchmark.</div>
+    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
+    <button class="wl-btn en" onclick="openModal('Business Plan Pro')">Notify me when live →</button>
+    <button class="wl-btn fr" onclick="openModal('Business Plan Pro')">Me notifier →</button>
+  </div>
+
+</div>
       <div class="tc tc-locked">
         <div class="tc-name en">SOP Generator</div><div class="tc-name fr">Générateur de SOP</div>
         <div class="tc-desc en">Operating procedures, training docs, onboarding kits.</div>
