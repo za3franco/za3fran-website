@@ -342,7 +342,8 @@ nav.nav-pushed{top:2.5rem;}
         <span class="v-what-label fr">Sections stratégiques</span>
       </div>
     </div>
-    <div class="v-price-band fade-up d3">
+    <!-- Standard price band (Validator only) -->
+    <div class="v-price-band fade-up d3" id="hero-price-band-standard">
       <span class="v-price-label en">One-time fee</span>
       <span class="v-price-label fr">Frais uniques</span>
       <div class="v-price-divider"></div>
@@ -350,6 +351,18 @@ nav.nav-pushed{top:2.5rem;}
       <div class="v-price-divider"></div>
       <span class="v-price-desc en">Full report · Secure payment · Instant delivery</span>
       <span class="v-price-desc fr">Rapport complet · Paiement sécurisé · Livraison instantanée</span>
+    </div>
+    <!-- Bundle price band (shown when ?bundle=true) -->
+    <div class="fade-up d3" id="hero-price-band-bundle" style="display:none;padding:1.25rem 2rem;border:0.5px solid rgba(201,134,42,0.4);background:rgba(201,134,42,0.06);max-width:480px;margin:0 auto;">
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" class="en">Validator + Business Plan Essentials Bundle</div>
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" class="fr">Bundle Validator + Business Plan Essentials</div>
+      <div style="display:flex;align-items:baseline;gap:0.75rem;justify-content:center;margin-bottom:0.5rem;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--copper);" id="hero-bundle-price-band">€699</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="en">one-time · two products · two reports</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="fr">paiement unique · deux produits · deux rapports</span>
+      </div>
+      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" class="en">✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ <span id="hero-bundle-save">Save €99</span></div>
+      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" class="fr">✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ <span id="hero-bundle-save-fr">Économisez 99€</span></div>
     </div>
   </div>
 </div>
@@ -650,10 +663,19 @@ nav.nav-pushed{top:2.5rem;}
           <div class="v-summary-item en">Risk register — the 3 biggest threats to your concept, with mitigation strategies</div>
           <div class="v-summary-item fr">Registre des risques — les 3 principales menaces avec stratégies de mitigation</div>
         </div>
-        <div class="v-total">
+        <div class="v-total" id="form-total-validator">
           <span class="v-total-label en">Total · One-time payment</span>
           <span class="v-total-label fr">Total · Paiement unique</span>
           <span class="v-total-price" id="submit-price">€199</span>
+        </div>
+        <div class="v-total" id="form-total-bundle" style="display:none;">
+          <div>
+            <div class="v-total-label en">Bundle total · Validator + Business Plan</div>
+            <div class="v-total-label fr">Total bundle · Validator + Business Plan</div>
+            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="en">Includes both products · <span id="form-bundle-save">Save €99</span></div>
+            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="fr">Inclut les deux produits · <span id="form-bundle-save-fr">Économisez 99€</span></div>
+          </div>
+          <span class="v-total-price" id="submit-bundle-price">€699</span>
         </div>
       </div>
       <div class="v-form-err" id="form-err"></div>
@@ -891,12 +913,16 @@ var BUNDLE_PRESELECTED = false;
   const params = new URLSearchParams(window.location.search);
   if (params.get('bundle') === 'true') {
     BUNDLE_PRESELECTED = true;
-    // Show banner
-    document.getElementById('bundle-banner').classList.add('show');
+    // Show banner immediately
+    const banner = document.getElementById('bundle-banner');
+    if (banner) banner.classList.add('show');
     // Push nav and hero down
-    document.getElementById('nav').classList.add('nav-pushed');
-    document.getElementById('v-hero').classList.add('bundle-mode');
-    updateBundleBannerText();
+    const nav = document.getElementById('nav');
+    if (nav) nav.classList.add('nav-pushed');
+    const hero = document.getElementById('v-hero');
+    if (hero) hero.classList.add('bundle-mode');
+    // Hero price swap and banner text run after all functions are defined
+    // (handled in DOMContentLoaded below and currency fetch callback)
   }
 })();
 
@@ -924,7 +950,12 @@ fetch('/api/currency')
   .then(data => {
     CURRENCY = data.currency || 'EUR';
     updatePriceDisplays();
-    updateBundleBannerText();
+    // Update bundle UI now that currency is known
+    if (BUNDLE_PRESELECTED) {
+      updateBundleHeroUI();
+      updateBundleBannerText();
+      updateFormBundleTotal();
+    }
   })
   .catch(() => {});
 
@@ -941,12 +972,44 @@ function updatePriceDisplays() {
   if (el('price-bundle-opt'))   el('price-bundle-opt').textContent = bp;
   if (el('price-bundle-list'))  el('price-bundle-list').textContent = bl;
 
-  // Save badge text
+  // Bundle hero price band
+  if (el('hero-bundle-price-band'))  el('hero-bundle-price-band').textContent = bp;
+  if (el('hero-bundle-save'))        el('hero-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
+  if (el('hero-bundle-save-fr'))     el('hero-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
+
+  // Bundle form total
+  if (el('submit-bundle-price'))     el('submit-bundle-price').textContent = bp;
+  if (el('form-bundle-save'))        el('form-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
+  if (el('form-bundle-save-fr'))     el('form-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
+
+  // Save badge text in review toggle
   document.querySelectorAll('.v-bundle-save').forEach((el, i) => {
     el.textContent = (i % 2 === 0) ? (BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR) : (BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR);
   });
 
   updateReviewTotal();
+}
+
+function updateBundleHeroUI() {
+  // Swap hero price band
+  const standard = document.getElementById('hero-price-band-standard');
+  const bundle   = document.getElementById('hero-price-band-bundle');
+  if (standard) standard.style.display = 'none';
+  if (bundle)   bundle.style.display   = 'block';
+  // Swap form total
+  const formStd = document.getElementById('form-total-validator');
+  const formBdl = document.getElementById('form-total-bundle');
+  if (formStd) formStd.style.display = 'none';
+  if (formBdl) formBdl.style.display = 'flex';
+}
+
+function updateFormBundleTotal() {
+  const c = CURRENCY;
+  const bp = PRICES.bundle[c] || PRICES.bundle.EUR;
+  const el = id => document.getElementById(id);
+  if (el('submit-bundle-price')) el('submit-bundle-price').textContent = bp;
+  if (el('form-bundle-save'))    el('form-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
+  if (el('form-bundle-save-fr')) el('form-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
 }
 
 // ── PACKAGE SELECTION ──
@@ -1217,6 +1280,14 @@ async function proceedToPayment() {
 document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
   el.addEventListener('input', () => el.classList.remove('error'));
   el.addEventListener('change', () => el.classList.remove('error'));
+});
+
+// ── BUNDLE UI INIT (runs after all functions defined) ──
+document.addEventListener('DOMContentLoaded', function() {
+  if (BUNDLE_PRESELECTED) {
+    updateBundleHeroUI();
+    updateBundleBannerText();
+  }
 });
 </script>
 </body>
