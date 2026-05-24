@@ -35,10 +35,20 @@ body .fr-inline{display:none;}
 body.lang-fr .fr-inline{display:inline;}
 body.lang-fr .en-inline{display:none;}
 
+/* ── BUNDLE BANNER ── */
+#bundle-banner{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  background:var(--navy);border-bottom:1px solid rgba(201,134,42,0.4);
+  padding:0.65rem 2rem;display:none;align-items:center;
+  justify-content:center;gap:1rem;font-size:0.78rem;
+}
+#bundle-banner.show{display:flex;}
+
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
   justify-content:space-between;padding:1.25rem 4rem;background:rgba(10,10,10,0.95);
   backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);}
+nav.nav-pushed{top:2.5rem;}
 .nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;}
 .nav-mark{width:36px;height:36px;flex-shrink:0;}
 .nav-mark img{width:100%;height:100%;object-fit:contain;display:block;}
@@ -57,6 +67,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 
 /* ── HERO ── */
 .v-hero{padding:10rem 4rem 5rem;position:relative;overflow:hidden;text-align:center;}
+.v-hero.bundle-mode{padding-top:13rem;}
 .v-hero-bg{position:absolute;inset:0;z-index:0;
   background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(201,134,42,0.06) 0%,transparent 70%);}
 .v-hero-grid{position:absolute;inset:0;z-index:0;
@@ -121,27 +132,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .v-err{font-size:0.72rem;color:var(--error);margin-top:0.25rem;display:none;}
 .v-err.show{display:block;}
 
-/* ── RADIO / CHECKBOX GROUPS ── */
-.v-options{display:flex;flex-direction:column;gap:0.5rem;}
-.v-options.inline{flex-direction:row;flex-wrap:wrap;gap:0.5rem;}
-.v-opt{display:flex;align-items:center;gap:0.75rem;cursor:pointer;}
-.v-opt input[type=radio],.v-opt input[type=checkbox]{display:none;}
-.v-opt-box{width:16px;height:16px;border:0.5px solid rgba(201,134,42,0.3);
-  flex-shrink:0;transition:all 0.2s;position:relative;}
-.v-opt input[type=radio]+.v-opt-box{border-radius:50%;}
-.v-opt input:checked+.v-opt-box{background:var(--copper);border-color:var(--copper);}
-.v-opt input:checked+.v-opt-box::after{content:'';position:absolute;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  width:6px;height:6px;background:var(--black);border-radius:50%;}
-.v-opt input[type=checkbox]:checked+.v-opt-box::after{content:'✓';
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-size:9px;color:var(--black);border-radius:0;}
-.v-opt-label{font-size:0.85rem;font-weight:300;color:rgba(250,250,247,0.7);
-  transition:color 0.2s;}
-.v-opt:hover .v-opt-label{color:var(--white);}
-.v-opt input:checked~.v-opt-label{color:var(--white);}
-
-/* Pill-style options */
+/* ── PILLS ── */
 .v-pills{display:flex;flex-wrap:wrap;gap:0.5rem;}
 .v-pill{display:none;}
 .v-pill-label{padding:0.5rem 1rem;border:0.5px solid rgba(201,134,42,0.2);
@@ -186,8 +177,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .v-success{display:none;text-align:center;padding:6rem 4rem;max-width:640px;margin:0 auto;}
 .v-success.show{display:block;}
 .v-success-icon{width:72px;height:72px;border:0.5px solid var(--copper);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;
-  font-size:1.5rem;}
+  display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;font-size:1.5rem;}
 .v-success-h{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;
   margin-bottom:1rem;line-height:1.2;}
 .v-success-h em{font-style:italic;color:var(--copper);}
@@ -212,8 +202,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .v-rblock-title{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);}
 .v-rblock-edit{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;
   color:var(--muted);background:none;border:0.5px solid var(--border);
-  padding:0.3rem 0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;
-  transition:all 0.2s;}
+  padding:0.3rem 0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
 .v-rblock-edit:hover{border-color:var(--copper);color:var(--copper);}
 .v-rblock-body{padding:1.5rem;}
 .v-rrow{display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem;margin-bottom:0.75rem;}
@@ -225,18 +214,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .v-ritem-empty{font-size:0.82rem;color:rgba(136,136,128,0.4);font-style:italic;}
 .v-review-confirm{border-top:0.5px solid var(--border);padding-top:3rem;}
 .v-review-total{display:flex;align-items:center;justify-content:space-between;
-  padding:1.5rem 2rem;background:var(--charcoal);border:0.5px solid var(--border);
-  margin-bottom:1.5rem;}
+  padding:1.5rem 2rem;background:var(--charcoal);border:0.5px solid var(--border);margin-bottom:1.5rem;}
 .v-review-total-left{display:flex;flex-direction:column;gap:0.3rem;}
 .v-review-total-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
 .v-review-total-desc{font-size:0.78rem;color:rgba(250,250,247,0.4);}
-.v-review-total-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;
-  font-weight:300;color:var(--copper);}
+.v-review-total-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--copper);}
 .btn-confirm{width:100%;font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;
   padding:1.25rem 2rem;background:var(--copper);color:var(--black);border:none;
   cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;
-  transition:background 0.2s,transform 0.15s;display:flex;align-items:center;
-  justify-content:center;gap:0.75rem;}
+  transition:background 0.2s,transform 0.15s;display:flex;align-items:center;justify-content:center;gap:0.75rem;}
 .btn-confirm:hover:not(:disabled){background:var(--copper-light);transform:translateY(-1px);}
 .btn-confirm:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-confirm .spinner{width:16px;height:16px;border:2px solid rgba(10,10,10,0.3);
@@ -248,6 +234,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   transition:color 0.2s;width:100%;padding:0.5rem;}
 .btn-back:hover{color:var(--copper);}
 
+/* ── BUNDLE TOGGLE ── */
+.v-bundle-toggle{border:0.5px solid var(--border);margin-bottom:1.5rem;overflow:hidden;}
+.v-bundle-option{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 1.5rem;
+  cursor:pointer;transition:background 0.2s;position:relative;}
+.v-bundle-option:first-child{border-bottom:0.5px solid var(--border);}
+.v-bundle-option.selected{background:rgba(201,134,42,0.06);border-left:3px solid var(--copper);}
+.v-bundle-radio{width:18px;height:18px;border:0.5px solid rgba(201,134,42,0.4);
+  border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;transition:all 0.2s;}
+.v-bundle-option.selected .v-bundle-radio{background:var(--copper);border-color:var(--copper);}
+.v-bundle-option.selected .v-bundle-radio::after{content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;background:var(--black);border-radius:50%;}
+.v-bundle-content{flex:1;}
+.v-bundle-label{font-size:0.82rem;font-weight:500;color:var(--white);margin-bottom:0.3rem;}
+.v-bundle-desc{font-size:0.75rem;color:rgba(250,250,247,0.45);line-height:1.55;}
+.v-bundle-price{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;
+  color:var(--copper);flex-shrink:0;white-space:nowrap;}
+.v-bundle-save{display:inline-block;font-size:0.62rem;letter-spacing:0.1em;
+  text-transform:uppercase;background:rgba(201,134,42,0.15);color:var(--copper);
+  padding:0.2rem 0.5rem;margin-left:0.5rem;vertical-align:middle;}
+.v-bundle-list{font-size:0.78rem;color:#C9862A;margin:0.75rem 0 0;
+  letter-spacing:0.08em;text-transform:uppercase;}
+
 /* ── DIVIDER ── */
 .v-div{width:40px;height:0.5px;background:var(--copper);margin:1.5rem 0;}
 
@@ -255,43 +263,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 @media(max-width:768px){
   nav{padding:1rem 1.5rem;}
   .v-hero{padding:8rem 1.5rem 3rem;}
+  .v-hero.bundle-mode{padding-top:11rem;}
   .v-form-wrap{padding:0 1.5rem 5rem;}
   .v-row.two,.v-row.three{grid-template-columns:1fr;}
   .v-what{gap:1.5rem;}
   .v-price-band{flex-direction:column;text-align:center;gap:0.5rem;}
   .v-price-divider{display:none;}
+  #bundle-banner{padding:0.65rem 1rem;font-size:0.72rem;}
 }
 
-/* ── BUNDLE TOGGLE ── */
-.v-bundle-toggle{border:0.5px solid var(--border);margin-bottom:1.5rem;overflow:hidden;}
-.v-bundle-option{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 1.5rem;
-cursor:pointer;transition:background 0.2s;position:relative;}
-.v-bundle-option:first-child{border-bottom:0.5px solid var(--border);}
-.v-bundle-option.selected{background:rgba(201,134,42,0.06);border-left:3px solid var(--copper);}
-.v-bundle-option.selected:first-child{border-left:3px solid var(--copper);}
-.v-bundle-radio{width:18px;height:18px;border:0.5px solid rgba(201,134,42,0.4);
-border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;transition:all 0.2s;}
-.v-bundle-option.selected .v-bundle-radio{background:var(--copper);border-color:var(--copper);}
-.v-bundle-option.selected .v-bundle-radio::after{content:'';position:absolute;
-top:50%;left:50%;transform:translate(-50%,-50%);
-width:7px;height:7px;background:var(--black);border-radius:50%;}
-.v-bundle-content{flex:1;}
-.v-bundle-label{font-size:0.82rem;font-weight:500;color:var(--white);margin-bottom:0.3rem;}
-.v-bundle-desc{font-size:0.75rem;color:rgba(250,250,247,0.45);line-height:1.55;}
-.v-bundle-price{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;
-color:var(--copper);flex-shrink:0;white-space:nowrap;}
-.v-bundle-save{display:inline-block;font-size:0.62rem;letter-spacing:0.1em;
-text-transform:uppercase;background:rgba(201,134,42,0.15);color:var(--copper);
-padding:0.2rem 0.5rem;margin-left:0.5rem;vertical-align:middle;}
-.v-bundle-list{font-size:0.78rem;color:#C9862A;margin:0.75rem 0 0;
-letter-spacing:0.08em;text-transform:uppercase;} 
-  
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 .fade-up{animation:fadeUp 0.6s ease both;}
 .d1{animation-delay:0.1s;}.d2{animation-delay:0.2s;}.d3{animation-delay:0.3s;}
 </style>
-  <!-- Google Analytics GA4 — Za3fran -->
+  <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -299,12 +285,19 @@ letter-spacing:0.08em;text-transform:uppercase;}
     gtag('js', new Date());
     gtag('config', 'G-X7Q3Q8ZKRE');
   </script>
-
 </head>
 <body id="body">
 
+<!-- BUNDLE BANNER — shown when ?bundle=true -->
+<div id="bundle-banner">
+  <span style="color:#C9862A;font-size:0.9rem;">✦</span>
+  <span id="bundle-banner-text" style="color:rgba(250,250,247,0.9);"></span>
+  <button onclick="document.getElementById('bundle-banner').classList.remove('show');document.getElementById('nav').classList.remove('nav-pushed');document.querySelector('.v-hero').classList.remove('bundle-mode');"
+    style="background:none;border:none;color:rgba(136,136,128,0.6);cursor:pointer;font-size:1rem;padding:0 0.25rem;line-height:1;flex-shrink:0;margin-left:0.5rem;">✕</button>
+</div>
+
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <a href="/" class="nav-logo">
     <div class="nav-mark">
       <img src="assets/za3fran-mark.svg" alt="Za3fran" onerror="this.style.display='none'">
@@ -322,7 +315,7 @@ letter-spacing:0.08em;text-transform:uppercase;}
 </nav>
 
 <!-- HERO -->
-<div class="v-hero">
+<div class="v-hero" id="v-hero">
   <div class="v-hero-bg"></div>
   <div class="v-hero-grid"></div>
   <div class="v-hero-content">
@@ -414,14 +407,11 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <label class="v-label fr" for="f-role">Votre rôle <span class="req">*</span></label>
           <select class="v-select" id="f-role" required>
             <option value="" disabled selected></option>
-            <option value="founder" class="en">Founder / Entrepreneur</option>
-            <option value="founder" class="fr">Fondateur / Entrepreneur</option>
+            <option value="founder">Founder / Entrepreneur</option>
             <option value="investor">Investor / Investisseur</option>
-            <option value="operator" class="en">Existing operator</option>
-            <option value="operator" class="fr">Opérateur existant</option>
+            <option value="operator">Existing operator / Opérateur existant</option>
             <option value="consultant">Consultant</option>
-            <option value="other" class="en">Other</option>
-            <option value="other" class="fr">Autre</option>
+            <option value="other">Other / Autre</option>
           </select>
         </div>
       </div>
@@ -436,8 +426,8 @@ letter-spacing:0.08em;text-transform:uppercase;}
       </div>
       <div class="v-row">
         <div class="v-field">
-          <label class="v-label en" for="f-concept-name">Concept name <span class="req">*</span> <span class="opt en">(working title is fine)</span><span class="opt fr">(titre provisoire accepté)</span></label>
-          <label class="v-label fr" for="f-concept-name">Nom du concept <span class="req">*</span></label>
+          <label class="v-label en" for="f-concept-name">Concept name <span class="req">*</span> <span class="opt">working title is fine</span></label>
+          <label class="v-label fr" for="f-concept-name">Nom du concept <span class="req">*</span> <span class="opt">titre provisoire accepté</span></label>
           <input class="v-input" type="text" id="f-concept-name" placeholder="e.g. Dar Zitoun, The Marble Club...">
         </div>
       </div>
@@ -447,28 +437,17 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <label class="v-label fr" for="f-type">Type d'établissement <span class="req">*</span></label>
           <select class="v-select" id="f-type" required>
             <option value="" disabled selected></option>
-            <option value="restaurant_casual" class="en">Casual dining restaurant</option>
-            <option value="restaurant_casual" class="fr">Restaurant casual dining</option>
-            <option value="restaurant_fine" class="en">Fine dining restaurant</option>
-            <option value="restaurant_fine" class="fr">Restaurant gastronomique</option>
-            <option value="cafe_brunch" class="en">Café / Brunch spot</option>
-            <option value="cafe_brunch" class="fr">Café / Brunch</option>
-            <option value="fast_casual" class="en">Fast casual / QSR</option>
-            <option value="fast_casual" class="fr">Fast casual / Restauration rapide</option>
-            <option value="bar_lounge" class="en">Bar / Lounge</option>
-            <option value="bar_lounge" class="fr">Bar / Lounge</option>
-            <option value="beach_club" class="en">Beach club / Pool club</option>
-            <option value="beach_club" class="fr">Beach club / Pool club</option>
-            <option value="rooftop" class="en">Rooftop / Terrace venue</option>
-            <option value="rooftop" class="fr">Rooftop / Terrasse</option>
-            <option value="dark_kitchen" class="en">Dark kitchen / Delivery only</option>
-            <option value="dark_kitchen" class="fr">Dark kitchen / Livraison uniquement</option>
-            <option value="food_hall" class="en">Food hall / Market stall</option>
-            <option value="food_hall" class="fr">Food hall / Stand de marché</option>
-            <option value="hotel_fb" class="en">Hotel F&B outlet</option>
-            <option value="hotel_fb" class="fr">Point de vente F&B hôtelier</option>
-            <option value="other" class="en">Other</option>
-            <option value="other" class="fr">Autre</option>
+            <option value="restaurant_casual">Casual dining restaurant</option>
+            <option value="restaurant_fine">Fine dining restaurant</option>
+            <option value="cafe_brunch">Café / Brunch spot</option>
+            <option value="fast_casual">Fast casual / QSR</option>
+            <option value="bar_lounge">Bar / Lounge</option>
+            <option value="beach_club">Beach club / Pool club</option>
+            <option value="rooftop">Rooftop / Terrace venue</option>
+            <option value="dark_kitchen">Dark kitchen / Delivery only</option>
+            <option value="food_hall">Food hall / Market stall</option>
+            <option value="hotel_fb">Hotel F&B outlet</option>
+            <option value="other">Other / Autre</option>
           </select>
         </div>
         <div class="v-field">
@@ -511,8 +490,8 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <input class="v-input" type="text" id="f-city" placeholder="Casablanca, Marrakech, Dakar...">
         </div>
         <div class="v-field">
-          <label class="v-label en" for="f-neighbourhood">Neighbourhood / District <span class="opt en">(if known)</span><span class="opt fr">(si connu)</span></label>
-          <label class="v-label fr" for="f-neighbourhood">Quartier / Zone <span class="opt fr">(si connu)</span></label>
+          <label class="v-label en" for="f-neighbourhood">Neighbourhood / District <span class="opt">if known</span></label>
+          <label class="v-label fr" for="f-neighbourhood">Quartier / Zone <span class="opt">si connu</span></label>
           <input class="v-input" type="text" id="f-neighbourhood" placeholder="Maarif, Gueliz, Plateau...">
         </div>
       </div>
@@ -523,19 +502,14 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <div class="v-pills" id="f-audience">
             <input type="checkbox" class="v-pill" id="aud-locals" name="audience" value="locals">
             <label class="v-pill-label" for="aud-locals" data-en="Local residents" data-fr="Résidents locaux">Local residents</label>
-
             <input type="checkbox" class="v-pill" id="aud-tourists" name="audience" value="tourists">
             <label class="v-pill-label" for="aud-tourists" data-en="Tourists" data-fr="Touristes">Tourists</label>
-
             <input type="checkbox" class="v-pill" id="aud-expats" name="audience" value="expats">
             <label class="v-pill-label" for="aud-expats" data-en="Expats" data-fr="Expatriés">Expats</label>
-
             <input type="checkbox" class="v-pill" id="aud-corporate" name="audience" value="corporate">
             <label class="v-pill-label" for="aud-corporate" data-en="Corporate / Business" data-fr="Corporate / Affaires">Corporate / Business</label>
-
             <input type="checkbox" class="v-pill" id="aud-affluent" name="audience" value="affluent_locals">
             <label class="v-pill-label" for="aud-affluent" data-en="Affluent locals" data-fr="Clientèle locale aisée">Affluent locals</label>
-
             <input type="checkbox" class="v-pill" id="aud-families" name="audience" value="families">
             <label class="v-pill-label" for="aud-families" data-en="Families" data-fr="Familles">Families</label>
           </div>
@@ -557,16 +531,11 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <label class="v-label fr" for="f-budget">Budget d'investissement estimé <span class="req">*</span></label>
           <select class="v-select" id="f-budget" required>
             <option value="" disabled selected></option>
-            <option value="under_50k" class="en">Under $50,000</option>
-            <option value="under_50k" class="fr">Moins de 500 000 MAD</option>
-            <option value="50_150k" class="en">$50,000 – $150,000</option>
-            <option value="50_150k" class="fr">500k – 1,5M MAD</option>
-            <option value="150_500k" class="en">$150,000 – $500,000</option>
-            <option value="150_500k" class="fr">1,5M – 5M MAD</option>
-            <option value="500k_1m" class="en">$500,000 – $1M</option>
-            <option value="500k_1m" class="fr">5M – 10M MAD</option>
-            <option value="over_1m" class="en">Over $1M</option>
-            <option value="over_1m" class="fr">Plus de 10M MAD</option>
+            <option value="under_50k">Under $50,000 / moins de 500k MAD</option>
+            <option value="50_150k">$50,000–$150,000 / 500k–1,5M MAD</option>
+            <option value="150_500k">$150,000–$500,000 / 1,5M–5M MAD</option>
+            <option value="500k_1m">$500,000–$1M / 5M–10M MAD</option>
+            <option value="over_1m">Over $1M / plus de 10M MAD</option>
           </select>
         </div>
       </div>
@@ -584,8 +553,8 @@ letter-spacing:0.08em;text-transform:uppercase;}
       </div>
       <div class="v-row two">
         <div class="v-field">
-          <label class="v-label en" for="f-seats">Seating capacity <span class="opt en">(approximate)</span><span class="opt fr">(approximatif)</span></label>
-          <label class="v-label fr" for="f-seats">Capacité d'accueil <span class="opt fr">(approximatif)</span></label>
+          <label class="v-label en" for="f-seats">Seating capacity <span class="opt">approximate</span></label>
+          <label class="v-label fr" for="f-seats">Capacité d'accueil <span class="opt">approximatif</span></label>
           <input class="v-input" type="text" id="f-seats" placeholder="e.g. 60 inside + 40 terrace...">
         </div>
         <div class="v-field">
@@ -605,8 +574,8 @@ letter-spacing:0.08em;text-transform:uppercase;}
       </div>
       <div class="v-row">
         <div class="v-field">
-          <label class="v-label en" for="f-competitors">Who are your main competitors? <span class="opt en">(name 2–3 if you can)</span></label>
-          <label class="v-label fr" for="f-competitors">Qui sont vos principaux concurrents ? <span class="opt fr">(nommez 2–3 si possible)</span></label>
+          <label class="v-label en" for="f-competitors">Who are your main competitors? <span class="opt">name 2–3 if you can</span></label>
+          <label class="v-label fr" for="f-competitors">Qui sont vos principaux concurrents ? <span class="opt">nommez 2–3 si possible</span></label>
           <textarea class="v-textarea" id="f-competitors" rows="3"
             placeholder="e.g. Le Cabestan, Bo&Zin, Bagatelle — or describe the type of venues you're competing with if you don't have specific names yet."></textarea>
         </div>
@@ -634,20 +603,13 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <label class="v-label fr" for="f-stage">Stade actuel <span class="req">*</span></label>
           <select class="v-select" id="f-stage" required>
             <option value="" disabled selected></option>
-            <option value="idea" class="en">Early idea / Concept phase</option>
-            <option value="idea" class="fr">Idée initiale / Phase concept</option>
-            <option value="planning" class="en">Business planning in progress</option>
-            <option value="planning" class="fr">Business plan en cours</option>
-            <option value="funding" class="en">Seeking funding / investors</option>
-            <option value="funding" class="fr">Recherche de financement</option>
-            <option value="location" class="en">Location scouting / lease negotiation</option>
-            <option value="location" class="fr">Recherche de local / négociation bail</option>
-            <option value="build" class="en">Under construction / fit-out</option>
-            <option value="build" class="fr">En construction / aménagement</option>
-            <option value="prelaunch" class="en">Pre-launch (opening within 3 months)</option>
-            <option value="prelaunch" class="fr">Pré-lancement (ouverture dans 3 mois)</option>
-            <option value="existing" class="en">Existing operation — repositioning</option>
-            <option value="existing" class="fr">Établissement existant — repositionnement</option>
+            <option value="idea">Early idea / Concept phase</option>
+            <option value="planning">Business planning in progress</option>
+            <option value="funding">Seeking funding / investors</option>
+            <option value="location">Location scouting / lease negotiation</option>
+            <option value="build">Under construction / fit-out</option>
+            <option value="prelaunch">Pre-launch (opening within 3 months)</option>
+            <option value="existing">Existing operation — repositioning</option>
           </select>
         </div>
         <div class="v-field">
@@ -655,23 +617,18 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <label class="v-label fr" for="f-timeline">Calendrier d'ouverture cible <span class="req">*</span></label>
           <select class="v-select" id="f-timeline" required>
             <option value="" disabled selected></option>
-            <option value="under_3m" class="en">Under 3 months</option>
-            <option value="under_3m" class="fr">Moins de 3 mois</option>
-            <option value="3_6m" class="en">3–6 months</option>
-            <option value="3_6m" class="fr">3–6 mois</option>
-            <option value="6_12m" class="en">6–12 months</option>
-            <option value="6_12m" class="fr">6–12 mois</option>
-            <option value="over_1y" class="en">More than 1 year</option>
-            <option value="over_1y" class="fr">Plus d'un an</option>
-            <option value="undefined" class="en">Not yet defined</option>
-            <option value="undefined" class="fr">Pas encore défini</option>
+            <option value="under_3m">Under 3 months / Moins de 3 mois</option>
+            <option value="3_6m">3–6 months / 3–6 mois</option>
+            <option value="6_12m">6–12 months / 6–12 mois</option>
+            <option value="over_1y">More than 1 year / Plus d'un an</option>
+            <option value="undefined">Not yet defined / Pas encore défini</option>
           </select>
         </div>
       </div>
       <div class="v-row">
         <div class="v-field">
-          <label class="v-label en" for="f-context">Anything else we should know? <span class="opt en">(optional but valuable)</span><span class="opt fr">(optionnel mais précieux)</span></label>
-          <label class="v-label fr" for="f-context">Autre chose à nous communiquer ? <span class="opt fr">(optionnel mais précieux)</span></label>
+          <label class="v-label en" for="f-context">Anything else we should know? <span class="opt">optional but valuable</span></label>
+          <label class="v-label fr" for="f-context">Autre chose à nous communiquer ? <span class="opt">optionnel mais précieux</span></label>
           <textarea class="v-textarea" id="f-context" rows="4"
             placeholder="Previous F&B experience, key challenges you're anticipating, specific questions you want the report to address, local context we should factor in..."></textarea>
         </div>
@@ -688,14 +645,10 @@ letter-spacing:0.08em;text-transform:uppercase;}
           <div class="v-summary-item fr">Analyse d'adéquation marché — données concurrentielles réelles pour votre ville et format</div>
           <div class="v-summary-item en">Financial viability assessment — ticket benchmarking, revenue modelling, break-even analysis</div>
           <div class="v-summary-item fr">Évaluation de viabilité financière — benchmark ticket, modélisation revenus, seuil de rentabilité</div>
-          <div class="v-summary-item en">Competitive white space — where the real opportunity is, and where the risk lies</div>
-          <div class="v-summary-item fr">Espaces concurrentiels — où est la vraie opportunité, et où se situent les risques</div>
           <div class="v-summary-item en">Strategic recommendations — 5 specific actions to strengthen your concept before launch</div>
           <div class="v-summary-item fr">Recommandations stratégiques — 5 actions concrètes pour renforcer votre concept avant ouverture</div>
           <div class="v-summary-item en">Risk register — the 3 biggest threats to your concept, with mitigation strategies</div>
           <div class="v-summary-item fr">Registre des risques — les 3 principales menaces avec stratégies de mitigation</div>
-          <div class="v-summary-item en">Delivered as a private web report — readable on any device, printable as PDF</div>
-          <div class="v-summary-item fr">Livré en rapport web privé — lisible sur tout appareil, imprimable en PDF</div>
         </div>
         <div class="v-total">
           <span class="v-total-label en">Total · One-time payment</span>
@@ -710,8 +663,8 @@ letter-spacing:0.08em;text-transform:uppercase;}
         <span class="btn-label fr">Vérifier ma soumission →</span>
       </button>
       <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.5);margin-top:1rem;line-height:1.6;">
-        <span class="en">Secure payment via Stripe · Your data is used solely to generate your report · Report delivered within 3 minutes of payment confirmation</span>
-        <span class="fr">Paiement sécurisé via Stripe · Vos données servent uniquement à générer votre rapport · Rapport livré dans les 3 minutes suivant la confirmation</span>
+        <span class="en">Secure payment via Stripe · Your data is used solely to generate your report · Delivered within 3 minutes of payment</span>
+        <span class="fr">Paiement sécurisé via Stripe · Vos données servent uniquement à générer votre rapport · Livré dans les 3 minutes suivant la confirmation</span>
       </p>
     </div>
 
@@ -725,273 +678,174 @@ letter-spacing:0.08em;text-transform:uppercase;}
     <span class="v-review-eyebrow fr">Étape 2 sur 2 — Vérifiez votre soumission</span>
     <h2 class="v-review-title en">Everything<br><em>looks right?</em></h2>
     <h2 class="v-review-title fr">Tout est<br><em>correct ?</em></h2>
-    <p class="v-review-notice en"><strong>Important:</strong> your report is generated once from these exact inputs. Take a moment to review everything below before proceeding to payment. You can edit any section using the buttons on the right.</p>
-    <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois à partir de ces informations exactes. Prenez un moment pour vérifier ci-dessous avant de procéder au paiement. Vous pouvez modifier chaque section via les boutons à droite.</p>
+    <p class="v-review-notice en"><strong>Important:</strong> your report is generated once from these exact inputs. Review everything below before proceeding to payment.</p>
+    <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois. Vérifiez ci-dessous avant de procéder au paiement.</p>
   </div>
 
-  <!-- Block 1: Contact -->
+  <!-- Block 1 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">01 — Your details</span>
       <span class="v-rblock-title fr">01 — Vos coordonnées</span>
-      <button class="v-rblock-edit en" onclick="editSection(1)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(1)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(1)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
       <div class="v-rrow">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Full name</span>
-          <span class="v-ritem-label fr">Nom complet</span>
-          <span class="v-ritem-val" id="r-name"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Email</span>
-          <span class="v-ritem-label fr">Email</span>
-          <span class="v-ritem-val" id="r-email"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Country</span>
-          <span class="v-ritem-label fr">Pays</span>
-          <span class="v-ritem-val" id="r-country"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Role</span>
-          <span class="v-ritem-label fr">Rôle</span>
-          <span class="v-ritem-val" id="r-role"></span>
-        </div>
+        <div class="v-ritem"><span class="v-ritem-label">Name</span><span class="v-ritem-val" id="r-name"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Email</span><span class="v-ritem-val" id="r-email"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Country</span><span class="v-ritem-val" id="r-country"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Role</span><span class="v-ritem-val" id="r-role"></span></div>
       </div>
     </div>
   </div>
 
-  <!-- Block 2: Concept -->
+  <!-- Block 2 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">02 — Your concept</span>
       <span class="v-rblock-title fr">02 — Votre concept</span>
-      <button class="v-rblock-edit en" onclick="editSection(2)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(2)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(2)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
       <div class="v-rrow">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Concept name</span>
-          <span class="v-ritem-label fr">Nom du concept</span>
-          <span class="v-ritem-val" id="r-concept-name"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Type</span>
-          <span class="v-ritem-label fr">Type</span>
-          <span class="v-ritem-val" id="r-type"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Cuisine / Format</span>
-          <span class="v-ritem-label fr">Cuisine / Format</span>
-          <span class="v-ritem-val" id="r-cuisine"></span>
-        </div>
+        <div class="v-ritem"><span class="v-ritem-label">Concept name</span><span class="v-ritem-val" id="r-concept-name"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Type</span><span class="v-ritem-val" id="r-type"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Cuisine</span><span class="v-ritem-val" id="r-cuisine"></span></div>
       </div>
-      <div class="v-rrow full">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Concept description</span>
-          <span class="v-ritem-label fr">Description du concept</span>
-          <span class="v-ritem-val long" id="r-description"></span>
-        </div>
-      </div>
-      <div class="v-rrow full">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Differentiation</span>
-          <span class="v-ritem-label fr">Différenciation</span>
-          <span class="v-ritem-val long" id="r-differentiation"></span>
-        </div>
-      </div>
+      <div class="v-rrow full"><div class="v-ritem"><span class="v-ritem-label">Description</span><span class="v-ritem-val long" id="r-description"></span></div></div>
+      <div class="v-rrow full"><div class="v-ritem"><span class="v-ritem-label">Differentiation</span><span class="v-ritem-val long" id="r-differentiation"></span></div></div>
     </div>
   </div>
 
-  <!-- Block 3: Location & Market -->
+  <!-- Block 3 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">03 — Location &amp; market</span>
       <span class="v-rblock-title fr">03 — Localisation &amp; marché</span>
-      <button class="v-rblock-edit en" onclick="editSection(3)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(3)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(3)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
       <div class="v-rrow">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">City</span>
-          <span class="v-ritem-label fr">Ville</span>
-          <span class="v-ritem-val" id="r-city"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Neighbourhood</span>
-          <span class="v-ritem-label fr">Quartier</span>
-          <span class="v-ritem-val" id="r-neighbourhood"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Target audience</span>
-          <span class="v-ritem-label fr">Clientèle cible</span>
-          <span class="v-ritem-val" id="r-audience"></span>
-        </div>
+        <div class="v-ritem"><span class="v-ritem-label">City</span><span class="v-ritem-val" id="r-city"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Neighbourhood</span><span class="v-ritem-val" id="r-neighbourhood"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Audience</span><span class="v-ritem-val" id="r-audience"></span></div>
       </div>
     </div>
   </div>
 
-  <!-- Block 4: Financials -->
+  <!-- Block 4 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">04 — Financial parameters</span>
       <span class="v-rblock-title fr">04 — Paramètres financiers</span>
-      <button class="v-rblock-edit en" onclick="editSection(4)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(4)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(4)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
       <div class="v-rrow">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Investment budget</span>
-          <span class="v-ritem-label fr">Budget d'investissement</span>
-          <span class="v-ritem-val" id="r-budget"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Target ticket / person</span>
-          <span class="v-ritem-label fr">Ticket moyen cible</span>
-          <span class="v-ritem-val" id="r-ticket"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Covers per day</span>
-          <span class="v-ritem-label fr">Couverts par jour</span>
-          <span class="v-ritem-val" id="r-covers"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Seating capacity</span>
-          <span class="v-ritem-label fr">Capacité d'accueil</span>
-          <span class="v-ritem-val" id="r-seats"></span>
-        </div>
+        <div class="v-ritem"><span class="v-ritem-label">Budget</span><span class="v-ritem-val" id="r-budget"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Ticket</span><span class="v-ritem-val" id="r-ticket"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Covers/day</span><span class="v-ritem-val" id="r-covers"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Seats</span><span class="v-ritem-val" id="r-seats"></span></div>
       </div>
     </div>
   </div>
 
-  <!-- Block 5: Competition -->
+  <!-- Block 5 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">05 — Competitive landscape</span>
       <span class="v-rblock-title fr">05 — Paysage concurrentiel</span>
-      <button class="v-rblock-edit en" onclick="editSection(5)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(5)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(5)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
-      <div class="v-rrow full">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Competitors</span>
-          <span class="v-ritem-label fr">Concurrents</span>
-          <span class="v-ritem-val long" id="r-competitors"></span>
-        </div>
-      </div>
-      <div class="v-rrow full">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Market gap</span>
-          <span class="v-ritem-label fr">Vide du marché</span>
-          <span class="v-ritem-val long" id="r-gap"></span>
-        </div>
-      </div>
+      <div class="v-rrow full"><div class="v-ritem"><span class="v-ritem-label">Competitors</span><span class="v-ritem-val long" id="r-competitors"></span></div></div>
+      <div class="v-rrow full"><div class="v-ritem"><span class="v-ritem-label">Market gap</span><span class="v-ritem-val long" id="r-gap"></span></div></div>
     </div>
   </div>
 
-  <!-- Block 6: Context -->
+  <!-- Block 6 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">06 — Project context</span>
       <span class="v-rblock-title fr">06 — Contexte du projet</span>
-      <button class="v-rblock-edit en" onclick="editSection(6)">Edit ↗</button>
-      <button class="v-rblock-edit fr" onclick="editSection(6)">Modifier ↗</button>
+      <button class="v-rblock-edit" onclick="editSection(6)">Edit / Modifier ↗</button>
     </div>
     <div class="v-rblock-body">
       <div class="v-rrow">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Current stage</span>
-          <span class="v-ritem-label fr">Stade actuel</span>
-          <span class="v-ritem-val" id="r-stage"></span>
-        </div>
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Opening timeline</span>
-          <span class="v-ritem-label fr">Calendrier d'ouverture</span>
-          <span class="v-ritem-val" id="r-timeline"></span>
-        </div>
+        <div class="v-ritem"><span class="v-ritem-label">Stage</span><span class="v-ritem-val" id="r-stage"></span></div>
+        <div class="v-ritem"><span class="v-ritem-label">Timeline</span><span class="v-ritem-val" id="r-timeline"></span></div>
       </div>
-      <div class="v-rrow full">
-        <div class="v-ritem">
-          <span class="v-ritem-label en">Additional context</span>
-          <span class="v-ritem-label fr">Contexte additionnel</span>
-          <span class="v-ritem-val long" id="r-context"></span>
-        </div>
-      </div>
+      <div class="v-rrow full"><div class="v-ritem"><span class="v-ritem-label">Additional context</span><span class="v-ritem-val long" id="r-context"></span></div></div>
     </div>
   </div>
 
- <!-- Confirm & Pay -->
-  <div class="v-review-confirm"> 
-    <!-- Bundle toggle -->
-<div style="margin-bottom:1.5rem;">
-  <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin:0 0 0.75rem;">
-    <span class="en">Choose your package</span>
-    <span class="fr">Choisissez votre offre</span>
-  </p>
-  <div class="v-bundle-toggle">
-    <!-- Option A: Validator only -->
-    <div class="v-bundle-option selected" id="opt-validator" onclick="selectPackage('validator')">
-      <div class="v-bundle-radio"></div>
-      <div class="v-bundle-content">
-        <div class="v-bundle-label en">Concept Validator only</div>
-        <div class="v-bundle-label fr">Concept Validator seul</div>
-        <div class="v-bundle-desc en">20-page strategic report · Market fit · Financial viability · Risk register</div>
-        <div class="v-bundle-desc fr">Rapport stratégique 20 pages · Adéquation marché · Viabilité financière · Registre des risques</div>
-      </div>
-      <div class="v-bundle-price" id="price-validator-opt">€199</div>
-    </div>
-    <!-- Option B: Bundle -->
-    <div class="v-bundle-option" id="opt-bundle" onclick="selectPackage('bundle')">
-      <div class="v-bundle-radio"></div>
-      <div class="v-bundle-content">
-        <div class="v-bundle-label en">
-          Validator + Business Plan Essentials
-          <span class="v-bundle-save en">Save €99</span>
-          <span class="v-bundle-save fr">Économisez 99 €</span>
+  <!-- Confirm & Pay -->
+  <div class="v-review-confirm">
+    <!-- Package toggle -->
+    <div style="margin-bottom:1.5rem;">
+      <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin:0 0 0.75rem;">
+        <span class="en">Choose your package</span>
+        <span class="fr">Choisissez votre offre</span>
+      </p>
+      <div class="v-bundle-toggle">
+        <div class="v-bundle-option selected" id="opt-validator" onclick="selectPackage('validator')">
+          <div class="v-bundle-radio"></div>
+          <div class="v-bundle-content">
+            <div class="v-bundle-label en">Concept Validator only</div>
+            <div class="v-bundle-label fr">Concept Validator seul</div>
+            <div class="v-bundle-desc en">20-page strategic report · Market fit · Financial viability · Risk register</div>
+            <div class="v-bundle-desc fr">Rapport stratégique 20 pages · Adéquation marché · Viabilité financière · Registre des risques</div>
+          </div>
+          <div class="v-bundle-price" id="price-validator-opt">€199</div>
         </div>
-        <div class="v-bundle-label fr">
-          Validator + Business Plan Essentials
+        <div class="v-bundle-option" id="opt-bundle" onclick="selectPackage('bundle')">
+          <div class="v-bundle-radio"></div>
+          <div class="v-bundle-content">
+            <div class="v-bundle-label en">
+              Validator + Business Plan Essentials
+              <span class="v-bundle-save">Save €99</span>
+            </div>
+            <div class="v-bundle-label fr">
+              Validator + Business Plan Essentials
+              <span class="v-bundle-save">Économisez 99€</span>
+            </div>
+            <div class="v-bundle-desc en">Everything above + full business plan with benchmark financial projections, market strategy, operations model — ready to show investors</div>
+            <div class="v-bundle-desc fr">Tout ci-dessus + business plan complet avec projections financières benchmark, stratégie marché, modèle opérationnel — prêt investisseurs</div>
+            <div class="v-bundle-list en">✦ Validator report &nbsp;✦ Business Plan Essentials &nbsp;✦ Two access codes</div>
+            <div class="v-bundle-list fr">✦ Rapport Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ Deux codes d'accès</div>
+          </div>
+          <div>
+            <div class="v-bundle-price" id="price-bundle-opt">€699</div>
+            <div style="font-size:0.68rem;color:var(--muted);text-decoration:line-through;text-align:right;" id="price-bundle-list">€798</div>
+          </div>
         </div>
-        <div class="v-bundle-desc en">Everything above + full business plan with benchmark financial projections, market strategy, operations model — ready to show investors</div>
-        <div class="v-bundle-desc fr">Tout ci-dessus + business plan complet avec projections financières benchmark, stratégie marché, modèle opérationnel — prêt à présenter aux investisseurs</div>
-        <div class="v-bundle-list en">✦ Validator report &nbsp;✦ Business Plan Essentials &nbsp;✦ Two separate access codes</div>
-        <div class="v-bundle-list fr">✦ Rapport Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ Deux codes d'accès distincts</div>
-      </div>
-      <div>
-        <div class="v-bundle-price" id="price-bundle-opt">€699</div>
-        <div style="font-size:0.68rem;color:var(--muted);text-decoration:line-through;text-align:right;" id="price-bundle-list">€798</div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="v-review-total">
-  <div class="v-review-total-left">
-    <span class="v-review-total-label en">Total · One-time payment</span>
-    <span class="v-review-total-label fr">Total · Paiement unique</span>
-    <span class="v-review-total-desc" id="review-total-desc-en" style="display:block;">20-page strategic report · Delivered in under 3 minutes</span>
-    <span class="v-review-total-desc" id="review-total-desc-fr" style="display:none;">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+    <div class="v-review-total">
+      <div class="v-review-total-left">
+        <span class="v-review-total-label en">Total · One-time payment</span>
+        <span class="v-review-total-label fr">Total · Paiement unique</span>
+        <span class="v-review-total-desc" id="review-total-desc-en" style="display:block;">20-page strategic report · Delivered in under 3 minutes</span>
+        <span class="v-review-total-desc" id="review-total-desc-fr" style="display:none;">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+      </div>
+      <span class="v-review-total-price" id="review-price">€199</span>
+    </div>
+    <div class="v-form-err" id="review-err"></div>
+    <button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
+      <div class="spinner"></div>
+      <span class="btn-label en">Confirm &amp; proceed to payment →</span>
+      <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
+    </button>
+    <button class="btn-back" onclick="backToForm()">
+      <span class="en">← Edit my submission</span>
+      <span class="fr">← Modifier ma soumission</span>
+    </button>
+    <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
+      <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes</span>
+      <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes</span>
+    </p>
   </div>
-  <span class="v-review-total-price" id="review-price">€199</span>
-</div>
-<div class="v-form-err" id="review-err"></div>
-<button class="btn-confirm" id="confirm-btn" onclick="proceedToPayment()">
-  <div class="spinner"></div>
-  <span class="btn-label en">Confirm &amp; proceed to payment →</span>
-  <span class="btn-label fr">Confirmer &amp; procéder au paiement →</span>
-</button>
-<button class="btn-back en" onclick="backToForm()">← Edit my submission</button>
-<button class="btn-back fr" onclick="backToForm()">← Modifier ma soumission</button>
-<p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
-  <span class="en">Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes of payment</span>
-  <span class="fr">Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes suivant le paiement</span>
-</p>
 </div>
 
 <!-- SUCCESS STATE -->
@@ -1010,70 +864,93 @@ letter-spacing:0.08em;text-transform:uppercase;}
 
 <script>
 // ── LANGUAGE ──
-function setLang(l){
-  document.getElementById('body').classList.toggle('lang-fr', l==='fr');
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-fr').classList.toggle('active', l==='fr');
+function setLang(l) {
+  document.getElementById('body').classList.toggle('lang-fr', l === 'fr');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
   document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
     el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
   });
+  // Update bundle banner text if visible
+  updateBundleBannerText();
   localStorage.setItem('za3fran_lang', l);
 }
-(function(){
+
+(function() {
   const saved = localStorage.getItem('za3fran_lang');
-  if(saved === 'fr') setLang('fr');
+  if (saved === 'fr') setLang('fr');
   else setLang('en');
 })();
 
+function isFr() { return document.getElementById('body').classList.contains('lang-fr'); }
+
+// ── BUNDLE PRE-SELECTION ──
+var BUNDLE_PRESELECTED = false;
+
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('bundle') === 'true') {
+    BUNDLE_PRESELECTED = true;
+    // Show banner
+    document.getElementById('bundle-banner').classList.add('show');
+    // Push nav and hero down
+    document.getElementById('nav').classList.add('nav-pushed');
+    document.getElementById('v-hero').classList.add('bundle-mode');
+    updateBundleBannerText();
+  }
+})();
+
+function updateBundleBannerText() {
+  const el = document.getElementById('bundle-banner-text');
+  if (!el) return;
+  if (!BUNDLE_PRESELECTED) return;
+  el.innerHTML = isFr()
+    ? 'Vous êtes sur le parcours <strong style="color:#C9862A;">Validator + Business Plan Essentials — ' + (PRICES.bundle[CURRENCY] || '€699') + '</strong>. Complétez le formulaire pour les deux produits.'
+    : 'You\'re on the <strong style="color:#C9862A;">Validator + Business Plan Essentials — ' + (PRICES.bundle[CURRENCY] || '€699') + '</strong> path. Complete the form to get both.';
+}
+
 // ── CURRENCY ──
 var CURRENCY = 'EUR';
-
-// Price map per currency
 var PRICES = {
-  validator: { EUR: '€199', MAD: 'MAD 1 990', USD: '$219' },
-  bundle:    { EUR: '€699', MAD: 'MAD 6 990', USD: '$749' },
-  bundleList:{ EUR: '€798', MAD: 'MAD 7 980', USD: '$868' },  // crossed-out list price
-  validatorOnly: { EUR: '€199', MAD: 'MAD 1 990', USD: '$219' },
+  validator:  { EUR: '€199',  MAD: 'MAD 1 990', USD: '$219' },
+  bundle:     { EUR: '€699',  MAD: 'MAD 6 990', USD: '$749' },
+  bundleList: { EUR: '€798',  MAD: 'MAD 7 980', USD: '$868' },
 };
-
-var BUNDLE_SAVE = { EUR: 'Save €99', MAD: 'Économisez MAD 990', USD: 'Save $99' };
+var BUNDLE_SAVE = { EUR: 'Save €99', MAD: 'Save MAD 990', USD: 'Save $99' };
+var BUNDLE_SAVE_FR = { EUR: 'Économisez 99€', MAD: 'Économisez 990 MAD', USD: 'Économisez 99$' };
 
 fetch('/api/currency')
   .then(r => r.json())
   .then(data => {
     CURRENCY = data.currency || 'EUR';
     updatePriceDisplays();
+    updateBundleBannerText();
   })
   .catch(() => {});
 
 function updatePriceDisplays() {
   const c = CURRENCY;
-  // Hero and submit area (Validator-only price)
   const vp = PRICES.validator[c] || PRICES.validator.EUR;
-  const el1 = document.getElementById('hero-price');
-  const el2 = document.getElementById('submit-price');
-  if(el1) el1.textContent = vp;
-  if(el2) el2.textContent = vp;
+  const bp = PRICES.bundle[c] || PRICES.bundle.EUR;
+  const bl = PRICES.bundleList[c] || PRICES.bundleList.EUR;
 
-  // Bundle toggle option prices
-  const elV = document.getElementById('price-validator-opt');
-  const elB = document.getElementById('price-bundle-opt');
-  const elBL = document.getElementById('price-bundle-list');
-  if(elV) elV.textContent = PRICES.validator[c] || PRICES.validator.EUR;
-  if(elB) elB.textContent = PRICES.bundle[c] || PRICES.bundle.EUR;
-  if(elBL) elBL.textContent = PRICES.bundleList[c] || PRICES.bundleList.EUR;
+  const el = id => document.getElementById(id);
+  if (el('hero-price'))         el('hero-price').textContent = vp;
+  if (el('submit-price'))       el('submit-price').textContent = vp;
+  if (el('price-validator-opt'))el('price-validator-opt').textContent = vp;
+  if (el('price-bundle-opt'))   el('price-bundle-opt').textContent = bp;
+  if (el('price-bundle-list'))  el('price-bundle-list').textContent = bl;
 
   // Save badge text
-  document.querySelectorAll('.v-bundle-save').forEach(el => {
-    el.textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
+  document.querySelectorAll('.v-bundle-save').forEach((el, i) => {
+    el.textContent = (i % 2 === 0) ? (BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR) : (BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR);
   });
 
-  // Review total (reflects current selection)
   updateReviewTotal();
 }
 
 // ── PACKAGE SELECTION ──
-var PURCHASE_TYPE = 'validator';  // 'validator' or 'bundle'
+var PURCHASE_TYPE = 'validator';
 
 function selectPackage(type) {
   PURCHASE_TYPE = type;
@@ -1088,27 +965,27 @@ function updateReviewTotal() {
     ? (PRICES.bundle[c] || PRICES.bundle.EUR)
     : (PRICES.validator[c] || PRICES.validator.EUR);
   const rp = document.getElementById('review-price');
-  if(rp) rp.textContent = price;
+  if (rp) rp.textContent = price;
 
-  // Update desc line
+  // Update submit-price on form too
+  const sp = document.getElementById('submit-price');
+  if (sp) sp.textContent = PRICES.validator[CURRENCY] || PRICES.validator.EUR;
+
   const descEn = document.getElementById('review-total-desc-en');
   const descFr = document.getElementById('review-total-desc-fr');
-  const isFrLang = isFr();
-  if(PURCHASE_TYPE === 'bundle') {
-    if(descEn) descEn.textContent = 'Validator + Business Plan Essentials · Two reports · Two access codes';
-    if(descFr) descFr.textContent = 'Validator + Business Plan Essentials · Deux rapports · Deux codes d\'accès';
+  if (PURCHASE_TYPE === 'bundle') {
+    if (descEn) descEn.textContent = 'Validator + Business Plan Essentials · Two reports · Two access codes';
+    if (descFr) descFr.textContent = 'Validator + Business Plan Essentials · Deux rapports · Deux codes d\'accès';
   } else {
-    if(descEn) descEn.textContent = '20-page strategic report · Delivered in under 3 minutes';
-    if(descFr) descFr.textContent = 'Rapport stratégique 20 pages · Livré en moins de 3 minutes';
+    if (descEn) descEn.textContent = '20-page strategic report · Delivered in under 3 minutes';
+    if (descFr) descFr.textContent = 'Rapport stratégique 20 pages · Livré en moins de 3 minutes';
   }
-  if(descEn) descEn.style.display = isFrLang ? 'none' : 'block';
-  if(descFr) descFr.style.display = isFrLang ? 'block' : 'none';
+  if (descEn) descEn.style.display = isFr() ? 'none' : 'block';
+  if (descFr) descFr.style.display = isFr() ? 'block' : 'none';
 }
 
 // ── VALIDATION ──
-function isFr(){ return document.getElementById('body').classList.contains('lang-fr'); }
-
-function validateForm(){
+function validateForm() {
   let valid = true;
   const required = ['f-name','f-email','f-country','f-role','f-concept-name',
     'f-type','f-cuisine','f-description','f-differentiation','f-city',
@@ -1116,84 +993,82 @@ function validateForm(){
 
   required.forEach(id => {
     const el = document.getElementById(id);
-    if(!el) return;
-    const val = el.value.trim();
-    if(!val){ el.classList.add('error'); valid = false; }
+    if (!el) return;
+    if (!el.value.trim()) { el.classList.add('error'); valid = false; }
     else { el.classList.remove('error'); }
   });
 
   const email = document.getElementById('f-email');
-  if(email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){
+  if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
     email.classList.add('error'); valid = false;
   }
 
   const desc = document.getElementById('f-description');
-  if(desc.value.trim().length < 100){ desc.classList.add('error'); valid = false; }
+  if (desc.value.trim().length < 100) { desc.classList.add('error'); valid = false; }
 
   const audienceChecked = document.querySelectorAll('[name="audience"]:checked');
   const errAudience = document.getElementById('err-audience');
-  if(audienceChecked.length === 0){
+  if (audienceChecked.length === 0) {
     errAudience.textContent = isFr() ? 'Sélectionnez au moins une option.' : 'Please select at least one.';
     errAudience.classList.add('show'); valid = false;
   } else {
     errAudience.classList.remove('show');
   }
-
   return valid;
 }
 
-function collectData(){
-  const audience = Array.from(document.querySelectorAll('[name="audience"]:checked')).map(e=>e.value);
+function collectData() {
+  const audience = Array.from(document.querySelectorAll('[name="audience"]:checked')).map(e => e.value);
   return {
-    name:           document.getElementById('f-name').value.trim(),
-    email:          document.getElementById('f-email').value.trim(),
-    country:        document.getElementById('f-country').value,
-    role:           document.getElementById('f-role').value,
-    concept_name:   document.getElementById('f-concept-name').value.trim(),
-    type:           document.getElementById('f-type').value,
-    cuisine:        document.getElementById('f-cuisine').value.trim(),
-    description:    document.getElementById('f-description').value.trim(),
-    differentiation:document.getElementById('f-differentiation').value.trim(),
-    city:           document.getElementById('f-city').value.trim(),
-    neighbourhood:  document.getElementById('f-neighbourhood').value.trim(),
-    audience:       audience,
-    budget:         document.getElementById('f-budget').value,
-    ticket:         document.getElementById('f-ticket').value.trim(),
-    covers:         document.getElementById('f-covers').value.trim(),
-    seats:          document.getElementById('f-seats').value.trim(),
-    opening_hours:  document.getElementById('f-opening').value.trim(),
-    competitors:    document.getElementById('f-competitors').value.trim(),
-    market_gap:     document.getElementById('f-gap').value.trim(),
-    stage:          document.getElementById('f-stage').value,
-    timeline:       document.getElementById('f-timeline').value,
-    additional:     document.getElementById('f-context').value.trim(),
-    currency:       CURRENCY,
-    language:       isFr() ? 'fr' : 'en',
-    purchase_type:  PURCHASE_TYPE,   // ← new: 'validator' or 'bundle'
-    submitted_at:   new Date().toISOString()
+    name:            document.getElementById('f-name').value.trim(),
+    email:           document.getElementById('f-email').value.trim(),
+    country:         document.getElementById('f-country').value,
+    role:            document.getElementById('f-role').value,
+    concept_name:    document.getElementById('f-concept-name').value.trim(),
+    type:            document.getElementById('f-type').value,
+    cuisine:         document.getElementById('f-cuisine').value.trim(),
+    description:     document.getElementById('f-description').value.trim(),
+    differentiation: document.getElementById('f-differentiation').value.trim(),
+    city:            document.getElementById('f-city').value.trim(),
+    neighbourhood:   document.getElementById('f-neighbourhood').value.trim(),
+    audience,
+    budget:          document.getElementById('f-budget').value,
+    ticket:          document.getElementById('f-ticket').value.trim(),
+    covers:          document.getElementById('f-covers').value.trim(),
+    seats:           document.getElementById('f-seats').value.trim(),
+    opening_hours:   document.getElementById('f-opening').value.trim(),
+    competitors:     document.getElementById('f-competitors').value.trim(),
+    market_gap:      document.getElementById('f-gap').value.trim(),
+    stage:           document.getElementById('f-stage').value,
+    timeline:        document.getElementById('f-timeline').value,
+    additional:      document.getElementById('f-context').value.trim(),
+    currency:        CURRENCY,
+    language:        isFr() ? 'fr' : 'en',
+    purchase_type:   PURCHASE_TYPE,
+    submitted_at:    new Date().toISOString()
   };
 }
 
 // ── LABEL MAPS ──
 const TYPE_LABELS = {
-  restaurant_casual:'Casual dining restaurant',restaurant_fine:'Fine dining',
+  restaurant_casual:'Casual dining',restaurant_fine:'Fine dining',
   cafe_brunch:'Café / Brunch',fast_casual:'Fast casual / QSR',
-  bar_lounge:'Bar / Lounge',beach_club:'Beach club / Pool club',
+  bar_lounge:'Bar / Lounge',beach_club:'Beach club',
   rooftop:'Rooftop / Terrace',dark_kitchen:'Dark kitchen',
-  food_hall:'Food hall',hotel_fb:'Hotel F&B outlet',other:'Other'
+  food_hall:'Food hall',hotel_fb:'Hotel F&B',other:'Other'
 };
 const BUDGET_LABELS = {
-  under_50k:'Under $50,000','50_150k':'$50k–$150k',
+  under_50k:'Under $50k','50_150k':'$50k–$150k',
   '150_500k':'$150k–$500k','500k_1m':'$500k–$1M',over_1m:'Over $1M'
 };
 const STAGE_LABELS = {
-  idea:'Early idea / Concept phase',planning:'Business planning',
-  funding:'Seeking funding',location:'Location scouting',
-  build:'Under construction',prelaunch:'Pre-launch',existing:'Existing — repositioning'
+  idea:'Early idea',planning:'Business planning',funding:'Seeking funding',
+  location:'Location scouting',build:'Under construction',
+  prelaunch:'Pre-launch',existing:'Existing — repositioning'
 };
 const TIMELINE_LABELS = {
   under_3m:'Under 3 months','3_6m':'3–6 months',
-  '6_12m':'6–12 months',over_1y:'Over 1 year',undefined_:'Not yet defined'
+  '6_12m':'6–12 months',over_1y:'Over 1 year',undefined:'Not yet defined'
 };
 const ROLE_LABELS = {
   founder:'Founder / Entrepreneur',investor:'Investor',
@@ -1212,10 +1087,12 @@ const SECTION_IDS = {
 function populateReview(data) {
   const set = (id, val) => {
     const el = document.getElementById(id);
-    if(!el) return;
-    if(!val || (typeof val === 'string' && val.trim() === '')) {
+    if (!el) return;
+    if (!val || (typeof val === 'string' && !val.trim())) {
       el.innerHTML = '<span class="v-ritem-empty">' + (isFr() ? 'Non renseigné' : 'Not provided') + '</span>';
-    } else { el.textContent = val; }
+    } else {
+      el.textContent = val;
+    }
   };
   set('r-name',            data.name);
   set('r-email',           data.email);
@@ -1228,7 +1105,7 @@ function populateReview(data) {
   set('r-differentiation', data.differentiation);
   set('r-city',            data.city);
   set('r-neighbourhood',   data.neighbourhood);
-  set('r-audience',        (data.audience||[]).join(', '));
+  set('r-audience',        (data.audience || []).join(', '));
   set('r-budget',          BUDGET_LABELS[data.budget] || data.budget);
   set('r-ticket',          data.ticket);
   set('r-covers',          data.covers);
@@ -1236,10 +1113,11 @@ function populateReview(data) {
   set('r-competitors',     data.competitors);
   set('r-gap',             data.market_gap);
   set('r-stage',           STAGE_LABELS[data.stage] || data.stage);
-  set('r-timeline',        TIMELINE_LABELS[data.timeline] || TIMELINE_LABELS[data.timeline + '_'] || data.timeline);
+  set('r-timeline',        TIMELINE_LABELS[data.timeline] || data.timeline);
   set('r-context',         data.additional);
-  // Reset to validator-only on each review open
-  selectPackage('validator');
+
+  // Pre-select bundle if arriving from bundle CTA, otherwise validator-only
+  selectPackage(BUNDLE_PRESELECTED ? 'bundle' : 'validator');
   updateReviewTotal();
 }
 
@@ -1248,48 +1126,49 @@ function showForm() {
   review.classList.remove('show'); review.style.display = 'none';
   document.getElementById('validator-form').style.display = '';
   document.querySelector('.v-form-wrap').style.display = '';
-  document.querySelector('.v-hero').style.display = '';
-  window.scrollTo({top:0, behavior:'smooth'});
+  document.getElementById('v-hero').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function editSection(num) {
   showForm();
   setTimeout(() => {
     const el = document.getElementById(SECTION_IDS[num]);
-    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 200);
 }
 
 function backToForm() { showForm(); }
 
 // ── FORM SUBMIT → SHOW REVIEW ──
-document.getElementById('validator-form').addEventListener('submit', function(e){
+document.getElementById('validator-form').addEventListener('submit', function(e) {
   e.preventDefault();
   const errEl = document.getElementById('form-err');
   errEl.classList.remove('show');
 
-  if(!validateForm()){
+  if (!validateForm()) {
     errEl.textContent = isFr()
       ? 'Veuillez compléter tous les champs obligatoires.'
       : 'Please complete all required fields.';
     errEl.classList.add('show');
     const firstErr = document.querySelector('.v-input.error, .v-select.error, .v-textarea.error');
-    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
-  if(typeof gtag !== 'undefined') {
-    gtag('event', 'form_submitted', { event_category:'validator', event_label:'review_screen_reached' });
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'form_submitted', { event_category: 'validator', event_label: 'review_screen_reached' });
   }
 
   const data = collectData();
-  try { populateReview(data); } catch(e) { console.error('populateReview error:', e); }
+  try { populateReview(data); } catch(err) { console.error('populateReview error:', err); }
+
   document.getElementById('validator-form').style.display = 'none';
   document.querySelector('.v-form-wrap').style.display = 'none';
-  document.querySelector('.v-hero').style.display = 'none';
+  document.getElementById('v-hero').style.display = 'none';
   const review = document.getElementById('v-review');
   review.style.display = 'block'; review.classList.add('show');
-  window.scrollTo({top:0, behavior:'instant'});
+  window.scrollTo({ top: 0, behavior: 'instant' });
 });
 
 // ── CONFIRM & PAY ──
@@ -1301,7 +1180,7 @@ async function proceedToPayment() {
 
   const data = collectData();
 
-  if(typeof gtag !== 'undefined') {
+  if (typeof gtag !== 'undefined') {
     gtag('event', 'begin_checkout', {
       event_category: 'conversion',
       event_label: PURCHASE_TYPE === 'bundle' ? 'bundle_checkout' : 'validator_checkout',
@@ -1315,17 +1194,17 @@ async function proceedToPayment() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if(!res.ok) throw new Error('submission failed');
+    if (!res.ok) throw new Error('submission failed');
     const result = await res.json();
-    if(result.checkoutUrl){
+    if (result.checkoutUrl) {
       window.location.href = result.checkoutUrl;
     } else {
-      const rev = document.getElementById('v-review');
-      rev.classList.remove('show'); rev.style.display = 'none';
+      document.getElementById('v-review').classList.remove('show');
+      document.getElementById('v-review').style.display = 'none';
       document.getElementById('v-success').classList.add('show');
-      window.scrollTo({top:0, behavior:'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  } catch(err){
+  } catch(err) {
     errEl.textContent = isFr()
       ? "Une erreur s'est produite. Réessayez ou contactez hello@za3fran.io."
       : 'Something went wrong. Please try again or contact hello@za3fran.io.';
@@ -1340,312 +1219,5 @@ document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
   el.addEventListener('change', () => el.classList.remove('error'));
 });
 </script>
-  // Update pill labels using data attributes
-  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
-    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
-  });
-
-  localStorage.setItem('za3fran_lang', l);
-}
-
-// Restore language preference
-(function(){
-  const saved = localStorage.getItem('za3fran_lang');
-  if(saved === 'fr') setLang('fr');
-  else setLang('en');
-})();
-
-// ── CURRENCY ──
-var CURRENCY = 'EUR';
-var PRICE_DISPLAY = { MAD: 'MAD 1,990', EUR: '€199', USD: '$219' };
-
-fetch('/api/currency')
-  .then(r => r.json())
-  .then(data => {
-    CURRENCY = data.currency || 'EUR';
-    const p = PRICE_DISPLAY[CURRENCY];
-    document.getElementById('hero-price').textContent = p;
-    document.getElementById('submit-price').textContent = p;
-  })
-  .catch(() => {});
-
-// ── VALIDATION ──
-function isFr(){ return document.getElementById('body').classList.contains('lang-fr'); }
-
-function validateForm(){
-  let valid = true;
-  const required = ['f-name','f-email','f-country','f-role','f-concept-name',
-    'f-type','f-cuisine','f-description','f-differentiation','f-city',
-    'f-budget','f-ticket','f-covers','f-gap','f-stage','f-timeline'];
-
-  required.forEach(id => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    const val = el.value.trim();
-    if(!val){
-      el.classList.add('error');
-      valid = false;
-    } else {
-      el.classList.remove('error');
-    }
-  });
-
-  // Email format
-  const email = document.getElementById('f-email');
-  if(email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){
-    email.classList.add('error');
-    valid = false;
-  }
-
-  // Description min length
-  const desc = document.getElementById('f-description');
-  if(desc.value.trim().length < 100){
-    desc.classList.add('error');
-    valid = false;
-  }
-
-  // Audience — at least one pill checked
-  const audienceChecked = document.querySelectorAll('[name="audience"]:checked');
-  const errAudience = document.getElementById('err-audience');
-  if(audienceChecked.length === 0){
-    errAudience.textContent = isFr() ? 'Sélectionnez au moins une option.' : 'Please select at least one.';
-    errAudience.classList.add('show');
-    valid = false;
-  } else {
-    errAudience.classList.remove('show');
-  }
-
-  return valid;
-}
-
-function collectData(){
-  const audience = Array.from(document.querySelectorAll('[name="audience"]:checked')).map(e=>e.value);
-  return {
-    // Contact
-    name:           document.getElementById('f-name').value.trim(),
-    email:          document.getElementById('f-email').value.trim(),
-    country:        document.getElementById('f-country').value,
-    role:           document.getElementById('f-role').value,
-    // Concept
-    concept_name:   document.getElementById('f-concept-name').value.trim(),
-    type:           document.getElementById('f-type').value,
-    cuisine:        document.getElementById('f-cuisine').value.trim(),
-    description:    document.getElementById('f-description').value.trim(),
-    differentiation:document.getElementById('f-differentiation').value.trim(),
-    // Location & Market
-    city:           document.getElementById('f-city').value.trim(),
-    neighbourhood:  document.getElementById('f-neighbourhood').value.trim(),
-    audience:       audience,
-    // Financials
-    budget:         document.getElementById('f-budget').value,
-    ticket:         document.getElementById('f-ticket').value.trim(),
-    covers:         document.getElementById('f-covers').value.trim(),
-    seats:          document.getElementById('f-seats').value.trim(),
-    opening_hours:  document.getElementById('f-opening').value.trim(),
-    // Competition
-    competitors:    document.getElementById('f-competitors').value.trim(),
-    market_gap:     document.getElementById('f-gap').value.trim(),
-    // Context
-    stage:          document.getElementById('f-stage').value,
-    timeline:       document.getElementById('f-timeline').value,
-    additional:     document.getElementById('f-context').value.trim(),
-    // Meta
-    currency:       CURRENCY,
-    language:       isFr() ? 'fr' : 'en',
-    submitted_at:   new Date().toISOString()
-  };
-}
-
-// ── LABEL MAPS (for readable review display) ──
-const TYPE_LABELS = {
-  restaurant_casual:'Casual dining restaurant',restaurant_fine:'Fine dining',
-  cafe_brunch:'Café / Brunch',fast_casual:'Fast casual / QSR',
-  bar_lounge:'Bar / Lounge',beach_club:'Beach club / Pool club',
-  rooftop:'Rooftop / Terrace',dark_kitchen:'Dark kitchen',
-  food_hall:'Food hall',hotel_fb:'Hotel F&B outlet',other:'Other'
-};
-const BUDGET_LABELS = {
-  under_50k:'Under $50,000','50_150k':'$50k–$150k',
-  '150_500k':'$150k–$500k','500k_1m':'$500k–$1M',over_1m:'Over $1M'
-};
-const STAGE_LABELS = {
-  idea:'Early idea / Concept phase',planning:'Business planning',
-  funding:'Seeking funding',location:'Location scouting',
-  build:'Under construction',prelaunch:'Pre-launch',existing:'Existing — repositioning'
-};
-const TIMELINE_LABELS = {
-  under_3m:'Under 3 months','3_6m':'3–6 months',
-  '6_12m':'6–12 months',over_1y:'Over 1 year',undefined_:'Not yet defined'
-};
-const ROLE_LABELS = {
-  founder:'Founder / Entrepreneur',investor:'Investor',
-  operator:'Existing operator',consultant:'Consultant',other:'Other'
-};
-const COUNTRY_LABELS = {
-  MA:'Morocco',DZ:'Algeria',TN:'Tunisia',EG:'Egypt',SN:'Senegal',
-  CI:"Côte d'Ivoire",CM:'Cameroon',NG:'Nigeria',KE:'Kenya',ZA:'South Africa',
-  AE:'UAE',SA:'Saudi Arabia',FR:'France',BE:'Belgium',CH:'Switzerland',
-  GB:'United Kingdom',OTHER:'Other'
-};
-
-// ── SECTION ANCHOR MAP (edit button scrolls to section) ──
-const SECTION_IDS = {
-  1: 'f-name', 2: 'f-concept-name', 3: 'f-city',
-  4: 'f-budget', 5: 'f-competitors', 6: 'f-stage'
-};
-
-// ── POPULATE REVIEW SCREEN ──
-function populateReview(data) {
-  const set = (id, val) => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    if(!val || val.trim() === '') {
-      el.innerHTML = '<span class="v-ritem-empty">' + (isFr() ? 'Non renseigné' : 'Not provided') + '</span>';
-    } else {
-      el.textContent = val;
-    }
-  };
-  set('r-name',           data.name);
-  set('r-email',          data.email);
-  set('r-country',        COUNTRY_LABELS[data.country] || data.country);
-  set('r-role',           ROLE_LABELS[data.role] || data.role);
-  set('r-concept-name',   data.concept_name);
-  set('r-type',           TYPE_LABELS[data.type] || data.type);
-  set('r-cuisine',        data.cuisine);
-  set('r-description',    data.description);
-  set('r-differentiation',data.differentiation);
-  set('r-city',           data.city);
-  set('r-neighbourhood',  data.neighbourhood);
-  set('r-audience',       (data.audience||[]).join(', '));
-  set('r-budget',         BUDGET_LABELS[data.budget] || data.budget);
-  set('r-ticket',         data.ticket);
-  set('r-covers',         data.covers);
-  set('r-seats',          data.seats);
-  set('r-competitors',    data.competitors);
-  set('r-gap',            data.market_gap);
-  set('r-stage',          STAGE_LABELS[data.stage] || data.stage);
-  set('r-timeline',       TIMELINE_LABELS[data.timeline] || TIMELINE_LABELS[data.timeline + '_'] || data.timeline);
-  set('r-context',        data.additional);
-  // Update price
-  const p = PRICE_DISPLAY[CURRENCY];
-  const rp = document.getElementById('review-price');
-  if(rp) rp.textContent = p;
-}
-
-// ── EDIT SECTION (go back to form, scroll to section) ──
-function showForm() {
-  const review = document.getElementById('v-review');
-  review.classList.remove('show');
-  review.style.display = 'none';
-  document.getElementById('validator-form').style.display = '';
-  document.querySelector('.v-form-wrap').style.display = '';
-  document.querySelector('.v-hero').style.display = '';
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function editSection(num) {
-  showForm();
-  setTimeout(() => {
-    const targetId = SECTION_IDS[num];
-    const el = document.getElementById(targetId);
-    if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
-  }, 200);
-}
-
-function backToForm() {
-  showForm();
-}
-
-// ── FORM SUBMIT → SHOW REVIEW ──
-document.getElementById('validator-form').addEventListener('submit', function(e){
-  e.preventDefault();
-  const errEl = document.getElementById('form-err');
-  errEl.classList.remove('show');
-
-  if(!validateForm()){
-    errEl.textContent = isFr()
-      ? 'Veuillez compléter tous les champs obligatoires.'
-      : 'Please complete all required fields.';
-    errEl.classList.add('show');
-    const firstErr = document.querySelector('.v-input.error, .v-select.error, .v-textarea.error');
-    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
-    return;
-  }
-
-  // GA4 — form completed and submitted to review
-  if(typeof gtag !== 'undefined') {
-    gtag('event', 'form_submitted', {
-      event_category: 'validator',
-      event_label: 'review_screen_reached'
-    });
-  }
-
-  // Collect and show review
-  const data = collectData();
-  try { populateReview(data); } catch(e) { console.error('populateReview error:', e); }
-  document.getElementById('validator-form').style.display = 'none';
-  document.querySelector('.v-form-wrap').style.display = 'none';
-  document.querySelector('.v-hero').style.display = 'none';
-  const review = document.getElementById('v-review');
-  review.style.display = 'block';
-  review.classList.add('show');
-  window.scrollTo({top: 0, behavior: 'instant'});
-});
-
-// ── CONFIRM & PAY ──
-async function proceedToPayment() {
-  const btn = document.getElementById('confirm-btn');
-  const errEl = document.getElementById('review-err');
-  errEl.classList.remove('show');
-  btn.disabled = true;
-  btn.classList.add('loading');
-
-  const data = collectData();
-
-  // GA4 — user clicked Confirm & Pay, about to redirect to Stripe
-  if(typeof gtag !== 'undefined') {
-    gtag('event', 'begin_checkout', {
-      event_category: 'conversion',
-      event_label: 'validator_checkout',
-      currency: data.currency || 'EUR'
-    });
-  }
-
-  // ← STRIPE CHECKOUT will be wired here in the next step
-  try {
-    const res = await fetch('/api/submit-validator', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if(!res.ok) throw new Error('submission failed');
-    const result = await res.json();
-    if(result.checkoutUrl){
-      window.location.href = result.checkoutUrl;
-    } else {
-      const rev = document.getElementById('v-review');
-      rev.classList.remove('show'); rev.style.display = 'none';
-      document.getElementById('v-success').classList.add('show');
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-  } catch(err){
-    errEl.textContent = isFr()
-      ? "Une erreur s'est produite. Réessayez ou contactez hello@za3fran.io."
-      : 'Something went wrong. Please try again or contact hello@za3fran.io.';
-    errEl.classList.add('show');
-    btn.disabled = false;
-    btn.classList.remove('loading');
-  }
-}
-
-// Remove error state on input
-document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
-  el.addEventListener('input', () => el.classList.remove('error'));
-  el.addEventListener('change', () => el.classList.remove('error'));
-});
-</script>
 </body>
 </html>
-
-
-
