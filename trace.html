@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trace — Food History & Culture · Fond de Sauce · Za3fran</title>
+  <meta name="description" content="Trace explores the archaeology of what we eat — food history, ingredient origins, technique migrations, cultural depth." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a;
+      --charcoal: #1a1a1a;
+      --copper: #C9862A;
+      --navy: #0F1F3D;
+      --white: #FAFAF7;
+      --muted: #888880;
+      --border: rgba(201,134,42,0.15);
+      --serif: 'Cormorant Garamond', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--white); text-decoration: none; letter-spacing: 0.02em; }
+    .nav-logo span { color: var(--copper); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-lang { display: flex; gap: 0.5rem; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.08em; }
+    .nav-lang button { background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.4rem; transition: color 0.2s; }
+    .nav-lang button.active { color: var(--copper); }
+    .nav-lang .sep { color: var(--border); line-height: 1.8; }
+
+    .breadcrumb {
+      margin-top: 80px; padding: 1.2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--copper); }
+    .breadcrumb span { color: var(--copper); margin: 0 0.6rem; }
+
+    /* SERIES HERO */
+    .series-hero {
+      padding: 6rem 4rem 5rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+    }
+    .series-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--copper); margin-bottom: 1rem; }
+    .series-hero-title { font-family: var(--serif); font-size: clamp(4rem, 7vw, 6rem); font-weight: 300; font-style: italic; line-height: 0.95; letter-spacing: -0.02em; }
+    .series-hero-desc { font-size: 1rem; color: rgba(250,250,247,0.75); line-height: 1.9; max-width: 460px; }
+    .series-hero-rule { width: 40px; height: 1px; background: var(--copper); margin: 2rem 0; }
+
+    /* FILTERS */
+    .filters {
+      padding: 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      font-family: var(--sans); font-size: 0.68rem; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--copper); color: var(--copper); }
+
+    /* ARTICLES LIST */
+    .articles-section { padding: 4rem; }
+    .articles-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .article-row {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 3rem;
+      align-items: center;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+    }
+    .article-row:hover { background: rgba(201,134,42,0.03); }
+    .article-row:hover .article-row-title { color: var(--copper); }
+
+    .article-row-num {
+      font-family: var(--serif);
+      font-size: 2.5rem; font-weight: 300;
+      color: rgba(201,134,42,0.2); line-height: 1;
+    }
+
+    .article-row-content {}
+    .article-row-tag {
+      font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--copper); margin-bottom: 0.6rem;
+    }
+    .article-row-title {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 400; line-height: 1.25;
+      transition: color 0.2s; margin-bottom: 0.5rem;
+    }
+    .article-row-excerpt {
+      font-size: 0.85rem; color: var(--muted); line-height: 1.7; max-width: 600px;
+    }
+    .article-row-meta {
+      text-align: right; font-size: 0.68rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      white-space: nowrap;
+    }
+    .article-row-meta .read-time { margin-top: 0.4rem; color: rgba(201,134,42,0.6); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .empty-ornament {
+      font-family: var(--serif); font-size: 4rem; font-weight: 300;
+      font-style: italic; color: rgba(201,134,42,0.2); margin-bottom: 2rem;
+    }
+    .empty-title {
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 300;
+      margin-bottom: 1rem;
+    }
+    .empty-title em { font-style: italic; color: var(--copper); }
+    .empty-desc {
+      font-size: 0.9rem; color: var(--muted); max-width: 420px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+    }
+    .btn-outline {
+      display: inline-block;
+      border: 1px solid var(--border); color: var(--copper);
+      font-family: var(--sans); font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.8rem 2rem; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--copper); background: rgba(201,134,42,0.05); }
+
+    [data-lang] { display: none; }
+    body.lang-en [data-lang="en"] { display: block; }
+    body.lang-fr [data-lang="fr"] { display: block; }
+    body.lang-en [data-lang="en"].inline { display: inline; }
+    body.lang-fr [data-lang="fr"].inline { display: inline; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .breadcrumb, .series-hero, .filters, .articles-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .series-hero { grid-template-columns: 1fr; gap: 2rem; }
+      .article-row { grid-template-columns: 40px 1fr; }
+      .article-row-meta { display: none; }
+    }
+  </style>
+</head>
+<body class="lang-en">
+
+  <nav>
+    <a href="https://za3fran.io" class="nav-logo">Za3fran<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="https://za3fran.io#services">Services</a></li>
+      <li><a href="https://za3fran.io#platform">Platform</a></li>
+      <li><a href="/fond-de-sauce" class="active">Fond de Sauce</a></li>
+      <li><a href="https://za3fran.io#contact">Contact</a></li>
+    </ul>
+    <div class="nav-lang">
+      <button class="active" onclick="setLang('en')" id="btn-en">EN</button>
+      <span class="sep">|</span>
+      <button onclick="setLang('fr')" id="btn-fr">FR</button>
+    </div>
+  </nav>
+
+  <div class="breadcrumb">
+    <a href="https://za3fran.io">Za3fran</a>
+    <span>✦</span>
+    <a href="/fond-de-sauce">Fond de Sauce</a>
+    <span>✦</span>
+    Trace
+  </div>
+
+  <section class="series-hero">
+    <div>
+      <p class="series-label">
+        <span data-lang="en" class="inline">Series 01 · Food History & Culture</span>
+        <span data-lang="fr" class="inline">Série 01 · Histoire culinaire & culture</span>
+      </p>
+      <h1 class="series-hero-title">Trace</h1>
+    </div>
+    <div>
+      <div class="series-hero-rule"></div>
+      <p class="series-hero-desc">
+        <span data-lang="en" class="inline">
+          Every dish is a document. Every technique is a migration. Every ingredient carries the memory of the hands that first cultivated it, the routes that carried it, the cultures that transformed it into something recognisable.<br><br>
+          Trace follows that archaeology — not as academic exercise, but because understanding where things come from changes how you work with them.
+        </span>
+        <span data-lang="fr" class="inline">
+          Chaque plat est un document. Chaque technique est une migration. Chaque ingrédient porte la mémoire des mains qui l'ont d'abord cultivé, des routes qui l'ont transporté, des cultures qui l'ont transformé en quelque chose de reconnaissable.<br><br>
+          Trace suit cette archéologie — pas comme exercice académique, mais parce que comprendre l'origine des choses change la façon dont on travaille avec elles.
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <div class="filters">
+    <button class="filter-btn active">
+      <span data-lang="en" class="inline">All</span>
+      <span data-lang="fr" class="inline">Tout</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Ingredients</span>
+      <span data-lang="fr" class="inline">Ingrédients</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Techniques</span>
+      <span data-lang="fr" class="inline">Techniques</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Recipes</span>
+      <span data-lang="fr" class="inline">Recettes</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Culture & History</span>
+      <span data-lang="fr" class="inline">Culture & Histoire</span>
+    </button>
+    <button class="filter-btn">Morocco / Maroc</button>
+    <button class="filter-btn">MENA</button>
+  </div>
+
+  <section class="articles-section">
+    <!-- EMPTY STATE — remove once articles exist, replace with .articles-list -->
+    <div class="empty-state">
+      <div class="empty-ornament">Trace</div>
+      <h2 class="empty-title">
+        <span data-lang="en" class="inline">The first article is <em>almost ready.</em></span>
+        <span data-lang="fr" class="inline">Le premier article est <em>presque prêt.</em></span>
+      </h2>
+      <p class="empty-desc">
+        <span data-lang="en" class="inline">Subscribe to Fond de Sauce and you'll be the first to know when Trace publishes.</span>
+        <span data-lang="fr" class="inline">Abonnez-vous à Fond de Sauce et vous serez le premier informé de la publication de Trace.</span>
+      </p>
+      <a href="/fond-de-sauce#subscribe" class="btn-outline">
+        <span data-lang="en" class="inline">Subscribe →</span>
+        <span data-lang="fr" class="inline">S'abonner →</span>
+      </a>
+    </div>
+
+    <!-- ARTICLE ROW TEMPLATE — uncomment and repeat when articles go live
+    <div class="articles-list">
+      <a href="/fond-de-sauce/trace/[slug]" class="article-row">
+        <div class="article-row-num">01</div>
+        <div class="article-row-content">
+          <div class="article-row-tag">Ingredients · Morocco</div>
+          <div class="article-row-title">[Article Title]</div>
+          <div class="article-row-excerpt">[2-sentence excerpt]</div>
+        </div>
+        <div class="article-row-meta">
+          <div>[Date]</div>
+          <div class="read-time">8 min read</div>
+        </div>
+      </a>
+    </div>
+    -->
+  </section>
+
+  <script>
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      localStorage.setItem('za3fran-lang', lang);
+    }
+    const saved = localStorage.getItem('za3fran-lang');
+    if (saved) setLang(saved);
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

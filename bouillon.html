@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bouillon — Trend Intelligence · Fond de Sauce · Za3fran</title>
+  <meta name="description" content="Bouillon tracks what's actually moving in F&B and hospitality — people, concepts, service philosophies, and ideas worth paying attention to." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a;
+      --charcoal: #1a1a1a;
+      --copper: #C9862A;
+      --navy: #0F1F3D;
+      --white: #FAFAF7;
+      --muted: #888880;
+      --border: rgba(201,134,42,0.15);
+      --navy-border: rgba(15,31,61,0.6);
+      --serif: 'Cormorant Garamond', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--white); text-decoration: none; letter-spacing: 0.02em; }
+    .nav-logo span { color: var(--copper); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-lang { display: flex; gap: 0.5rem; }
+    .nav-lang button { background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.4rem; transition: color 0.2s; }
+    .nav-lang button.active { color: var(--copper); }
+    .nav-lang .sep { color: var(--border); line-height: 1.8; font-size: 0.72rem; }
+
+    .breadcrumb {
+      margin-top: 80px; padding: 1.2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--copper); }
+    .breadcrumb span { color: var(--copper); margin: 0 0.6rem; }
+
+    /* SERIES HERO — navy accent for Bouillon */
+    .series-hero {
+      padding: 6rem 4rem 5rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+    }
+    .series-hero::after {
+      content: 'Bouillon';
+      position: absolute;
+      right: -2rem; bottom: -2rem;
+      font-family: var(--serif);
+      font-size: 12rem; font-weight: 300; font-style: italic;
+      color: rgba(15,31,61,0.15);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .series-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--copper); margin-bottom: 1rem; }
+    .series-hero-title { font-family: var(--serif); font-size: clamp(4rem, 7vw, 6rem); font-weight: 300; font-style: italic; line-height: 0.95; letter-spacing: -0.02em; position: relative; z-index: 1; }
+    .series-hero-desc { font-size: 1rem; color: rgba(250,250,247,0.75); line-height: 1.9; max-width: 460px; position: relative; z-index: 1; }
+    .series-hero-rule { width: 40px; height: 1px; background: var(--navy); margin: 2rem 0; }
+
+    /* WHAT TO EXPECT */
+    .expect-section {
+      padding: 4rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .expect-card {
+      padding: 2.5rem;
+      background: var(--charcoal);
+    }
+    .expect-num { font-family: var(--serif); font-size: 0.9rem; font-weight: 300; color: var(--copper); margin-bottom: 1rem; }
+    .expect-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 0.8rem; }
+    .expect-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.75; }
+
+    /* FILTERS */
+    .filters {
+      padding: 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      font-family: var(--sans); font-size: 0.68rem; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--copper); color: var(--copper); }
+
+    /* EDITIONS LIST */
+    .editions-section { padding: 4rem; }
+    .editions-grid { display: flex; flex-direction: column; gap: 2px; }
+
+    .edition-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 3rem;
+      background: var(--charcoal);
+      padding: 2.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .edition-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--navy);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.3s ease;
+    }
+    .edition-row:hover { background: #1f1f1f; }
+    .edition-row:hover::before { transform: scaleY(1); }
+
+    .edition-num {
+      font-family: var(--serif);
+      font-size: 2.5rem; font-weight: 300; font-style: italic;
+      color: rgba(201,134,42,0.25); line-height: 1;
+      padding-top: 0.3rem;
+    }
+    .edition-badge {
+      display: inline-block;
+      font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      background: rgba(15,31,61,0.5); border: 1px solid var(--navy-border);
+      color: rgba(250,250,247,0.6); margin-bottom: 0.8rem;
+    }
+    .edition-title {
+      font-family: var(--serif); font-size: 1.5rem; font-weight: 400;
+      line-height: 1.25; margin-bottom: 0.6rem;
+      transition: color 0.2s;
+    }
+    .edition-row:hover .edition-title { color: var(--copper); }
+    .edition-signals {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;
+    }
+    .signal-tag {
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--border); color: var(--muted);
+    }
+    .edition-date {
+      font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+
+    /* EMPTY STATE */
+    .empty-state { padding: 6rem 2rem; text-align: center; }
+    .empty-ornament { font-family: var(--serif); font-size: 4rem; font-weight: 300; font-style: italic; color: rgba(15,31,61,0.4); margin-bottom: 2rem; }
+    .empty-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; margin-bottom: 1rem; }
+    .empty-title em { font-style: italic; color: var(--copper); }
+    .empty-desc { font-size: 0.9rem; color: var(--muted); max-width: 420px; margin: 0 auto 2.5rem; line-height: 1.8; }
+    .btn-outline { display: inline-block; border: 1px solid var(--border); color: var(--copper); font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.8rem 2rem; text-decoration: none; transition: all 0.2s; }
+    .btn-outline:hover { border-color: var(--copper); background: rgba(201,134,42,0.05); }
+
+    [data-lang] { display: none; }
+    body.lang-en [data-lang="en"] { display: block; }
+    body.lang-fr [data-lang="fr"] { display: block; }
+    body.lang-en [data-lang="en"].inline { display: inline; }
+    body.lang-fr [data-lang="fr"].inline { display: inline; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .breadcrumb, .series-hero, .expect-section, .filters, .editions-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .series-hero { grid-template-columns: 1fr; gap: 2rem; }
+      .series-hero::after { display: none; }
+      .expect-section { grid-template-columns: 1fr; }
+      .edition-row { grid-template-columns: 1fr; }
+      .edition-num { display: none; }
+    }
+  </style>
+</head>
+<body class="lang-en">
+
+  <nav>
+    <a href="https://za3fran.io" class="nav-logo">Za3fran<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="https://za3fran.io#services">Services</a></li>
+      <li><a href="https://za3fran.io#platform">Platform</a></li>
+      <li><a href="/fond-de-sauce" class="active">Fond de Sauce</a></li>
+      <li><a href="https://za3fran.io#contact">Contact</a></li>
+    </ul>
+    <div class="nav-lang">
+      <button class="active" onclick="setLang('en')" id="btn-en">EN</button>
+      <span class="sep">|</span>
+      <button onclick="setLang('fr')" id="btn-fr">FR</button>
+    </div>
+  </nav>
+
+  <div class="breadcrumb">
+    <a href="https://za3fran.io">Za3fran</a>
+    <span>✦</span>
+    <a href="/fond-de-sauce">Fond de Sauce</a>
+    <span>✦</span>
+    Bouillon
+  </div>
+
+  <section class="series-hero">
+    <div>
+      <p class="series-label">
+        <span data-lang="en" class="inline">Series 02 · Trend Intelligence</span>
+        <span data-lang="fr" class="inline">Série 02 · Intelligence terrain</span>
+      </p>
+      <h1 class="series-hero-title">Bouillon</h1>
+    </div>
+    <div>
+      <div class="series-hero-rule"></div>
+      <p class="series-hero-desc">
+        <span data-lang="en" class="inline">
+          "Bouillon de culture" — a French expression for a melting pot of ideas. Things fermenting. Something building before it surfaces.<br><br>
+          Each edition: 5–7 signals from across the industry. Producers changing ingredients. People reinventing service. Concepts worth watching before they become obvious. Editorial takes, not press releases.
+        </span>
+        <span data-lang="fr" class="inline">
+          "Bouillon de culture" — une expression pour un milieu où les idées fermentent. Des choses qui se forment avant de remonter à la surface.<br><br>
+          Chaque numéro : 5 à 7 signaux de l'industrie. Des producteurs qui changent les ingrédients. Des gens qui réinventent le service. Des concepts à surveiller avant qu'ils deviennent évidents. Des prises de position éditoriales, pas des communiqués de presse.
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT TO EXPECT -->
+  <section class="expect-section">
+    <div class="expect-card">
+      <div class="expect-num">01</div>
+      <div class="expect-title">
+        <span data-lang="en" class="inline">Real signals</span>
+        <span data-lang="fr" class="inline">Vrais signaux</span>
+      </div>
+      <p class="expect-desc">
+        <span data-lang="en" class="inline">People, places, and ideas that are actually changing the industry — not AI-generated trend lists or recycled trade press.</span>
+        <span data-lang="fr" class="inline">Des personnes, des lieux et des idées qui changent vraiment l'industrie — pas des listes de tendances IA ou de la presse pro recyclée.</span>
+      </p>
+    </div>
+    <div class="expect-card">
+      <div class="expect-num">02</div>
+      <div class="expect-title">
+        <span data-lang="en" class="inline">Editorial opinion</span>
+        <span data-lang="fr" class="inline">Opinion éditoriale</span>
+      </div>
+      <p class="expect-desc">
+        <span data-lang="en" class="inline">Each signal comes with a point of view. Why it matters. What it means for operators and investors in our region. What to watch next.</span>
+        <span data-lang="fr" class="inline">Chaque signal vient avec un point de vue. Pourquoi ça compte. Ce que ça signifie pour les opérateurs et investisseurs dans notre région. Ce qu'il faut surveiller ensuite.</span>
+      </p>
+    </div>
+    <div class="expect-card">
+      <div class="expect-num">03</div>
+      <div class="expect-title">
+        <span data-lang="en" class="inline">Full spectrum</span>
+        <span data-lang="fr" class="inline">Spectre complet</span>
+      </div>
+      <p class="expect-desc">
+        <span data-lang="en" class="inline">Art de la table. What's in the plate. How it's served. How to recruit. How to train. New formats. Producer innovation. All of it.</span>
+        <span data-lang="fr" class="inline">Art de la table. Ce qui est dans l'assiette. Comment c'est servi. Comment recruter. Comment former. Nouveaux formats. Innovation producteurs. Tout.</span>
+      </p>
+    </div>
+  </section>
+
+  <div class="filters">
+    <button class="filter-btn active">
+      <span data-lang="en" class="inline">All editions</span>
+      <span data-lang="fr" class="inline">Tous les numéros</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Experience & Service</span>
+      <span data-lang="fr" class="inline">Expérience & Service</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Producers & Ingredients</span>
+      <span data-lang="fr" class="inline">Producteurs & Ingrédients</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">Concepts & Formats</span>
+      <span data-lang="fr" class="inline">Concepts & Formats</span>
+    </button>
+    <button class="filter-btn">
+      <span data-lang="en" class="inline">People & Teams</span>
+      <span data-lang="fr" class="inline">Personnes & Équipes</span>
+    </button>
+    <button class="filter-btn">Morocco / Maroc</button>
+    <button class="filter-btn">MENA</button>
+  </div>
+
+  <section class="editions-section">
+    <!-- EMPTY STATE — remove when editions go live -->
+    <div class="empty-state">
+      <div class="empty-ornament">Bouillon</div>
+      <h2 class="empty-title">
+        <span data-lang="en" class="inline">Edition #1 is <em>on its way.</em></span>
+        <span data-lang="fr" class="inline">Le numéro #1 est <em>en route.</em></span>
+      </h2>
+      <p class="empty-desc">
+        <span data-lang="en" class="inline">Subscribe to Fond de Sauce and you'll be the first to receive Bouillon when it drops.</span>
+        <span data-lang="fr" class="inline">Abonnez-vous à Fond de Sauce et vous recevrez Bouillon en premier dès sa sortie.</span>
+      </p>
+      <a href="/fond-de-sauce#subscribe" class="btn-outline">
+        <span data-lang="en" class="inline">Subscribe →</span>
+        <span data-lang="fr" class="inline">S'abonner →</span>
+      </a>
+    </div>
+
+    <!-- EDITION ROW TEMPLATE — uncomment when editions go live
+    <div class="editions-grid">
+      <a href="/fond-de-sauce/bouillon/[slug]" class="edition-row">
+        <div class="edition-num">#01</div>
+        <div>
+          <div class="edition-badge">Bouillon · Edition 01</div>
+          <div class="edition-title">[Edition Title]</div>
+          <div class="edition-signals">
+            <span class="signal-tag">Service reinvention</span>
+            <span class="signal-tag">Morocco producers</span>
+            <span class="signal-tag">Art de la table</span>
+          </div>
+          <div class="edition-date">[Date]</div>
+        </div>
+      </a>
+    </div>
+    -->
+  </section>
+
+  <script>
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      localStorage.setItem('za3fran-lang', lang);
+    }
+    const saved = localStorage.getItem('za3fran-lang');
+    if (saved) setLang(saved);
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

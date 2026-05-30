@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- AUTOMATION: replace these meta tags per article -->
+  <title>{{TITLE_EN}} · {{SERIES}} · Fond de Sauce · Za3fran</title>
+  <meta name="description" content="{{EXCERPT_EN}}" />
+  <meta property="og:title" content="{{TITLE_EN}} · Za3fran Fond de Sauce" />
+  <meta property="og:description" content="{{EXCERPT_EN}}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://za3fran.io/fond-de-sauce/{{SERIES_SLUG}}/{{SLUG}}" />
+  <meta name="article:published_time" content="{{DATE_ISO}}" />
+  <!-- END AUTOMATION META -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a;
+      --charcoal: #1a1a1a;
+      --copper: #C9862A;
+      --navy: #0F1F3D;
+      --white: #FAFAF7;
+      --muted: #888880;
+      --border: rgba(201,134,42,0.15);
+      --serif: 'Cormorant Garamond', serif;
+      --sans: 'DM Sans', sans-serif;
+      --body-width: 720px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--copper); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-lang { display: flex; gap: 0.5rem; }
+    .nav-lang button { background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.4rem; transition: color 0.2s; }
+    .nav-lang button.active { color: var(--copper); }
+    .nav-lang .sep { color: var(--border); line-height: 1.8; font-size: 0.72rem; }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      margin-top: 80px; padding: 1.2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--copper); }
+    .breadcrumb span { color: var(--copper); margin: 0 0.6rem; }
+
+    /* ARTICLE HEADER */
+    .article-header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 4rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-series-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--copper); margin-bottom: 2rem;
+    }
+    .article-series-badge .dot { width: 4px; height: 4px; background: var(--copper); border-radius: 50%; }
+
+    .article-title {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300; font-style: italic;
+      line-height: 1.15; letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-subtitle {
+      font-family: var(--serif);
+      font-size: 1.2rem; font-weight: 300;
+      color: rgba(250,250,247,0.65);
+      line-height: 1.6; margin-bottom: 2.5rem;
+      max-width: 600px;
+    }
+
+    .article-meta-row {
+      display: flex; align-items: center; gap: 2rem;
+      font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .article-meta-row .meta-item { display: flex; align-items: center; gap: 0.5rem; }
+    .article-meta-row .meta-sep { color: var(--border); }
+
+    /* ARTICLE BODY */
+    .article-body {
+      max-width: var(--body-width);
+      margin: 0 auto;
+      padding: 4rem;
+    }
+
+    /* Typography for article prose */
+    .article-body p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: rgba(250,250,247,0.85);
+      margin-bottom: 1.8rem;
+    }
+
+    .article-body p:first-child::first-letter {
+      font-family: var(--serif);
+      font-size: 3.5rem; font-weight: 300;
+      float: left; line-height: 0.85;
+      margin: 0.1em 0.12em 0 0;
+      color: var(--copper);
+    }
+
+    .article-body h2 {
+      font-family: var(--serif);
+      font-size: 1.8rem; font-weight: 300; font-style: italic;
+      line-height: 1.3; margin: 3rem 0 1.2rem;
+      color: var(--white);
+    }
+
+    .article-body h3 {
+      font-family: var(--sans);
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--copper); margin: 2.5rem 0 1rem;
+    }
+
+    .article-body blockquote {
+      border-left: 2px solid var(--copper);
+      padding: 1rem 2rem;
+      margin: 2.5rem 0;
+      font-family: var(--serif);
+      font-size: 1.35rem; font-weight: 300; font-style: italic;
+      color: rgba(250,250,247,0.8);
+      line-height: 1.6;
+    }
+
+    .article-body a {
+      color: var(--copper); text-decoration: none;
+      border-bottom: 1px solid rgba(201,134,42,0.3);
+      transition: border-color 0.2s;
+    }
+    .article-body a:hover { border-color: var(--copper); }
+
+    .article-body strong { font-weight: 500; color: var(--white); }
+    .article-body em { font-style: italic; }
+
+    /* BOUILLON SIGNALS — specific to Bouillon series */
+    .signal-block {
+      background: var(--charcoal);
+      border-left: 3px solid var(--navy);
+      padding: 2rem 2.5rem;
+      margin: 2.5rem 0;
+    }
+    .signal-number {
+      font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--copper); margin-bottom: 0.6rem;
+    }
+    .signal-title {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
+      margin-bottom: 1rem; color: var(--white);
+    }
+    .signal-body { font-size: 0.95rem; color: rgba(250,250,247,0.75); line-height: 1.8; }
+    .signal-body p { font-size: 0.95rem; margin-bottom: 0.8rem; }
+    .signal-body p:first-child::first-letter { all: unset; } /* no drop cap inside signals */
+
+    /* TAGS */
+    .article-tags {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+    .tag {
+      font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.3rem 0.8rem; border: 1px solid var(--border); color: var(--muted);
+    }
+
+    /* SHARE */
+    .share-row {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .share-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .share-btn {
+      background: var(--charcoal); border: 1px solid var(--border);
+      color: var(--white); font-family: var(--sans); font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.5rem 1.2rem; cursor: pointer;
+      text-decoration: none; transition: border-color 0.2s;
+    }
+    .share-btn:hover { border-color: var(--copper); color: var(--copper); }
+
+    /* LANGUAGE NOTE */
+    .lang-switch-note {
+      background: rgba(201,134,42,0.05);
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.8rem;
+      margin-bottom: 3rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .lang-note-text { font-size: 0.8rem; color: var(--muted); }
+    .lang-note-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--copper); font-family: var(--sans); font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.4rem 1rem; cursor: pointer; white-space: nowrap;
+      transition: border-color 0.2s;
+    }
+    .lang-note-btn:hover { border-color: var(--copper); }
+
+    /* NEXT ARTICLE */
+    .next-article {
+      background: var(--charcoal);
+      padding: 3rem 4rem;
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 2rem;
+      text-decoration: none; color: inherit;
+      transition: background 0.2s;
+      max-width: 900px; margin: 0 auto 4rem;
+    }
+    .next-article:hover { background: #1f1f1f; }
+    .next-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .next-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 300; font-style: italic; }
+    .next-arrow { font-size: 1.5rem; color: var(--copper); }
+
+    /* SUBSCRIBE CTA */
+    .subscribe-cta {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 4rem 5rem;
+    }
+    .subscribe-cta-inner {
+      border: 1px solid var(--border); padding: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .subscribe-cta-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 300; }
+    .subscribe-cta-title em { font-style: italic; color: var(--copper); }
+    .subscribe-cta-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+    .subscribe-row { display: flex; gap: 0.8rem; }
+    .subscribe-row input { flex: 1; background: var(--black); border: 1px solid var(--border); color: var(--white); font-family: var(--sans); font-size: 0.85rem; padding: 0.8rem 1rem; outline: none; transition: border-color 0.2s; }
+    .subscribe-row input:focus { border-color: rgba(201,134,42,0.4); }
+    .subscribe-row input::placeholder { color: var(--muted); }
+    .btn-copper { background: var(--copper); color: var(--black); font-family: var(--sans); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.8rem 1.5rem; border: none; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; }
+    .btn-copper:hover { opacity: 0.88; }
+
+    /* LANG SYSTEM */
+    [data-lang] { display: none; }
+    body.lang-en [data-lang="en"] { display: block; }
+    body.lang-fr [data-lang="fr"] { display: block; }
+    body.lang-en [data-lang="en"].inline { display: inline; }
+    body.lang-fr [data-lang="fr"].inline { display: inline; }
+    body.lang-en .lang-en-flex { display: flex; }
+    body.lang-fr .lang-fr-flex { display: flex; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .breadcrumb, .article-header, .article-body, .subscribe-cta { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .subscribe-cta-inner { grid-template-columns: 1fr; }
+      .next-article { padding: 2rem 1.5rem; grid-template-columns: 1fr; }
+      .subscribe-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body class="lang-en">
+
+  <nav>
+    <a href="https://za3fran.io" class="nav-logo">Za3fran<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="https://za3fran.io#services">Services</a></li>
+      <li><a href="https://za3fran.io#platform">Platform</a></li>
+      <li><a href="/fond-de-sauce" class="active">Fond de Sauce</a></li>
+      <li><a href="https://za3fran.io#contact">Contact</a></li>
+    </ul>
+    <div class="nav-lang">
+      <button class="active" onclick="setLang('en')" id="btn-en">EN</button>
+      <span class="sep">|</span>
+      <button onclick="setLang('fr')" id="btn-fr">FR</button>
+    </div>
+  </nav>
+
+  <div class="breadcrumb">
+    <a href="https://za3fran.io">Za3fran</a>
+    <span>✦</span>
+    <a href="/fond-de-sauce">Fond de Sauce</a>
+    <span>✦</span>
+    <!-- AUTOMATION: replace with series name and link -->
+    <a href="/fond-de-sauce/{{SERIES_SLUG}}">{{SERIES}}</a>
+    <span>✦</span>
+    <span data-lang="en" class="inline">{{TITLE_EN}}</span>
+    <span data-lang="fr" class="inline">{{TITLE_FR}}</span>
+  </div>
+
+  <!-- ARTICLE HEADER -->
+  <header class="article-header">
+    <div class="article-series-badge">
+      <span class="dot"></span>
+      <!-- AUTOMATION: replace -->
+      <span>{{SERIES}} · <span data-lang="en" class="inline">{{SERIES_TAGLINE_EN}}</span><span data-lang="fr" class="inline">{{SERIES_TAGLINE_FR}}</span></span>
+    </div>
+
+    <h1 class="article-title">
+      <span data-lang="en" class="inline">{{TITLE_EN}}</span>
+      <span data-lang="fr" class="inline">{{TITLE_FR}}</span>
+    </h1>
+
+    <p class="article-subtitle">
+      <span data-lang="en" class="inline">{{SUBTITLE_EN}}</span>
+      <span data-lang="fr" class="inline">{{SUBTITLE_FR}}</span>
+    </p>
+
+    <div class="article-meta-row">
+      <!-- AUTOMATION: replace DATE_DISPLAY, READ_TIME, TAGS_DISPLAY -->
+      <span class="meta-item">{{DATE_DISPLAY}}</span>
+      <span class="meta-sep">·</span>
+      <span class="meta-item">
+        <span data-lang="en" class="inline">{{READ_TIME}} min read</span>
+        <span data-lang="fr" class="inline">{{READ_TIME}} min de lecture</span>
+      </span>
+      <span class="meta-sep">·</span>
+      <span class="meta-item">{{TAGS_DISPLAY}}</span>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <article class="article-body">
+
+    <!-- LANGUAGE SWITCH NOTE -->
+    <div class="lang-switch-note">
+      <span class="lang-note-text">
+        <span data-lang="en" class="inline">This article is also available in French.</span>
+        <span data-lang="fr" class="inline">Cet article est également disponible en anglais.</span>
+      </span>
+      <button class="lang-note-btn" onclick="setLang(document.body.classList.contains('lang-en') ? 'fr' : 'en')">
+        <span data-lang="en" class="inline">Lire en français →</span>
+        <span data-lang="fr" class="inline">Read in English →</span>
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         AUTOMATION: REPLACE EVERYTHING BELOW THIS LINE
+         For TRACE articles: use <p>, <h2>, <h3>, <blockquote>
+         For BOUILLON articles: use .signal-block divs for each signal
+         ═══════════════════════════════════════════════════════════ -->
+
+    <div data-lang="en">
+      {{BODY_EN}}
+    </div>
+
+    <div data-lang="fr">
+      {{BODY_FR}}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         END OF AUTOMATED CONTENT
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- TAGS -->
+    <div class="article-tags">
+      <!-- AUTOMATION: generate tags from article metadata -->
+      {{TAGS_HTML}}
+    </div>
+
+    <!-- SHARE -->
+    <div class="share-row">
+      <span class="share-label">
+        <span data-lang="en" class="inline">Share</span>
+        <span data-lang="fr" class="inline">Partager</span>
+      </span>
+      <!-- AUTOMATION: replace {{LINKEDIN_SHARE_URL}} -->
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://za3fran.io/fond-de-sauce/{{SERIES_SLUG}}/{{SLUG}}" target="_blank" rel="noopener" class="share-btn">LinkedIn</a>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(()=>this.textContent='Copied!')">
+        <span data-lang="en" class="inline">Copy link</span>
+        <span data-lang="fr" class="inline">Copier le lien</span>
+      </button>
+    </div>
+
+  </article>
+
+  <!-- NEXT ARTICLE — AUTOMATION: populate when next article exists -->
+  <!--
+  <a href="/fond-de-sauce/{{NEXT_SERIES_SLUG}}/{{NEXT_SLUG}}" class="next-article">
+    <div>
+      <div class="next-label">
+        <span data-lang="en" class="inline">Next in {{NEXT_SERIES}} →</span>
+        <span data-lang="fr" class="inline">Suivant dans {{NEXT_SERIES}} →</span>
+      </div>
+      <div class="next-title">
+        <span data-lang="en" class="inline">{{NEXT_TITLE_EN}}</span>
+        <span data-lang="fr" class="inline">{{NEXT_TITLE_FR}}</span>
+      </div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+  -->
+
+  <!-- SUBSCRIBE -->
+  <div class="subscribe-cta">
+    <div class="subscribe-cta-inner">
+      <div>
+        <h3 class="subscribe-cta-title">
+          <span data-lang="en" class="inline"><em>Fond de Sauce</em> — every week.</span>
+          <span data-lang="fr" class="inline"><em>Fond de Sauce</em> — chaque semaine.</span>
+        </h3>
+        <p class="subscribe-cta-sub">
+          <span data-lang="en" class="inline">Trace and Bouillon alternate. Both languages. No noise.</span>
+          <span data-lang="fr" class="inline">Trace et Bouillon alternent. Les deux langues. Sans bruit.</span>
+        </p>
+      </div>
+      <div>
+        <div class="subscribe-row">
+          <input type="email" id="sub-email-art" placeholder="your@email.com" />
+          <button class="btn-copper" onclick="handleSubscribeArt()">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      localStorage.setItem('za3fran-lang', lang);
+    }
+    const saved = localStorage.getItem('za3fran-lang');
+    if (saved) setLang(saved);
+
+    function handleSubscribeArt() {
+      const email = document.getElementById('sub-email-art').value;
+      if (!email || !email.includes('@')) return;
+      // TODO: wire to Brevo API
+      alert('Subscribed! / Abonné !');
+    }
+  </script>
+</body>
+</html>
