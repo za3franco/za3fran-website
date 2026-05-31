@@ -31,15 +31,23 @@
       background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--white); text-decoration: none; letter-spacing: 0.02em; }
-    .nav-logo span { color: var(--copper); }
-    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
-    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .nav-links a:hover, .nav-links a.active { color: var(--white); }
-    .nav-lang { display: flex; gap: 0.5rem; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.08em; }
-    .nav-lang button { background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.4rem; transition: color 0.2s; }
-    .nav-lang button.active { color: var(--copper); }
-    .nav-lang .sep { color: var(--border); line-height: 1.8; }
+    .nav-logo { display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
+    .nav-mark { width:44px; height:44px; flex-shrink:0; display:block; }
+    .nav-mark img { width:100%; height:100%; object-fit:contain; display:block; }
+    .nav-name { font-family:var(--serif); font-size:1.3rem; font-weight:500; letter-spacing:0.08em; color:var(--white); }
+    .nav-name span { color:var(--copper); }
+    .nav-right { display:flex; align-items:center; gap:2rem; }
+    .nav-links { display:flex; align-items:center; gap:2rem; list-style:none; }
+    .nav-links a { font-size:0.75rem; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--copper); }
+    .nav-links a.active { color:var(--white); }
+    .nav-cta { color:var(--copper)!important; border:0.5px solid var(--copper)!important; padding:0.5rem 1.2rem; transition:background 0.2s,color 0.2s!important; }
+    .nav-cta:hover { background:var(--copper)!important; color:var(--black)!important; }
+    .nav-lang { display:flex; border:0.5px solid var(--border); }
+    .nav-lang button { font-size:0.65rem; letter-spacing:0.1em; padding:0.35rem 0.65rem; background:none; border:none; cursor:pointer; color:var(--muted); transition:all 0.2s; font-family:var(--sans); text-transform:uppercase; }
+    .nav-lang button.active { background:var(--copper); color:var(--black); }
+    .nav-toggle { display:none; background:none; border:none; cursor:pointer; flex-direction:column; gap:5px; padding:4px; }
+    .nav-toggle span { display:block; width:22px; height:0.5px; background:var(--white); }
 
     .breadcrumb {
       margin-top: 80px; padding: 1.2rem 4rem;
@@ -170,18 +178,24 @@
 </head>
 <body class="lang-en">
 
-  <nav>
-    <a href="https://za3fran.io" class="nav-logo">Za3fran<span>.</span></a>
-    <ul class="nav-links">
-      <li><a href="https://za3fran.io#services">Services</a></li>
-      <li><a href="https://za3fran.io#platform">Platform</a></li>
-      <li><a href="/fond-de-sauce" class="active">Fond de Sauce</a></li>
-      <li><a href="https://za3fran.io#contact">Contact</a></li>
-    </ul>
-    <div class="nav-lang">
-      <button class="active" onclick="setLang('en')" id="btn-en">EN</button>
-      <span class="sep">|</span>
-      <button onclick="setLang('fr')" id="btn-fr">FR</button>
+  <nav id="nav">
+    <a href="https://za3fran.io" class="nav-logo">
+      <div class="nav-mark"><img src="https://za3fran.io/assets/logo.png" alt="Za3fran"></div>
+      <span class="nav-name">Za3fran<span>.io</span></span>
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="https://za3fran.io#services">Services</a></li>
+        <li><a href="https://za3fran.io#platform">Platform</a></li>
+        <li><a href="https://za3fran.io#about">About</a></li>
+        <li><a href="/fond-de-sauce" class="active">Fond de Sauce</a></li>
+        <li><a href="https://za3fran.io#contact" class="nav-cta">Get Started</a></li>
+      </ul>
+      <div class="nav-lang">
+        <button class="active" onclick="setLang('en')" id="btn-en">EN</button>
+        <button onclick="setLang('fr')" id="btn-fr">FR</button>
+      </div>
+      <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
