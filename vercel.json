@@ -23,10 +23,10 @@
     { "source": "/business-plan/success",     "destination": "/business-plan.html" },
     { "source": "/report/:id",                "destination": "/api/report-viewer.js?id=:id" },
     { "source": "/bp-report/:id",             "destination": "/api/report-bp-viewer.js?id=:id" },
-    { "source": "/fond-de-sauce/trace/:slug", "destination": "/articles/trace/:slug.html" },
-    { "source": "/fond-de-sauce/bouillon/:slug", "destination": "/articles/bouillon/:slug.html" },
     { "source": "/fond-de-sauce/trace",       "destination": "/trace.html" },
     { "source": "/fond-de-sauce/bouillon",    "destination": "/bouillon.html" },
+    { "source": "/fond-de-sauce/trace/:slug", "destination": "/articles/trace/:slug.html" },
+    { "source": "/fond-de-sauce/bouillon/:slug", "destination": "/articles/bouillon/:slug.html" },
     { "source": "/business-plan",             "destination": "/business-plan.html" }
   ]
 }
