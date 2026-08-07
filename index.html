@@ -5,407 +5,302 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran — Premium Hospitality & F&B Consulting</title>
 <meta name="description" content="Za3fran is a premium hospitality and F&B consulting company — strategy, audits, creative direction and AI-powered tools. Based in Morocco, serving Africa and beyond.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <!-- EmailJS SDK for waitlist auto-response emails -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
 <!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
 <script>
 (function(){
-  var PRICES = {
-    MAD: { en: 'MAD 1,990', fr: '1 990 MAD' },
-    EUR: { en: '€199',      fr: '199€'       },
-    USD: { en: '$219',      fr: '$219'       }
-  };
-  var BTN_PRICES = {
-    MAD: { en: 'Get Your Report — MAD 1,990', fr: 'Votre rapport — 1 990 MAD' },
-    EUR: { en: 'Get Your Report — €199',      fr: 'Votre rapport — 199€'       },
-    USD: { en: 'Get Your Report — $219',      fr: 'Votre rapport — $219'       }
-  };
+  var PRICES = { MAD:{en:'MAD 1,990',fr:'1 990 MAD'}, EUR:{en:'€199',fr:'199€'}, USD:{en:'$219',fr:'$219'} };
   var VAL_PRICES = {
-    MAD: { en: 'Validate My Concept — MAD 1,990', fr: 'Valider mon concept — 1 990 MAD' },
-    EUR: { en: 'Validate My Concept — €199',      fr: 'Valider mon concept — 199€'       },
-    USD: { en: 'Validate My Concept — $219',      fr: 'Valider mon concept — $219'       }
+    MAD:{en:'Validate My Concept — MAD 1,990', fr:'Valider mon concept — 1 990 MAD'},
+    EUR:{en:'Validate My Concept — €199',      fr:'Valider mon concept — 199€'},
+    USD:{en:'Validate My Concept — $219',      fr:'Valider mon concept — $219'}
   };
   var BUNDLE_LABEL = {
-    MAD: { en: 'Validator + Business Plan — MAD 6,990', fr: 'Validator + Business Plan — 6 990 MAD' },
-    EUR: { en: 'Validator + Business Plan — €699',      fr: 'Validator + Business Plan — 699€'      },
-    USD: { en: 'Validator + Business Plan — $749',      fr: 'Validator + Business Plan — $749'      }
+    MAD:{en:'Validator + Business Plan — MAD 6,990', fr:'Validator + Business Plan — 6 990 MAD'},
+    EUR:{en:'Validator + Business Plan — €699',      fr:'Validator + Business Plan — 699€'},
+    USD:{en:'Validator + Business Plan — $749',      fr:'Validator + Business Plan — $749'}
   };
   var BP_TILE_PRICE = {
-    MAD: { en: 'MAD 6,990 with Validator · MAD 4,990 standalone', fr: '6 990 MAD avec Validator · 4 990 MAD seul' },
-    EUR: { en: '€699 with Validator · €499 standalone',           fr: '699€ avec Validator · 499€ seul'           },
-    USD: { en: '$749 with Validator · $549 standalone',           fr: '$749 avec Validator · $549 seul'           }
+    MAD:{en:'MAD 6,990 with Validator · MAD 4,990 standalone', fr:'6 990 MAD avec Validator · 4 990 MAD seul'},
+    EUR:{en:'€699 with Validator · €499 standalone',           fr:'699€ avec Validator · 499€ seul'},
+    USD:{en:'$749 with Validator · $549 standalone',           fr:'$749 avec Validator · $549 seul'}
   };
-  var VALIDATOR_PRICE = { MAD: 'MAD 1,990', EUR: '€199', USD: '$219' };
-  var BUNDLE_PRICE    = { MAD: 'MAD 6,990', EUR: '€699', USD: '$749' };
+  var VALIDATOR_PRICE = { MAD:'MAD 1,990', EUR:'€199', USD:'$219' };
+  var BUNDLE_PRICE    = { MAD:'MAD 6,990', EUR:'€699', USD:'$749' };
   var BUNDLE_SAVE = {
-    MAD: { en: 'save MAD 990', fr: 'économisez 990 MAD' },
-    EUR: { en: 'save €99',     fr: 'économisez 99€'     },
-    USD: { en: 'save $99',     fr: 'économisez 99$'     }
+    MAD:{en:'Save MAD 990', fr:'Économisez 990 MAD'},
+    EUR:{en:'Save €99',     fr:'Économisez 99€'},
+    USD:{en:'Save $99',     fr:'Économisez 99$'}
   };
-
-  function setCurrency(currency) {
-    window.ZA3FRAN_CURRENCY = currency;
-    document.querySelectorAll('[data-price]').forEach(function(el) {
-      el.textContent = PRICES[currency][el.getAttribute('data-price')];
-    });
-    document.querySelectorAll('[data-btn-price]').forEach(function(el) {
-      el.textContent = BTN_PRICES[currency][el.getAttribute('data-btn-price')];
-    });
-    document.querySelectorAll('[data-val-price]').forEach(function(el) {
-      el.textContent = VAL_PRICES[currency][el.getAttribute('data-val-price')];
-    });
-    document.querySelectorAll('[data-bundle-label]').forEach(function(el) {
-      el.textContent = BUNDLE_LABEL[currency][el.getAttribute('data-bundle-label')];
-    });
-    document.querySelectorAll('[data-bp-tile-price]').forEach(function(el) {
-      el.textContent = BP_TILE_PRICE[currency][el.getAttribute('data-bp-tile-price')];
-    });
-    var elBPV = document.getElementById('bp-val-price');
-    if(elBPV) elBPV.textContent = VALIDATOR_PRICE[currency];
-    var elBPB = document.getElementById('bp-bundle-price');
-    if(elBPB) elBPB.textContent = BUNDLE_PRICE[currency];
-    var elSaveEN = document.getElementById('bp-save-en');
-    if(elSaveEN) elSaveEN.textContent = BUNDLE_SAVE[currency].en;
-    var elSaveFR = document.getElementById('bp-save-fr');
-    if(elSaveFR) elSaveFR.textContent = BUNDLE_SAVE[currency].fr;
+  function setCurrency(c){
+    window.ZA3FRAN_CURRENCY = c;
+    document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = PRICES[c][el.getAttribute('data-price')]; });
+    document.querySelectorAll('[data-val-price]').forEach(function(el){ el.textContent = VAL_PRICES[c][el.getAttribute('data-val-price')]; });
+    document.querySelectorAll('[data-bundle-label]').forEach(function(el){ el.textContent = BUNDLE_LABEL[c][el.getAttribute('data-bundle-label')]; });
+    document.querySelectorAll('[data-bp-tile-price]').forEach(function(el){ el.textContent = BP_TILE_PRICE[c][el.getAttribute('data-bp-tile-price')]; });
+    var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
+    var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
+    var se=document.getElementById('bp-save-en'); if(se) se.textContent = BUNDLE_SAVE[c].en;
+    var sf=document.getElementById('bp-save-fr'); if(sf) sf.textContent = BUNDLE_SAVE[c].fr;
   }
-
-  function detectCurrency() {
-    fetch('/api/currency')
-      .then(function(r){ return r.json(); })
-      .then(function(data){ setCurrency(data.currency || 'EUR'); })
-      .catch(function(){ setCurrency('EUR'); });
+  function detectCurrency(){
+    fetch('/api/currency').then(function(r){return r.json();}).then(function(d){setCurrency(d.currency||'EUR');}).catch(function(){setCurrency('EUR');});
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', detectCurrency);
-  } else {
-    detectCurrency();
-  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', detectCurrency); } else { detectCurrency(); }
 })();
 </script>
+<!-- Google Analytics GA4 — Za3fran -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
 <style>
-:root{--black:#0a0a0a;--charcoal:#1a1a1a;--copper:#C9862A;--copper-light:#E4A84C;--copper-dark:#9E6618;--navy:#0F1F3D;--navy-mid:#1A3060;--white:#FAFAF7;--muted:#888880;--border:rgba(201,134,42,0.2);--border-light:rgba(201,134,42,0.08);}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;font-size:16px;}
-body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;}
-h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:400;}
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--copper-dark);border-radius:2px;}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
 
-/* ── LANGUAGE SYSTEM ── */
-/* All lang elements hidden by default */
-.en,.fr{display:none;}
-/* EN mode (default): show .en, hide .fr */
-body .en{display:block;}
-body .fr{display:none;}
-/* FR mode: show .fr, hide .en */
-body.lang-fr .fr{display:block;}
-body.lang-fr .en{display:none;}
-/* Inline variants */
-.en-inline,.fr-inline{display:none;}
-body .en-inline{display:inline;}
-body .fr-inline{display:none;}
-body.lang-fr .fr-inline{display:inline;}
-body.lang-fr .en-inline{display:none;}
-/* Flex variants (for li, flex containers) */
-.en-flex,.fr-flex{display:none;}
-body .en-flex{display:flex;}
-body .fr-flex{display:none;}
-body.lang-fr .fr-flex{display:flex;}
-body.lang-fr .en-flex{display:none;}
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --cream:#F4F1EA; --ink:#111826;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+.measure{max-width:62ch;} /* 70-char rule */
+::selection{background:var(--copper);color:var(--black);}
+:focus-visible{outline:2px solid var(--copper-bright);outline-offset:3px;}
+img{max-width:100%;display:block;}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 4rem;background:rgba(10,10,10,0.9);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);transition:padding 0.3s;}
-.nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;}
-.nav-mark{width:44px;height:44px;flex-shrink:0;display:block;}
-.nav-mark img{width:100%;height:100%;object-fit:contain;display:block;}
-.nav-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;letter-spacing:0.08em;color:var(--white);}
-.nav-name span{color:var(--copper);}
-.nav-right{display:flex;align-items:center;gap:2rem;}
-.nav-links{display:flex;align-items:center;gap:2rem;list-style:none;}
-.nav-links a{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
-.nav-links a:hover{color:var(--copper);}
-.nav-lang{display:flex;border:0.5px solid var(--border);}
-.lang-btn{font-size:0.65rem;letter-spacing:0.1em;padding:0.35rem 0.65rem;background:none;border:none;cursor:pointer;color:var(--muted);transition:all 0.2s;font-family:'DM Sans',sans-serif;}
-.lang-btn.active{background:var(--copper);color:var(--black);}
-.nav-cta{color:var(--copper)!important;border:0.5px solid var(--copper)!important;padding:0.5rem 1.2rem;transition:background 0.2s,color 0.2s!important;}
-.nav-cta:hover{background:var(--copper)!important;color:var(--black)!important;}
-.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
-.nav-toggle span{display:block;width:22px;height:0.5px;background:var(--white);}
+/* bilingual toggle */
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:8rem 2rem 5rem;position:relative;overflow:hidden;}
-.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,134,42,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 15% 85%,rgba(15,31,61,0.5) 0%,transparent 60%);}
-.hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(201,134,42,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,134,42,0.04) 1px,transparent 1px);background-size:60px 60px;}
-/* Zellige SVG pattern overlay */
-/* Zellige background - SVG default. To use a custom image, uncomment the line below and place file at assets/zellige-hero.jpg */
-.hero-zellige{position:absolute;inset:0;z-index:0;opacity:0.12;}
-/* .hero-zellige{background-image:url('assets/zellige-hero.jpg');background-size:cover;background-position:center;opacity:0.25;} */
-.hero-zellige img{width:100%;height:100%;object-fit:cover;display:block;}
-.hero-content{position:relative;z-index:1;max-width:880px;}
-.hero-eyebrow{display:inline-block;font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--copper);margin-bottom:2rem;padding:0.4rem 1rem;border:0.5px solid var(--border);animation:fadeUp 0.8s ease both;}
-.hero-h1{font-size:clamp(3rem,7vw,6.5rem);line-height:1.0;font-weight:300;margin-bottom:0.4rem;animation:fadeUp 0.8s 0.1s ease both;}
-.hero-h1 em{font-style:italic;color:var(--copper);}
-.hero-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,2.8vw,2.4rem);font-weight:300;font-style:italic;color:var(--muted);margin-bottom:2.5rem;animation:fadeUp 0.8s 0.2s ease both;}
-.hero-desc{font-size:1rem;line-height:1.8;font-weight:300;color:rgba(250,250,247,0.6);max-width:580px;margin:0 auto 3rem;animation:fadeUp 0.8s 0.3s ease both;}
-.hero-desc strong{color:var(--copper);font-weight:400;}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.8s 0.4s ease both;}
-.scroll-ind{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;animation:fadeUp 0.8s 0.6s ease both;}
-.scroll-ind span{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
-.scroll-line{width:0.5px;height:40px;background:linear-gradient(var(--copper),transparent);animation:scrollPulse 2s ease infinite;}
+/* ambient texture (signature: warm spice-wash, not literal) */
+.grain{position:absolute;inset:0;opacity:.045;background-image:radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0);background-size:20px 20px;pointer-events:none;}
+.wash{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.35;}
 
-/* ── BUTTONS ── */
-.btn-p{font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:1rem 2.5rem;background:var(--copper);color:var(--black);text-decoration:none;font-weight:500;transition:background 0.2s,transform 0.15s;display:inline-block;}
-.btn-p:hover{background:var(--copper-light);transform:translateY(-1px);}
-.btn-s{font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:1rem 2.5rem;border:0.5px solid rgba(250,250,247,0.25);color:var(--white);text-decoration:none;font-weight:400;transition:border-color 0.2s,color 0.2s;display:inline-block;}
-.btn-s:hover{border-color:var(--copper);color:var(--copper);}
-.btn-o{font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:1rem 2.5rem;border:0.5px solid var(--copper);color:var(--copper);text-decoration:none;font-weight:400;transition:background 0.2s,color 0.2s;display:inline-block;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.btn-o:hover{background:var(--copper);color:var(--black);}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;}
+nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;}
+.navlinks{display:flex;gap:34px;font-size:14px;color:var(--muted);}
+.navlinks a{position:relative;}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
+.navlinks a:hover::after{width:100%;}
+.navlinks a:hover{color:var(--white);}
+.navcta{border:1px solid var(--copper);padding:9px 20px;border-radius:100px;font-size:13px;transition:.25s;}
+.navcta:hover{background:var(--copper);color:var(--black);}
 
-/* ── SHARED ── */
-section{padding:7rem 4rem;}
-.sl{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;display:block;}
-.st{font-size:clamp(2rem,4vw,3.5rem);line-height:1.1;font-weight:300;margin-bottom:1.5rem;}
-.st em{font-style:italic;color:var(--copper);}
-.slead{font-size:1rem;line-height:1.8;font-weight:300;color:rgba(250,250,247,0.6);max-width:600px;}
-.div{width:40px;height:0.5px;background:var(--copper);margin:1.75rem 0;}
-.mx{max-width:1200px;margin:0 auto;}
+/* reveal */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
 
-/* ── NUMBERS BAR ── */
-.numbar{background:var(--charcoal);padding:3rem 4rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
-.ni{text-align:center;}
-.nv{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--copper);line-height:1;margin-bottom:0.4rem;}
-.nl{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+/* section rhythm — tinted bands, no hard rules */
+section{position:relative;padding:130px 0;}
+.tint-a{background:var(--black);}
+.tint-b{background:linear-gradient(180deg,var(--charcoal),var(--charcoal2));}
+.section-tag{display:flex;align-items:center;gap:10px;color:var(--copper);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px;font-weight:700;}
+.section-tag::before{content:'';width:22px;height:1px;background:var(--copper);}
 
-/* ── SERVICES ── */
-.svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:0.5px solid var(--border);margin-top:3.5rem;}
-.sc{background:var(--black);padding:3rem 2.5rem;position:relative;overflow:hidden;transition:background 0.3s;}
-.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--copper);transform:scaleX(0);transform-origin:left;transition:transform 0.4s;}
-.sc:hover{background:var(--charcoal);}
-.sc:hover::before{transform:scaleX(1);}
-.sc-icon{width:48px;height:48px;margin-bottom:1.5rem;color:var(--copper);opacity:0.7;}
-.sc-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:rgba(201,134,42,0.28);line-height:1;margin-bottom:1rem;}
-.sc-name{font-family:'Cormorant Garamond',serif;font-size:1.55rem;margin-bottom:0.4rem;}
-.sc-sub{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;}
-.sc-desc{font-size:0.88rem;line-height:1.8;font-weight:300;color:rgba(250,250,247,0.5);}
-.sc-list{margin-top:1.25rem;list-style:none;display:flex;flex-direction:column;gap:0.4rem;}
-.sc-list li{font-size:0.8rem;color:rgba(250,250,247,0.4);display:flex;gap:0.6rem;}
-.sc-list li::before{content:'—';color:var(--copper);flex-shrink:0;}
-.sc-lnk{display:inline-block;margin-top:1.75rem;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);text-decoration:none;}
-.sc-lnk::after{content:' →';}
-
-/* ── VISUAL BANNER (between services and scorecard) ── */
-.visual-band{background:var(--navy);padding:0;overflow:hidden;height:320px;position:relative;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
-.visual-band-inner{max-width:1200px;margin:0 auto;height:100%;display:grid;grid-template-columns:1fr 1fr 1fr;height:100%;}
-.vb-panel{position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:2rem;}
-.vb-panel:not(:last-child){border-right:0.5px solid var(--border);}
-/* Photo slot — styled placeholder ready for real image */
-.photo-slot{position:absolute;inset:0;background:var(--charcoal);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;}
-.photo-slot svg{width:32px;height:32px;color:rgba(201,134,42,0.3);}
-.photo-slot-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,134,42,0.3);}
-/* Photo when actual image is in place */
-.vb-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-/* Zellige pattern panel */
-/* Visual band zellige panel - SVG default. To swap, place file at assets/zellige-panel.jpg and uncomment the line below */
-.zellige-panel{position:absolute;inset:0;}
-/* .zellige-panel{background-image:url('assets/zellige-panel.jpg');background-size:cover;background-position:center;} */
-.zellige-panel img{width:100%;height:100%;object-fit:cover;display:block;}
-.vb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,0.92) 0%,rgba(10,10,10,0.5) 45%,rgba(10,10,10,0.15) 75%,transparent 100%);z-index:1;}
-.vb-caption{position:relative;z-index:2;}
-.vb-caption-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.35rem;}
-.vb-caption-text{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:rgba(250,250,247,0.8);}
-
-/* ── SCORECARD ── */
-.scard-section{background:var(--navy);}
-.scard-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
-.scard-widget{background:var(--black);border:0.5px solid var(--border);padding:2.5rem;position:relative;}
-.scard-widget::before{content:'FREE · GRATUIT';position:absolute;top:-0.7rem;left:1.5rem;font-size:0.58rem;letter-spacing:0.2em;background:var(--navy);padding:0 0.5rem;color:var(--copper);}
-.prog{display:flex;gap:4px;margin-bottom:1.5rem;}
-.pd{width:22px;height:2px;background:rgba(201,134,42,0.2);transition:background 0.3s;}
-.pd.done{background:var(--copper);}
-.step{display:none;}
-.step.active{display:block;}
-.step-q{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300;margin-bottom:1.25rem;line-height:1.3;}
-.step-opts{display:flex;flex-direction:column;gap:0.6rem;}
-.sopt{padding:0.75rem 1rem;border:0.5px solid rgba(201,134,42,0.2);font-size:0.82rem;color:rgba(250,250,247,0.65);cursor:pointer;transition:all 0.2s;background:none;text-align:left;width:100%;font-family:'DM Sans',sans-serif;}
-.sopt:hover,.sopt.sel{border-color:var(--copper);color:var(--white);background:rgba(201,134,42,0.06);}
-.sres{display:none;text-align:center;}
-.sres.active{display:block;}
-.sring{width:110px;height:110px;border-radius:50%;border:2px solid var(--copper);margin:0 auto 1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.sring-n{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--copper);line-height:1;}
-.sring-l{font-size:0.58rem;letter-spacing:0.15em;color:var(--muted);margin-top:0.15rem;}
-.sres-msg{font-size:0.85rem;line-height:1.7;color:rgba(250,250,247,0.6);margin-bottom:1.5rem;}
-.email-row{display:flex;}
-.email-inp{flex:1;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);border-right:none;color:var(--white);font-size:0.82rem;font-family:'DM Sans',sans-serif;outline:none;}
-.email-inp::placeholder{color:var(--muted);}
-.email-btn{padding:0.75rem 1.1rem;background:var(--copper);border:none;color:var(--black);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;white-space:nowrap;transition:background 0.2s;}
-.email-btn:hover{background:var(--copper-light);}
-.upsell{margin-top:1.25rem;padding-top:1.25rem;border-top:0.5px solid var(--border);font-size:0.78rem;color:rgba(250,250,247,0.4);}
-.upsell a{color:var(--copper);text-decoration:none;}
-
-/* ── VALIDATOR ── */
-.val-section{background:var(--charcoal);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
-.val-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
-.rpt{background:var(--black);border:0.5px solid var(--border);padding:2.5rem;position:relative;}
-.rpt::before{content:'SAMPLE REPORT';position:absolute;top:-0.7rem;left:1.5rem;font-size:0.58rem;letter-spacing:0.2em;background:var(--charcoal);padding:0 0.5rem;color:var(--copper);}
-.rsc{display:flex;align-items:baseline;gap:0.5rem;margin-bottom:2rem;}
-.rsc-big{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--copper);line-height:1;}
-.rsc-meta{display:flex;flex-direction:column;gap:0.15rem;}
-.rsc-d{font-size:0.68rem;letter-spacing:0.15em;color:var(--copper);}
-.rsc-l{font-size:0.72rem;color:var(--muted);}
-.rbars{display:flex;flex-direction:column;gap:0.85rem;}
-.rbar{display:grid;grid-template-columns:1fr 100px auto;gap:1rem;align-items:center;}
-.rb-l{font-size:0.75rem;color:rgba(250,250,247,0.55);}
-.rb-t{height:2px;background:rgba(255,255,255,0.07);position:relative;}
-.rb-f{position:absolute;left:0;top:0;bottom:0;background:var(--copper);}
-.rb-s{font-size:0.7rem;color:var(--copper);text-align:right;}
-.rpt-v{margin-top:1.75rem;padding-top:1.5rem;border-top:0.5px solid var(--border);font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;line-height:1.7;color:rgba(250,250,247,0.4);}
-
-/* ── PLATFORM ── */
-.plat-section{background:var(--navy);}
-.plat-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
-.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(201,134,42,0.15);}
-.tc{background:var(--navy);padding:1.75rem;transition:background 0.2s;}
-.tc:hover{background:var(--navy-mid);}
-.tc-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:0.35rem;}
-.tc-desc{font-size:0.78rem;line-height:1.6;font-weight:300;color:rgba(250,250,247,0.45);margin-bottom:0.75rem;}
-.badge{display:inline-block;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.22rem 0.55rem;}
-.bl{background:rgba(201,134,42,0.15);color:var(--copper);}
-.bs{background:rgba(255,255,255,0.05);color:var(--muted);}
-.wl-btn{display:block;margin-top:0.65rem;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(201,134,42,0.55);cursor:pointer;background:none;border:none;padding:0;font-family:'DM Sans',sans-serif;transition:color 0.2s;text-align:left;}
-.wl-btn:hover{color:var(--copper);}
-.tc-locked{opacity:0.65;}
-
-/* ── GEO ── */
-.geo-section{background:var(--black);position:relative;overflow:hidden;min-height:600px;}
-.geo-map-bg{position:absolute;inset:0;opacity:0.25;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.geo-inner{position:relative;z-index:1;text-align:center;}
-.geo-stmt{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:300;line-height:1.05;margin:2rem 0;}
-.geo-stmt em{font-style:italic;color:var(--copper);}
-.geo-desc{font-size:0.95rem;line-height:1.8;font-weight:300;color:rgba(250,250,247,0.5);max-width:600px;margin:0 auto 2.5rem;}
-.geo-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:0.6rem;}
-.gtag{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.45rem 1.1rem;border:0.5px solid rgba(201,134,42,0.18);color:rgba(250,250,247,0.4);transition:all 0.2s;display:inline-block;}
-.gtag:hover{border-color:var(--copper);color:var(--copper);}
-
-/* ── ABOUT ── */
-.about-section{background:var(--charcoal);}
-.about-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start;}
-.aq{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:300;font-style:italic;line-height:1.5;color:rgba(250,250,247,0.8);border-left:2px solid var(--copper);padding-left:1.75rem;margin-bottom:2rem;}
-.ab{font-size:0.88rem;line-height:1.85;font-weight:300;color:rgba(250,250,247,0.5);margin-bottom:1rem;}
-.astats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:0.5px solid var(--border);margin-top:2.5rem;}
-.astat{background:var(--charcoal);padding:1.5rem;}
-.asv{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--copper);margin-bottom:0.2rem;}
-.asl{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
-/* Photo slot for about */
-.int-card{border:0.5px solid var(--border);padding:2.5rem;margin-bottom:1.5rem;}
-.int-items{display:flex;flex-direction:column;gap:0.65rem;margin-top:1.25rem;}
-.ii{display:flex;gap:0.75rem;align-items:center;font-size:0.83rem;color:rgba(250,250,247,0.55);}
-.ii::before{content:'✦';color:var(--copper);font-size:0.6rem;flex-shrink:0;}
-.name-card{border:0.5px solid var(--border);padding:2.5rem;}
-.name-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;}
-.name-latin{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;color:var(--copper);line-height:1;}
-.name-divider{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:rgba(201,134,42,0.4);line-height:1;}
-.arabic{font-family:'Cormorant Garamond',serif;font-size:2rem;font-style:italic;color:var(--copper);direction:rtl;line-height:1;}
-
-/* ── CTA ── */
-.cta-section{background:var(--black);text-align:center;padding:8rem 4rem;position:relative;overflow:hidden;}
-.cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(201,134,42,0.05) 0%,transparent 70%);}
-.cta-in{position:relative;z-index:1;max-width:720px;margin:0 auto;}
-.cta-t{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;margin-bottom:1.5rem;line-height:1.1;}
-.cta-t em{font-style:italic;color:var(--copper);}
-.cta-d{font-size:1rem;line-height:1.8;font-weight:300;color:rgba(250,250,247,0.5);margin-bottom:3rem;}
-.cta-acts{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
-
-/* ── FOOTER ── */
-footer{background:var(--black);border-top:0.5px solid var(--border);padding:3.5rem 4rem;}
-.fg{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;}
-.fb{font-family:'Cormorant Garamond',serif;font-size:1.4rem;margin-bottom:0.75rem;}
-.fb span{color:var(--copper);}
-.ft{font-size:0.8rem;line-height:1.7;font-weight:300;color:var(--muted);max-width:250px;}
-.fct{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;}
-.fl{list-style:none;display:flex;flex-direction:column;gap:0.7rem;}
-.fl a{font-size:0.82rem;font-weight:300;color:var(--muted);text-decoration:none;transition:color 0.2s;}
-.fl a:hover{color:var(--white);}
-.fbot{max-width:1200px;margin:2.5rem auto 0;padding-top:2rem;border-top:0.5px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;}
-.fcp{font-size:0.7rem;color:rgba(136,136,128,0.5);}
-.flang-btn{background:none;border:none;font-size:0.68rem;letter-spacing:0.12em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color 0.2s;padding:0;}
-
-/* ── MODAL ── */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;}
+/* ============ WHATSAPP + MODAL ============ */
+.wa-btn{position:fixed;bottom:24px;right:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;right:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
 .modal.open{display:flex;}
-.mbox{background:var(--charcoal);border:0.5px solid var(--border);padding:2.5rem;max-width:520px;width:100%;position:relative;max-height:92vh;overflow-y:auto;}
-.mcls{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;transition:color 0.2s;z-index:10;}
+.mbox{background:var(--charcoal2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:40px;max-width:520px;width:100%;position:relative;max-height:92vh;overflow-y:auto;}
+.mcls{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
 .mcls:hover{color:var(--white);}
-.mt{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:0.5rem;}
-.ms{font-size:0.85rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
-.minp{width:100%;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);color:var(--white);font-size:0.85rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:0.6rem;transition:border-color 0.2s;}
+.mt{font-family:'Cormorant Garamond';font-size:28px;font-weight:500;margin-bottom:8px;}
+.ms{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.minp{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--white);font-size:13.5px;font-family:'DM Sans';outline:none;margin-bottom:10px;transition:border-color .2s;}
 .minp:focus{border-color:var(--copper);}
 .minp::placeholder{color:var(--muted);}
-select.minp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%23C9862A' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;background-size:10px;padding-right:2.5rem;cursor:pointer;}
-select.minp option{background:var(--charcoal);color:var(--white);}
-.mtxt{resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;}
-.check-label{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--copper);margin:1rem 0 0.6rem;}
-.checks{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;}
-.check{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:rgba(250,250,247,0.7);cursor:pointer;padding:0.4rem 0;}
-.check input{appearance:none;width:14px;height:14px;border:0.5px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;position:relative;transition:all 0.15s;}
-.check input:checked{background:var(--copper);border-color:var(--copper);}
-.check input:checked::after{content:'✓';position:absolute;top:-2px;left:1px;font-size:11px;color:var(--black);font-weight:700;}
-.mbtn{width:100%;padding:0.9rem;background:var(--copper);border:none;color:var(--black);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:background 0.2s;margin-top:0.5rem;}
-.mbtn:hover{background:var(--copper-light);}
-.mbtn:disabled{opacity:0.6;cursor:wait;}
-.merr{margin-top:0.75rem;font-size:0.78rem;color:#E07060;text-align:center;min-height:1rem;}
-.msuc{display:none;text-align:center;padding:2rem 0;}
+select.minp{appearance:none;cursor:pointer;}
+select.minp option{background:var(--charcoal2);color:var(--white);}
+.mtxt{resize:vertical;min-height:56px;font-family:'DM Sans';}
+.check-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);margin:16px 0 10px;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(250,250,247,.75);cursor:pointer;}
+.check input{width:14px;height:14px;accent-color:var(--copper);cursor:pointer;}
+.mbtn{width:100%;padding:14px;background:var(--copper);border:none;border-radius:100px;color:var(--black);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans';margin-top:8px;transition:background .2s;}
+.mbtn:hover{background:var(--copper-bright);}
+.mbtn:disabled{opacity:.6;cursor:wait;}
+.merr{margin-top:10px;font-size:13px;color:#E07060;text-align:center;min-height:16px;}
+.msuc{display:none;text-align:center;padding:30px 0;}
 .msuc.show{display:block;}
-.msuc-t{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:0.75rem;}
-.msuc p{font-size:0.88rem;color:rgba(250,250,247,0.6);line-height:1.7;}
+.msuc-t{font-family:'Cormorant Garamond';font-size:24px;font-weight:500;margin-bottom:10px;}
+.msuc p{font-size:14px;color:var(--muted);line-height:1.7;}
 
-/* WhatsApp tooltip language handling */
-.wa-tip.en, .wa-tip.fr { display: none; }
-body .wa-tip.en { display: block; }
-body.lang-fr .wa-tip.en { display: none; }
-body.lang-fr .wa-tip.fr { display: block; }
+/* ============ HERO — 3-second test ============ */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:90px;overflow:hidden;}
+.bg-img{position:absolute;inset:0;z-index:0;}
+.bg-img img{width:100%;height:100%;object-fit:cover;}
+.bg-overlay{position:absolute;inset:0;z-index:1;}
+.hero .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);}
+.hero .wrap{position:relative;z-index:2;}
+.hero .wash.w1{width:640px;height:640px;top:-10%;right:-15%;background:radial-gradient(circle,var(--copper) 0%,transparent 70%);z-index:1;}
+.hero .wash.w2{width:560px;height:560px;bottom:-15%;left:-10%;background:radial-gradient(circle,var(--navy-bright) 0%,transparent 70%);opacity:.35;z-index:1;}
+.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:26px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+.hero h1{font-size:clamp(46px,6.6vw,88px);line-height:1.03;letter-spacing:-.01em;max-width:820px;}
+.hero .transform-line{font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--copper-bright);margin-top:22px;font-weight:700;}
+.hero p.sub{color:var(--muted);font-size:18px;margin-top:22px;line-height:1.65;}
+.hero-ctas{display:flex;align-items:center;gap:28px;margin-top:42px;flex-wrap:wrap;}
+.btn-primary{background:var(--copper);color:var(--black);padding:17px 34px;border-radius:100px;font-weight:700;font-size:14.5px;display:inline-block;transition:transform .3s,box-shadow .3s;box-shadow:0 0 0 rgba(201,134,42,0);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(201,134,42,.28);}
+.link-secondary{font-size:14px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;transition:.25s;}
+.link-secondary:hover{color:var(--white);border-color:var(--copper);}
+.hero-strip{display:flex;gap:52px;margin-top:88px;padding-top:30px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
+.hero-strip .num{font-family:'Cormorant Garamond';font-size:32px;color:var(--copper-bright);}
+.hero-strip .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;max-width:16ch;}
 
-/* ── WHATSAPP FLOATING BUTTON ── */
-.wa-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:90;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;}
-.wa-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,211,102,0.4);}
-.wa-btn svg{width:28px;height:28px;fill:white;}
-.wa-tip{position:absolute;right:64px;top:50%;transform:translateY(-50%);background:var(--charcoal);color:var(--white);padding:0.5rem 0.85rem;font-size:0.78rem;letter-spacing:0.05em;white-space:nowrap;border:0.5px solid var(--border);opacity:0;pointer-events:none;transition:opacity 0.2s;}
-.wa-btn:hover .wa-tip{opacity:1;}
+/* ============ INTRO BAND (who we are, moved up) ============ */
+.intro-band{padding:64px 0;}
+.intro-row{display:flex;align-items:center;gap:44px;flex-wrap:wrap;}
+.intro-name{min-width:220px;}
+.intro-name h3{font-size:26px;margin-top:6px;}
+.intro-copy{flex:1;min-width:260px;color:var(--muted);font-size:14.5px;line-height:1.7;max-width:56ch;}
+.intro-link{white-space:nowrap;}
+@media(max-width:760px){.intro-row{flex-direction:column;align-items:flex-start;gap:18px;}}
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-@keyframes scrollPulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
-.d1{transition-delay:0.1s;}.d2{transition-delay:0.2s;}.d3{transition-delay:0.3s;}
+/* ============ DISCIPLINES — asymmetric index/detail ============ */
+.disc-wrap{display:grid;grid-template-columns:35% 65%;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;}
+.disc-index{background:rgba(255,255,255,.02);}
+.disc-item{padding:26px 28px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;gap:16px;transition:background .3s;}
+.disc-item:last-child{border-bottom:none;}
+.disc-item .di-num{font-size:12px;color:var(--muted);font-weight:700;}
+.disc-item .di-name{font-family:'Cormorant Garamond';font-size:21px;}
+.disc-item.active{background:rgba(201,134,42,.09);}
+.disc-item.active .di-num{color:var(--copper);}
+.disc-item:hover{background:rgba(201,134,42,.06);}
+.disc-detail{padding:48px 52px;}
+.disc-panel{display:none;}
+.disc-panel.active{display:block;}
+.disc-panel .dp-tag{color:var(--copper-bright);font-size:13px;font-weight:700;margin-bottom:14px;}
+.disc-panel h3{font-size:34px;margin-bottom:16px;}
+.disc-panel p{color:var(--muted);line-height:1.7;margin-bottom:26px;}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:30px;}
+.dp-grid div{font-size:13.5px;color:var(--white);padding:10px 0 10px 18px;border-left:2px solid rgba(201,134,42,.4);}
+.dp-cta{font-size:13.5px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:2px;}
+@media(max-width:860px){.disc-wrap{grid-template-columns:1fr;}.disc-detail{padding:32px 26px;}}
 
-/* ── RESPONSIVE ── */
-@media(max-width:1024px){nav{padding:1.25rem 2rem;}section{padding:5rem 2rem;}.numbar{padding:2.5rem 2rem;}.scard-inner,.val-inner,.plat-inner,.about-inner{grid-template-columns:1fr;gap:3rem;}.fg{grid-template-columns:1fr 1fr;gap:2rem;}.visual-band-inner{grid-template-columns:1fr 1fr;}.visual-band-inner .vb-panel:last-child{display:none;}}
-@media(max-width:768px){.nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--charcoal);flex-direction:column;padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);}.nav-links.open{display:flex;}.nav-toggle{display:flex;}.numbar{grid-template-columns:repeat(2,1fr);}.svc-grid,.tools-grid{grid-template-columns:1fr;}.astats{grid-template-columns:1fr;}.fg{grid-template-columns:1fr;}.fbot{flex-direction:column;gap:1rem;text-align:center;}.hero-h1{font-size:2.8rem;}.email-row{flex-direction:column;}.email-inp{border-right:0.5px solid var(--border);border-bottom:none;}.visual-band{height:200px;}.visual-band-inner{grid-template-columns:1fr;}.visual-band-inner .vb-panel:not(:first-child){display:none;}}
+/* ============ SCORECARD / CRO PANEL ============ */
+.cro-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;background:rgba(201,134,42,.05);border:1px solid rgba(201,134,42,.18);border-radius:20px;padding:56px;}
+.cro-panel h2{font-size:clamp(28px,3.2vw,42px);margin-bottom:18px;}
+.cro-panel p{color:var(--muted);line-height:1.7;margin-bottom:24px;}
+.cro-list{list-style:none;margin-bottom:30px;}
+.cro-list li{padding:9px 0 9px 24px;position:relative;font-size:14px;color:var(--white);}
+.cro-list li::before{content:'—';position:absolute;left:0;color:var(--copper);}
+.cro-meta{font-size:12px;color:var(--muted);margin-top:18px;letter-spacing:.03em;}
+.cro-side{background:var(--charcoal2);border-radius:16px;padding:32px;border:1px solid rgba(255,255,255,.06);}
+.cro-side .upsell{font-size:13.5px;color:var(--muted);line-height:1.7;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);}
+@media(max-width:900px){.cro-panel{grid-template-columns:1fr;padding:36px 26px;}}
+
+/* ============ TWO-STEP + SAMPLE OUTPUT ============ */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px;}
+.step-card{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:34px;transition:border-color .3s,transform .3s;}
+.step-card:hover{border-color:rgba(201,134,42,.4);transform:translateY(-4px);}
+.step-card .st-tag{color:var(--copper);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.step-card h3{font-size:24px;margin-bottom:4px;}
+.step-card .st-price{color:var(--copper-bright);font-size:15px;font-weight:700;margin-bottom:14px;}
+.step-card p{color:var(--muted);font-size:14px;line-height:1.65;}
+.bundle-cta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:70px;}
+
+.sample-panel{background:linear-gradient(150deg,var(--navy),var(--black));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:44px;}
+.sample-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:24px;}
+.sample-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:28px;align-items:center;}
+.score-ring{width:90px;height:90px;border-radius:50%;border:3px solid var(--copper);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-ring .sr-num{font-family:'Cormorant Garamond';font-size:26px;color:var(--copper-bright);}
+.score-ring .sr-lbl{font-size:9px;color:var(--muted);}
+.sample-metric .sm-num{font-family:'Cormorant Garamond';font-size:24px;color:var(--white);}
+.sample-metric .sm-lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.unlock-note{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--copper-bright);}
+@media(max-width:800px){.steps{grid-template-columns:1fr;}.sample-grid{grid-template-columns:1fr 1fr;gap:20px;}}
+
+/* ============ PLATFORM — asymmetric process rail ============ */
+.plat-wrap{display:grid;grid-template-columns:33% 67%;gap:56px;align-items:start;}
+.plat-copy h2{font-size:clamp(28px,3.4vw,44px);margin-bottom:18px;}
+.plat-copy p{color:var(--muted);line-height:1.7;margin-bottom:22px;}
+.plat-copy .link-secondary{display:inline-block;}
+.tool-rail{display:flex;flex-direction:column;gap:2px;}
+.tool-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:22px;align-items:center;background:rgba(255,255,255,.02);padding:22px 26px;border-radius:10px;transition:background .3s,transform .25s;}
+.tool-row:hover{background:rgba(201,134,42,.07);transform:translateX(6px);}
+.tool-row .tr-name{font-family:'Cormorant Garamond';font-size:20px;}
+.tool-row .tr-desc{color:var(--muted);font-size:13px;margin-top:3px;max-width:46ch;}
+.tool-row .tr-status{font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border-radius:100px;white-space:nowrap;}
+.tr-status.live{background:rgba(124,191,124,.15);color:#8fd48f;}
+.tr-status.soon{background:rgba(255,255,255,.06);color:var(--muted);}
+.tool-row .tr-price{font-size:13px;color:var(--copper-bright);font-weight:700;white-space:nowrap;}
+@media(max-width:900px){.plat-wrap{grid-template-columns:1fr;}.tool-row{grid-template-columns:1fr;gap:8px;}}
+
+/* ============ TERRITORY ============ */
+.terr-section{overflow:hidden;padding:150px 0;}
+.terr-section .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.94) 0%,rgba(15,31,61,.78) 42%,rgba(10,14,24,.4) 100%);}
+.terr-section .wrap{position:relative;z-index:2;}
+.terr-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.terr-tags span{font-size:12px;border:1px solid rgba(255,255,255,.18);padding:8px 16px;border-radius:100px;color:var(--white);opacity:.85;transition:.25s;}
+.terr-tags span:hover{border-color:var(--copper);opacity:1;color:var(--copper-bright);}
+
+/* ============ LIGHT BAND (About) ============ */
+#about.tint-light{background:linear-gradient(180deg,#F4F1EA 0%,#ECE6D8 100%);color:#12192a;}
+#about.tint-light .about-body p,
+#about.tint-light .pc-lbl,
+#about.tint-light .cro-meta{color:#4a5062;}
+#about.tint-light .proof-strip{background:rgba(21,59,115,.16);border-color:rgba(21,59,115,.16);}
+#about.tint-light .proof-cell{background:#ffffff;}
+#about.tint-light .disc-tags span{border-color:rgba(21,59,115,.25);background:#ffffff;color:#2c3140;}
+#about.tint-light .about-quote{border-left-color:var(--copper);color:#12192a;}
+#about.tint-light em{color:#a8651a;}
+#about.tint-light .section-tag{color:#a8651a;}
+#about.tint-light .section-tag::before{background:var(--copper);}
+
+/* ============ ABOUT / PROOF ============ */
+.proof-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;margin-bottom:64px;}
+.proof-cell{background:var(--charcoal2);padding:28px 22px;}
+.proof-cell .pc-num{font-family:'Cormorant Garamond';font-size:30px;color:var(--copper-bright);}
+.proof-cell .pc-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+.about-quote{font-family:'Cormorant Garamond';font-style:italic;font-size:clamp(22px,2.6vw,32px);max-width:760px;line-height:1.5;border-left:2px solid var(--copper);padding-left:26px;margin-bottom:56px;}
+.about-body{display:grid;grid-template-columns:1fr 1fr;gap:56px;}
+.about-body p{color:var(--muted);line-height:1.75;margin-bottom:16px;}
+.disc-tags{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
+.disc-tags span{font-size:12.5px;padding:9px 16px;border:1px solid rgba(255,255,255,.1);border-radius:100px;color:var(--muted);}
+@media(max-width:900px){.about-body{grid-template-columns:1fr;}.proof-strip{grid-template-columns:1fr 1fr;}}
+
+/* ============ FINAL CTA ============ */
+.cta-final{text-align:center;padding:150px 0 110px;}
+.cta-final h2{font-size:clamp(34px,4.8vw,60px);max-width:760px;margin:0 auto 24px;}
+.cta-final p.measure{margin:0 auto 38px;color:var(--muted);}
+footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background:var(--charcoal);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:44px;}
+.foot-grid h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.foot-grid ul{list-style:none;}
+.foot-grid li{margin-bottom:10px;font-size:13.5px;color:var(--muted);}
+.foot-grid li a:hover{color:var(--copper-bright);}
+.foot-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px;}
 </style>
-  <!-- Google Analytics GA4 — Za3fran -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-X7Q3Q8ZKRE');
-  </script>
-
 </head>
-<body id="body">
+<body>
 
 <!-- WHATSAPP FLOATING BUTTON -->
-<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" id="waBtn" aria-label="Chat on WhatsApp">
-  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/>
-  </svg>
-  <span class="wa-tip en">Chat on WhatsApp</span>
-  <span class="wa-tip fr">Discuter sur WhatsApp</span>
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
 </a>
 
 <!-- WAITLIST MODAL -->
@@ -413,23 +308,19 @@ body.lang-fr .wa-tip.fr { display: block; }
   <div class="mbox">
     <button class="mcls" onclick="closeModal()">✕</button>
     <div id="mform">
-      <h3 class="mt en">Join the Waitlist</h3>
-      <h3 class="mt fr">Liste d'attente</h3>
-      <p class="ms en">Tell us a little about you and which tools matter most. We'll be in touch when they go live.</p>
-      <p class="ms fr">Parlez-nous de vous et des outils qui vous intéressent. Nous vous contacterons dès leur lancement.</p>
-
+      <h3 class="mt" data-en>Join the Waitlist</h3><h3 class="mt" data-fr>Liste d'attente</h3>
+      <p class="ms" data-en>Tell us a little about you and which tools matter most. We'll be in touch when they go live.</p>
+      <p class="ms" data-fr>Parlez-nous de vous et des outils qui vous intéressent. Nous vous contacterons dès leur lancement.</p>
       <input class="minp" type="text" id="m_name" placeholder="First name / Prénom" required>
       <input class="minp" type="email" id="m_email" placeholder="Email" required>
-
       <select class="minp" id="m_country">
-        <option value="" class="en">Country / Région</option>
+        <option value="">Country / Région</option>
         <option value="Morocco">Morocco / Maroc</option>
         <option value="France">France</option>
         <option value="Other Africa">Other Africa / Autre Afrique</option>
         <option value="Indian Ocean">Indian Ocean / Océan Indien</option>
         <option value="Other">Other / Autre</option>
       </select>
-
       <select class="minp" id="m_role">
         <option value="">Your role / Votre rôle</option>
         <option value="Restaurant owner">Restaurant owner / Restaurateur</option>
@@ -438,953 +329,496 @@ body.lang-fr .wa-tip.fr { display: block; }
         <option value="Investor">Investor / Investisseur</option>
         <option value="Other">Other / Autre</option>
       </select>
-
-      <div class="check-label en">Which tools interest you most?</div>
-      <div class="check-label fr">Quels outils vous intéressent le plus ?</div>
+      <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
       <div class="checks">
         <label class="check"><input type="checkbox" class="m_tool" value="Concept Validator"><span>Concept Validator</span></label>
-        <label class="check"><input type="checkbox" class="m_tool" value="Menu Engineer" id="m_pre"><span>Menu Engineer</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Menu Engineer"><span>Menu Engineer</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Business Plan"><span>Business Plan</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Marketing Strategy"><span>Marketing</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="SOP Generator"><span>SOP Generator</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Intelligence Dashboard"><span>Intelligence</span></label>
       </div>
-
       <textarea class="minp mtxt" id="m_msg" rows="2" placeholder="Anything specific we should know? (optional) / Quelque chose à nous dire ? (facultatif)"></textarea>
-
-      <button class="mbtn en" onclick="submitWL()">Join the Waitlist</button>
-      <button class="mbtn fr" onclick="submitWL()">Rejoindre la liste</button>
+      <button class="mbtn" data-en onclick="submitWL()">Join the Waitlist</button>
+      <button class="mbtn" data-fr onclick="submitWL()">Rejoindre la liste</button>
       <p class="merr" id="m_err"></p>
     </div>
     <div class="msuc" id="msuc">
-      <div style="color:var(--copper);font-size:1.6rem;margin-bottom:0.75rem;">✦</div>
-      <h3 class="msuc-t en">Welcome to Za3fran Digital.</h3>
-      <h3 class="msuc-t fr">Bienvenue chez Za3fran Digital.</h3>
-      <p class="en">Check your inbox — a confirmation email is on its way.</p>
-      <p class="fr">Vérifiez votre boîte de réception — un email de confirmation est en route.</p>
+      <div style="color:var(--copper);font-size:26px;margin-bottom:12px">✦</div>
+      <h3 class="msuc-t" data-en>Welcome to Za3fran Digital.</h3><h3 class="msuc-t" data-fr>Bienvenue chez Za3fran Digital.</h3>
+      <p data-en>Check your inbox — a confirmation email is on its way.</p>
+      <p data-fr>Vérifiez votre boîte de réception — un email de confirmation est en route.</p>
     </div>
   </div>
 </div>
 
-<!-- NAV -->
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
 <nav id="nav">
-  <a href="#" class="nav-logo">
-    <div class="nav-mark"><img src="assets/logo.png" alt="Za3fran"></div>
-    <span class="nav-name">Za3fran<span>.io</span></span>
-  </a>
-  <div class="nav-right">
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#services" class="en-inline">Services</a><a href="#services" class="fr-inline">Services</a></li>
-      <li><a href="#platform" class="en-inline">Platform</a><a href="#platform" class="fr-inline">Plateforme</a></li>
-      <li><a href="#about" class="en-inline">About</a><a href="#about" class="fr-inline">À propos</a></li>
-      <li><a href="#contact" class="nav-cta en-inline">Get Started</a><a href="#contact" class="nav-cta fr-inline">Commencer</a></li>
-    </ul>
-    <div class="nav-lang">
-      <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btnFR" onclick="setLang('fr')">FR</button>
+  <div class="wrap">
+    <a href="#" class="logo" style="display:flex;align-items:center;gap:10px">
+      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain">
+      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+    </a>
+    <div class="navlinks">
+      <a href="#disciplines" data-en>Services</a><a href="#disciplines" data-fr>Services</a>
+      <a href="#platform" data-en>Platform</a><a href="#platform" data-fr>Plateforme</a>
+      <a href="#about" data-en>About</a><a href="#about" data-fr>À propos</a>
     </div>
-    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+    <a href="#contact" class="navcta" data-en>Get Started</a><a href="#contact" class="navcta" data-fr>Commencer</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <!-- Authentic Zellige 8-point star tessellation -->
-  <svg class="hero-zellige" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <pattern id="zellige" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
-        <!-- 8-point star formed by two overlapping squares (Khatim/Shamsa) -->
-        <g stroke="#C9862A" stroke-width="1.4" fill="none">
-          <!-- Center 8-point star: two squares rotated 45° -->
-          <rect x="50" y="50" width="60" height="60" />
-          <rect x="50" y="50" width="60" height="60" transform="rotate(45 80 80)"/>
-          <!-- Inner small star -->
-          <rect x="68" y="68" width="24" height="24" stroke-width="1"/>
-          <rect x="68" y="68" width="24" height="24" stroke-width="1" transform="rotate(45 80 80)"/>
-          <!-- Center filled dot -->
-          <circle cx="80" cy="80" r="2.5" fill="#C9862A" stroke="none"/>
-
-          <!-- Corner mini-stars at the 4 corners of pattern (which tile together) -->
-          <g stroke-width="1">
-            <rect x="-10" y="-10" width="20" height="20"/>
-            <rect x="-10" y="-10" width="20" height="20" transform="rotate(45 0 0)"/>
-            <rect x="150" y="-10" width="20" height="20"/>
-            <rect x="150" y="-10" width="20" height="20" transform="rotate(45 160 0)"/>
-            <rect x="-10" y="150" width="20" height="20"/>
-            <rect x="-10" y="150" width="20" height="20" transform="rotate(45 0 160)"/>
-            <rect x="150" y="150" width="20" height="20"/>
-            <rect x="150" y="150" width="20" height="20" transform="rotate(45 160 160)"/>
-          </g>
-
-          <!-- Diagonal connectors from corner stars to center star (creates interlacing) -->
-          <g stroke-width="0.9">
-            <line x1="14" y1="14" x2="50" y2="50"/>
-            <line x1="146" y1="14" x2="110" y2="50"/>
-            <line x1="14" y1="146" x2="50" y2="110"/>
-            <line x1="146" y1="146" x2="110" y2="110"/>
-          </g>
-
-          <!-- Edge midpoint diamonds (further tessellation) -->
-          <g stroke-width="0.9">
-            <rect x="72" y="-8" width="16" height="16" transform="rotate(45 80 0)"/>
-            <rect x="72" y="152" width="16" height="16" transform="rotate(45 80 160)"/>
-            <rect x="-8" y="72" width="16" height="16" transform="rotate(45 0 80)"/>
-            <rect x="152" y="72" width="16" height="16" transform="rotate(45 160 80)"/>
-          </g>
-
-          <!-- Connectors from edge diamonds to center star -->
-          <g stroke-width="0.7">
-            <line x1="80" y1="8" x2="80" y2="50"/>
-            <line x1="80" y1="152" x2="80" y2="110"/>
-            <line x1="8" y1="80" x2="50" y2="80"/>
-            <line x1="152" y1="80" x2="110" y2="80"/>
-          </g>
-        </g>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#zellige)"/>
-  </svg>
-  <div class="hero-content">
-    <span class="hero-eyebrow en">Hospitality · F&B · Morocco &amp; Africa</span>
-    <span class="hero-eyebrow fr">Hôtellerie · Restauration · Maroc &amp; Afrique</span>
-    <h1 class="hero-h1 en">Where Strategy<br>Meets <em>Craft.</em></h1>
-    <h1 class="hero-h1 fr">Là où la Stratégie<br>Rencontre <em>l'Art.</em></h1>
-    <p class="hero-sub en">Concept. Operations. Experience. Growth.</p>
-    <p class="hero-sub fr">Concept. Opérations. Expérience. Croissance.</p>
-    <p class="hero-desc en">Za3fran is a <strong>premium hospitality and F&B consulting company</strong> — combining strategy, creative direction, field intelligence and AI-powered tools to help hotels, restaurants and lifestyle brands perform at their best.</p>
-    <p class="hero-desc fr">Za3fran est une <strong>société de conseil premium en hôtellerie et restauration</strong> — alliant stratégie, direction créative, intelligence terrain et outils IA pour aider hôtels, restaurants et marques lifestyle à atteindre l'excellence.</p>
-    <div class="hero-btns">
-      <a href="#services" class="btn-p en">Explore Our Services</a>
-      <a href="#services" class="btn-p fr">Nos Services</a>
-      <a href="#scorecard" class="btn-s en">Test Your Concept — Free</a>
-      <a href="#scorecard" class="btn-s fr">Tester Votre Concept — Gratuit</a>
+<section class="hero tint-a">
+  <div class="bg-img"><img src="https://www.za3fran.io/assets/vision-to-table.jpg" alt="Za3fran — from vision to table"></div>
+  <div class="bg-overlay"></div>
+  <div class="grain"></div>
+  <div class="wash w1"></div>
+  <div class="wash w2"></div>
+  <div class="wrap">
+    <div class="eyebrow"><span data-en>Hospitality · F&amp;B · Morocco &amp; Africa</span><span data-fr>Hôtellerie · Restauration · Maroc &amp; Afrique</span></div>
+    <h1><span data-en>Where Strategy<br>Meets <em>Craft.</em></span><span data-fr>Là où la Stratégie<br>Rencontre <em>l'Art.</em></span></h1>
+    <div class="transform-line"><span data-en>Concept. Operations. Experience. Growth.</span><span data-fr>Concept. Opérations. Expérience. Croissance.</span></div>
+    <p class="sub measure">
+      <span data-en>Za3fran is a premium hospitality and F&amp;B consulting company — combining strategy, creative direction, field intelligence and AI-powered tools to help hotels, restaurants and lifestyle brands perform at their best.</span>
+      <span data-fr>Za3fran est une société de conseil premium en hôtellerie et restauration — alliant stratégie, direction créative, intelligence terrain et outils IA pour aider hôtels, restaurants et marques lifestyle à atteindre l'excellence.</span>
+    </p>
+    <div class="hero-ctas">
+      <a href="#scorecard" class="btn-primary" data-en>Test Your Concept — Free</a><a href="#scorecard" class="btn-primary" data-fr>Tester Votre Concept — Gratuit</a>
+      <a href="#disciplines" class="link-secondary" data-en>Explore our services</a><a href="#disciplines" class="link-secondary" data-fr>Nos services</a>
+    </div>
+    <div class="hero-strip reveal">
+      <div><div class="num">04</div><div class="lbl"><span data-en>Service divisions</span><span data-fr>Divisions</span></div></div>
+      <div><div class="num" data-en>Morocco</div><div class="num" data-fr>Maroc</div><div class="lbl"><span data-en>Gateway to Africa</span><span data-fr>Porte de l'Afrique</span></div></div>
+      <div><div class="num">F&amp;B</div><div class="lbl"><span data-en>Strategy &amp; Operations</span><span data-fr>Stratégie &amp; Opérations</span></div></div>
+      <div><div class="num">AI</div><div class="lbl"><span data-en>Digital Tools Suite</span><span data-fr>Suite Outils IA</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- NUMBERS -->
-<div class="numbar reveal">
-  <div class="ni"><div class="nv">4</div><div class="nl en">Service Divisions</div><div class="nl fr">Divisions</div></div>
-  <div class="ni"><div class="nv">Morocco</div><div class="nl en">Gateway to Africa</div><div class="nl fr">Porte de l'Afrique</div></div>
-  <div class="ni"><div class="nv">F&B</div><div class="nl en">Strategy & Operations</div><div class="nl fr">Stratégie & Opérations</div></div>
-  <div class="ni"><div class="nv">AI</div><div class="nl en">Digital Tools Suite</div><div class="nl fr">Suite Outils IA</div></div>
-</div>
-
-<!-- SERVICES -->
-<section id="services" style="background:var(--black);">
-  <div class="mx">
-    <div class="reveal">
-      <span class="sl en">What We Do — Our Four Divisions</span>
-      <span class="sl fr">Ce que nous faisons — Nos quatre divisions</span>
-      <h2 class="st en">Four disciplines.<br><em>One company.</em></h2>
-      <h2 class="st fr">Quatre disciplines.<br><em>Une entreprise.</em></h2>
-      <div class="div"></div>
-      <p class="slead en">Za3fran sits at the intersection of hospitality strategy, F&B expertise, brand experience, operational performance and digital intelligence — a premium consulting and technology company rooted in Morocco, serving Africa.</p>
-      <p class="slead fr">Za3fran se situe à l'intersection de la stratégie hôtelière, de l'expertise F&B, de l'expérience de marque, de la performance opérationnelle et de l'intelligence digitale — une société premium ancrée au Maroc, au service de l'Afrique.</p>
-    </div>
-    <div class="svc-grid">
-
-      <!-- 01 -->
-      <div class="sc reveal">
-        <div class="sc-num">01</div>
-        <!-- Icon: strategy/chart -->
-        <svg class="sc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 36L16 24l8 8 10-14 8 6"/><rect x="6" y="6" width="36" height="36" rx="1"/></svg>
-        <h3 class="sc-name en">Hospitality &amp; F&B Consulting</h3>
-        <h3 class="sc-name fr">Conseil Hôtellerie &amp; Restauration</h3>
-        <p class="sc-sub en">Strategy · Operations · Performance</p>
-        <p class="sc-sub fr">Stratégie · Opérations · Performance</p>
-        <p class="sc-desc en">We help hotels, restaurants, cafés, beach clubs and hospitality groups improve their concept, guest experience and profitability — practical expertise that translates into measurable results.</p>
-        <p class="sc-desc fr">Nous aidons les hôtels, restaurants, cafés, beach clubs et groupes hôteliers à améliorer leur concept, l'expérience client et leur rentabilité — une expertise pratique qui produit des résultats mesurables.</p>
-        <ul class="sc-list">
-          <li class="en">F&B strategy &amp; concept development</li>
-          <li class="fr">Stratégie F&B &amp; développement de concept</li>
-          <li class="en">Menu structure &amp; positioning</li>
-          <li class="fr">Structure de menu &amp; positionnement</li>
-          <li class="en">Cost control &amp; profitability analysis</li>
-          <li class="fr">Contrôle des coûts &amp; analyse de rentabilité</li>
-          <li class="en">Guest journey optimisation</li>
-          <li class="fr">Optimisation du parcours client</li>
-        </ul>
-        <a href="#contact" class="sc-lnk en">Discuss your project</a>
-        <a href="#contact" class="sc-lnk fr">Discuter de votre projet</a>
+<!-- WHO WE ARE — intro band, moved up so visitors get identity early -->
+<section class="tint-b intro-band">
+  <div class="wrap">
+    <div class="intro-row reveal">
+      <div class="intro-name">
+        <div class="section-tag"><span data-en>Who We Are</span><span data-fr>Qui nous sommes</span></div>
+        <h3 class="serif">Za3fran · الزعفران</h3>
       </div>
-
-      <!-- 02 -->
-      <div class="sc reveal d1">
-        <div class="sc-num">02</div>
-        <!-- Icon: audit/magnifier -->
-        <svg class="sc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="20" cy="20" r="12"/><path d="M30 30l10 10"/><path d="M14 20h12M20 14v12"/></svg>
-        <h3 class="sc-name">Za3fran Mystery</h3>
-        <p class="sc-sub en">Audit · Standards · Intelligence</p>
-        <p class="sc-sub fr">Audit · Standards · Intelligence</p>
-        <p class="sc-desc en">Professional mystery guest and mystery client audits for hotels, restaurants and hospitality businesses — calibrated against your own concept standards, not generic benchmarks.</p>
-        <p class="sc-desc fr">Audits mystery guest et mystery client professionnels pour les hôtels et restaurants — calibrés selon vos propres standards de concept, pas des benchmarks génériques.</p>
-        <ul class="sc-list">
-          <li class="en">Mystery guest audits for hotels</li>
-          <li class="fr">Audits mystery guest pour hôtels</li>
-          <li class="en">Mystery client audits for restaurants</li>
-          <li class="fr">Audits mystery client pour restaurants</li>
-          <li class="en">Service quality &amp; standards compliance</li>
-          <li class="fr">Qualité de service &amp; conformité aux standards</li>
-          <li class="en">Detailed reports with recommendations</li>
-          <li class="fr">Rapports détaillés avec recommandations</li>
-        </ul>
-        <a href="#contact" class="sc-lnk en">Request an audit</a>
-        <a href="#contact" class="sc-lnk fr">Demander un audit</a>
-      </div>
-
-      <!-- 03 -->
-      <div class="sc reveal d2">
-        <div class="sc-num">03</div>
-        <!-- Icon: camera/creative -->
-        <svg class="sc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="14" width="36" height="26" rx="2"/><circle cx="24" cy="27" r="8"/><path d="M16 14l3-6h10l3 6"/><circle cx="38" cy="20" r="2" fill="currentColor"/></svg>
-        <h3 class="sc-name">Za3fran Design</h3>
-        <p class="sc-sub en">Food Styling · Visual Direction · Creative Production</p>
-        <p class="sc-sub fr">Food Styling · Direction Visuelle · Production Créative</p>
-        <p class="sc-desc en">Food styling, art direction and creative production for F&B and hospitality brands. We help restaurants, hotels and food brands make their product look as good as it tastes.</p>
-        <p class="sc-desc fr">Food styling, direction artistique et production créative pour les marques F&B et hôtelières. Nous aidons les restaurants, hôtels et marques à sublimer leur produit visuellement.</p>
-        <ul class="sc-list">
-          <li class="en">Food styling &amp; art direction</li>
-          <li class="fr">Food styling &amp; direction artistique</li>
-          <li class="en">Photo &amp; video shoot direction</li>
-          <li class="fr">Direction de shoots photo &amp; vidéo</li>
-          <li class="en">Social media content direction</li>
-          <li class="fr">Direction de contenu réseaux sociaux</li>
-          <li class="en">Advertising visuals &amp; menu imagery</li>
-          <li class="fr">Visuels publicitaires &amp; imagerie de menu</li>
-        </ul>
-        <a href="#contact" class="sc-lnk en">Explore creative services</a>
-        <a href="#contact" class="sc-lnk fr">Services créatifs</a>
-      </div>
-
-      <!-- 04 -->
-      <div class="sc reveal d3">
-        <div class="sc-num">04</div>
-        <!-- Icon: AI/digital -->
-        <svg class="sc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="8" width="14" height="14" rx="1"/><rect x="26" y="8" width="14" height="14" rx="1"/><rect x="8" y="26" width="14" height="14" rx="1"/><rect x="26" y="26" width="14" height="14" rx="1"/><line x1="22" y1="15" x2="26" y2="15"/><line x1="22" y1="33" x2="26" y2="33"/><line x1="15" y1="22" x2="15" y2="26"/><line x1="33" y1="22" x2="33" y2="26"/></svg>
-        <h3 class="sc-name">Za3fran Digital</h3>
-        <p class="sc-sub en">AI Tools · SaaS · Automation</p>
-        <p class="sc-sub fr">Outils IA · SaaS · Automatisation</p>
-        <p class="sc-desc en">An AI-powered ecosystem of interconnected tools for building and running restaurants. One concept profile powers every module — fill in your details once, every tool starts pre-loaded.</p>
-        <p class="sc-desc fr">Un écosystème d'outils IA interconnectés pour construire et gérer des restaurants. Un seul profil concept alimente chaque module — renseignez vos données une fois, chaque outil démarre pré-chargé.</p>
-        <ul class="sc-list">
-          <li class="en">Concept validation &amp; market analysis</li>
-          <li class="fr">Validation de concept &amp; analyse de marché</li>
-          <li class="en">Menu engineering &amp; food cost optimisation</li>
-          <li class="fr">Ingénierie de menu &amp; food cost</li>
-          <li class="en">Business plan &amp; financial modelling</li>
-          <li class="fr">Business plan &amp; modélisation financière</li>
-          <li class="en">Marketing strategy &amp; SOP generation</li>
-          <li class="fr">Stratégie marketing &amp; génération de SOP</li>
-        </ul>
-        <a href="#platform" class="sc-lnk en">Explore the platform</a>
-        <a href="#platform" class="sc-lnk fr">Explorer la plateforme</a>
-      </div>
-
+      <p class="intro-copy">
+        <span data-en>Saffron — the world's most precious spice. Rare, complex and transformative. Za3fran brings that same philosophy to every hospitality business we work with. Founded in 2015, rooted in Morocco, serving Africa.</span>
+        <span data-fr>Le safran — l'épice la plus précieuse du monde. Rare, complexe et transformatrice. Za3fran apporte cette même philosophie à chaque entreprise hôtelière. Fondé en 2015, ancré au Maroc, au service de l'Afrique.</span>
+      </p>
+      <a href="#about" class="link-secondary intro-link"><span data-en>More about us ↓</span><span data-fr>En savoir plus ↓</span></a>
     </div>
   </div>
 </section>
 
-<!-- VISUAL BAND -->
-<div class="visual-band reveal">
-  <div class="visual-band-inner">
-    <!-- Panel 1: From Vision to Table -->
-    <div class="vb-panel">
-      <img src="assets/vision-to-table.jpg" alt="From vision to table" class="vb-photo">
-      <div class="vb-overlay"></div>
-      <div class="vb-caption">
-        <div class="vb-caption-label en">Concept</div>
-        <div class="vb-caption-label fr">Concept</div>
-        <div class="vb-caption-text en">From vision to table</div>
-        <div class="vb-caption-text fr">De la vision à la table</div>
-      </div>
-    </div>
-    <!-- Panel 2: Zellige pattern as visual element -->
-    <div class="vb-panel">
-      <div class="zellige-panel">
-        <svg width="100%" height="100%" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <pattern id="zp2" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
-              <g stroke="#C9862A" fill="none">
-                <!-- Center 8-point star -->
-                <rect x="40" y="40" width="40" height="40" stroke-width="1.2"/>
-                <rect x="40" y="40" width="40" height="40" stroke-width="1.2" transform="rotate(45 60 60)"/>
-                <rect x="50" y="50" width="20" height="20" stroke-width="0.8"/>
-                <rect x="50" y="50" width="20" height="20" stroke-width="0.8" transform="rotate(45 60 60)"/>
-                <circle cx="60" cy="60" r="2" fill="#C9862A" stroke="none"/>
-                <!-- Corner stars -->
-                <rect x="-8" y="-8" width="16" height="16" stroke-width="0.8"/>
-                <rect x="-8" y="-8" width="16" height="16" stroke-width="0.8" transform="rotate(45 0 0)"/>
-                <rect x="112" y="-8" width="16" height="16" stroke-width="0.8"/>
-                <rect x="112" y="-8" width="16" height="16" stroke-width="0.8" transform="rotate(45 120 0)"/>
-                <rect x="-8" y="112" width="16" height="16" stroke-width="0.8"/>
-                <rect x="-8" y="112" width="16" height="16" stroke-width="0.8" transform="rotate(45 0 120)"/>
-                <rect x="112" y="112" width="16" height="16" stroke-width="0.8"/>
-                <rect x="112" y="112" width="16" height="16" stroke-width="0.8" transform="rotate(45 120 120)"/>
-                <!-- Diagonal connectors -->
-                <line x1="11" y1="11" x2="40" y2="40" stroke-width="0.7"/>
-                <line x1="109" y1="11" x2="80" y2="40" stroke-width="0.7"/>
-                <line x1="11" y1="109" x2="40" y2="80" stroke-width="0.7"/>
-                <line x1="109" y1="109" x2="80" y2="80" stroke-width="0.7"/>
-              </g>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="rgba(15,31,61,0.95)"/>
-          <rect width="100%" height="100%" fill="url(#zp2)"/>
-        </svg>
-      </div>
-      <div class="vb-overlay"></div>
-      <div class="vb-caption">
-        <div class="vb-caption-label en">Identity</div>
-        <div class="vb-caption-label fr">Identité</div>
-        <div class="vb-caption-text en">Rooted in Moroccan craft</div>
-        <div class="vb-caption-text fr">Ancré dans l'artisanat marocain</div>
-      </div>
-    </div>
-    <!-- Panel 3: Morocco. Africa. Beyond. -->
-    <div class="vb-panel">
-      <img src="assets/morocco-africa.jpg" alt="Morocco, Africa, Beyond" class="vb-photo">
-      <div class="vb-overlay"></div>
-      <div class="vb-caption">
-        <div class="vb-caption-label en">Territory</div>
-        <div class="vb-caption-label fr">Territoire</div>
-        <div class="vb-caption-text en">Morocco. Africa. Beyond.</div>
-        <div class="vb-caption-text fr">Maroc. Afrique. Au-delà.</div>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- DISCIPLINES -->
+<section class="tint-b" id="disciplines">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>What We Do</span><span data-fr>Ce que nous faisons</span></div>
+    <h2 class="reveal" style="font-size:clamp(30px,4vw,46px);max-width:640px;margin-bottom:20px"><span data-en>Four divisions.<br><em>One company.</em></span><span data-fr>Quatre divisions.<br><em>Une entreprise.</em></span></h2>
+    <p class="measure reveal" style="color:var(--muted);margin-bottom:56px;line-height:1.7">
+      <span data-en>Za3fran sits at the intersection of hospitality strategy, F&amp;B expertise, brand experience, operational performance and digital intelligence.</span>
+      <span data-fr>Za3fran se situe à l'intersection de la stratégie hôtelière, de l'expertise F&amp;B, de l'expérience de marque, de la performance opérationnelle et de l'intelligence digitale.</span>
+    </p>
 
-<!-- FREE SCORECARD -->
-<section class="scard-section" id="scorecard">
-  <div class="mx scard-inner">
-    <div class="reveal">
-      <span class="sl en">Free · No commitment · No registration</span>
-      <span class="sl fr">Gratuit · Sans engagement · Sans inscription</span>
-      <h2 class="st en">Get a first read<br>on your <em>concept.</em></h2>
-      <h2 class="st fr">Première lecture<br>de votre <em>concept.</em></h2>
-      <div class="div"></div>
-      <p class="slead en" style="margin-bottom:1.5rem;">Answer 10 questions and receive a scored concept analysis — completely free. Delivered to your inbox in under 60 seconds.</p>
-      <p class="slead fr" style="margin-bottom:1.5rem;">Répondez à 10 questions et recevez une analyse scorée de votre concept — entièrement gratuit. Dans votre boîte mail en moins de 60 secondes.</p>
-      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="en">Want the full picture? The <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for <strong style="color:var(--copper);font-weight:400;" data-price="en">€199</strong>.</p>
-      <p style="font-size:0.82rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:480px;" class="fr">Vous voulez une analyse complète ? Le <strong style="color:var(--copper);font-weight:400;">Za3fran Concept Validator</strong> livre une analyse stratégique de 20 pages avec données de marché locales, intelligence concurrentielle et modélisation financière — pour <strong style="color:var(--copper);font-weight:400;" data-price="fr">199€</strong>.</p>
-    </div>
-    <div class="reveal d1">
-      <div class="scard-widget" style="padding:2.5rem;">
-        <div style="margin-bottom:2rem;">
-          <p style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:1.25rem;font-weight:500;">
-  <span class="en">What you'll receive</span>
-  <span class="fr">Ce que vous recevrez</span>
-</p>
-          <div style="display:flex;flex-direction:column;gap:0.85rem;">
-            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;">
-  <span class="en">A concept score out of 100 with 5 sub-scores</span>
-  <span class="fr">Un score de concept sur 100 avec 5 sous-scores</span>
-</span>
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">What's working and what needs sharpening</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">Ce qui fonctionne et ce qui doit être affiné</span>
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">5 critical questions every operator must answer</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">5 questions critiques que tout opérateur doit adresser</span>
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-              <span style="color:var(--copper);font-size:0.75rem;margin-top:0.1rem;flex-shrink:0;">—</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="en">Your single biggest blind spot — named directly</span>
-              <span style="font-size:0.82rem;color:rgba(250,250,247,0.65);line-height:1.5;" class="fr">Votre principal angle mort — nommé directement</span>
-            </div>
+    <div class="disc-wrap reveal">
+      <div class="disc-index">
+        <div class="disc-item active" data-target="0"><span class="di-num">01</span><span class="di-name" data-en>Consulting</span><span class="di-name" data-fr>Conseil</span></div>
+        <div class="disc-item" data-target="1"><span class="di-num">02</span><span class="di-name" data-en>Mystery</span><span class="di-name" data-fr>Mystery</span></div>
+        <div class="disc-item" data-target="2"><span class="di-num">03</span><span class="di-name" data-en>Design</span><span class="di-name" data-fr>Design</span></div>
+        <div class="disc-item" data-target="3"><span class="di-num">04</span><span class="di-name" data-en>Digital</span><span class="di-name" data-fr>Digital</span></div>
+      </div>
+      <div class="disc-detail">
+        <div class="disc-panel active" data-panel="0">
+          <div class="dp-tag"><span data-en>Strategy · Operations · Performance</span><span data-fr>Stratégie · Opérations · Performance</span></div>
+          <h3><span data-en>Hospitality &amp; F&amp;B Consulting</span><span data-fr>Conseil Hôtellerie &amp; Restauration</span></h3>
+          <p><span data-en>We help hotels, restaurants, cafés, beach clubs and hospitality groups improve their concept, guest experience and profitability — practical expertise that translates into measurable results.</span><span data-fr>Nous aidons les hôtels, restaurants, cafés, beach clubs et groupes hôteliers à améliorer leur concept, l'expérience client et leur rentabilité.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>F&amp;B strategy &amp; concept development</span><span data-fr>Stratégie F&amp;B &amp; développement de concept</span></div>
+            <div><span data-en>Menu structure &amp; positioning</span><span data-fr>Structure de menu &amp; positionnement</span></div>
+            <div><span data-en>Cost control &amp; profitability analysis</span><span data-fr>Contrôle des coûts &amp; rentabilité</span></div>
+            <div><span data-en>Guest journey optimisation</span><span data-fr>Optimisation du parcours client</span></div>
           </div>
+          <a href="#contact" class="dp-cta"><span data-en>Discuss your project →</span><span data-fr>Discuter de votre projet →</span></a>
         </div>
-        <div style="height:0.5px;background:var(--border);margin-bottom:2rem;"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
-          <span style="font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;">
-  <span class="en">Free · Under 4 minutes · No account needed</span>
-  <span class="fr">Gratuit · Moins de 4 min · Sans inscription</span>
-</span>
+        <div class="disc-panel" data-panel="1">
+          <div class="dp-tag">Audit · Standards · Intelligence</div>
+          <h3>Za3fran Mystery</h3>
+          <p><span data-en>Professional mystery guest and mystery client audits for hotels, restaurants and hospitality businesses — calibrated against your own concept standards, not generic benchmarks.</span><span data-fr>Audits mystery guest et mystery client professionnels pour les hôtels et restaurants — calibrés selon vos propres standards de concept.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>Mystery guest audits for hotels</span><span data-fr>Audits mystery guest pour hôtels</span></div>
+            <div><span data-en>Mystery client audits for restaurants</span><span data-fr>Audits mystery client pour restaurants</span></div>
+            <div><span data-en>Service quality &amp; standards compliance</span><span data-fr>Qualité de service &amp; conformité</span></div>
+            <div><span data-en>Detailed reports with recommendations</span><span data-fr>Rapports détaillés avec recommandations</span></div>
+          </div>
+          <a href="#contact" class="dp-cta"><span data-en>Request an audit →</span><span data-fr>Demander un audit →</span></a>
         </div>
-        <a href="/scorecard" style="display:block;background:var(--copper);color:var(--black);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.5rem;text-align:center;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e0a040'" onmouseout="this.style.background='var(--copper)'">
-  <span class="en">Get My Free Scorecard →</span>
-  <span class="fr">Obtenir mon Scorecard gratuit →</span>
-</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONCEPT VALIDATOR -->
-<section class="val-section" id="validator">
-  <div class="mx val-inner" style="padding:7rem 0;">
-    <div class="reveal">
-      <span class="sl en">Za3fran Digital · Available Now</span>
-  <span class="sl fr">Za3fran Digital · Disponible maintenant</span>
-  <h2 class="st en">From concept to<br><em>investor-ready.</em></h2>
-  <h2 class="st fr">Du concept au<br><em>dossier investisseur.</em></h2>
-  <div class="div"></div>
-  <p class="slead en" style="margin-bottom:2rem;">Two tools, one journey. Validate your concept with real market data — then turn that analysis directly into a complete business plan. No duplicate work, no extra forms.</p>
-  <p class="slead fr" style="margin-bottom:2rem;">Deux outils, un seul parcours. Validez votre concept avec des données réelles — puis transformez cette analyse en business plan complet. Sans double saisie, sans formulaires supplémentaires.</p>
-
-  <!-- Product 1: Validator -->
-  <div style="border:0.5px solid var(--border);padding:1.5rem;margin-bottom:1rem;background:rgba(255,255,255,0.02);">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
-      <span style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);" class="en">Step 1 — Concept Validator</span>
-      <span style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);" class="fr">Étape 1 — Concept Validator</span>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--copper);" id="bp-val-price">€199</span>
-    </div>
-    <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0;" class="en">20-page strategic analysis — market fit, competitor intelligence, financial viability, risk register. Delivered in under 3 minutes.</p>
-    <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0;" class="fr">Analyse stratégique 20 pages — adéquation marché, intelligence concurrentielle, viabilité financière, registre des risques. En moins de 3 minutes.</p>
-  </div>
-
-  <!-- Product 2: BP Essentials -->
-  <div style="border:0.5px solid rgba(201,134,42,0.35);padding:1.5rem;margin-bottom:1.5rem;background:rgba(201,134,42,0.04);position:relative;">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
-      <span style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);" class="en">Step 2 — Business Plan Essentials</span>
-      <span style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);" class="fr">Étape 2 — Business Plan Essentials</span>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--copper);" id="bp-bundle-price">€699</span>
-    </div>
-    <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="en">Complete investor-ready business plan — financials Y1–Y3, market strategy, operations, risk analysis. Generated directly from your Validator data. <span style="color:rgba(201,134,42,0.7);" id="bp-save-en">Save €99</span> when bundled.</p>
-    <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="fr">Business plan complet prêt investisseurs — financiers A1–A3, stratégie marché, opérations, analyse des risques. Généré depuis vos données Validator. <span style="color:rgba(201,134,42,0.7);" id="bp-save-fr">Économisez 99€</span> en bundle.</p>
-  </div>
-
-  <!-- CTAs -->
-  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
-    <a href="/validator?bundle=true" class="btn-p en" data-bundle-label="en">Validator + Business Plan — €699</a>
-    <a href="/validator?bundle=true" class="btn-p fr" data-bundle-label="fr">Validator + Business Plan — 699€</a>
-  </div>
-  <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-    <a href="/validator" class="btn-s en" data-btn-price="en">Validator only — €199</a>
-    <a href="/validator" class="btn-s fr" data-btn-price="fr">Validator seul — 199€</a>
-    <a href="#scorecard" class="btn-s en" style="border-color:rgba(250,250,247,0.15);">Free Scorecard first</a>
-    <a href="#scorecard" class="btn-s fr" style="border-color:rgba(250,250,247,0.15);">Score gratuit d'abord</a>
-  </div>
-  <p style="font-size:0.8rem;line-height:1.7;color:rgba(250,250,247,0.35);max-width:520px;">
-    <span class="en">Need more than validation? The <strong style="color:var(--copper);font-weight:400;">Validator + Business Plan Essentials bundle</strong> gives you the report AND a complete investor-ready business plan with financial projections — for <strong style="color:var(--copper);font-weight:400;"><span data-bp-price="en">€699</span></strong> (<span data-bp-save="en">save €99</span> vs buying separately). <a href="/validator" style="color:var(--copper);text-decoration:none;letter-spacing:0.05em;" data-bundle-price="en">Validator + Business Plan — €699 →</a></span>
-    <span class="fr">Besoin de plus que la validation ? Le <strong style="color:var(--copper);font-weight:400;">bundle Validator + Business Plan Essentials</strong> vous donne le rapport ET un business plan complet prêt pour les investisseurs — pour <strong style="color:var(--copper);font-weight:400;"><span data-bp-price="fr">699€</span></strong> (<span data-bp-save="fr">économisez 99€</span> par rapport à l'achat séparé). <a href="/validator" style="color:var(--copper);text-decoration:none;letter-spacing:0.05em;" data-bundle-price="fr">Validator + Business Plan — 699€ →</a></span>
-  </p>
-    </div>
-    <div class="reveal d1">
-      <div class="rpt">
-    <!-- Validator report preview -->
-    <div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);margin-bottom:1rem;" class="en">Concept Validator — Sample output</div>
-    <div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);margin-bottom:1rem;" class="fr">Concept Validator — Exemple de livrable</div>
-    <div class="rsc"><div class="rsc-big">72</div><div class="rsc-meta"><span class="rsc-d">/ 100</span><span class="rsc-l en">Concept Score</span><span class="rsc-l fr">Score de concept</span></div></div>
-    <div class="rbars">
-      <div class="rbar"><span class="rb-l en">Concept Clarity</span><span class="rb-l fr">Clarté du concept</span><div class="rb-t"><div class="rb-f" style="width:78%"></div></div><span class="rb-s">78</span></div>
-      <div class="rbar"><span class="rb-l en">Market Fit</span><span class="rb-l fr">Adéquation marché</span><div class="rb-t"><div class="rb-f" style="width:61%"></div></div><span class="rb-s">61</span></div>
-      <div class="rbar"><span class="rb-l en">Financial Viability</span><span class="rb-l fr">Viabilité financière</span><div class="rb-t"><div class="rb-f" style="width:70%"></div></div><span class="rb-s">70</span></div>
-    </div>
-    <!-- BP Essentials preview strip -->
-    <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:0.5px solid var(--border);">
-      <div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,134,42,0.6);margin-bottom:0.75rem;" class="en">↳ Business Plan Essentials unlocked</div>
-      <div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,134,42,0.6);margin-bottom:0.75rem;" class="fr">↳ Business Plan Essentials débloqué</div>
-      <div style="display:flex;flex-direction:column;gap:0.4rem;">
-        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:rgba(250,250,247,0.4);">
-          <span class="en">Break-even point</span><span class="fr">Point mort</span>
-          <span style="color:var(--copper);">~14 months</span>
+        <div class="disc-panel" data-panel="2">
+          <div class="dp-tag"><span data-en>Food Styling · Visual Direction · Creative Production</span><span data-fr>Food Styling · Direction Visuelle · Production Créative</span></div>
+          <h3>Za3fran Design</h3>
+          <p><span data-en>Food styling, art direction and creative production for F&amp;B and hospitality brands. We help restaurants, hotels and food brands make their product look as good as it tastes.</span><span data-fr>Food styling, direction artistique et production créative pour les marques F&amp;B et hôtelières.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>Food styling &amp; art direction</span><span data-fr>Food styling &amp; direction artistique</span></div>
+            <div><span data-en>Photo &amp; video shoot direction</span><span data-fr>Direction de shoots photo &amp; vidéo</span></div>
+            <div><span data-en>Social media content direction</span><span data-fr>Direction de contenu réseaux sociaux</span></div>
+            <div><span data-en>Advertising visuals &amp; menu imagery</span><span data-fr>Visuels publicitaires &amp; imagerie de menu</span></div>
+          </div>
+          <a href="#contact" class="dp-cta"><span data-en>Explore creative services →</span><span data-fr>Services créatifs →</span></a>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:rgba(250,250,247,0.4);">
-          <span class="en">Year 1 revenue (base)</span><span class="fr">CA an 1 (base)</span>
-          <span style="color:var(--copper);">MAD 2.4M</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:rgba(250,250,247,0.4);">
-          <span class="en">Startup cost range</span><span class="fr">Fourchette investissement</span>
-          <span style="color:var(--copper);">MAD 1.2–1.8M</span>
-        </div>
-      </div>
-    </div>
-    <p class="rpt-v en">"Validator report validated the concept. Business Plan Essentials generated investor-ready financials in 5 minutes."</p>
-    <p class="rpt-v fr">« Rapport Validator validé. Business Plan Essentials a généré les projections financières en 5 minutes. »</p>
-  </div>
-    </div>
-  </div>
-</section>
-
-<!-- PLATFORM -->
-<section class="plat-section" id="platform">
-  <div class="mx plat-inner">
-    <div class="reveal">
-      <span class="sl en">Za3fran Digital · The Platform</span>
-      <span class="sl fr">Za3fran Digital · La Plateforme</span>
-      <h2 class="st en">One profile.<br><em>Every tool.</em></h2>
-      <h2 class="st fr">Un profil.<br><em>Chaque outil.</em></h2>
-      <div class="div"></div>
-      <p class="slead en" style="margin-bottom:1.5rem;">Every Za3fran Digital tool shares your concept data. Fill in your details once — every subsequent tool starts pre-loaded with your full project context.</p>
-      <p class="slead fr" style="margin-bottom:2.5rem;">Chaque outil Za3fran Digital partage vos données. Renseignez-les une fois — chaque outil suivant démarre avec votre contexte complet.</p>
-      <button onclick="openModal()" class="btn-o en">Join Waitlist for New Tools</button>
-      <button onclick="openModal()" class="btn-o fr">Liste d'attente nouveaux outils</button>
-    </div>
-    <div class="tools-grid reveal d1">
-
-  <!-- 1: Concept Validator — LIVE -->
-  <div class="tc">
-    <div class="tc-name en">Concept Validator</div><div class="tc-name fr">Validateur de Concept</div>
-    <div class="tc-desc en">Market fit, competitive analysis, financial viability. 20-page AI report in under 3 minutes.</div>
-    <div class="tc-desc fr">Adéquation marché, analyse concurrentielle, viabilité. Rapport IA de 20 pages en moins de 3 min.</div>
-    <span class="badge bl en">Available Now — €199</span><span class="badge bl fr">Disponible — 199€</span>
-    <a href="/validator" class="wl-btn en" style="color:var(--copper);opacity:1;">Start validation →</a>
-    <a href="/validator" class="wl-btn fr" style="color:var(--copper);opacity:1;">Commencer →</a>
-  </div>
-
-  <!-- 2: Business Plan Essentials — LIVE -->
-  <div class="tc">
-    <div class="tc-name en">Business Plan Essentials</div><div class="tc-name fr">Business Plan Essentials</div>
-    <div class="tc-desc en">Investor-ready business plan with benchmark financials — generated directly from your Validator data. No extra forms.</div>
-    <div class="tc-desc fr">Business plan prêt investisseurs avec projections benchmark — généré depuis vos données Validator. Sans saisie supplémentaire.</div>
-    <span class="badge bl en">Available Now</span><span class="badge bl fr">Disponible</span>
-    <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--muted);" class="en" data-bp-tile-price="en">€699 with Validator · €499 standalone</div>
-    <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--muted);" class="fr" data-bp-tile-price="fr">699€ avec Validator · 499€ seul</div>
-    <div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.65rem;">
-      <a href="/validator?bundle=true" class="wl-btn en" style="color:var(--copper);opacity:1;">New user: start with bundle →</a>
-      <a href="/validator?bundle=true" class="wl-btn fr" style="color:var(--copper);opacity:1;">Nouveau : commencer avec le bundle →</a>
-      <a href="/business-plan" class="wl-btn en" style="color:rgba(201,134,42,0.55);">Have a Validator code? Get BP →</a>
-      <a href="/business-plan" class="wl-btn fr" style="color:rgba(201,134,42,0.55);">Vous avez un code Validator ? →</a>
-    </div>
-  </div>
-
-  <!-- 3: Menu Engineer — Coming Soon -->
-  <div class="tc tc-locked">
-    <div class="tc-name en">Menu Engineer</div><div class="tc-name fr">Ingénieur de Menu</div>
-    <div class="tc-desc en">Translate your validated concept into a costed menu architecture — recipe matrix, pricing strategy, local sourcing.</div>
-    <div class="tc-desc fr">Traduisez votre concept validé en architecture menu chiffrée — matrice recettes, stratégie prix, sourcing local.</div>
-    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-    <button class="wl-btn en" onclick="openModal('Menu Engineer')">Notify me when live →</button>
-    <button class="wl-btn fr" onclick="openModal('Menu Engineer')">Me notifier →</button>
-  </div>
-
-  <!-- 4: Financial Builder — Coming Soon -->
-  <div class="tc tc-locked">
-    <div class="tc-name en">Financial Builder</div><div class="tc-name fr">Financial Builder</div>
-    <div class="tc-desc en">Investor-grade P&L modelling — startup costs, multi-scenario revenue projections, break-even, cash flow.</div>
-    <div class="tc-desc fr">Modélisation P&L investisseurs — coûts de lancement, projections multi-scénarios, point mort, flux de trésorerie.</div>
-    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-    <button class="wl-btn en" onclick="openModal('Financial Builder')">Notify me when live →</button>
-    <button class="wl-btn fr" onclick="openModal('Financial Builder')">Me notifier →</button>
-  </div>
-
-  <!-- 5: Staffing & Marketing Builder — Coming Soon -->
-  <div class="tc tc-locked">
-    <div class="tc-name en">Staffing &amp; Marketing Plan</div><div class="tc-name fr">Staffing &amp; Plan Marketing</div>
-    <div class="tc-desc en">Right team structure, service model, and launch marketing plan — built from your concept and capacity data.</div>
-    <div class="tc-desc fr">Structure d'équipe, modèle de service et plan marketing de lancement — construits depuis votre concept et capacité.</div>
-    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-    <button class="wl-btn en" onclick="openModal('Staffing & Marketing Plan')">Notify me when live →</button>
-    <button class="wl-btn fr" onclick="openModal('Staffing & Marketing Plan')">Me notifier →</button>
-  </div>
-
-  <!-- 6: Business Plan Pro — Coming Soon -->
-  <div class="tc tc-locked">
-    <div class="tc-name en">Business Plan Pro</div><div class="tc-name fr">Business Plan Pro</div>
-    <div class="tc-desc en">The full investor package — modeled financials from all upstream tools, not benchmark estimates. The complete project dossier.</div>
-    <div class="tc-desc fr">Le dossier investisseur complet — financiers modélisés depuis tous les outils amont, pas des estimations benchmark.</div>
-    <span class="badge bs en">Coming Soon</span><span class="badge bs fr">Bientôt</span>
-    <button class="wl-btn en" onclick="openModal('Business Plan Pro')">Notify me when live →</button>
-    <button class="wl-btn fr" onclick="openModal('Business Plan Pro')">Me notifier →</button>
-  </div>
-
-</div>
-    </div>
-  </div>
-</section>
-
-<!-- GEOGRAPHY -->
-<section class="geo-section" id="geography">
-  <!-- Africa continent outline — uploaded image -->
-  <div class="geo-map-bg">
-    <img src="assets/africa.png" alt="Africa" style="width:auto;height:95%;max-height:1000px;object-fit:contain;">
-  </div>
-  <div class="mx geo-inner reveal">
-    <span class="sl en">Our Territory</span>
-    <span class="sl fr">Notre Territoire</span>
-    <div class="geo-stmt en">Morocco.<br><em>Gateway to Africa.</em></div>
-    <div class="geo-stmt fr">Le Maroc.<br><em>Porte de l'Afrique.</em></div>
-    <p class="geo-desc en">Za3fran is rooted in Morocco — a market that combines French business culture, Arabic hospitality traditions and rapid economic development. From this base, we work across francophone and anglophone Africa, bringing the same rigour to every market we enter.</p>
-    <p class="geo-desc fr">Za3fran est ancré au Maroc — un marché qui conjugue culture d'affaires française, traditions d'hospitalité arabes et développement économique rapide. Depuis cette base, nous intervenons en Afrique francophone et anglophone, avec la même rigueur dans chaque marché.</p>
-    <div class="geo-tags">
-      <span class="gtag en">Casablanca</span><span class="gtag fr">Casablanca</span>
-      <span class="gtag en">Marrakech</span><span class="gtag fr">Marrakech</span>
-      <span class="gtag en">Rabat</span><span class="gtag fr">Rabat</span>
-      <span class="gtag en">Francophone Africa</span><span class="gtag fr">Afrique francophone</span>
-      <span class="gtag en">Anglophone Africa</span><span class="gtag fr">Afrique anglophone</span>
-      <span class="gtag en">Indian Ocean</span><span class="gtag fr">Océan Indien</span>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="about-section" id="about">
-  <div class="mx about-inner">
-    <div class="reveal">
-      <span class="sl en">About Za3fran</span>
-      <span class="sl fr">À propos de Za3fran</span>
-      <h2 class="st en">Premium. Practical.<br><em>Results-oriented.</em></h2>
-      <h2 class="st fr">Premium. Pratique.<br><em>Orienté résultats.</em></h2>
-      <div class="div"></div>
-      <blockquote class="aq en">"Not just giving advice — helping clients structure, improve, launch, monitor and grow their business."</blockquote>
-      <blockquote class="aq fr">« Pas seulement donner des conseils — aider les clients à structurer, améliorer, lancer, suivre et développer leur activité. »</blockquote>
-      <p class="ab en">Za3fran Consulting is a hospitality, F&B and guest-experience consulting company built around one clear objective: helping hotels, restaurants, cafés, hospitality groups and lifestyle brands improve their concept, operations, customer experience, positioning and commercial performance.</p>
-      <p class="ab fr">Za3fran Consulting est une société de conseil en hôtellerie, restauration et expérience client construite autour d'un objectif clair : aider les hôtels, restaurants, cafés et marques lifestyle à améliorer leur concept, opérations, expérience client, positionnement et performance commerciale.</p>
-      <p class="ab en">Our positioning is premium, practical and results-oriented — not just recommendations, but hands-on support to structure, improve, launch, monitor and grow.</p>
-      <p class="ab fr">Notre positionnement est premium, pratique et orienté résultats — pas seulement des recommandations, mais un accompagnement concret pour structurer, améliorer, lancer, suivre et développer.</p>
-      <div class="astats">
-        <div class="astat"><div class="asv">F&B</div><div class="asl en">Strategy & Ops</div><div class="asl fr">Stratégie & Ops</div></div>
-        <div class="astat"><div class="asv">Morocco</div><div class="asl en">Africa Base</div><div class="asl fr">Base Afrique</div></div>
-        <div class="astat"><div class="asv">4</div><div class="asl en">Divisions</div><div class="asl fr">Divisions</div></div>
-        <div class="astat"><div class="asv">AI</div><div class="asl en">Digital Suite</div><div class="asl fr">Suite Digitale</div></div>
-      </div>
-    </div>
-    <div class="reveal d1" style="padding-top:1rem;">
-      <div class="name-card" style="margin-bottom:1.5rem;">
-        <span class="sl en">The Name</span>
-        <span class="sl fr">Le Nom</span>
-        <div class="name-row">
-          <span class="name-latin">Za3fran</span>
-          <span class="name-divider">·</span>
-          <span class="arabic">الزعفران</span>
-        </div>
-        <p style="font-size:0.88rem;line-height:1.85;font-weight:300;color:rgba(250,250,247,0.55);" class="en">Saffron — the world's most precious spice. Rare, complex and transformative. A single thread changes everything it touches. Za3fran brings that same philosophy to every hospitality business we work with.</p>
-        <p style="font-size:0.88rem;line-height:1.85;font-weight:300;color:rgba(250,250,247,0.55);" class="fr">Le safran — l'épice la plus précieuse du monde. Rare, complexe et transformatrice. Un seul fil change tout ce qu'il touche. Za3fran apporte cette même philosophie à chaque entreprise hôtelière avec laquelle nous travaillons.</p>
-      </div>
-      <div class="int-card">
-        <span class="sl en">Our Positioning</span>
-        <span class="sl fr">Notre Positionnement</span>
-        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;line-height:1.3;" class="en">The intersection of <em>five disciplines.</em></h3>
-        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;line-height:1.3;" class="fr">L'intersection de <em>cinq disciplines.</em></h3>
-        <div class="int-items">
-          <div class="ii en">Hospitality Strategy</div><div class="ii fr">Stratégie hôtelière</div>
-          <div class="ii en">F&B Expertise</div><div class="ii fr">Expertise F&B</div>
-          <div class="ii en">Brand Experience &amp; Creative Direction</div><div class="ii fr">Expérience de marque &amp; direction créative</div>
-          <div class="ii en">Operational Performance</div><div class="ii fr">Performance opérationnelle</div>
-          <div class="ii en">Digital Intelligence &amp; AI Tools</div><div class="ii fr">Intelligence digitale &amp; outils IA</div>
+        <div class="disc-panel" data-panel="3">
+          <div class="dp-tag"><span data-en>AI Tools · SaaS · Automation</span><span data-fr>Outils IA · SaaS · Automatisation</span></div>
+          <h3>Za3fran Digital</h3>
+          <p><span data-en>An AI-powered ecosystem of interconnected tools for building and running restaurants. One concept profile powers every module — fill in your details once, every tool starts pre-loaded.</span><span data-fr>Un écosystème d'outils IA interconnectés. Un seul profil concept alimente chaque module.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>Concept validation &amp; market analysis</span><span data-fr>Validation de concept &amp; analyse de marché</span></div>
+            <div><span data-en>Menu engineering &amp; food cost optimisation</span><span data-fr>Ingénierie de menu &amp; food cost</span></div>
+            <div><span data-en>Business plan &amp; financial modelling</span><span data-fr>Business plan &amp; modélisation financière</span></div>
+            <div><span data-en>Marketing strategy &amp; SOP generation</span><span data-fr>Stratégie marketing &amp; génération de SOP</span></div>
+          </div>
+          <a href="#platform" class="dp-cta"><span data-en>Explore the platform →</span><span data-fr>Explorer la plateforme →</span></a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section" id="contact">
-  <div class="cta-bg"></div>
-  <div class="cta-in reveal">
-    <span class="sl en">Get Started · Work With Us</span>
-    <span class="sl fr">Commencer · Travailler avec nous</span>
-    <h2 class="cta-t en">Ready to build<br><em>something real?</em></h2>
-    <h2 class="cta-t fr">Prêt à construire<br><em>quelque chose de réel ?</em></h2>
-    <p class="cta-d en">Whether you're launching a concept, improving an operation, commissioning an audit or looking for creative direction — Za3fran is built to deliver results, not just recommendations.</p>
-    <p class="cta-d fr">Que vous lanciez un concept, amélioriez une opération, commandiez un audit ou cherchiez une direction créative — Za3fran est construit pour produire des résultats, pas seulement des recommandations.</p>
-    <div class="cta-acts">
-      <a href="mailto:hello@za3fran.io" class="btn-p">hello@za3fran.io</a>
-      <a href="tel:+212648960306" class="btn-s">+212 648 960 306</a>
-      <a href="#validator" class="btn-o en" data-val-price="en">Validate My Concept — €199</a>
-      <a href="#validator" class="btn-o fr" data-val-price="fr">Valider mon concept — 199€</a>
+<!-- SCORECARD CRO PANEL -->
+<section class="tint-a" id="scorecard">
+  <div class="wrap">
+    <div class="cro-panel reveal">
+      <div>
+        <h2><span data-en>Get a first read on your <em>concept.</em></span><span data-fr>Première lecture de votre <em>concept.</em></span></h2>
+        <p class="measure"><span data-en>Answer 10 questions and receive a scored concept analysis — completely free. Delivered to your inbox in under 60 seconds.</span><span data-fr>Répondez à 10 questions et recevez une analyse scorée — entièrement gratuit, en moins de 60 secondes.</span></p>
+        <ul class="cro-list">
+          <li><span data-en>A concept score out of 100 with 5 sub-scores</span><span data-fr>Un score de concept sur 100 avec 5 sous-scores</span></li>
+          <li><span data-en>What's working and what needs sharpening</span><span data-fr>Ce qui fonctionne et ce qui doit être affiné</span></li>
+          <li><span data-en>5 critical questions every operator must answer</span><span data-fr>5 questions critiques que tout opérateur doit adresser</span></li>
+          <li><span data-en>Your single biggest blind spot — named directly</span><span data-fr>Votre principal angle mort — nommé directement</span></li>
+        </ul>
+        <a href="/scorecard" class="btn-primary" data-en>Get My Free Scorecard →</a><a href="/scorecard" class="btn-primary" data-fr>Obtenir mon Scorecard gratuit →</a>
+        <div class="cro-meta"><span data-en>Free · Under 4 minutes · No account needed</span><span data-fr>Gratuit · Moins de 4 min · Sans inscription</span></div>
+      </div>
+      <div class="cro-side">
+        <div class="section-tag" style="margin-bottom:14px"><span data-en>Want the full picture?</span><span data-fr>Une analyse complète ?</span></div>
+        <p style="color:var(--white);font-size:15px;line-height:1.7">
+          <span data-en>The <strong>Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for <strong style="color:var(--copper-bright)" data-price="en">€199</strong>.</span>
+          <span data-fr>Le <strong>Za3fran Concept Validator</strong> livre une analyse de 20 pages avec données de marché locales — pour <strong style="color:var(--copper-bright)" data-price="fr">199€</strong>.</span>
+        </p>
+        <div class="upsell"><span data-en>Most operators start free, then upgrade once they see their score.</span><span data-fr>La plupart des opérateurs démarrent gratuitement, puis passent au Validator après avoir vu leur score.</span></div>
+      </div>
     </div>
-    <p class="cta-hours en" style="margin-top:1.75rem;font-size:0.78rem;color:rgba(250,250,247,0.4);letter-spacing:0.05em;">WhatsApp available · Monday–Friday · 9:00–18:00 GMT</p>
-    <p class="cta-hours fr" style="margin-top:1.75rem;font-size:0.78rem;color:rgba(250,250,247,0.4);letter-spacing:0.05em;">WhatsApp disponible · Lundi–Vendredi · 9h00–18h00 GMT</p>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- STEP 1/2 + SAMPLE OUTPUT -->
+<section class="tint-b" id="validator">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Za3fran Digital · Available Now</span><span data-fr>Za3fran Digital · Disponible maintenant</span></div>
+    <h2 class="reveal" style="font-size:clamp(30px,4vw,46px);max-width:640px;margin-bottom:16px"><span data-en>From concept to <em>investor-ready.</em></span><span data-fr>Du concept au <em>dossier investisseur.</em></span></h2>
+    <p class="measure reveal" style="color:var(--muted);margin-bottom:48px;line-height:1.7"><span data-en>Two tools, one journey. Validate your concept with real market data — then turn that analysis directly into a complete business plan. No duplicate work.</span><span data-fr>Deux outils, un seul parcours. Validez votre concept — puis transformez cette analyse en business plan complet.</span></p>
+
+    <div class="steps reveal">
+      <div class="step-card">
+        <div class="st-tag"><span data-en>Step 1</span><span data-fr>Étape 1</span> — Concept Validator</div>
+        <h3 id="bp-val-price">€199</h3>
+        <p><span data-en>20-page strategic analysis — market fit, competitor intelligence, financial viability, risk register. Delivered in under 3 minutes.</span><span data-fr>Analyse stratégique 20 pages — adéquation marché, intelligence concurrentielle, viabilité financière. En moins de 3 minutes.</span></p>
+      </div>
+      <div class="step-card">
+        <div class="st-tag"><span data-en>Step 2</span><span data-fr>Étape 2</span> — Business Plan Essentials</div>
+        <h3><span id="bp-bundle-price">€699</span> <span style="font-size:13px;color:var(--muted);font-weight:400" data-en>bundled</span><span style="font-size:13px;color:var(--muted);font-weight:400" data-fr>en bundle</span></h3>
+        <p><span data-en>Complete investor-ready business plan — financials Y1–Y3, market strategy, operations, risk analysis. Generated directly from your Validator data. <span id="bp-save-en">Save €99</span> when bundled.</span><span data-fr>Business plan complet — financiers A1–A3, stratégie, opérations. Généré depuis vos données Validator. <span id="bp-save-fr">Économisez 99€</span>.</span></p>
+      </div>
+    </div>
+
+    <div class="bundle-cta reveal">
+      <a href="/validator?bundle=true" class="btn-primary" data-en data-bundle-label="en">Validator + Business Plan — €699</a>
+      <a href="/validator?bundle=true" class="btn-primary" data-fr data-bundle-label="fr">Validator + Business Plan — 699€</a>
+      <a href="/validator" class="link-secondary"><span data-en>Validator only — €199</span><span data-fr>Validator seul — 199€</span></a>
+      <a href="#scorecard" class="link-secondary"><span data-en>Free scorecard first</span><span data-fr>Score gratuit d'abord</span></a>
+    </div>
+
+    <div class="sample-panel reveal">
+      <div class="sample-label"><span data-en>Concept Validator — Sample Output</span><span data-fr>Concept Validator — Exemple de livrable</span></div>
+      <div class="sample-grid">
+        <div class="score-ring"><div class="sr-num">72</div><div class="sr-lbl">/100</div></div>
+        <div class="sample-metric"><div class="sm-num">78</div><div class="sm-lbl" data-en>Concept Clarity</div><div class="sm-lbl" data-fr>Clarté du concept</div></div>
+        <div class="sample-metric"><div class="sm-num">61</div><div class="sm-lbl" data-en>Market Fit</div><div class="sm-lbl" data-fr>Adéquation marché</div></div>
+        <div class="sample-metric"><div class="sm-num">70</div><div class="sm-lbl" data-en>Financial Viability</div><div class="sm-lbl" data-fr>Viabilité financière</div></div>
+      </div>
+      <div class="unlock-note">↳ <span data-en>Business Plan Essentials unlocked — break-even ~14 months · Year 1 revenue MAD 2.4M · Startup cost MAD 1.2–1.8M</span><span data-fr>Business Plan Essentials débloqué — point mort ~14 mois · CA an 1 MAD 2.4M · Investissement MAD 1.2–1.8M</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM RAIL -->
+<section class="tint-a" id="platform">
+  <div class="wrap">
+    <div class="plat-wrap">
+      <div class="plat-copy reveal">
+        <div class="section-tag"><span data-en>Za3fran Digital · The Platform</span><span data-fr>Za3fran Digital · La Plateforme</span></div>
+        <h2><span data-en>One profile.<br><em>Every tool.</em></span><span data-fr>Un profil.<br><em>Chaque outil.</em></span></h2>
+        <p><span data-en>Every Za3fran Digital tool shares your concept data. Fill in your details once — every subsequent tool starts pre-loaded with your full project context.</span><span data-fr>Chaque outil partage vos données. Renseignez-les une fois — chaque outil suivant démarre pré-chargé.</span></p>
+        <a href="#" onclick="openModal();return false;" class="link-secondary"><span data-en>Join waitlist for new tools →</span><span data-fr>Liste d'attente nouveaux outils →</span></a>
+      </div>
+      <div class="tool-rail reveal">
+        <div class="tool-row">
+          <div class="tr-name">Concept Validator</div>
+          <div class="tr-desc"><span data-en>Market fit, competitive analysis, financial viability. 20-page AI report in under 3 minutes.</span><span data-fr>Adéquation marché, analyse concurrentielle. Rapport IA 20 pages en moins de 3 min.</span></div>
+          <span class="tr-status live" data-en>Live</span><span class="tr-status live" data-fr>Disponible</span>
+          <div class="tr-price"><span data-en data-price="en">€199</span><span data-fr data-price="fr">199€</span></div>
+        </div>
+        <div class="tool-row">
+          <div class="tr-name">Business Plan Essentials</div>
+          <div class="tr-desc"><span data-en data-bp-tile-price="en">€699 with Validator · €499 standalone</span><span data-fr data-bp-tile-price="fr">699€ avec Validator · 499€ seul</span></div>
+          <span class="tr-status live" data-en>Live</span><span class="tr-status live" data-fr>Disponible</span>
+          <div class="tr-price"></div>
+        </div>
+        <div class="tool-row">
+          <div class="tr-name"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></div>
+          <div class="tr-desc"><span data-en>Translate your validated concept into a costed menu architecture — recipe matrix, pricing strategy, local sourcing.</span><span data-fr>Architecture menu chiffrée — matrice recettes, stratégie prix, sourcing local.</span></div>
+          <span class="tr-status soon" data-en>Coming Soon</span><span class="tr-status soon" data-fr>Bientôt</span>
+          <a href="#" onclick="openModal('Menu Engineer');return false;" class="tr-price" style="color:var(--copper-bright)" data-en>Notify me →</a><a href="#" onclick="openModal('Menu Engineer');return false;" class="tr-price" style="color:var(--copper-bright)" data-fr>Me notifier →</a>
+        </div>
+        <div class="tool-row">
+          <div class="tr-name">Financial Builder</div>
+          <div class="tr-desc"><span data-en>Investor-grade P&amp;L modelling — startup costs, multi-scenario revenue projections, break-even, cash flow.</span><span data-fr>Modélisation P&amp;L investisseurs — coûts, projections multi-scénarios.</span></div>
+          <span class="tr-status soon" data-en>Coming Soon</span><span class="tr-status soon" data-fr>Bientôt</span>
+          <a href="#" onclick="openModal('Financial Builder');return false;" class="tr-price" style="color:var(--copper-bright)" data-en>Notify me →</a><a href="#" onclick="openModal('Financial Builder');return false;" class="tr-price" style="color:var(--copper-bright)" data-fr>Me notifier →</a>
+        </div>
+        <div class="tool-row">
+          <div class="tr-name"><span data-en>Staffing &amp; Marketing Plan</span><span data-fr>Staffing &amp; Plan Marketing</span></div>
+          <div class="tr-desc"><span data-en>Right team structure, service model, and launch marketing plan — built from your concept and capacity data.</span><span data-fr>Structure d'équipe, plan marketing de lancement.</span></div>
+          <span class="tr-status soon" data-en>Coming Soon</span><span class="tr-status soon" data-fr>Bientôt</span>
+          <a href="#" onclick="openModal('Staffing &amp; Marketing Plan');return false;" class="tr-price" style="color:var(--copper-bright)" data-en>Notify me →</a><a href="#" onclick="openModal('Staffing &amp; Marketing Plan');return false;" class="tr-price" style="color:var(--copper-bright)" data-fr>Me notifier →</a>
+        </div>
+        <div class="tool-row">
+          <div class="tr-name">Business Plan Pro</div>
+          <div class="tr-desc"><span data-en>The full investor package — modeled financials from all upstream tools, not benchmark estimates.</span><span data-fr>Le dossier investisseur complet — financiers modélisés depuis tous les outils amont.</span></div>
+          <span class="tr-status soon" data-en>Coming Soon</span><span class="tr-status soon" data-fr>Bientôt</span>
+          <a href="#" onclick="openModal('Business Plan Pro');return false;" class="tr-price" style="color:var(--copper-bright)" data-en>Notify me →</a><a href="#" onclick="openModal('Business Plan Pro');return false;" class="tr-price" style="color:var(--copper-bright)" data-fr>Me notifier →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERRITORY -->
+<section class="tint-b terr-section">
+  <div class="bg-img"><img src="https://www.za3fran.io/assets/africa.png" alt="Morocco — gateway to Africa"></div>
+  <div class="bg-overlay"></div>
+  <div class="wrap reveal">
+    <div class="section-tag"><span data-en>Our Territory</span><span data-fr>Notre Territoire</span></div>
+    <h2 style="font-size:clamp(28px,3.6vw,44px);margin-bottom:22px"><span data-en>Morocco.<br><em>Gateway to Africa.</em></span><span data-fr>Le Maroc.<br><em>Porte de l'Afrique.</em></span></h2>
+    <p class="measure" style="color:var(--muted);line-height:1.75">
+      <span data-en>Za3fran is rooted in Morocco — a market that combines French business culture, Arabic hospitality traditions and rapid economic development. From this base, we work across francophone and anglophone Africa.</span>
+      <span data-fr>Za3fran est ancré au Maroc — un marché qui conjugue culture d'affaires française, traditions d'hospitalité arabes et développement économique rapide.</span>
+    </p>
+    <div class="terr-tags">
+      <span>Casablanca</span><span>Marrakech</span><span>Rabat</span>
+      <span data-en>Francophone Africa</span><span data-fr>Afrique francophone</span>
+      <span data-en>Anglophone Africa</span><span data-fr>Afrique anglophone</span>
+      <span data-en>Indian Ocean</span><span data-fr>Océan Indien</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / PROOF -->
+<section class="tint-light" id="about">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>About Za3fran</span><span data-fr>À propos de Za3fran</span></div>
+    <h2 class="reveal" style="font-size:clamp(30px,4vw,46px);max-width:640px;margin-bottom:44px"><span data-en>Premium. Practical.<br><em>Results-oriented.</em></span><span data-fr>Premium. Pratique.<br><em>Orienté résultats.</em></span></h2>
+
+    <div class="proof-strip reveal">
+      <div class="proof-cell"><div class="pc-num">2015</div><div class="pc-lbl" data-en>Founded</div><div class="pc-lbl" data-fr>Fondation</div></div>
+      <div class="proof-cell"><div class="pc-num">04</div><div class="pc-lbl" data-en>Divisions</div><div class="pc-lbl" data-fr>Divisions</div></div>
+      <div class="proof-cell"><div class="pc-num" data-en>Morocco</div><div class="pc-num" data-fr>Maroc</div><div class="pc-lbl" data-en>Africa base</div><div class="pc-lbl" data-fr>Base Afrique</div></div>
+      <div class="proof-cell"><div class="pc-num">05</div><div class="pc-lbl" data-en>Core disciplines</div><div class="pc-lbl" data-fr>Disciplines clés</div></div>
+    </div>
+
+    <div class="about-quote reveal">
+      <span data-en>"Not just giving advice — helping clients structure, improve, launch, monitor and grow their business."</span>
+      <span data-fr>« Pas seulement donner des conseils — aider les clients à structurer, améliorer, lancer, suivre et développer leur activité. »</span>
+    </div>
+
+    <div class="about-body reveal">
+      <div>
+        <p><span data-en>Za3fran Consulting is a hospitality, F&amp;B and guest-experience consulting company built around one clear objective: helping hotels, restaurants, cafés, hospitality groups and lifestyle brands improve their concept, operations, customer experience, positioning and commercial performance.</span><span data-fr>Za3fran Consulting est une société de conseil construite autour d'un objectif clair : aider les hôtels, restaurants et marques lifestyle à améliorer leur concept, opérations et performance commerciale.</span></p>
+        <p><span data-en>Our positioning is premium, practical and results-oriented — not just recommendations, but hands-on support to structure, improve, launch, monitor and grow.</span><span data-fr>Notre positionnement est premium, pratique et orienté résultats — un accompagnement concret pour structurer, améliorer, lancer, suivre et développer.</span></p>
+      </div>
+      <div>
+        <div class="section-tag" style="margin-bottom:10px"><span data-en>The Name</span><span data-fr>Le Nom</span></div>
+        <h3 class="serif" style="font-size:22px;margin-bottom:14px">Za3fran · الزعفران</h3>
+        <p><span data-en>Saffron — the world's most precious spice. Rare, complex and transformative. Za3fran brings that same philosophy to every hospitality business we work with.</span><span data-fr>Le safran — l'épice la plus précieuse du monde. Rare, complexe et transformatrice. Za3fran apporte cette même philosophie à chaque entreprise avec laquelle nous travaillons.</span></p>
+        <div class="disc-tags">
+          <span data-en>Hospitality Strategy</span><span data-fr>Stratégie hôtelière</span>
+          <span data-en>F&amp;B Expertise</span><span data-fr>Expertise F&amp;B</span>
+          <span data-en>Brand &amp; Creative Direction</span><span data-fr>Marque &amp; direction créative</span>
+          <span data-en>Operational Performance</span><span data-fr>Performance opérationnelle</span>
+          <span data-en>Digital Intelligence &amp; AI</span><span data-fr>Intelligence digitale &amp; IA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="tint-b" id="contact">
+  <div class="cta-final wrap">
+    <div class="section-tag reveal" style="justify-content:center"><span data-en>Get Started · Work With Us</span><span data-fr>Commencer · Travailler avec nous</span></div>
+    <h2 class="reveal"><span data-en>Ready to build <em>something real?</em></span><span data-fr>Prêt à construire <em>quelque chose de réel ?</em></span></h2>
+    <p class="measure reveal"><span data-en>Whether you're launching a concept, improving an operation, commissioning an audit or looking for creative direction — Za3fran is built to deliver results, not just recommendations.</span><span data-fr>Que vous lanciez un concept, amélioriez une opération ou cherchiez une direction créative — Za3fran est construit pour produire des résultats.</span></p>
+    <div class="hero-ctas reveal" style="justify-content:center">
+      <a href="#validator" class="btn-primary" data-en data-val-price="en">Validate My Concept — €199</a>
+      <a href="#validator" class="btn-primary" data-fr data-val-price="fr">Valider mon concept — 199€</a>
+      <a href="https://wa.me/212648960306" class="link-secondary" data-en>WhatsApp us</a><a href="https://wa.me/212648960306" class="link-secondary" data-fr>Nous écrire sur WhatsApp</a>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div class="fg">
-    <div>
-      <div class="fb">Za3fran<span>.io</span></div>
-      <p class="ft en">Premium hospitality and F&B consulting — strategy, audits, creative direction and AI-powered tools. Morocco. Africa. Beyond.</p>
-      <p class="ft fr">Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA. Maroc. Afrique. Au-delà.</p>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px">Za3fran.io</div>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
+      </div>
+      <div>
+        <h4 data-en>Services</h4><h4 data-fr>Services</h4>
+        <ul>
+          <li><a href="#disciplines"><span data-en>Hospitality Consulting</span><span data-fr>Conseil Hôtellerie</span></a></li>
+          <li><a href="#disciplines">Za3fran Mystery</a></li>
+          <li><a href="#disciplines">Za3fran Design</a></li>
+          <li><a href="#platform">Za3fran Digital</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
+        <ul>
+          <li><a href="#validator">Concept Validator</a></li>
+          <li><a href="#platform"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></a></li>
+          <li><a href="/business-plan">Business Plan Essentials</a></li>
+          <li><a href="#platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
+        <ul>
+          <li><a href="#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
+          <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <div class="fct en">Services</div><div class="fct fr">Services</div>
-      <ul class="fl">
-        <li><a href="#services" class="en">Hospitality Consulting</a><a href="#services" class="fr">Conseil Hôtellerie</a></li>
-        <li><a href="#services" class="en">Za3fran Mystery</a><a href="#services" class="fr">Za3fran Mystery</a></li>
-        <li><a href="#services" class="en">Za3fran Design</a><a href="#services" class="fr">Za3fran Design</a></li>
-        <li><a href="#platform" class="en">Za3fran Digital</a><a href="#platform" class="fr">Za3fran Digital</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="fct en">Platform</div><div class="fct fr">Plateforme</div>
-      <ul class="fl">
-        <li><a href="#validator" class="en">Concept Validator</a><a href="#validator" class="fr">Validateur de Concept</a></li>
-        <li><a href="#platform" class="en">Menu Engineer</a><a href="#platform" class="fr">Ingénieur de Menu</a></li>
-        <li><a href="/business-plan" class="en">Business Plan Essentials</a><a href="/business-plan" class="fr">Business Plan Essentials</a></li>
-        <li><a href="#platform" class="en">All Tools</a><a href="#platform" class="fr">Tous les outils</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="fct en">Company</div><div class="fct fr">Entreprise</div>
-      <ul class="fl">
-        <li><a href="#about" class="en">About</a><a href="#about" class="fr">À propos</a></li>
-        <li><a href="#geography" class="en">Our Markets</a><a href="#geography" class="fr">Nos marchés</a></li>
-        <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
-        <li><a href="tel:+212648960306">+212 648 960 306</a></li>
-        <li><a href="https://wa.me/212648960306" target="_blank" rel="noopener">WhatsApp</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="fbot">
-    <span class="fcp en">© 2025 Za3fran Consulting. All rights reserved.</span>
-    <span class="fcp fr">© 2025 Za3fran Consulting. Tous droits réservés.</span>
-    <div style="display:flex;gap:0.75rem;align-items:center;">
-      <button onclick="setLang('en')" id="fEN" class="flang-btn" style="color:var(--copper);">EN</button>
-      <span style="color:var(--border);font-size:0.7rem;">|</span>
-      <button onclick="setLang('fr')" id="fFR" class="flang-btn" style="color:var(--muted);">FR</button>
+    <div class="foot-bottom">
+      <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
     </div>
   </div>
 </footer>
 
 <script>
-// ── LANGUAGE ──
-function setLang(l){
-  document.getElementById('body').classList.toggle('lang-fr', l==='fr');
-  document.getElementById('btnEN').classList.toggle('active', l==='en');
-  document.getElementById('btnFR').classList.toggle('active', l==='fr');
-  document.getElementById('fEN').style.color = l==='en' ? 'var(--copper)' : 'var(--muted)';
-  document.getElementById('fFR').style.color = l==='fr' ? 'var(--copper)' : 'var(--muted)';
-  document.documentElement.lang = l;
-}
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-// ── NAV ──
-document.getElementById('navToggle').addEventListener('click', ()=>document.getElementById('navLinks').classList.toggle('open'));
-document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').style.padding = window.scrollY > 60 ? '0.85rem 4rem' : '1.25rem 4rem';
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
 });
 
-// ── SCROLL REVEAL ──
-const obs = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+document.querySelectorAll('.disc-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelectorAll('.disc-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.disc-panel').forEach(p=>p.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelector('.disc-panel[data-panel="'+item.dataset.target+'"]').classList.add('active');
+  });
+});
 
-// ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-  const id=a.getAttribute('href').slice(1);
-  const el=document.getElementById(id);
-  if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'});}
-}));
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('is-visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-// ── SCORECARD ──
-const scores=[0,0,0,0,0];
-function pick(step,score){
-  scores[step]=score;
-  event.currentTarget.classList.add('sel');
-  document.getElementById('pd'+step).classList.add('done');
-  setTimeout(()=>{
-    const next=step+1;
-    if(next<5){
-      document.getElementById('st'+step).classList.remove('active');
-      document.getElementById('st'+next).classList.add('active');
-    } else {
-      document.getElementById('pd4').classList.add('done');
-      document.getElementById('steps').style.display='none';
-      document.getElementById('prog').style.display='none';
-      const total=scores.reduce((a,b)=>a+b,0);
-      const isFr=document.getElementById('body').classList.contains('lang-fr');
-      document.getElementById('srn').textContent=total;
-      let msg='';
-      if(total>=70) msg=isFr?'Votre concept est bien positionné. L\'analyse complète vous donnera les leviers pour maximiser vos chances de succès.':'Your concept is well-positioned. The full analysis will give you the levers to maximise your chances of success.';
-      else if(total>=45) msg=isFr?'Votre concept a du potentiel mais présente des zones d\'ombre. L\'analyse complète identifie précisément ce qui doit être affiné.':'Your concept has potential but has some blind spots. The full analysis pinpoints exactly what needs to be refined.';
-      else msg=isFr?'Votre concept est encore en construction. L\'analyse complète vous donnera un plan d\'action clair avant de vous engager davantage.':'Your concept is still taking shape. The full analysis will give you a clear action plan before committing further.';
-      document.getElementById('srm').textContent=msg;
-      document.getElementById('sres').classList.add('active');
-    }
-  },320);
-}
-function subSC(){
-  const e=document.getElementById('semail').value;
-  if(!e)return;
-  const isFr=document.getElementById('body').classList.contains('lang-fr');
-  document.getElementById('sres').innerHTML='<div style="text-align:center;padding:1.5rem 0;"><div style="color:var(--copper);font-size:1.5rem;margin-bottom:0.75rem;">✦</div><p style="font-size:0.88rem;color:rgba(250,250,247,0.6);line-height:1.7;">'+(isFr?'Merci. Nous vous enverrons votre score détaillé et quelques pistes d\'amélioration sous peu.':'Thank you. We\'ll send your detailed score and improvement pointers shortly.')+'</p></div>';
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.reveal').forEach(el=>{el.style.transition='none';el.classList.add('is-visible');});
 }
 
-// ── WAITLIST CONFIGURATION ──
-// EmailJS handles BOTH the welcome email to the user AND the admin notification to hello@za3fran.io
+// ── WAITLIST (EmailJS) ──
 const EMAILJS_PUBLIC_KEY = 'b1vodEoZjP84BKQWg';
 const EMAILJS_SERVICE_ID = 'service_intaecp';
-
-// Template 1: Welcome email sent to the person signing up
 const EMAILJS_TEMPLATE_USER = 'template_zsiefip';
-
-// Template 2: Notification email sent to hello@za3fran.io (you'll create this in EmailJS — see instructions)
 const EMAILJS_TEMPLATE_ADMIN = 'template_bo06e03';
-
-// Initialize EmailJS once page loads
-if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY_HERE') {
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-}
+if (typeof emailjs !== 'undefined') { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
 
 function openModal(toolName){
-  const checkboxes = document.querySelectorAll('.m_tool');
-  // If a specific tool is passed, pre-check only that one. Otherwise leave all unchecked.
-  checkboxes.forEach(cb => { cb.checked = (toolName && cb.value === toolName); });
+  document.querySelectorAll('.m_tool').forEach(cb => { cb.checked = (toolName && cb.value === toolName); });
   document.getElementById('mform').style.display='block';
   document.getElementById('msuc').classList.remove('show');
   document.getElementById('m_err').textContent='';
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
-
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow='';
 }
-
-document.getElementById('modal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('modal')) closeModal();
-});
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
 
 async function submitWL(){
-  const isFr = document.getElementById('body').classList.contains('lang-fr');
+  const isFr = document.body.classList.contains('lang-fr');
   const errEl = document.getElementById('m_err');
   errEl.textContent = '';
-
   const name = document.getElementById('m_name').value.trim();
   const email = document.getElementById('m_email').value.trim();
   const country = document.getElementById('m_country').value;
   const role = document.getElementById('m_role').value;
   const message = document.getElementById('m_msg').value.trim();
   const tools = Array.from(document.querySelectorAll('.m_tool:checked')).map(c=>c.value);
-
-  // Validation
-  if(!name || !email){
-    errEl.textContent = isFr ? 'Veuillez renseigner votre prénom et email.' : 'Please enter your first name and email.';
-    return;
-  }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    errEl.textContent = isFr ? 'Email non valide.' : 'Please enter a valid email.';
-    return;
-  }
-
-  // Disable submit buttons during processing
+  if(!name || !email){ errEl.textContent = isFr ? 'Veuillez renseigner votre prénom et email.' : 'Please enter your first name and email.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = isFr ? 'Email non valide.' : 'Please enter a valid email.'; return; }
   const btns = document.querySelectorAll('.mbtn');
   btns.forEach(b=>b.disabled=true);
-
   const toolsLabel = tools.length ? tools.join(', ') : (isFr ? 'tous nos outils' : 'all our tools');
-
   try {
-    const tasks = [];
-
-    // Build the parameters EmailJS templates can use
-    const baseParams = {
-      user_name: name,
-      user_email: email,
-      user_tools: toolsLabel,
-      user_country: country || '—',
-      user_role: role || '—',
-      user_message: message || '—',
-      reply_to: 'hello@za3fran.io',
-      admin_email: 'hello@za3fran.io',
-      submitted_at: new Date().toLocaleString('en-GB', { timeZone: 'Africa/Casablanca' })
-    };
-
-    if (typeof emailjs === 'undefined') {
-      throw new Error('EmailJS SDK not loaded');
-    }
-
-    // Send welcome email to the user
-    if(EMAILJS_TEMPLATE_USER && EMAILJS_TEMPLATE_USER !== 'YOUR_USER_TEMPLATE_ID_HERE'){
-      console.log('Sending welcome email to user...');
-      tasks.push(
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams)
-          .then(r => { console.log('✓ Welcome email sent:', r); return {type:'user', ok:true, r}; })
-          .catch(e => { console.error('✗ Welcome email failed:', e); return {type:'user', ok:false, e}; })
-      );
-    }
-
-    // Send notification email to hello@za3fran.io
-    if(EMAILJS_TEMPLATE_ADMIN && EMAILJS_TEMPLATE_ADMIN !== 'YOUR_ADMIN_TEMPLATE_ID_HERE'){
-      console.log('Sending admin notification...');
-      tasks.push(
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams)
-          .then(r => { console.log('✓ Admin notification sent:', r); return {type:'admin', ok:true, r}; })
-          .catch(e => { console.error('✗ Admin notification failed:', e); return {type:'admin', ok:false, e}; })
-      );
-    }
-
-    if(tasks.length === 0){
-      console.log('Waitlist signup (no templates configured yet):', baseParams);
-    }
-
+    const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
+    if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    const tasks = [
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))
+    ];
     const results = await Promise.allSettled(tasks);
-    const settled = results.map(r => r.value || r.reason);
-    console.log('Submission results:', settled);
-
-    const userEmailOK = settled.some(s => s.type === 'user' && s.ok);
-    const adminEmailOK = settled.some(s => s.type === 'admin' && s.ok);
-
-    // Show success only if at least one email succeeded
-    if (userEmailOK || adminEmailOK || tasks.length === 0) {
+    const settled = results.map(r=>r.value||r.reason);
+    const ok = settled.some(s=>s.ok);
+    if (ok) {
       document.getElementById('mform').style.display='none';
       document.getElementById('msuc').classList.add('show');
-
-      // Reset form for next use
       setTimeout(()=>{
-        document.getElementById('m_name').value='';
-        document.getElementById('m_email').value='';
-        document.getElementById('m_country').value='';
-        document.getElementById('m_role').value='';
+        document.getElementById('m_name').value=''; document.getElementById('m_email').value='';
+        document.getElementById('m_country').value=''; document.getElementById('m_role').value='';
         document.getElementById('m_msg').value='';
         document.querySelectorAll('.m_tool').forEach(c=>c.checked=false);
-      }, 200);
-    } else {
-      throw new Error('All email sends failed');
-    }
-
+      },200);
+    } else { throw new Error('All email sends failed'); }
     btns.forEach(b=>b.disabled=false);
   } catch (err) {
-    console.error('Waitlist submission error:', err);
     errEl.textContent = isFr ? "Une erreur s'est produite. Réessayez ou écrivez-nous à hello@za3fran.io." : "Something went wrong. Try again or email us at hello@za3fran.io.";
     btns.forEach(b=>b.disabled=false);
   }
 }
+
+// ── GA4 CTA TRACKING ──
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href^="/validator"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'validator_cta'})));
+  document.querySelectorAll('a[href="/scorecard"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'scorecard_cta'})));
+  document.querySelectorAll('a[href="#contact"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'contact_click'})));
+});
 </script>
-
-  <script>
-    // GA4 — CTA click tracking
-    document.addEventListener('DOMContentLoaded', function() {
-
-      // Track all clicks on validator CTA buttons (href="/validator")
-      document.querySelectorAll('a[href="/validator"]').forEach(function(el) {
-        el.addEventListener('click', function() {
-          gtag('event', 'cta_click', {
-            event_category: 'engagement',
-            event_label: 'validator_cta',
-            page_location: window.location.href
-          });
-        });
-      });
-
-      // Track scorecard CTA clicks (href="/scorecard")
-      document.querySelectorAll('a[href="/scorecard"], a[href*="scorecard"]').forEach(function(el) {
-        el.addEventListener('click', function() {
-          gtag('event', 'cta_click', {
-            event_category: 'engagement',
-            event_label: 'scorecard_cta',
-            page_location: window.location.href
-          });
-        });
-      });
-
-      // Track contact / Get Started nav click
-      document.querySelectorAll('a[href="#contact"], a[href*="contact"]').forEach(function(el) {
-        el.addEventListener('click', function() {
-          gtag('event', 'cta_click', {
-            event_category: 'engagement',
-            event_label: 'contact_click'
-          });
-        });
-      });
-
-    });
-  </script>
 </body>
 </html>
-
-
-
-
-
-
-
