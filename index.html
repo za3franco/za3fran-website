@@ -116,10 +116,10 @@ section{position:relative;padding:130px 0;}
 .section-tag::before{content:'';width:22px;height:1px;background:var(--copper);}
 
 /* ============ WHATSAPP + MODAL ============ */
-.wa-btn{position:fixed;bottom:24px;right:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s;}
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s;}
 .wa-btn:hover{transform:scale(1.08);}
 .wa-btn svg{width:28px;height:28px;fill:#fff;}
-.wa-tip{position:absolute;right:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-tip{position:absolute;left:64px;right:auto;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .wa-btn:hover .wa-tip{opacity:1;}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
 .modal.open{display:flex;}
@@ -181,7 +181,10 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 
 /* ============ DISCIPLINES — asymmetric index/detail ============ */
 .disc-wrap{display:grid;grid-template-columns:35% 65%;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;}
-.disc-index{background:rgba(255,255,255,.02);}
+.disc-index{background:rgba(255,255,255,.02);display:flex;flex-direction:column;}
+.disc-index-fill{flex:1;position:relative;min-height:40px;}
+.disc-index-fill::before{content:'';position:absolute;left:44px;top:0;bottom:28px;width:1px;background:linear-gradient(to bottom, rgba(201,134,42,.3), transparent);}
+.disc-index-fill::after{content:'';position:absolute;left:40px;bottom:24px;width:9px;height:9px;border-radius:50%;border:1px solid rgba(201,134,42,.35);}
 .disc-item{padding:26px 28px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;gap:16px;transition:background .3s;}
 .disc-item:last-child{border-bottom:none;}
 .disc-item .di-num{font-size:12px;color:var(--muted);font-weight:700;}
@@ -250,8 +253,9 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 @media(max-width:900px){.plat-wrap{grid-template-columns:1fr;}.tool-row{grid-template-columns:1fr;gap:8px;}}
 
 /* ============ TERRITORY ============ */
-.terr-section{overflow:hidden;padding:150px 0;}
-.terr-section .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.94) 0%,rgba(15,31,61,.78) 42%,rgba(10,14,24,.4) 100%);}
+.terr-section{overflow:hidden;padding:150px 0;background:var(--black);}
+.terr-section .bg-img img{object-fit:contain;object-position:center;opacity:.9;}
+.terr-section .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.94) 0%,rgba(15,31,61,.55) 42%,rgba(10,14,24,.25) 100%);}
 .terr-section .wrap{position:relative;z-index:2;}
 .terr-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
 .terr-tags span{font-size:12px;border:1px solid rgba(255,255,255,.18);padding:8px 16px;border-radius:100px;color:var(--white);opacity:.85;transition:.25s;}
@@ -360,7 +364,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 <nav id="nav">
   <div class="wrap">
     <a href="#" class="logo" style="display:flex;align-items:center;gap:10px">
-      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain">
+      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);">
       <span>Za3fran<span style="color:var(--copper)">.io</span></span>
     </a>
     <div class="navlinks">
@@ -374,8 +378,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 
 <!-- HERO -->
 <section class="hero tint-a">
-  <div class="bg-img"><img src="https://www.za3fran.io/assets/vision-to-table.jpg" alt="Za3fran — from vision to table"></div>
-  <div class="bg-overlay"></div>
+  <!-- HERO BACKGROUND IMAGE — placeholder removed, awaiting new photo (hands-on plating/service moment).
+       To add the final image once sourced: uncomment the line below and set the correct src. -->
+  <!-- <div class="bg-img"><img src="assets/hero-hands-plating.jpg" alt="Za3fran — hands-on craft"></div> -->
+  <div class="bg-overlay" style="background:radial-gradient(ellipse 70% 60% at 75% 30%, rgba(43,99,184,.22), transparent 60%), radial-gradient(ellipse 60% 50% at 10% 90%, rgba(201,134,42,.10), transparent 65%), var(--black);"></div>
   <div class="grain"></div>
   <div class="wash w1"></div>
   <div class="wash w2"></div>
@@ -433,6 +439,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
         <div class="disc-item" data-target="1"><span class="di-num">02</span><span class="di-name" data-en>Mystery</span><span class="di-name" data-fr>Mystery</span></div>
         <div class="disc-item" data-target="2"><span class="di-num">03</span><span class="di-name" data-en>Design</span><span class="di-name" data-fr>Design</span></div>
         <div class="disc-item" data-target="3"><span class="di-num">04</span><span class="di-name" data-en>Digital</span><span class="di-name" data-fr>Digital</span></div>
+        <div class="disc-index-fill"></div>
       </div>
       <div class="disc-detail">
         <div class="disc-panel active" data-panel="0">
