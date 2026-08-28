@@ -93,7 +93,8 @@ body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
 .wash{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.35;}
 
 /* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
+nav.menu-open{background:rgba(10,14,24,.98);}
 nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
 nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .logo{font-family:'Cormorant Garamond';font-size:22px;}
@@ -165,7 +166,10 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 .bg-img{position:absolute;inset:0;z-index:0;}
 .bg-img img{width:100%;height:100%;object-fit:cover;}
 .hero .bg-img{background:var(--black);}
-.hero .bg-img img{object-fit:contain;}
+.hero .bg-img img{object-fit:cover;object-position:75% center;}
+@media(max-width:760px){
+  .hero .bg-img img{object-fit:contain;object-position:center;}
+}
 .bg-overlay{position:absolute;inset:0;z-index:1;}
 .hero .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);}
 .hero .wrap{position:relative;z-index:2;}
@@ -385,7 +389,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 <nav id="nav">
   <div class="wrap">
     <a href="#" class="logo" style="display:flex;align-items:center;gap:10px">
-      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);">
+      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain;border-radius:6px;">
       <span>Za3fran<span style="color:var(--copper)">.io</span></span>
     </a>
     <div class="navlinks" id="navlinks">
@@ -759,8 +763,14 @@ window.addEventListener('scroll', () => {
 const navToggle = document.getElementById('navToggle');
 const navlinksEl = document.getElementById('navlinks');
 if(navToggle){
-  navToggle.addEventListener('click', () => navlinksEl.classList.toggle('open'));
-  navlinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navlinksEl.classList.remove('open')));
+  navToggle.addEventListener('click', () => {
+    navlinksEl.classList.toggle('open');
+    nav.classList.toggle('menu-open', navlinksEl.classList.contains('open'));
+  });
+  navlinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navlinksEl.classList.remove('open');
+    nav.classList.remove('menu-open');
+  }));
 }
 
 document.getElementById('langtoggle').addEventListener('click', e=>{
