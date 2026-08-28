@@ -83,7 +83,8 @@ img{max-width:100%;display:block;}
 /* bilingual toggle */
 body:not(.lang-fr) [data-fr]{display:none;}
 body.lang-fr [data-en]{display:none;}
-#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
 #langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
 #langtoggle button.active{background:var(--copper);color:var(--black);}
 
@@ -101,6 +102,17 @@ nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
 .navlinks a:hover::after{width:100%;}
 .navlinks a:hover{color:var(--white);}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:8px;flex-shrink:0;}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;}
+@media(max-width:760px){
+  nav .wrap{flex-wrap:wrap;}
+  .logo span:last-child{display:none;}
+  .navlinks{display:none;width:100%;flex-direction:column;align-items:flex-start;gap:0;order:3;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);margin-top:14px;}
+  .navlinks.open{display:flex;}
+  .navlinks a{padding:12px 0;font-size:15px;width:100%;}
+  .navlinks a.navcta{width:auto;margin-top:8px;}
+  .nav-toggle{display:flex;}
+}
 .navcta{border:1px solid var(--copper);padding:9px 20px;border-radius:100px;font-size:13px;transition:.25s;}
 .navcta:hover{background:var(--copper);color:var(--black);}
 
@@ -116,7 +128,8 @@ section{position:relative;padding:130px 0;}
 .section-tag::before{content:'';width:22px;height:1px;background:var(--copper);}
 
 /* ============ WHATSAPP + MODAL ============ */
-.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s;}
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
 .wa-btn:hover{transform:scale(1.08);}
 .wa-btn svg{width:28px;height:28px;fill:#fff;}
 .wa-tip{position:absolute;left:64px;right:auto;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -151,6 +164,8 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:90px;overflow:hidden;}
 .bg-img{position:absolute;inset:0;z-index:0;}
 .bg-img img{width:100%;height:100%;object-fit:cover;}
+.hero .bg-img{background:var(--black);}
+.hero .bg-img img{object-fit:contain;}
 .bg-overlay{position:absolute;inset:0;z-index:1;}
 .hero .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);}
 .hero .wrap{position:relative;z-index:2;}
@@ -166,9 +181,15 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(201,134,42,.28);}
 .link-secondary{font-size:14px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;transition:.25s;}
 .link-secondary:hover{color:var(--white);border-color:var(--copper);}
-.hero-strip{display:flex;gap:52px;margin-top:88px;padding-top:30px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
+.hero-strip{display:flex;gap:52px;margin-top:88px;padding-top:30px;padding-bottom:80px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
 .hero-strip .num{font-family:'Cormorant Garamond';font-size:32px;color:var(--copper-bright);}
 .hero-strip .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;max-width:16ch;}
+@media(max-width:640px){
+  .hero{padding-top:110px;padding-bottom:20px;}
+  .hero-ctas{flex-direction:column;align-items:stretch;gap:14px;}
+  .hero-ctas .btn-primary{text-align:center;}
+  .hero-strip{gap:28px 40px;margin-top:56px;padding-bottom:40px;}
+}
 
 /* ============ INTRO BAND (who we are, moved up) ============ */
 .intro-band{padding:64px 0;}
@@ -364,17 +385,16 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 <nav id="nav">
   <div class="wrap">
     <a href="#" class="logo" style="display:flex;align-items:center;gap:10px">
-      <span style="width:36px;height:36px;border-radius:9px;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
-        <img src="assets/logo.png" alt="Za3fran" style="width:28px;height:28px;object-fit:contain;">
-      </span>
+      <img src="assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);">
       <span>Za3fran<span style="color:var(--copper)">.io</span></span>
     </a>
-    <div class="navlinks">
+    <div class="navlinks" id="navlinks">
       <a href="#disciplines" data-en>Services</a><a href="#disciplines" data-fr>Services</a>
       <a href="#platform" data-en>Platform</a><a href="#platform" data-fr>Plateforme</a>
       <a href="#about" data-en>About</a><a href="#about" data-fr>À propos</a>
+      <a href="#contact" class="navcta" data-en>Get Started</a><a href="#contact" class="navcta" data-fr>Commencer</a>
     </div>
-    <a href="#contact" class="navcta" data-en>Get Started</a><a href="#contact" class="navcta" data-fr>Commencer</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
@@ -645,7 +665,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
       <div class="proof-cell"><div class="pc-num">2015</div><div class="pc-lbl" data-en>Founded</div><div class="pc-lbl" data-fr>Fondation</div></div>
       <div class="proof-cell"><div class="pc-num">04</div><div class="pc-lbl" data-en>Divisions</div><div class="pc-lbl" data-fr>Divisions</div></div>
       <div class="proof-cell"><div class="pc-num" data-en>Morocco</div><div class="pc-num" data-fr>Maroc</div><div class="pc-lbl" data-en>Africa base</div><div class="pc-lbl" data-fr>Base Afrique</div></div>
-      <div class="proof-cell"><div class="pc-num">05</div><div class="pc-lbl" data-en>Core disciplines</div><div class="pc-lbl" data-fr>Disciplines clés</div></div>
+      <div class="proof-cell"><div class="pc-num">04</div><div class="pc-lbl" data-en>Core disciplines</div><div class="pc-lbl" data-fr>Disciplines clés</div></div>
     </div>
 
     <div class="about-quote reveal">
@@ -731,7 +751,17 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 
 <script>
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+
+const navToggle = document.getElementById('navToggle');
+const navlinksEl = document.getElementById('navlinks');
+if(navToggle){
+  navToggle.addEventListener('click', () => navlinksEl.classList.toggle('open'));
+  navlinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navlinksEl.classList.remove('open')));
+}
 
 document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
