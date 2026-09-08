@@ -4,6 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran Digital — The Platform</title>
+<!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
+<script>
+(function(){
+  var PRICES = { MAD:{en:'MAD 1,990',fr:'1 990 MAD'}, EUR:{en:'€199',fr:'199€'}, USD:{en:'$219',fr:'$219'} };
+  var VAL_PRICES = {
+    MAD:{en:'Validate My Concept — MAD 1,990', fr:'Valider mon concept — 1 990 MAD'},
+    EUR:{en:'Validate My Concept — €199',      fr:'Valider mon concept — 199€'},
+    USD:{en:'Validate My Concept — $219',      fr:'Valider mon concept — $219'}
+  };
+  var BUNDLE_LABEL = {
+    MAD:{en:'Validator + Business Plan — MAD 6,990', fr:'Validator + Business Plan — 6 990 MAD'},
+    EUR:{en:'Validator + Business Plan — €699',      fr:'Validator + Business Plan — 699€'},
+    USD:{en:'Validator + Business Plan — $749',      fr:'Validator + Business Plan — $749'}
+  };
+  var BP_TILE_PRICE = {
+    MAD:{en:'MAD 6,990 with Validator · MAD 4,990 standalone', fr:'6 990 MAD avec Validator · 4 990 MAD seul'},
+    EUR:{en:'€699 with Validator · €499 standalone',           fr:'699€ avec Validator · 499€ seul'},
+    USD:{en:'$749 with Validator · $549 standalone',           fr:'$749 avec Validator · $549 seul'}
+  };
+  var VALIDATOR_PRICE = { MAD:'MAD 1,990', EUR:'€199', USD:'$219' };
+  var BUNDLE_PRICE    = { MAD:'MAD 6,990', EUR:'€699', USD:'$749' };
+  var BUNDLE_SAVE = {
+    MAD:{en:'Save MAD 990', fr:'Économisez 990 MAD'},
+    EUR:{en:'Save €99',     fr:'Économisez 99€'},
+    USD:{en:'Save $99',     fr:'Économisez 99$'}
+  };
+  function setCurrency(c){
+    window.ZA3FRAN_CURRENCY = c;
+    document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = PRICES[c][el.getAttribute('data-price')]; });
+    document.querySelectorAll('[data-val-price]').forEach(function(el){ el.textContent = VAL_PRICES[c][el.getAttribute('data-val-price')]; });
+    document.querySelectorAll('[data-bundle-label]').forEach(function(el){ el.textContent = BUNDLE_LABEL[c][el.getAttribute('data-bundle-label')]; });
+    document.querySelectorAll('[data-bp-tile-price]').forEach(function(el){ el.textContent = BP_TILE_PRICE[c][el.getAttribute('data-bp-tile-price')]; });
+    var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
+    var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
+    var se=document.getElementById('bp-save-en'); if(se) se.textContent = BUNDLE_SAVE[c].en;
+    var sf=document.getElementById('bp-save-fr'); if(sf) sf.textContent = BUNDLE_SAVE[c].fr;
+  }
+  function detectCurrency(){
+    fetch('/api/currency').then(function(r){return r.json();}).then(function(d){setCurrency(d.currency||'EUR');}).catch(function(){setCurrency('EUR');});
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', detectCurrency); } else { detectCurrency(); }
+})();
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
 
@@ -144,7 +187,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
       <span>←</span>
       <span data-en>Back to Za3fran.io</span><span data-fr>Retour à Za3fran.io</span>
     </a>
-    <a href="#contact" class="navcta" data-en>Get Started</a><a href="#contact" class="navcta" data-fr>Commencer</a>
+    <a href="#pricing" class="navcta" data-en>Get Started</a><a href="#pricing" class="navcta" data-fr>Commencer</a>
   </div>
 </nav>
 
@@ -154,7 +197,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
   <div class="wash w2"></div>
   <div class="wrap">
     <div class="eyebrow"><span data-en>Za3fran Digital</span><span data-fr>Za3fran Digital</span></div>
-    <h1><span data-en>One profile.<br><em>Every tool.</em></span><span data-fr>Un profil.<br><em>Chaque outil.</em></span></h1>
+    <h1><span data-en>One profile.<br><em>Every tool.</em></span><span data-fr>Un profil.<br><em>Tous les outils.</em></span></h1>
     <p class="sub"><span data-en>An AI-powered ecosystem built for restaurant and hospitality project owners — from a free first read on your concept to an investor-ready business plan, without filling in the same information twice.</span><span data-fr>Un écosystème d'outils IA pensé pour les porteurs de projets F&amp;B — d'une première lecture gratuite de votre concept jusqu'à un business plan prêt pour les investisseurs, sans jamais ressaisir la même information.</span></p>
     <div class="hero-ctas">
       <a href="/scorecard" class="btn-primary" data-en>Start Free — Get My Scorecard</a><a href="/scorecard" class="btn-primary" data-fr>Commencer — Score gratuit</a>
@@ -242,7 +285,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
 </section>
 
 <!-- PRICING -->
-<section class="tint-b">
+<section class="tint-b" id="pricing">
   <div class="wrap">
     <div class="section-tag reveal"><span data-en>Start Here</span><span data-fr>Commencer ici</span></div>
     <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:640px"><span data-en>Three ways to<br><em>get started.</em></span><span data-fr>Trois façons de<br><em>commencer.</em></span></h2>
@@ -330,19 +373,6 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
         <h4><span data-en>Can consultants use these tools for their own clients?</span><span data-fr>Les consultants peuvent-ils utiliser ces outils pour leurs clients ?</span></h4>
         <p><span data-en>Yes — consultants are welcome to use every tool as-is today. White-label branding for consulting firms is planned for a future release.</span><span data-fr>Oui — les consultants peuvent utiliser tous les outils dès aujourd'hui. Le marque blanche pour cabinets de conseil est prévu pour une prochaine version.</span></p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="tint-a" id="contact">
-  <div class="cta-final wrap">
-    <div class="section-tag reveal" style="justify-content:center"><span data-en>Ready When You Are</span><span data-fr>Prêt quand vous l'êtes</span></div>
-    <h2 class="reveal"><span data-en>Start with the<br><em>free read.</em></span><span data-fr>Commencez par la<br><em>lecture gratuite.</em></span></h2>
-    <p class="measure reveal"><span data-en>No account needed, no commitment — just a clear first read on where your concept stands today.</span><span data-fr>Sans inscription, sans engagement — juste une lecture claire de votre concept aujourd'hui.</span></p>
-    <div class="hero-ctas reveal">
-      <a href="/scorecard" class="btn-primary" data-en>Get My Free Scorecard</a><a href="/scorecard" class="btn-primary" data-fr>Obtenir mon Scorecard gratuit</a>
-      <a href="https://za3fran.io" class="link-secondary"><span data-en>← Back to Za3fran.io</span><span data-fr>← Retour à Za3fran.io</span></a>
     </div>
   </div>
 </section>
