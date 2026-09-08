@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Za3fran</title>
+  <meta name="description" content="Choose your Za3fran tool package. From concept validation to full business planning and menu engineering." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black:   #0a0a0a;
+      --charcoal:#1a1a1a;
+      --navy:    #0F1F3D;
+      --navy-mid:#162d54;
+      --navy-light:#1e3a6e;
+      --copper:  #C9862A;
+      --copper-light:#d99a45;
+      --cream:   #FAFAF7;
+      --cream-dim:#f0ede6;
+      --muted:   #888880;
+      --muted-light:#aaa89f;
+      --white:   #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(15,31,61,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,134,42,0.15);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      background: rgba(201,134,42,0.12);
+      padding: 0.35rem 0.9rem;
+      border-radius: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--muted-light);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cream); }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      padding: 9rem 3rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--cream);
+      max-width: 680px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--copper-light);
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    /* ── SECTION DIVIDER ──────────────────────────────── */
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(201,134,42,0.2);
+    }
+
+    /* ── GRID WRAPPER ─────────────────────────────────── */
+    .pricing-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 6rem;
+    }
+
+    /* ── CARDS ────────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .cards-grid.col-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid.col-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-grid.col-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: rgba(201,134,42,0.35);
+      background: rgba(255,255,255,0.055);
+      transform: translateY(-2px);
+    }
+
+    .card.featured {
+      border-color: rgba(201,134,42,0.5);
+      background: rgba(201,134,42,0.06);
+    }
+
+    .card.featured:hover {
+      border-color: var(--copper);
+      background: rgba(201,134,42,0.1);
+    }
+
+    .badge {
+      position: absolute;
+      top: -1px; right: 1.5rem;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--copper);
+      padding: 0.25rem 0.75rem;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .card-price {
+      margin-bottom: 1.5rem;
+    }
+
+    .price-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--cream);
+      line-height: 1;
+    }
+
+    .price-alt {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      font-weight: 300;
+    }
+
+    .price-saving {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--copper-light);
+      margin-top: 0.4rem;
+    }
+
+    .card-includes {
+      list-style: none;
+      margin-bottom: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card-includes li {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      padding-left: 1.1rem;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .card-includes li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--copper);
+      font-size: 0.7rem;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 3px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--copper);
+      color: var(--navy);
+    }
+
+    .btn-primary:hover {
+      background: var(--copper-light);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--cream);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--copper);
+      color: var(--copper-light);
+    }
+
+    /* ── RETURNING USER SECTION ───────────────────────── */
+    .returning-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 4rem;
+    }
+
+    .returning-note {
+      background: rgba(201,134,42,0.06);
+      border: 1px solid rgba(201,134,42,0.2);
+      border-radius: 4px;
+      padding: 1.75rem 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .returning-note-icon {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--copper);
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 0.1rem;
+    }
+
+    .returning-note-text h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.4rem;
+    }
+
+    .returning-note-text p {
+      font-size: 0.83rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      line-height: 1.6;
+    }
+
+    /* ── WHAT YOU GET ─────────────────────────────────── */
+    .deliverables-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 6rem;
+    }
+
+    .deliverables-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .deliverable {
+      background: rgba(15,31,61,0.8);
+      padding: 2rem;
+    }
+
+    .deliverable-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: rgba(201,134,42,0.3);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .deliverable h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+
+    .deliverable p {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      line-height: 1.65;
+    }
+
+    .deliverable-tag {
+      display: inline-block;
+      margin-top: 0.75rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--copper);
+      background: rgba(201,134,42,0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+    }
+
+    /* ── SPACER ───────────────────────────────────────── */
+    .spacer { margin-bottom: 4rem; }
+
+    /* ── FAQ ──────────────────────────────────────────── */
+    .faq-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 8rem;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .faq-item h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--muted-light);
+      line-height: 1.7;
+    }
+
+    .faq-item p a {
+      color: var(--copper-light);
+      text-decoration: none;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    footer a {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--cream); }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .pricing-section,
+      .returning-section,
+      .deliverables-section,
+      .faq-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .cards-grid.col-2,
+      .cards-grid.col-3,
+      .cards-grid.col-4 { grid-template-columns: 1fr; }
+      .deliverables-grid { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .returning-note { flex-direction: column; gap: 1rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+
+    /* ── SUBTLE NOISE TEXTURE ─────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      opacity: 0.025;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      z-index: 0;
+    }
+
+    body > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Za3fran</a>
+  <ul class="nav-links">
+    <li><a href="/platform">Platform</a></li>
+    <li><a href="/validator">Concept Validator</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="mailto:hello@za3fran.io">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-label">Pricing &amp; Packages</p>
+  <h1>The right tools,<br /><em>for where you are</em></h1>
+  <p class="hero-sub">Start with the Concept Validator. Add tools as your project grows. Every package includes professional AI-generated deliverables in your language and currency.</p>
+</div>
+
+<!-- ── SECTION 1: NEW USERS ──────────────────────────── -->
+<section class="pricing-section">
+  <p class="section-title">New to Za3fran — Start here</p>
+  <div class="cards-grid col-3">
+
+    <!-- Validator only -->
+    <div class="card">
+      <p class="card-label">Entry</p>
+      <p class="card-name">Concept Validator</p>
+      <p class="card-desc">Validate your F&B concept before investing. A full AI-powered diagnostic covering market fit, positioning, audience, financial viability, and risk profile.</p>
+      <div class="card-price">
+        <p class="price-main">€199</p>
+        <p class="price-alt">MAD 1,990 · $219</p>
+      </div>
+      <ul class="card-includes">
+        <li>20-page bilingual validation report</li>
+        <li>Market positioning analysis</li>
+        <li>Financial viability indicators</li>
+        <li>Risk profile &amp; action plan</li>
+      </ul>
+      <a href="/validator" class="btn btn-outline">Start with Validator</a>
+    </div>
+
+    <!-- Validator + BP -->
+    <div class="card featured">
+      <span class="badge">Most popular</span>
+      <p class="card-label">Bundle</p>
+      <p class="card-name">Validator + Business Plan</p>
+      <p class="card-desc">Validate your concept and get a complete business plan in one step. From idea to investor-ready document without additional forms.</p>
+      <div class="card-price">
+        <p class="price-main">€699</p>
+        <p class="price-alt">MAD 6,990 · $749</p>
+        <span class="price-saving">Save €99 vs separate</span>
+      </div>
+      <ul class="card-includes">
+        <li>Everything in Concept Validator</li>
+        <li>15–25 page business plan</li>
+        <li>Benchmark financial projections (3 years)</li>
+        <li>Menu strategy &amp; operational model</li>
+        <li>Structured data for all downstream tools</li>
+      </ul>
+      <a href="/validator?bundle=bundle_bp" class="btn btn-primary">Get Validator + Business Plan</a>
+    </div>
+
+    <!-- Validator + Menu -->
+    <div class="card">
+      <p class="card-label">Bundle</p>
+      <p class="card-name">Validator + Menu Engineer</p>
+      <p class="card-desc">Validate your concept and receive a complete, branded menu package — document, costed recipe matrix, and menu strategy report.</p>
+      <div class="card-price">
+        <p class="price-main">€499</p>
+        <p class="price-alt">MAD 4,990 · $549</p>
+        <span class="price-saving">Save €99 vs separate</span>
+      </div>
+      <ul class="card-includes">
+        <li>Everything in Concept Validator</li>
+        <li>Branded menu document (print-ready)</li>
+        <li>Costed recipe matrix (XLSX)</li>
+        <li>Menu strategy report + Brand Identity Kit</li>
+        <li>1 free regeneration included</li>
+      </ul>
+      <a href="/validator?bundle=bundle_menu" class="btn btn-outline">Get Validator + Menu</a>
+    </div>
+
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Full bundle -->
+  <div class="cards-grid col-2">
+
+    <div class="card featured">
+      <span class="badge">Best value</span>
+      <p class="card-label">Full Journey Bundle</p>
+      <p class="card-name">Validator + Business Plan + Menu Engineer</p>
+      <p class="card-desc">The complete project launch package. Validate your concept, produce an investor-ready business plan, and engineer your menu — all from a single intake form.</p>
+      <div class="card-price">
+        <p class="price-main">€849</p>
+        <p class="price-alt">MAD 8,490 · $949</p>
+        <span class="price-saving">Save €248 vs buying separately</span>
+      </div>
+      <ul class="card-includes">
+        <li>Concept Validator — full 20-page report</li>
+        <li>Business Plan Essentials — 15–25 pages, benchmark financials</li>
+        <li>Menu Engineer — branded menu, XLSX costing matrix, strategy report</li>
+        <li>Brand Identity Starter Kit included</li>
+        <li>All outputs in your language and currency</li>
+        <li>1 free Menu regeneration included</li>
+      </ul>
+      <a href="/validator?bundle=bundle_full" class="btn btn-primary">Get the Full Bundle</a>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+      <div class="card" style="flex:1;">
+        <p class="card-label">Coming soon</p>
+        <p class="card-name">Financial Builder</p>
+        <p class="card-desc">Investor-grade P&L modeling, multi-scenario projections, and break-even analysis. Replaces benchmark estimates with your real numbers.</p>
+        <div class="card-price">
+          <p class="price-main" style="font-size:1.4rem; color:var(--muted);">€499–€799</p>
+          <p class="price-alt">Phase 6 — 2026</p>
+        </div>
+        <span style="display:inline-block; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); background:rgba(255,255,255,0.05); padding:0.35rem 0.8rem; border-radius:2px;">Notify me when available →</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── RETURNING USERS ──────────────────────────────── -->
+<section class="returning-section">
+  <p class="section-title">Already have a Validator report?</p>
+
+  <div class="returning-note">
+    <div class="returning-note-icon">→</div>
+    <div class="returning-note-text">
+      <h3>Add tools to your existing project</h3>
+      <p>If you've already completed the Concept Validator, you can add the Business Plan or Menu Engineer at any time using your access code. Your concept data carries over — no need to fill in another form from scratch.</p>
+    </div>
+  </div>
+
+  <div class="cards-grid col-3">
+
+    <!-- BP standalone returning -->
+    <div class="card">
+      <p class="card-label">Add-on — Returning customer</p>
+      <p class="card-name">Business Plan Essentials</p>
+      <p class="card-desc">A full business plan generated from your existing Validator data. Enter your access code and your concept data pre-fills automatically.</p>
+      <div class="card-price">
+        <p class="price-main">€499</p>
+        <p class="price-alt">MAD 4,990 · $549</p>
+        <span class="price-saving">Loyalty rate — save €100</span>
+      </div>
+      <ul class="card-includes">
+        <li>15–25 page professional business plan</li>
+        <li>3-year financial projections with benchmarks</li>
+        <li>Menu strategy &amp; operational model</li>
+        <li>Uses your existing Validator concept data</li>
+      </ul>
+      <a href="/business-plan" class="btn btn-outline">Add Business Plan</a>
+    </div>
+
+    <!-- Menu standalone returning -->
+    <div class="card">
+      <p class="card-label">Add-on — Returning customer</p>
+      <p class="card-name">Menu Engineer</p>
+      <p class="card-desc">Transform your validated concept into a complete menu package. Branded document, costed recipe matrix, and strategy report with Brand Identity Kit.</p>
+      <div class="card-price">
+        <p class="price-main">€399</p>
+        <p class="price-alt">MAD 3,990 · $449</p>
+      </div>
+      <ul class="card-includes">
+        <li>Branded, print-ready menu document</li>
+        <li>Costed recipe matrix (XLSX download)</li>
+        <li>Menu strategy report + Brand Identity Kit</li>
+        <li>1 free regeneration included</li>
+        <li>Uses your existing Validator concept data</li>
+      </ul>
+      <a href="/menu-engineer" class="btn btn-outline">Add Menu Engineer</a>
+    </div>
+
+    <!-- Menu loyalty (has BP already) -->
+    <div class="card featured">
+      <span class="badge">Loyalty</span>
+      <p class="card-label">Add-on — Validator + BP customers</p>
+      <p class="card-name">Menu Engineer</p>
+      <p class="card-desc">Already have both the Validator and Business Plan? Add Menu Engineer at a loyalty rate. Your full concept context enriches every output.</p>
+      <div class="card-price">
+        <p class="price-main">€349</p>
+        <p class="price-alt">MAD 3,490 · $389</p>
+        <span class="price-saving">Loyalty rate — save €50</span>
+      </div>
+      <ul class="card-includes">
+        <li>Branded, print-ready menu document</li>
+        <li>Costed recipe matrix (XLSX download)</li>
+        <li>Menu strategy report + Brand Identity Kit</li>
+        <li>1 free regeneration included</li>
+        <li>Enriched by your full Validator + BP data</li>
+      </ul>
+      <a href="/menu-engineer?loyalty=true" class="btn btn-primary">Add Menu Engineer (loyalty)</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── WHAT YOU GET WITH MENU ENGINEER ─────────────── -->
+<section class="deliverables-section">
+  <p class="section-title">What Menu Engineer delivers</p>
+  <div class="deliverables-grid">
+    <div class="deliverable">
+      <p class="deliverable-num">01</p>
+      <h3>Branded Menu Document</h3>
+      <p>A complete, print-ready menu with visual identity derived from your concept — typography, layout density, item naming style, and description voice tailored to your positioning. Print to PDF directly from your browser.</p>
+      <span class="deliverable-tag">HTML → PDF</span>
+    </div>
+    <div class="deliverable">
+      <p class="deliverable-num">02</p>
+      <h3>Costed Recipe Matrix</h3>
+      <p>Every menu item with benchmark-estimated ingredient costs, target food cost percentage, suggested selling price, and gross margin — in your currency. A working document you edit in Excel or Google Sheets with real supplier quotes.</p>
+      <span class="deliverable-tag">XLSX download</span>
+    </div>
+    <div class="deliverable">
+      <p class="deliverable-num">03</p>
+      <h3>Menu Strategy Report</h3>
+      <p>The intelligence layer — pricing strategy, local sourcing recommendations, pre-opening menu engineering preview (stars / plowhorses / puzzles / dogs), gap analysis, and a Brand Identity Starter Kit with color palette, typography, and tone of voice guide.</p>
+      <span class="deliverable-tag">HTML report · permanent link</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────────── -->
+<section class="faq-section">
+  <p class="section-title">Questions</p>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <h4>Do I need the Validator first?</h4>
+      <p>Yes — the Validator is the intake form for the entire ecosystem. All downstream tools (Business Plan, Menu Engineer) pull from your Validator concept data. New users always start there. If you already have a report, use your access code to add tools.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Can I buy tools separately later?</h4>
+      <p>Yes. If you've already done the Validator, you can add the Business Plan or Menu Engineer at any time using your access code. The loyalty rate applies when you already hold both the Validator and Business Plan.</p>
+    </div>
+    <div class="faq-item">
+      <h4>What is a Menu regeneration?</h4>
+      <p>Every Menu Engineer purchase includes one free regeneration — if you want to adjust the concept direction, menu style, or brand inputs, you can update your choices and regenerate all three deliverables. Additional regenerations are €49 each, triggered directly from your report.</p>
+    </div>
+    <div class="faq-item">
+      <h4>What languages and currencies are supported?</h4>
+      <p>All reports are generated in both English and French. Financial figures and pricing are displayed in your local currency — EUR, MAD, or USD — detected automatically and used throughout the report.</p>
+    </div>
+    <div class="faq-item">
+      <h4>How are financial figures estimated?</h4>
+      <p>Business Plan Essentials uses regional F&B benchmarks clearly labeled as estimates — not modeled from real data. The upcoming Financial Builder (Phase 6) will replace these with investor-grade modeled projections from your actual inputs.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Something else?</h4>
+      <p>Write to us at <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> or WhatsApp <a href="https://wa.me/212648960306">+212 648 960 306</a>. We read everything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Za3fran Consulting. All rights reserved.</p>
+  <div style="display:flex; gap:2rem;">
+    <a href="/platform">Platform</a>
+    <a href="/validator">Get started</a>
+    <a href="mailto:hello@za3fran.io">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
