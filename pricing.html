@@ -1,774 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pricing — Za3fran</title>
-  <meta name="description" content="Choose your Za3fran tool package. From concept validation to full business planning and menu engineering." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --black:   #0a0a0a;
-      --charcoal:#1a1a1a;
-      --navy:    #0F1F3D;
-      --navy-mid:#162d54;
-      --navy-light:#1e3a6e;
-      --copper:  #C9862A;
-      --copper-light:#d99a45;
-      --cream:   #FAFAF7;
-      --cream-dim:#f0ede6;
-      --muted:   #888880;
-      --muted-light:#aaa89f;
-      --white:   #ffffff;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Za3fran</title>
+<meta name="description" content="Choose your Za3fran tool package. From concept validation to full business planning and menu engineering.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+img{max-width:100%;display:block;}
+::selection{background:var(--copper);color:var(--black);}
 
-    html { scroll-behavior: smooth; }
+/* bilingual toggle */
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--navy);
-      color: var(--cream);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
 
-    /* ── NAV ─────────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 3rem;
-      background: rgba(15,31,61,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(201,134,42,0.15);
-    }
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
+nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.navlinks{display:flex;gap:34px;font-size:14px;color:var(--muted);align-items:center;}
+.navlinks a{position:relative;}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
+.navlinks a:hover::after{width:100%;}
+.navlinks a:hover{color:var(--white);}
+@media(max-width:640px){
+  .logo span:last-child{display:none;}
+}
 
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--cream);
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      background: rgba(201,134,42,0.12);
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-    }
+/* hero */
+.hero{padding:150px 32px 70px;max-width:1180px;margin:0 auto;}
+.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:22px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+.hero h1{font-size:clamp(38px,5.5vw,58px);line-height:1.1;letter-spacing:-.01em;max-width:680px;margin-bottom:20px;}
+.hero p.sub{color:var(--muted);font-size:16.5px;line-height:1.7;max-width:560px;}
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
+/* section shell */
+.section-title{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid rgba(201,134,42,.2);display:flex;align-items:center;gap:10px;}
+.pricing-section{max-width:1180px;margin:0 auto;padding:0 32px 80px;}
 
-    .nav-links a {
-      font-size: 0.8rem;
-      font-weight: 400;
-      color: var(--muted-light);
-      text-decoration: none;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
+/* cards grid */
+.cards-grid{display:grid;gap:22px;}
+.cards-grid.col-2{grid-template-columns:repeat(2,1fr);}
+.cards-grid.col-3{grid-template-columns:repeat(3,1fr);}
 
-    .nav-links a:hover { color: var(--cream); }
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:32px;position:relative;transition:border-color .25s,background .25s,transform .2s;display:flex;flex-direction:column;}
+.card:hover{border-color:rgba(201,134,42,.35);background:rgba(255,255,255,.05);transform:translateY(-3px);}
+.card.featured{border-color:rgba(201,134,42,.5);background:rgba(201,134,42,.06);}
+.card.featured:hover{border-color:var(--copper);background:rgba(201,134,42,.1);}
 
-    /* ── HERO ─────────────────────────────────────────── */
-    .hero {
-      padding: 9rem 3rem 4rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+.badge{position:absolute;top:-1px;right:24px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);background:var(--copper);padding:5px 14px;border-radius:0 0 8px 8px;}
 
-    .hero-label {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--copper);
-      margin-bottom: 1.5rem;
-    }
+.card-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.card-name{font-family:'Cormorant Garamond';font-size:22px;color:var(--white);line-height:1.2;margin-bottom:10px;}
+.card-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:24px;flex-grow:1;}
 
-    .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.8rem, 5vw, 4.2rem);
-      font-weight: 300;
-      line-height: 1.1;
-      color: var(--cream);
-      max-width: 680px;
-      margin-bottom: 1.5rem;
-    }
+.card-price{margin-bottom:22px;}
+.price-main{font-family:'Cormorant Garamond';font-size:36px;color:var(--white);line-height:1;}
+.price-alt{font-size:12.5px;color:var(--muted);margin-top:6px;}
+.price-saving{display:inline-block;font-size:12px;font-weight:700;color:var(--copper-bright);margin-top:8px;}
 
-    .hero h1 em {
-      font-style: italic;
-      color: var(--copper-light);
-    }
+.card-includes{list-style:none;margin-bottom:26px;display:flex;flex-direction:column;gap:9px;}
+.card-includes li{font-size:13.5px;color:var(--muted);padding-left:20px;position:relative;line-height:1.5;}
+.card-includes li::before{content:'—';position:absolute;left:0;color:var(--copper);}
 
-    .hero-sub {
-      font-size: 1rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      max-width: 520px;
-      line-height: 1.7;
-    }
+.btn{display:block;width:100%;padding:15px 24px;text-align:center;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;border-radius:100px;cursor:pointer;border:none;transition:all .25s;}
+.btn-primary{background:var(--copper);color:var(--black);box-shadow:0 0 0 rgba(201,134,42,0);}
+.btn-primary:hover{background:var(--copper-bright);transform:translateY(-2px);box-shadow:0 10px 24px rgba(201,134,42,.25);}
+.btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.22);}
+.btn-outline:hover{border-color:var(--copper);color:var(--copper-bright);}
 
-    /* ── SECTION DIVIDER ──────────────────────────────── */
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--copper);
-      margin-bottom: 2rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid rgba(201,134,42,0.2);
-    }
+.spacer{margin-bottom:38px;}
 
-    /* ── GRID WRAPPER ─────────────────────────────────── */
-    .pricing-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 3rem 6rem;
-    }
+/* returning users */
+.returning-note{background:rgba(201,134,42,.06);border:1px solid rgba(201,134,42,.2);border-radius:14px;padding:28px 32px;display:flex;align-items:flex-start;gap:24px;margin-bottom:44px;}
+.returning-note-icon{font-family:'Cormorant Garamond';font-size:28px;color:var(--copper);flex-shrink:0;line-height:1;}
+.returning-note-text h3{font-family:'Cormorant Garamond';font-size:19px;color:var(--white);margin-bottom:6px;}
+.returning-note-text p{font-size:13.5px;color:var(--muted);line-height:1.65;}
 
-    /* ── CARDS ────────────────────────────────────────── */
-    .cards-grid {
-      display: grid;
-      gap: 1.5rem;
-    }
+/* deliverables */
+.deliverables-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
+.deliverable{background:var(--charcoal2);padding:32px;}
+.deliverable-num{font-family:'Cormorant Garamond';font-size:34px;color:rgba(201,134,42,.35);line-height:1;margin-bottom:14px;}
+.deliverable h3{font-family:'Cormorant Garamond';font-size:18.5px;color:var(--white);margin-bottom:10px;}
+.deliverable p{font-size:13.5px;color:var(--muted);line-height:1.7;}
+.deliverable-tag{display:inline-block;margin-top:14px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper-bright);background:rgba(201,134,42,.12);padding:4px 10px;border-radius:100px;}
 
-    .cards-grid.col-2 { grid-template-columns: repeat(2, 1fr); }
-    .cards-grid.col-3 { grid-template-columns: repeat(3, 1fr); }
-    .cards-grid.col-4 { grid-template-columns: repeat(4, 1fr); }
+/* faq */
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+.faq-item h4{font-family:'Cormorant Garamond';font-size:17px;color:var(--white);margin-bottom:8px;}
+.faq-item p{font-size:13.5px;color:var(--muted);line-height:1.75;}
+.faq-item p a{color:var(--copper-bright);}
 
-    .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 4px;
-      padding: 2rem;
-      position: relative;
-      transition: border-color 0.25s, background 0.25s, transform 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
+/* footer */
+footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.foot-grid h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.foot-grid ul{list-style:none;}
+.foot-grid li{margin-bottom:10px;font-size:13.5px;color:var(--muted);}
+.foot-grid li a:hover{color:var(--copper-bright);}
+.foot-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px;}
 
-    .card:hover {
-      border-color: rgba(201,134,42,0.35);
-      background: rgba(255,255,255,0.055);
-      transform: translateY(-2px);
-    }
-
-    .card.featured {
-      border-color: rgba(201,134,42,0.5);
-      background: rgba(201,134,42,0.06);
-    }
-
-    .card.featured:hover {
-      border-color: var(--copper);
-      background: rgba(201,134,42,0.1);
-    }
-
-    .badge {
-      position: absolute;
-      top: -1px; right: 1.5rem;
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--navy);
-      background: var(--copper);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0 0 4px 4px;
-    }
-
-    .card-label {
-      font-size: 0.65rem;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .card-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      font-weight: 500;
-      color: var(--cream);
-      line-height: 1.2;
-      margin-bottom: 0.5rem;
-    }
-
-    .card-desc {
-      font-size: 0.82rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-      flex-grow: 1;
-    }
-
-    .card-price {
-      margin-bottom: 1.5rem;
-    }
-
-    .price-main {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem;
-      font-weight: 400;
-      color: var(--cream);
-      line-height: 1;
-    }
-
-    .price-alt {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.3rem;
-      font-weight: 300;
-    }
-
-    .price-saving {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--copper-light);
-      margin-top: 0.4rem;
-    }
-
-    .card-includes {
-      list-style: none;
-      margin-bottom: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .card-includes li {
-      font-size: 0.8rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      padding-left: 1.1rem;
-      position: relative;
-      line-height: 1.4;
-    }
-
-    .card-includes li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--copper);
-      font-size: 0.7rem;
-    }
-
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 0.85rem 1.5rem;
-      text-align: center;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 3px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--copper);
-      color: var(--navy);
-    }
-
-    .btn-primary:hover {
-      background: var(--copper-light);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--cream);
-      border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--copper);
-      color: var(--copper-light);
-    }
-
-    /* ── RETURNING USER SECTION ───────────────────────── */
-    .returning-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 3rem 4rem;
-    }
-
-    .returning-note {
-      background: rgba(201,134,42,0.06);
-      border: 1px solid rgba(201,134,42,0.2);
-      border-radius: 4px;
-      padding: 1.75rem 2rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    .returning-note-icon {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      color: var(--copper);
-      flex-shrink: 0;
-      line-height: 1;
-      margin-top: 0.1rem;
-    }
-
-    .returning-note-text h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: var(--cream);
-      margin-bottom: 0.4rem;
-    }
-
-    .returning-note-text p {
-      font-size: 0.83rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      line-height: 1.6;
-    }
-
-    /* ── WHAT YOU GET ─────────────────────────────────── */
-    .deliverables-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 3rem 6rem;
-    }
-
-    .deliverables-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .deliverable {
-      background: rgba(15,31,61,0.8);
-      padding: 2rem;
-    }
-
-    .deliverable-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.5rem;
-      font-weight: 300;
-      color: rgba(201,134,42,0.3);
-      line-height: 1;
-      margin-bottom: 1rem;
-    }
-
-    .deliverable h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.15rem;
-      font-weight: 500;
-      color: var(--cream);
-      margin-bottom: 0.5rem;
-    }
-
-    .deliverable p {
-      font-size: 0.8rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      line-height: 1.65;
-    }
-
-    .deliverable-tag {
-      display: inline-block;
-      margin-top: 0.75rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--copper);
-      background: rgba(201,134,42,0.1);
-      padding: 0.2rem 0.6rem;
-      border-radius: 2px;
-    }
-
-    /* ── SPACER ───────────────────────────────────────── */
-    .spacer { margin-bottom: 4rem; }
-
-    /* ── FAQ ──────────────────────────────────────────── */
-    .faq-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 3rem 8rem;
-    }
-
-    .faq-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    .faq-item h4 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--cream);
-      margin-bottom: 0.5rem;
-    }
-
-    .faq-item p {
-      font-size: 0.82rem;
-      font-weight: 300;
-      color: var(--muted-light);
-      line-height: 1.7;
-    }
-
-    .faq-item p a {
-      color: var(--copper-light);
-      text-decoration: none;
-    }
-
-    /* ── FOOTER ───────────────────────────────────────── */
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 2rem 3rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    footer p {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-weight: 300;
-    }
-
-    footer a {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    footer a:hover { color: var(--cream); }
-
-    /* ── RESPONSIVE ───────────────────────────────────── */
-    @media (max-width: 900px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
-      .hero { padding: 7rem 1.5rem 3rem; }
-      .pricing-section,
-      .returning-section,
-      .deliverables-section,
-      .faq-section { padding-left: 1.5rem; padding-right: 1.5rem; }
-      .cards-grid.col-2,
-      .cards-grid.col-3,
-      .cards-grid.col-4 { grid-template-columns: 1fr; }
-      .deliverables-grid { grid-template-columns: 1fr; }
-      .faq-grid { grid-template-columns: 1fr; }
-      .returning-note { flex-direction: column; gap: 1rem; }
-      footer { flex-direction: column; gap: 1rem; text-align: center; }
-    }
-
-    /* ── SUBTLE NOISE TEXTURE ─────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      opacity: 0.025;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-size: 200px 200px;
-      z-index: 0;
-    }
-
-    body > * { position: relative; z-index: 1; }
-  </style>
+@media(max-width:900px){
+  .cards-grid.col-2,.cards-grid.col-3{grid-template-columns:1fr;}
+  .deliverables-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .returning-note{flex-direction:column;gap:14px;}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:28px 24px;}
+  .foot-grid > div:first-child{grid-column:1 / -1;}
+}
+@media(max-width:480px){
+  .foot-grid{grid-template-columns:1fr;}
+  .navlinks{gap:18px;font-size:13px;}
+}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">Za3fran</a>
-  <ul class="nav-links">
-    <li><a href="/platform">Platform</a></li>
-    <li><a href="/validator">Concept Validator</a></li>
-    <li><a href="/#about">About</a></li>
-    <li><a href="mailto:hello@za3fran.io">Contact</a></li>
-  </ul>
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
+
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
+      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+    </a>
+    <div class="navlinks">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+    </div>
+  </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <p class="hero-label">Pricing &amp; Packages</p>
-  <h1>The right tools,<br /><em>for where you are</em></h1>
-  <p class="hero-sub">Start with the Concept Validator. Add tools as your project grows. Every package includes professional AI-generated deliverables in your language and currency.</p>
+  <p class="eyebrow"><span data-en>Pricing &amp; Packages</span><span data-fr>Tarifs &amp; Formules</span></p>
+  <h1><span data-en>The right tools,<br>for <em>where you are.</em></span><span data-fr>Les bons outils,<br>selon <em>votre étape.</em></span></h1>
+  <p class="sub"><span data-en>Start with the Concept Validator. Add tools as your project grows. Every package includes professional AI-generated deliverables in your language and currency.</span><span data-fr>Commencez avec le Concept Validator. Ajoutez des outils au fil de votre projet. Chaque formule inclut des livrables professionnels générés par IA, dans votre langue et votre devise.</span></p>
 </div>
 
-<!-- ── SECTION 1: NEW USERS ──────────────────────────── -->
+<!-- ── NEW USERS ──────────────────────────────────────── -->
 <section class="pricing-section">
-  <p class="section-title">New to Za3fran — Start here</p>
+  <p class="section-title"><span data-en>New to Za3fran — Start here</span><span data-fr>Nouveau chez Za3fran — Commencez ici</span></p>
   <div class="cards-grid col-3">
 
-    <!-- Validator only -->
     <div class="card">
-      <p class="card-label">Entry</p>
+      <p class="card-label"><span data-en>Entry</span><span data-fr>Entrée</span></p>
       <p class="card-name">Concept Validator</p>
-      <p class="card-desc">Validate your F&B concept before investing. A full AI-powered diagnostic covering market fit, positioning, audience, financial viability, and risk profile.</p>
+      <p class="card-desc"><span data-en>Validate your F&amp;B concept before investing. A full AI-powered diagnostic covering market fit, positioning, audience, financial viability, and risk profile.</span><span data-fr>Validez votre concept F&amp;B avant d'investir. Un diagnostic complet par IA couvrant l'adéquation au marché, le positionnement, l'audience, la viabilité financière et le profil de risque.</span></p>
       <div class="card-price">
         <p class="price-main">€199</p>
         <p class="price-alt">MAD 1,990 · $219</p>
       </div>
       <ul class="card-includes">
-        <li>20-page bilingual validation report</li>
-        <li>Market positioning analysis</li>
-        <li>Financial viability indicators</li>
-        <li>Risk profile &amp; action plan</li>
+        <li><span data-en>20-page bilingual validation report</span><span data-fr>Rapport de validation bilingue de 20 pages</span></li>
+        <li><span data-en>Market positioning analysis</span><span data-fr>Analyse de positionnement marché</span></li>
+        <li><span data-en>Financial viability indicators</span><span data-fr>Indicateurs de viabilité financière</span></li>
+        <li><span data-en>Risk profile &amp; action plan</span><span data-fr>Profil de risque &amp; plan d'action</span></li>
       </ul>
-      <a href="/validator" class="btn btn-outline">Start with Validator</a>
+      <a href="/validator" class="btn btn-outline"><span data-en>Start with Validator</span><span data-fr>Commencer avec Validator</span></a>
     </div>
 
-    <!-- Validator + BP -->
     <div class="card featured">
-      <span class="badge">Most popular</span>
-      <p class="card-label">Bundle</p>
-      <p class="card-name">Validator + Business Plan</p>
-      <p class="card-desc">Validate your concept and get a complete business plan in one step. From idea to investor-ready document without additional forms.</p>
+      <span class="badge"><span data-en>Most popular</span><span data-fr>Le plus populaire</span></span>
+      <p class="card-label"><span data-en>Bundle</span><span data-fr>Formule</span></p>
+      <p class="card-name"><span data-en>Validator + Business Plan</span><span data-fr>Validator + Business Plan</span></p>
+      <p class="card-desc"><span data-en>Validate your concept and get a complete business plan in one step. From idea to investor-ready document without additional forms.</span><span data-fr>Validez votre concept et obtenez un business plan complet en une seule étape. De l'idée au document prêt pour les investisseurs, sans formulaire supplémentaire.</span></p>
       <div class="card-price">
         <p class="price-main">€699</p>
         <p class="price-alt">MAD 6,990 · $749</p>
-        <span class="price-saving">Save €99 vs separate</span>
+        <span class="price-saving"><span data-en>Save €99 vs separate</span><span data-fr>Économisez 99€ vs séparé</span></span>
       </div>
       <ul class="card-includes">
-        <li>Everything in Concept Validator</li>
-        <li>15–25 page business plan</li>
-        <li>Benchmark financial projections (3 years)</li>
-        <li>Menu strategy &amp; operational model</li>
-        <li>Structured data for all downstream tools</li>
+        <li><span data-en>Everything in Concept Validator</span><span data-fr>Tout le Concept Validator</span></li>
+        <li><span data-en>15–25 page business plan</span><span data-fr>Business plan de 15 à 25 pages</span></li>
+        <li><span data-en>Benchmark financial projections (3 years)</span><span data-fr>Projections financières benchmark (3 ans)</span></li>
+        <li><span data-en>Menu strategy &amp; operational model</span><span data-fr>Stratégie menu &amp; modèle opérationnel</span></li>
+        <li><span data-en>Structured data for all downstream tools</span><span data-fr>Données structurées pour tous les outils suivants</span></li>
       </ul>
-      <a href="/validator?bundle=bundle_bp" class="btn btn-primary">Get Validator + Business Plan</a>
+      <a href="/validator?bundle=bundle_bp" class="btn btn-primary"><span data-en>Get Validator + Business Plan</span><span data-fr>Obtenir Validator + Business Plan</span></a>
     </div>
 
-    <!-- Validator + Menu -->
     <div class="card">
-      <p class="card-label">Bundle</p>
-      <p class="card-name">Validator + Menu Engineer</p>
-      <p class="card-desc">Validate your concept and receive a complete, branded menu package — document, costed recipe matrix, and menu strategy report.</p>
+      <p class="card-label"><span data-en>Bundle</span><span data-fr>Formule</span></p>
+      <p class="card-name"><span data-en>Validator + Menu Engineer</span><span data-fr>Validator + Menu Engineer</span></p>
+      <p class="card-desc"><span data-en>Validate your concept and receive a complete, branded menu package — document, costed recipe matrix, and menu strategy report.</span><span data-fr>Validez votre concept et recevez un pack menu complet et personnalisé — document, matrice de coûts, et rapport de stratégie menu.</span></p>
       <div class="card-price">
         <p class="price-main">€499</p>
         <p class="price-alt">MAD 4,990 · $549</p>
-        <span class="price-saving">Save €99 vs separate</span>
+        <span class="price-saving"><span data-en>Save €99 vs separate</span><span data-fr>Économisez 99€ vs séparé</span></span>
       </div>
       <ul class="card-includes">
-        <li>Everything in Concept Validator</li>
-        <li>Branded menu document (print-ready)</li>
-        <li>Costed recipe matrix (XLSX)</li>
-        <li>Menu strategy report + Brand Identity Kit</li>
-        <li>1 free regeneration included</li>
+        <li><span data-en>Everything in Concept Validator</span><span data-fr>Tout le Concept Validator</span></li>
+        <li><span data-en>Branded menu document (print-ready)</span><span data-fr>Document menu personnalisé (prêt à imprimer)</span></li>
+        <li><span data-en>Costed recipe matrix (XLSX)</span><span data-fr>Matrice de recettes costée (XLSX)</span></li>
+        <li><span data-en>Menu strategy report + Brand Identity Kit</span><span data-fr>Rapport stratégie menu + kit d'identité de marque</span></li>
+        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
       </ul>
-      <a href="/validator?bundle=bundle_menu" class="btn btn-outline">Get Validator + Menu</a>
+      <a href="/validator?bundle=bundle_menu" class="btn btn-outline"><span data-en>Get Validator + Menu</span><span data-fr>Obtenir Validator + Menu</span></a>
     </div>
 
   </div>
 
   <div class="spacer"></div>
 
-  <!-- Full bundle -->
   <div class="cards-grid col-2">
 
     <div class="card featured">
-      <span class="badge">Best value</span>
-      <p class="card-label">Full Journey Bundle</p>
-      <p class="card-name">Validator + Business Plan + Menu Engineer</p>
-      <p class="card-desc">The complete project launch package. Validate your concept, produce an investor-ready business plan, and engineer your menu — all from a single intake form.</p>
+      <span class="badge"><span data-en>Best value</span><span data-fr>Meilleure offre</span></span>
+      <p class="card-label"><span data-en>Full Journey Bundle</span><span data-fr>Formule Parcours Complet</span></p>
+      <p class="card-name"><span data-en>Validator + Business Plan + Menu Engineer</span><span data-fr>Validator + Business Plan + Menu Engineer</span></p>
+      <p class="card-desc"><span data-en>The complete project launch package. Validate your concept, produce an investor-ready business plan, and engineer your menu — all from a single intake form.</span><span data-fr>Le pack complet de lancement de projet. Validez votre concept, produisez un business plan prêt pour investisseurs, et concevez votre menu — à partir d'un seul formulaire.</span></p>
       <div class="card-price">
         <p class="price-main">€849</p>
         <p class="price-alt">MAD 8,490 · $949</p>
-        <span class="price-saving">Save €248 vs buying separately</span>
+        <span class="price-saving"><span data-en>Save €248 vs buying separately</span><span data-fr>Économisez 248€ vs achat séparé</span></span>
       </div>
       <ul class="card-includes">
-        <li>Concept Validator — full 20-page report</li>
-        <li>Business Plan Essentials — 15–25 pages, benchmark financials</li>
-        <li>Menu Engineer — branded menu, XLSX costing matrix, strategy report</li>
-        <li>Brand Identity Starter Kit included</li>
-        <li>All outputs in your language and currency</li>
-        <li>1 free Menu regeneration included</li>
+        <li><span data-en>Concept Validator — full 20-page report</span><span data-fr>Concept Validator — rapport complet 20 pages</span></li>
+        <li><span data-en>Business Plan Essentials — 15–25 pages, benchmark financials</span><span data-fr>Business Plan Essentials — 15 à 25 pages, finances benchmark</span></li>
+        <li><span data-en>Menu Engineer — branded menu, XLSX costing matrix, strategy report</span><span data-fr>Menu Engineer — menu personnalisé, matrice XLSX, rapport stratégique</span></li>
+        <li><span data-en>Brand Identity Starter Kit included</span><span data-fr>Kit de démarrage d'identité de marque inclus</span></li>
+        <li><span data-en>All outputs in your language and currency</span><span data-fr>Tous les livrables dans votre langue et devise</span></li>
+        <li><span data-en>1 free Menu regeneration included</span><span data-fr>1 régénération menu gratuite incluse</span></li>
       </ul>
-      <a href="/validator?bundle=bundle_full" class="btn btn-primary">Get the Full Bundle</a>
+      <a href="/validator?bundle=bundle_full" class="btn btn-primary"><span data-en>Get the Full Bundle</span><span data-fr>Obtenir la formule complète</span></a>
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:1.5rem;">
-      <div class="card" style="flex:1;">
-        <p class="card-label">Coming soon</p>
-        <p class="card-name">Financial Builder</p>
-        <p class="card-desc">Investor-grade P&L modeling, multi-scenario projections, and break-even analysis. Replaces benchmark estimates with your real numbers.</p>
-        <div class="card-price">
-          <p class="price-main" style="font-size:1.4rem; color:var(--muted);">€499–€799</p>
-          <p class="price-alt">Phase 6 — 2026</p>
-        </div>
-        <span style="display:inline-block; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); background:rgba(255,255,255,0.05); padding:0.35rem 0.8rem; border-radius:2px;">Notify me when available →</span>
+    <div class="card" style="justify-content:center;">
+      <p class="card-label"><span data-en>Coming soon</span><span data-fr>Bientôt disponible</span></p>
+      <p class="card-name">Financial Builder</p>
+      <p class="card-desc"><span data-en>Investor-grade P&amp;L modeling, multi-scenario projections, and break-even analysis. Replaces benchmark estimates with your real numbers.</span><span data-fr>Modélisation P&amp;L de niveau investisseur, projections multi-scénarios et analyse du seuil de rentabilité. Remplace les estimations benchmark par vos vrais chiffres.</span></p>
+      <div class="card-price">
+        <p class="price-main" style="font-size:24px;color:var(--muted);">€499–€799</p>
+        <p class="price-alt"><span data-en>Phase 6 — 2026</span><span data-fr>Phase 6 — 2026</span></p>
       </div>
+      <span style="display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.05);padding:8px 14px;border-radius:100px;width:fit-content;"><span data-en>Notify me when available →</span><span data-fr>Me prévenir à la sortie →</span></span>
     </div>
 
   </div>
 </section>
 
 <!-- ── RETURNING USERS ──────────────────────────────── -->
-<section class="returning-section">
-  <p class="section-title">Already have a Validator report?</p>
+<section class="pricing-section">
+  <p class="section-title"><span data-en>Already have a Validator report?</span><span data-fr>Vous avez déjà un rapport Validator ?</span></p>
 
   <div class="returning-note">
     <div class="returning-note-icon">→</div>
     <div class="returning-note-text">
-      <h3>Add tools to your existing project</h3>
-      <p>If you've already completed the Concept Validator, you can add the Business Plan or Menu Engineer at any time using your access code. Your concept data carries over — no need to fill in another form from scratch.</p>
+      <h3><span data-en>Add tools to your existing project</span><span data-fr>Ajoutez des outils à votre projet existant</span></h3>
+      <p><span data-en>If you've already completed the Concept Validator, you can add the Business Plan or Menu Engineer at any time using your access code. Your concept data carries over — no need to fill in another form from scratch.</span><span data-fr>Si vous avez déjà complété le Concept Validator, vous pouvez ajouter le Business Plan ou le Menu Engineer à tout moment avec votre code d'accès. Vos données de concept sont reprises automatiquement — pas besoin de tout ressaisir.</span></p>
     </div>
   </div>
 
   <div class="cards-grid col-3">
 
-    <!-- BP standalone returning -->
     <div class="card">
-      <p class="card-label">Add-on — Returning customer</p>
+      <p class="card-label"><span data-en>Add-on — Returning customer</span><span data-fr>Complément — Client existant</span></p>
       <p class="card-name">Business Plan Essentials</p>
-      <p class="card-desc">A full business plan generated from your existing Validator data. Enter your access code and your concept data pre-fills automatically.</p>
+      <p class="card-desc"><span data-en>A full business plan generated from your existing Validator data. Enter your access code and your concept data pre-fills automatically.</span><span data-fr>Un business plan complet généré à partir de vos données Validator existantes. Entrez votre code d'accès et vos données se pré-remplissent automatiquement.</span></p>
       <div class="card-price">
         <p class="price-main">€499</p>
         <p class="price-alt">MAD 4,990 · $549</p>
-        <span class="price-saving">Loyalty rate — save €100</span>
+        <span class="price-saving"><span data-en>Loyalty rate — save €100</span><span data-fr>Tarif fidélité — économisez 100€</span></span>
       </div>
       <ul class="card-includes">
-        <li>15–25 page professional business plan</li>
-        <li>3-year financial projections with benchmarks</li>
-        <li>Menu strategy &amp; operational model</li>
-        <li>Uses your existing Validator concept data</li>
+        <li><span data-en>15–25 page professional business plan</span><span data-fr>Business plan professionnel de 15 à 25 pages</span></li>
+        <li><span data-en>3-year financial projections with benchmarks</span><span data-fr>Projections financières sur 3 ans avec benchmarks</span></li>
+        <li><span data-en>Menu strategy &amp; operational model</span><span data-fr>Stratégie menu &amp; modèle opérationnel</span></li>
+        <li><span data-en>Uses your existing Validator concept data</span><span data-fr>Utilise vos données de concept Validator existantes</span></li>
       </ul>
-      <a href="/business-plan" class="btn btn-outline">Add Business Plan</a>
+      <a href="/business-plan" class="btn btn-outline"><span data-en>Add Business Plan</span><span data-fr>Ajouter le Business Plan</span></a>
     </div>
 
-    <!-- Menu standalone returning -->
     <div class="card">
-      <p class="card-label">Add-on — Returning customer</p>
+      <p class="card-label"><span data-en>Add-on — Returning customer</span><span data-fr>Complément — Client existant</span></p>
       <p class="card-name">Menu Engineer</p>
-      <p class="card-desc">Transform your validated concept into a complete menu package. Branded document, costed recipe matrix, and strategy report with Brand Identity Kit.</p>
+      <p class="card-desc"><span data-en>Transform your validated concept into a complete menu package. Branded document, costed recipe matrix, and strategy report with Brand Identity Kit.</span><span data-fr>Transformez votre concept validé en un pack menu complet. Document personnalisé, matrice de recettes costée, et rapport stratégique avec kit d'identité de marque.</span></p>
       <div class="card-price">
         <p class="price-main">€399</p>
         <p class="price-alt">MAD 3,990 · $449</p>
       </div>
       <ul class="card-includes">
-        <li>Branded, print-ready menu document</li>
-        <li>Costed recipe matrix (XLSX download)</li>
-        <li>Menu strategy report + Brand Identity Kit</li>
-        <li>1 free regeneration included</li>
-        <li>Uses your existing Validator concept data</li>
+        <li><span data-en>Branded, print-ready menu document</span><span data-fr>Document menu personnalisé, prêt à imprimer</span></li>
+        <li><span data-en>Costed recipe matrix (XLSX download)</span><span data-fr>Matrice de recettes costée (téléchargement XLSX)</span></li>
+        <li><span data-en>Menu strategy report + Brand Identity Kit</span><span data-fr>Rapport stratégie menu + kit d'identité de marque</span></li>
+        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
+        <li><span data-en>Uses your existing Validator concept data</span><span data-fr>Utilise vos données de concept Validator existantes</span></li>
       </ul>
-      <a href="/menu-engineer" class="btn btn-outline">Add Menu Engineer</a>
+      <a href="/menu-engineer" class="btn btn-outline"><span data-en>Add Menu Engineer</span><span data-fr>Ajouter Menu Engineer</span></a>
     </div>
 
-    <!-- Menu loyalty (has BP already) -->
     <div class="card featured">
-      <span class="badge">Loyalty</span>
-      <p class="card-label">Add-on — Validator + BP customers</p>
+      <span class="badge"><span data-en>Loyalty</span><span data-fr>Fidélité</span></span>
+      <p class="card-label"><span data-en>Add-on — Validator + BP customers</span><span data-fr>Complément — Clients Validator + BP</span></p>
       <p class="card-name">Menu Engineer</p>
-      <p class="card-desc">Already have both the Validator and Business Plan? Add Menu Engineer at a loyalty rate. Your full concept context enriches every output.</p>
+      <p class="card-desc"><span data-en>Already have both the Validator and Business Plan? Add Menu Engineer at a loyalty rate. Your full concept context enriches every output.</span><span data-fr>Vous avez déjà le Validator et le Business Plan ? Ajoutez Menu Engineer à tarif fidélité. Votre contexte complet enrichit chaque livrable.</span></p>
       <div class="card-price">
         <p class="price-main">€349</p>
         <p class="price-alt">MAD 3,490 · $389</p>
-        <span class="price-saving">Loyalty rate — save €50</span>
+        <span class="price-saving"><span data-en>Loyalty rate — save €50</span><span data-fr>Tarif fidélité — économisez 50€</span></span>
       </div>
       <ul class="card-includes">
-        <li>Branded, print-ready menu document</li>
-        <li>Costed recipe matrix (XLSX download)</li>
-        <li>Menu strategy report + Brand Identity Kit</li>
-        <li>1 free regeneration included</li>
-        <li>Enriched by your full Validator + BP data</li>
+        <li><span data-en>Branded, print-ready menu document</span><span data-fr>Document menu personnalisé, prêt à imprimer</span></li>
+        <li><span data-en>Costed recipe matrix (XLSX download)</span><span data-fr>Matrice de recettes costée (téléchargement XLSX)</span></li>
+        <li><span data-en>Menu strategy report + Brand Identity Kit</span><span data-fr>Rapport stratégie menu + kit d'identité de marque</span></li>
+        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
+        <li><span data-en>Enriched by your full Validator + BP data</span><span data-fr>Enrichi par vos données complètes Validator + BP</span></li>
       </ul>
-      <a href="/menu-engineer?loyalty=true" class="btn btn-primary">Add Menu Engineer (loyalty)</a>
+      <a href="/menu-engineer?loyalty=true" class="btn btn-primary"><span data-en>Add Menu Engineer (loyalty)</span><span data-fr>Ajouter Menu Engineer (fidélité)</span></a>
     </div>
 
   </div>
 </section>
 
-<!-- ── WHAT YOU GET WITH MENU ENGINEER ─────────────── -->
-<section class="deliverables-section">
-  <p class="section-title">What Menu Engineer delivers</p>
+<!-- ── DELIVERABLES ─────────────────────────────────── -->
+<section class="pricing-section">
+  <p class="section-title"><span data-en>What Menu Engineer delivers</span><span data-fr>Ce que livre Menu Engineer</span></p>
   <div class="deliverables-grid">
     <div class="deliverable">
       <p class="deliverable-num">01</p>
-      <h3>Branded Menu Document</h3>
-      <p>A complete, print-ready menu with visual identity derived from your concept — typography, layout density, item naming style, and description voice tailored to your positioning. Print to PDF directly from your browser.</p>
+      <h3><span data-en>Branded Menu Document</span><span data-fr>Document Menu Personnalisé</span></h3>
+      <p><span data-en>A complete, print-ready menu with visual identity derived from your concept — typography, layout density, item naming style, and description voice tailored to your positioning. Print to PDF directly from your browser.</span><span data-fr>Un menu complet, prêt à imprimer, avec une identité visuelle dérivée de votre concept — typographie, densité de mise en page, style de nommage et ton de description adaptés à votre positionnement. Imprimez en PDF directement depuis votre navigateur.</span></p>
       <span class="deliverable-tag">HTML → PDF</span>
     </div>
     <div class="deliverable">
       <p class="deliverable-num">02</p>
-      <h3>Costed Recipe Matrix</h3>
-      <p>Every menu item with benchmark-estimated ingredient costs, target food cost percentage, suggested selling price, and gross margin — in your currency. A working document you edit in Excel or Google Sheets with real supplier quotes.</p>
-      <span class="deliverable-tag">XLSX download</span>
+      <h3><span data-en>Costed Recipe Matrix</span><span data-fr>Matrice de Recettes Costée</span></h3>
+      <p><span data-en>Every menu item with benchmark-estimated ingredient costs, target food cost percentage, suggested selling price, and gross margin — in your currency. A working document you edit in Excel or Google Sheets with real supplier quotes.</span><span data-fr>Chaque article du menu avec coûts d'ingrédients estimés, pourcentage de food cost cible, prix de vente suggéré et marge brute — dans votre devise. Un document de travail que vous modifiez avec vos vrais devis fournisseurs.</span></p>
+      <span class="deliverable-tag"><span data-en>XLSX download</span><span data-fr>Téléchargement XLSX</span></span>
     </div>
     <div class="deliverable">
       <p class="deliverable-num">03</p>
-      <h3>Menu Strategy Report</h3>
-      <p>The intelligence layer — pricing strategy, local sourcing recommendations, pre-opening menu engineering preview (stars / plowhorses / puzzles / dogs), gap analysis, and a Brand Identity Starter Kit with color palette, typography, and tone of voice guide.</p>
-      <span class="deliverable-tag">HTML report · permanent link</span>
+      <h3><span data-en>Menu Strategy Report</span><span data-fr>Rapport Stratégie Menu</span></h3>
+      <p><span data-en>The intelligence layer — pricing strategy, local sourcing recommendations, pre-opening menu engineering preview (stars / plowhorses / puzzles / dogs), gap analysis, and a Brand Identity Starter Kit with color palette, typography, and tone of voice guide.</span><span data-fr>La couche d'intelligence — stratégie de prix, recommandations de sourcing local, aperçu d'ingénierie de menu pré-ouverture, analyse des opportunités manquées, et un kit d'identité de marque avec palette de couleurs, typographie et ton de voix.</span></p>
+      <span class="deliverable-tag"><span data-en>HTML report · permanent link</span><span data-fr>Rapport HTML · lien permanent</span></span>
     </div>
   </div>
 </section>
 
 <!-- ── FAQ ─────────────────────────────────────────── -->
-<section class="faq-section">
-  <p class="section-title">Questions</p>
+<section class="pricing-section">
+  <p class="section-title"><span data-en>Questions</span><span data-fr>Questions</span></p>
   <div class="faq-grid">
     <div class="faq-item">
-      <h4>Do I need the Validator first?</h4>
-      <p>Yes — the Validator is the intake form for the entire ecosystem. All downstream tools (Business Plan, Menu Engineer) pull from your Validator concept data. New users always start there. If you already have a report, use your access code to add tools.</p>
+      <h4><span data-en>Do I need the Validator first?</span><span data-fr>Ai-je besoin du Validator d'abord ?</span></h4>
+      <p><span data-en>Yes — the Validator is the intake form for the entire ecosystem. All downstream tools (Business Plan, Menu Engineer) pull from your Validator concept data. New users always start there. If you already have a report, use your access code to add tools.</span><span data-fr>Oui — le Validator est le point d'entrée de tout l'écosystème. Tous les outils suivants (Business Plan, Menu Engineer) utilisent vos données de concept Validator. Les nouveaux utilisateurs commencent toujours par là. Si vous avez déjà un rapport, utilisez votre code d'accès pour ajouter des outils.</span></p>
     </div>
     <div class="faq-item">
-      <h4>Can I buy tools separately later?</h4>
-      <p>Yes. If you've already done the Validator, you can add the Business Plan or Menu Engineer at any time using your access code. The loyalty rate applies when you already hold both the Validator and Business Plan.</p>
+      <h4><span data-en>Can I buy tools separately later?</span><span data-fr>Puis-je acheter les outils séparément plus tard ?</span></h4>
+      <p><span data-en>Yes. If you've already done the Validator, you can add the Business Plan or Menu Engineer at any time using your access code. The loyalty rate applies when you already hold both the Validator and Business Plan.</span><span data-fr>Oui. Si vous avez déjà fait le Validator, vous pouvez ajouter le Business Plan ou le Menu Engineer à tout moment avec votre code d'accès. Le tarif fidélité s'applique si vous avez déjà le Validator et le Business Plan.</span></p>
     </div>
     <div class="faq-item">
-      <h4>What is a Menu regeneration?</h4>
-      <p>Every Menu Engineer purchase includes one free regeneration — if you want to adjust the concept direction, menu style, or brand inputs, you can update your choices and regenerate all three deliverables. Additional regenerations are €49 each, triggered directly from your report.</p>
+      <h4><span data-en>What is a Menu regeneration?</span><span data-fr>Qu'est-ce qu'une régénération de menu ?</span></h4>
+      <p><span data-en>Every Menu Engineer purchase includes one free regeneration — if you want to adjust the concept direction, menu style, or brand inputs, you can update your choices and regenerate all three deliverables. Additional regenerations are €49 each, triggered directly from your report.</span><span data-fr>Chaque achat Menu Engineer inclut une régénération gratuite — pour ajuster la direction du concept, le style ou les éléments de marque, vous pouvez modifier vos choix et régénérer les trois livrables. Les régénérations supplémentaires sont à 49€ chacune, déclenchées directement depuis votre rapport.</span></p>
     </div>
     <div class="faq-item">
-      <h4>What languages and currencies are supported?</h4>
-      <p>All reports are generated in both English and French. Financial figures and pricing are displayed in your local currency — EUR, MAD, or USD — detected automatically and used throughout the report.</p>
+      <h4><span data-en>What languages and currencies are supported?</span><span data-fr>Quelles langues et devises sont prises en charge ?</span></h4>
+      <p><span data-en>All reports are generated in both English and French. Financial figures and pricing are displayed in your local currency — EUR, MAD, or USD — detected automatically and used throughout the report.</span><span data-fr>Tous les rapports sont générés en anglais et en français. Les chiffres financiers et les prix s'affichent dans votre devise locale — EUR, MAD ou USD — détectée automatiquement.</span></p>
     </div>
     <div class="faq-item">
-      <h4>How are financial figures estimated?</h4>
-      <p>Business Plan Essentials uses regional F&B benchmarks clearly labeled as estimates — not modeled from real data. The upcoming Financial Builder (Phase 6) will replace these with investor-grade modeled projections from your actual inputs.</p>
+      <h4><span data-en>How are financial figures estimated?</span><span data-fr>Comment les chiffres financiers sont-ils estimés ?</span></h4>
+      <p><span data-en>Business Plan Essentials uses regional F&amp;B benchmarks clearly labeled as estimates — not modeled from real data. The upcoming Financial Builder (Phase 6) will replace these with investor-grade modeled projections from your actual inputs.</span><span data-fr>Business Plan Essentials utilise des benchmarks F&amp;B régionaux clairement identifiés comme des estimations. Le futur Financial Builder (Phase 6) les remplacera par des projections modélisées de niveau investisseur.</span></p>
     </div>
     <div class="faq-item">
-      <h4>Something else?</h4>
-      <p>Write to us at <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> or WhatsApp <a href="https://wa.me/212648960306">+212 648 960 306</a>. We read everything.</p>
+      <h4><span data-en>Something else?</span><span data-fr>Autre chose ?</span></h4>
+      <p><span data-en>Write to us at <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> or WhatsApp <a href="https://wa.me/212648960306">+212 648 960 306</a>. We read everything.</span><span data-fr>Écrivez-nous à <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> ou sur WhatsApp au <a href="https://wa.me/212648960306">+212 648 960 306</a>. Nous lisons tout.</span></p>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <p>© 2026 Za3fran Consulting. All rights reserved.</p>
-  <div style="display:flex; gap:2rem;">
-    <a href="/platform">Platform</a>
-    <a href="/validator">Get started</a>
-    <a href="mailto:hello@za3fran.io">Contact</a>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px">Za3fran<span style="color:var(--copper)">.io</span></div>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
+      </div>
+      <div>
+        <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
+        <ul>
+          <li><a href="/validator">Concept Validator</a></li>
+          <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Menu Engineer</span></a></li>
+          <li><a href="/business-plan">Business Plan Essentials</a></li>
+          <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Pricing</h4><h4 data-fr>Tarifs</h4>
+        <ul>
+          <li><a href="/pricing"><span data-en>All packages</span><span data-fr>Toutes les formules</span></a></li>
+          <li><a href="/validator?bundle=bundle_full"><span data-en>Full journey bundle</span><span data-fr>Formule parcours complet</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
+        <ul>
+          <li><a href="/#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
+          <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    </div>
   </div>
 </footer>
+
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href^="/validator"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'pricing_validator_cta'})));
+});
+</script>
 
 </body>
 </html>
