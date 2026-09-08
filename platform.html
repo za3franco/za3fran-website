@@ -32,6 +32,7 @@
     EUR:{en:'Save €99',     fr:'Économisez 99€'},
     USD:{en:'Save $99',     fr:'Économisez 99$'}
   };
+  var BP_STANDALONE_PRICE = { MAD:{en:'MAD 4,990',fr:'4 990 MAD'}, EUR:{en:'€499',fr:'499€'}, USD:{en:'$549',fr:'$549'} };
   var BP_PRO_PRICE = {
     MAD:{en:'MAD 14,990–19,990', fr:'14 990–19 990 MAD'},
     EUR:{en:'€1,499–€1,999',     fr:'1 499€–1 999€'},
@@ -43,6 +44,7 @@
     document.querySelectorAll('[data-val-price]').forEach(function(el){ el.textContent = VAL_PRICES[c][el.getAttribute('data-val-price')]; });
     document.querySelectorAll('[data-bundle-label]').forEach(function(el){ el.textContent = BUNDLE_LABEL[c][el.getAttribute('data-bundle-label')]; });
     document.querySelectorAll('[data-bp-tile-price]').forEach(function(el){ el.textContent = BP_TILE_PRICE[c][el.getAttribute('data-bp-tile-price')]; });
+    document.querySelectorAll('[data-bp-standalone-price]').forEach(function(el){ el.textContent = BP_STANDALONE_PRICE[c][el.getAttribute('data-bp-standalone-price')]; });
     document.querySelectorAll('[data-bp-pro-price]').forEach(function(el){ el.textContent = BP_PRO_PRICE[c][el.getAttribute('data-bp-pro-price')]; });
     var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
     var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
@@ -176,7 +178,7 @@ section{position:relative;padding:110px 0;}
 .j-cta{font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;margin-left:14px;}
 
 /* PRICING */
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
 .price-col{background:var(--charcoal2);padding:36px 28px;display:flex;flex-direction:column;}
 .price-col.feat{background:linear-gradient(180deg,rgba(201,134,42,.08),transparent);}
 .price-col .p-name{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
@@ -188,7 +190,8 @@ section{position:relative;padding:110px 0;}
 .price-col .p-cta{display:block;text-align:center;margin-top:auto;padding:12px;padding-top:12px;border-radius:100px;border:1px solid rgba(255,255,255,.2);font-size:13px;transition:.3s;}
 .price-col.feat .p-cta{background:var(--copper);color:var(--black);border:none;font-weight:700;}
 .price-col .p-cta:hover{border-color:var(--copper);}
-@media(max-width:860px){.price-grid{grid-template-columns:1fr;}}
+@media(max-width:1080px){.price-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.price-grid{grid-template-columns:1fr;}}
 
 /* SAMPLE */
 .sample-panel{background:linear-gradient(150deg,var(--navy),var(--black));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:44px;margin-top:50px;}
@@ -346,11 +349,11 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
         <p class="j-desc"><span data-en>A 20-page strategic analysis — market fit, competitor intelligence, financial viability, full risk register.</span><span data-fr>Une analyse stratégique de 20 pages — adéquation marché, intelligence concurrentielle, viabilité financière, registre des risques.</span></p>
         <span class="j-price" data-en data-price="en">€199</span><span class="j-price" data-fr data-price="fr">199€</span>
       </div>
-      <div class="j-item live">
+      <a href="/business-plan" class="j-item live" style="display:block;text-decoration:none;color:inherit;">
         <div class="j-top"><span class="j-name">Business Plan Essentials</span><span class="j-status live" data-en>Live</span><span class="j-status live" data-fr>Disponible</span></div>
         <p class="j-desc"><span data-en>A complete, investor-ready business plan — financials Y1–Y3, market strategy, operations and risk — generated directly from your Validator data.</span><span data-fr>Un business plan complet — financiers A1–A3, stratégie, opérations et risques — généré depuis vos données Validator.</span></p>
         <span class="j-price" data-en data-bp-tile-price="en">€699 with Validator · €499 standalone</span><span class="j-price" data-fr data-bp-tile-price="fr">699€ avec Validator · 499€ seul</span>
-      </div>
+      </a>
       <div class="j-item">
         <div class="j-top"><span class="j-name" data-en>Menu Engineer</span><span class="j-name" data-fr>Ingénieur de Menu</span><span class="j-status soon" data-en>Coming Soon</span><span class="j-status soon" data-fr>Bientôt</span></div>
         <p class="j-desc"><span data-en>Turns your validated concept into a costed menu — recipe matrix, pricing strategy, local sourcing and plate design guidance.</span><span data-fr>Transforme votre concept validé en menu chiffré — matrice recettes, stratégie prix, sourcing local.</span></p>
@@ -420,6 +423,17 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
         </ul>
         <a href="/validator" class="p-cta"><span data-en>Validate my concept</span><span data-fr>Valider mon concept</span></a>
       </div>
+      <div class="price-col">
+        <div class="p-name" data-en>Already have a Validator?</div><div class="p-name" data-fr>Déjà un Validator ?</div>
+        <div class="p-cost" data-en data-bp-standalone-price="en">€499</div><div class="p-cost" data-fr data-bp-standalone-price="fr">499€</div>
+        <div class="p-note"><span data-en>Returning client rate</span><span data-fr>Tarif client existant</span></div>
+        <ul>
+          <li><span data-en>Investor-ready business plan</span><span data-fr>Business plan prêt investisseurs</span></li>
+          <li><span data-en>Financials, Y1–Y3</span><span data-fr>Financiers, A1–A3</span></li>
+          <li><span data-en>Delivered in 5 minutes</span><span data-fr>Livré en 5 minutes</span></li>
+        </ul>
+        <a href="/business-plan" class="p-cta"><span data-en>Get my Business Plan</span><span data-fr>Obtenir mon Business Plan</span></a>
+      </div>
     </div>
   </div>
 </section>
@@ -454,7 +468,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
     <div class="reveal">
       <div class="faq-item">
         <h4><span data-en>Do I need to buy the Validator before Business Plan Essentials?</span><span data-fr>Dois-je acheter le Validator avant Business Plan Essentials ?</span></h4>
-        <p><span data-en>Yes — Business Plan Essentials is generated from your Validator data, so it requires a completed Validator report first. The bundle is the fastest and cheapest way to get both.</span><span data-fr>Oui — Business Plan Essentials est généré depuis vos données Validator, un rapport Validator complété est donc requis. Le bundle est le moyen le plus rapide et économique d'obtenir les deux.</span></p>
+        <p><span data-en>Business Plan Essentials is generated from your Validator data, so a completed Validator report is required either way. If you're new, the bundle (€699) is the fastest and cheapest way to get both at once. If you already bought the Validator, you can add Business Plan Essentials on its own for €499 — just enter your Validator access code at checkout.</span><span data-fr>Business Plan Essentials est généré depuis vos données Validator, un rapport Validator est donc requis dans tous les cas. Si vous démarrez, le bundle (699€) est le moyen le plus rapide et économique d'obtenir les deux. Si vous avez déjà le Validator, ajoutez Business Plan Essentials seul pour 499€ — entrez simplement votre code d'accès Validator au moment du paiement.</span></p>
       </div>
       <div class="faq-item">
         <h4><span data-en>What currency will I be charged in?</span><span data-fr>Dans quelle devise serai-je facturé ?</span></h4>
