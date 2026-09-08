@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran Digital — The Platform</title>
+<!-- EmailJS SDK for waitlist auto-response emails -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
 <script>
 (function(){
@@ -30,12 +32,18 @@
     EUR:{en:'Save €99',     fr:'Économisez 99€'},
     USD:{en:'Save $99',     fr:'Économisez 99$'}
   };
+  var BP_PRO_PRICE = {
+    MAD:{en:'MAD 14,990–19,990', fr:'14 990–19 990 MAD'},
+    EUR:{en:'€1,499–€1,999',     fr:'1 499€–1 999€'},
+    USD:{en:'$1,599–$2,199',     fr:'$1,599–$2,199'}
+  };
   function setCurrency(c){
     window.ZA3FRAN_CURRENCY = c;
     document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = PRICES[c][el.getAttribute('data-price')]; });
     document.querySelectorAll('[data-val-price]').forEach(function(el){ el.textContent = VAL_PRICES[c][el.getAttribute('data-val-price')]; });
     document.querySelectorAll('[data-bundle-label]').forEach(function(el){ el.textContent = BUNDLE_LABEL[c][el.getAttribute('data-bundle-label')]; });
     document.querySelectorAll('[data-bp-tile-price]').forEach(function(el){ el.textContent = BP_TILE_PRICE[c][el.getAttribute('data-bp-tile-price')]; });
+    document.querySelectorAll('[data-bp-pro-price]').forEach(function(el){ el.textContent = BP_PRO_PRICE[c][el.getAttribute('data-bp-pro-price')]; });
     var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
     var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
     var se=document.getElementById('bp-save-en'); if(se) se.textContent = BUNDLE_SAVE[c].en;
@@ -75,6 +83,39 @@ body.lang-fr [data-en]{display:none;}
 body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
 #langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
 #langtoggle button.active{background:var(--copper);color:var(--black);}
+
+/* ============ WHATSAPP + MODAL ============ */
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;right:auto;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.modal.open{display:flex;}
+.mbox{background:var(--charcoal2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:40px;max-width:520px;width:100%;position:relative;max-height:92vh;overflow-y:auto;}
+.mcls{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.mcls:hover{color:var(--white);}
+.mt{font-family:'Cormorant Garamond';font-size:28px;font-weight:500;margin-bottom:8px;}
+.ms{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.minp{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--white);font-size:13.5px;font-family:'DM Sans';outline:none;margin-bottom:10px;transition:border-color .2s;}
+.minp:focus{border-color:var(--copper);}
+.minp::placeholder{color:var(--muted);}
+select.minp{appearance:none;cursor:pointer;}
+select.minp option{background:var(--charcoal2);color:var(--white);}
+.mtxt{resize:vertical;min-height:56px;font-family:'DM Sans';}
+.check-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);margin:16px 0 10px;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(250,250,247,.75);cursor:pointer;}
+.check input{width:14px;height:14px;accent-color:var(--copper);cursor:pointer;}
+.mbtn{width:100%;padding:14px;background:var(--copper);border:none;border-radius:100px;color:var(--black);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans';margin-top:8px;transition:background .2s;}
+.mbtn:hover{background:var(--copper-bright);}
+.mbtn:disabled{opacity:.6;cursor:wait;}
+.merr{margin-top:10px;font-size:13px;color:#E07060;text-align:center;min-height:16px;}
+.msuc{display:none;text-align:center;padding:30px 0;}
+.msuc.show{display:block;}
+.msuc-t{font-family:'Cormorant Garamond';font-size:24px;font-weight:500;margin-bottom:10px;}
+.msuc p{font-size:14px;color:var(--muted);line-height:1.7;}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
 nav.scrolled{background:rgba(10,14,24,.92);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 0;}
@@ -135,8 +176,8 @@ section{position:relative;padding:110px 0;}
 .j-cta{font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;margin-left:14px;}
 
 /* PRICING */
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;}
-.price-col{background:var(--charcoal2);padding:36px 28px;}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
+.price-col{background:var(--charcoal2);padding:36px 28px;display:flex;flex-direction:column;}
 .price-col.feat{background:linear-gradient(180deg,rgba(201,134,42,.08),transparent);}
 .price-col .p-name{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
 .price-col .p-cost{font-family:'Cormorant Garamond';font-size:38px;color:var(--white);margin-bottom:6px;}
@@ -144,7 +185,7 @@ section{position:relative;padding:110px 0;}
 .price-col ul{list-style:none;}
 .price-col li{font-size:13px;color:var(--muted);padding:8px 0;border-top:1px solid rgba(255,255,255,.06);}
 .price-col li:first-child{border-top:none;}
-.price-col .p-cta{display:block;text-align:center;margin-top:22px;padding:12px;border-radius:100px;border:1px solid rgba(255,255,255,.2);font-size:13px;transition:.3s;}
+.price-col .p-cta{display:block;text-align:center;margin-top:auto;padding:12px;padding-top:12px;border-radius:100px;border:1px solid rgba(255,255,255,.2);font-size:13px;transition:.3s;}
 .price-col.feat .p-cta{background:var(--copper);color:var(--black);border:none;font-weight:700;}
 .price-col .p-cta:hover{border-color:var(--copper);}
 @media(max-width:860px){.price-grid{grid-template-columns:1fr;}}
@@ -175,6 +216,61 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
 </style>
 </head>
 <body>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
+
+<!-- WAITLIST MODAL -->
+<div class="modal" id="modal">
+  <div class="mbox">
+    <button class="mcls" onclick="closeModal()">✕</button>
+    <div id="mform">
+      <h3 class="mt" data-en>Join the Waitlist</h3><h3 class="mt" data-fr>Liste d'attente</h3>
+      <p class="ms" data-en>Tell us a little about you and which tools matter most. We'll be in touch when they go live.</p>
+      <p class="ms" data-fr>Parlez-nous de vous et des outils qui vous intéressent. Nous vous contacterons dès leur lancement.</p>
+      <input class="minp" type="text" id="m_name" placeholder="First name / Prénom" required>
+      <input class="minp" type="email" id="m_email" placeholder="Email" required>
+      <select class="minp" id="m_country">
+        <option value="">Country / Région</option>
+        <option value="Morocco">Morocco / Maroc</option>
+        <option value="France">France</option>
+        <option value="Other Africa">Other Africa / Autre Afrique</option>
+        <option value="Indian Ocean">Indian Ocean / Océan Indien</option>
+        <option value="Other">Other / Autre</option>
+      </select>
+      <select class="minp" id="m_role">
+        <option value="">Your role / Votre rôle</option>
+        <option value="Restaurant owner">Restaurant owner / Restaurateur</option>
+        <option value="Hotel operator">Hotel operator / Hôtelier</option>
+        <option value="F&B consultant">F&B consultant / Consultant F&B</option>
+        <option value="Investor">Investor / Investisseur</option>
+        <option value="Other">Other / Autre</option>
+      </select>
+      <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" class="m_tool" value="Concept Validator"><span>Concept Validator</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Menu Engineer"><span>Menu Engineer</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Business Plan"><span>Business Plan</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Marketing Strategy"><span>Marketing</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="SOP Generator"><span>SOP Generator</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Intelligence Dashboard"><span>Intelligence</span></label>
+      </div>
+      <textarea class="minp mtxt" id="m_msg" rows="2" placeholder="Anything specific we should know? (optional) / Quelque chose à nous dire ? (facultatif)"></textarea>
+      <button class="mbtn" data-en onclick="submitWL()">Join the Waitlist</button>
+      <button class="mbtn" data-fr onclick="submitWL()">Rejoindre la liste</button>
+      <p class="merr" id="m_err"></p>
+    </div>
+    <div class="msuc" id="msuc">
+      <div style="color:var(--copper);font-size:26px;margin-bottom:12px">✦</div>
+      <h3 class="msuc-t" data-en>Welcome to Za3fran Digital.</h3><h3 class="msuc-t" data-fr>Bienvenue chez Za3fran Digital.</h3>
+      <p data-en>Check your inbox — a confirmation email is on its way.</p>
+      <p data-fr>Vérifiez votre boîte de réception — un email de confirmation est en route.</p>
+    </div>
+  </div>
+</div>
 
 <div id="langtoggle">
   <button data-l="en" class="active">EN</button>
@@ -274,7 +370,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
       <div class="j-item">
         <div class="j-top"><span class="j-name">Business Plan Pro</span><span class="j-status headline" data-en>Coming Soon · Headline</span><span class="j-status headline" data-fr>Bientôt · Produit phare</span></div>
         <p class="j-desc"><span data-en>The full investor package — modeled financials from every upstream tool you've completed, not benchmark estimates. The complete project dossier.</span><span data-fr>Le dossier investisseur complet — financiers modélisés depuis tous les outils réalisés, pas des estimations.</span></p>
-        <span class="j-price">€1,499–€1,999</span>
+        <span class="j-price" data-en data-bp-pro-price="en">€1,499–€1,999</span><span class="j-price" data-fr data-bp-pro-price="fr">1 499€–1 999€</span>
       </div>
     </div>
 
@@ -304,8 +400,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:44px 0;background:var(
       </div>
       <div class="price-col feat">
         <div class="p-name" data-en>Validator + Business Plan</div><div class="p-name" data-fr>Validator + Business Plan</div>
-        <div class="p-cost" data-en data-bundle-label="en">Validator + Business Plan — €699</div>
-        <div class="p-cost" style="font-size:38px" data-fr data-bundle-label="fr">Validator + Business Plan — 699€</div>
+        <div class="p-cost" id="bp-bundle-price">€699</div>
         <div class="p-note"><span data-en>Save €99 vs. separate</span><span data-fr>Économisez 99€</span></div>
         <ul>
           <li><span data-en>20-page strategic analysis</span><span data-fr>Analyse stratégique 20 pages</span></li>
@@ -406,7 +501,68 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.querySelectorAll('.reveal').forEach(el=>{el.style.transition='none';el.classList.add('is-visible');});
 }
 
-function openModal(){ alert('This wires into your existing waitlist modal once merged into the main site.'); }
+// ── WAITLIST (EmailJS) ──
+const EMAILJS_PUBLIC_KEY = 'b1vodEoZjP84BKQWg';
+const EMAILJS_SERVICE_ID = 'service_intaecp';
+const EMAILJS_TEMPLATE_USER = 'template_zsiefip';
+const EMAILJS_TEMPLATE_ADMIN = 'template_bo06e03';
+if (typeof emailjs !== 'undefined') { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+
+function openModal(toolName){
+  document.querySelectorAll('.m_tool').forEach(cb => { cb.checked = (toolName && cb.value === toolName); });
+  document.getElementById('mform').style.display='block';
+  document.getElementById('msuc').classList.remove('show');
+  document.getElementById('m_err').textContent='';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+
+async function submitWL(){
+  const isFr = document.body.classList.contains('lang-fr');
+  const errEl = document.getElementById('m_err');
+  errEl.textContent = '';
+  const name = document.getElementById('m_name').value.trim();
+  const email = document.getElementById('m_email').value.trim();
+  const country = document.getElementById('m_country').value;
+  const role = document.getElementById('m_role').value;
+  const message = document.getElementById('m_msg').value.trim();
+  const tools = Array.from(document.querySelectorAll('.m_tool:checked')).map(c=>c.value);
+  if(!name || !email){ errEl.textContent = isFr ? 'Veuillez renseigner votre prénom et email.' : 'Please enter your first name and email.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = isFr ? 'Email non valide.' : 'Please enter a valid email.'; return; }
+  const btns = document.querySelectorAll('.mbtn');
+  btns.forEach(b=>b.disabled=true);
+  const toolsLabel = tools.length ? tools.join(', ') : (isFr ? 'tous nos outils' : 'all our tools');
+  try {
+    const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
+    if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    const tasks = [
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))
+    ];
+    const results = await Promise.allSettled(tasks);
+    const settled = results.map(r=>r.value||r.reason);
+    const ok = settled.some(s=>s.ok);
+    if (ok) {
+      document.getElementById('mform').style.display='none';
+      document.getElementById('msuc').classList.add('show');
+      setTimeout(()=>{
+        document.getElementById('m_name').value=''; document.getElementById('m_email').value='';
+        document.getElementById('m_country').value=''; document.getElementById('m_role').value='';
+        document.getElementById('m_msg').value='';
+        document.querySelectorAll('.m_tool').forEach(c=>c.checked=false);
+      },200);
+    } else { throw new Error('All email sends failed'); }
+    btns.forEach(b=>b.disabled=false);
+  } catch (err) {
+    errEl.textContent = isFr ? "Une erreur s'est produite. Réessayez ou écrivez-nous à hello@za3fran.io." : "Something went wrong. Try again or email us at hello@za3fran.io.";
+    btns.forEach(b=>b.disabled=false);
+  }
+}
 </script>
 </body>
 </html>
