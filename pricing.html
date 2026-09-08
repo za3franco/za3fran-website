@@ -5,6 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Za3fran</title>
 <meta name="description" content="Choose your Za3fran tool package. From concept validation to full business planning and menu engineering.">
+<!-- Currency localisation: server-side IP detection via /api/currency (matches homepage pattern) -->
+<script>
+(function(){
+  var PRICE_TABLE = {
+    validator:      { EUR:{main:'€199', alt:'MAD 1,990 · $219'},  MAD:{main:'MAD 1,990', alt:'€199 · $219'},  USD:{main:'$219', alt:'€199 · MAD 1,990'} },
+    bundle_bp:      { EUR:{main:'€699', alt:'MAD 6,990 · $749'},  MAD:{main:'MAD 6,990', alt:'€699 · $749'},  USD:{main:'$749', alt:'€699 · MAD 6,990'} },
+    bundle_menu:    { EUR:{main:'€499', alt:'MAD 4,990 · $549'},  MAD:{main:'MAD 4,990', alt:'€499 · $549'},  USD:{main:'$549', alt:'€499 · MAD 4,990'} },
+    bundle_full:    { EUR:{main:'€849', alt:'MAD 8,490 · $949'},  MAD:{main:'MAD 8,490', alt:'€849 · $949'},  USD:{main:'$949', alt:'€849 · MAD 8,490'} },
+    bp_standalone:  { EUR:{main:'€499', alt:'MAD 4,990 · $549'},  MAD:{main:'MAD 4,990', alt:'€499 · $549'},  USD:{main:'$549', alt:'€499 · MAD 4,990'} },
+    menu_standard:  { EUR:{main:'€399', alt:'MAD 3,990 · $449'},  MAD:{main:'MAD 3,990', alt:'€399 · $449'},  USD:{main:'$449', alt:'€399 · MAD 3,990'} },
+    menu_loyalty:   { EUR:{main:'€349', alt:'MAD 3,490 · $389'},  MAD:{main:'MAD 3,490', alt:'€349 · $389'},  USD:{main:'$389', alt:'€349 · MAD 3,490'} },
+    financial_teaser:{ EUR:{main:'€499–€799', alt:''}, MAD:{main:'MAD 4,990–7,990', alt:''}, USD:{main:'$549–$849', alt:''} }
+  };
+  var SAVE_TABLE = {
+    bundle_bp:   { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $99 vs separate',  fr:'Économisez 99$ vs séparé'} },
+    bundle_menu: { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $99 vs separate',  fr:'Économisez 99$ vs séparé'} },
+    bundle_full: { EUR:{en:'Save €248 vs buying separately', fr:'Économisez 248€ vs achat séparé'},  MAD:{en:'Save MAD 2,480 vs buying separately',fr:'Économisez 2 480 MAD vs achat séparé'},USD:{en:'Save $248 vs buying separately', fr:'Économisez 248$ vs achat séparé'} },
+    bp_standalone:{ EUR:{en:'Loyalty rate — save €100', fr:'Tarif fidélité — économisez 100€'}, MAD:{en:'Loyalty rate — save MAD 1,000', fr:'Tarif fidélité — économisez 1 000 MAD'}, USD:{en:'Loyalty rate — save $100', fr:'Tarif fidélité — économisez 100$'} },
+    menu_loyalty:{ EUR:{en:'Loyalty rate — save €50', fr:'Tarif fidélité — économisez 50€'}, MAD:{en:'Loyalty rate — save MAD 500', fr:'Tarif fidélité — économisez 500 MAD'}, USD:{en:'Loyalty rate — save $50', fr:'Tarif fidélité — économisez 50$'} }
+  };
+  window.ZA3FRAN_setCurrency = function(c){
+    window.ZA3FRAN_CURRENCY = c;
+    document.querySelectorAll('[data-price-main]').forEach(function(el){
+      var tier = el.getAttribute('data-price-main');
+      if (PRICE_TABLE[tier]) el.textContent = PRICE_TABLE[tier][c].main;
+    });
+    document.querySelectorAll('[data-price-alt]').forEach(function(el){
+      var tier = el.getAttribute('data-price-alt');
+      if (PRICE_TABLE[tier]) el.textContent = PRICE_TABLE[tier][c].alt;
+    });
+    document.querySelectorAll('[data-save-en]').forEach(function(el){
+      var tier = el.getAttribute('data-save-en');
+      if (SAVE_TABLE[tier]) el.textContent = SAVE_TABLE[tier][c].en;
+    });
+    document.querySelectorAll('[data-save-fr]').forEach(function(el){
+      var tier = el.getAttribute('data-save-fr');
+      if (SAVE_TABLE[tier]) el.textContent = SAVE_TABLE[tier][c].fr;
+    });
+  };
+  function detectCurrency(){
+    fetch('/api/currency').then(function(r){return r.json();}).then(function(d){window.ZA3FRAN_setCurrency(d.currency||'EUR');}).catch(function(){window.ZA3FRAN_setCurrency('EUR');});
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', detectCurrency); } else { detectCurrency(); }
+})();
+</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -190,8 +235,8 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name">Concept Validator</p>
       <p class="card-desc"><span data-en>Validate your F&amp;B concept before investing. A full AI-powered diagnostic covering market fit, positioning, audience, financial viability, and risk profile.</span><span data-fr>Validez votre concept F&amp;B avant d'investir. Un diagnostic complet par IA couvrant l'adéquation au marché, le positionnement, l'audience, la viabilité financière et le profil de risque.</span></p>
       <div class="card-price">
-        <p class="price-main">€199</p>
-        <p class="price-alt">MAD 1,990 · $219</p>
+        <p class="price-main" data-price-main="validator">€199</p>
+        <p class="price-alt" data-price-alt="validator">MAD 1,990 · $219</p>
       </div>
       <ul class="card-includes">
         <li><span data-en>20-page bilingual validation report</span><span data-fr>Rapport de validation bilingue de 20 pages</span></li>
@@ -208,9 +253,9 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name"><span data-en>Validator + Business Plan</span><span data-fr>Validator + Business Plan</span></p>
       <p class="card-desc"><span data-en>Validate your concept and get a complete business plan in one step. From idea to investor-ready document without additional forms.</span><span data-fr>Validez votre concept et obtenez un business plan complet en une seule étape. De l'idée au document prêt pour les investisseurs, sans formulaire supplémentaire.</span></p>
       <div class="card-price">
-        <p class="price-main">€699</p>
-        <p class="price-alt">MAD 6,990 · $749</p>
-        <span class="price-saving"><span data-en>Save €99 vs separate</span><span data-fr>Économisez 99€ vs séparé</span></span>
+        <p class="price-main" data-price-main="bundle_bp">€699</p>
+        <p class="price-alt" data-price-alt="bundle_bp">MAD 6,990 · $749</p>
+        <span class="price-saving"><span data-en data-save-en="bundle_bp">Save €99 vs separate</span><span data-fr data-save-fr="bundle_bp">Économisez 99€ vs séparé</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Everything in Concept Validator</span><span data-fr>Tout le Concept Validator</span></li>
@@ -227,9 +272,9 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name"><span data-en>Validator + Menu Engineer</span><span data-fr>Validator + Menu Engineer</span></p>
       <p class="card-desc"><span data-en>Validate your concept and receive a complete, branded menu package — document, costed recipe matrix, and menu strategy report.</span><span data-fr>Validez votre concept et recevez un pack menu complet et personnalisé — document, matrice de coûts, et rapport de stratégie menu.</span></p>
       <div class="card-price">
-        <p class="price-main">€499</p>
-        <p class="price-alt">MAD 4,990 · $549</p>
-        <span class="price-saving"><span data-en>Save €99 vs separate</span><span data-fr>Économisez 99€ vs séparé</span></span>
+        <p class="price-main" data-price-main="bundle_menu">€499</p>
+        <p class="price-alt" data-price-alt="bundle_menu">MAD 4,990 · $549</p>
+        <span class="price-saving"><span data-en data-save-en="bundle_menu">Save €99 vs separate</span><span data-fr data-save-fr="bundle_menu">Économisez 99€ vs séparé</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Everything in Concept Validator</span><span data-fr>Tout le Concept Validator</span></li>
@@ -253,9 +298,9 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name"><span data-en>Validator + Business Plan + Menu Engineer</span><span data-fr>Validator + Business Plan + Menu Engineer</span></p>
       <p class="card-desc"><span data-en>The complete project launch package. Validate your concept, produce an investor-ready business plan, and engineer your menu — all from a single intake form.</span><span data-fr>Le pack complet de lancement de projet. Validez votre concept, produisez un business plan prêt pour investisseurs, et concevez votre menu — à partir d'un seul formulaire.</span></p>
       <div class="card-price">
-        <p class="price-main">€849</p>
-        <p class="price-alt">MAD 8,490 · $949</p>
-        <span class="price-saving"><span data-en>Save €248 vs buying separately</span><span data-fr>Économisez 248€ vs achat séparé</span></span>
+        <p class="price-main" data-price-main="bundle_full">€849</p>
+        <p class="price-alt" data-price-alt="bundle_full">MAD 8,490 · $949</p>
+        <span class="price-saving"><span data-en data-save-en="bundle_full">Save €248 vs buying separately</span><span data-fr data-save-fr="bundle_full">Économisez 248€ vs achat séparé</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Concept Validator — full 20-page report</span><span data-fr>Concept Validator — rapport complet 20 pages</span></li>
@@ -273,7 +318,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name">Financial Builder</p>
       <p class="card-desc"><span data-en>Investor-grade P&amp;L modeling, multi-scenario projections, and break-even analysis. Replaces benchmark estimates with your real numbers.</span><span data-fr>Modélisation P&amp;L de niveau investisseur, projections multi-scénarios et analyse du seuil de rentabilité. Remplace les estimations benchmark par vos vrais chiffres.</span></p>
       <div class="card-price">
-        <p class="price-main" style="font-size:24px;color:var(--muted);">€499–€799</p>
+        <p class="price-main" data-price-main="financial_teaser" style="font-size:24px;color:var(--muted);">€499–€799</p>
         <p class="price-alt"><span data-en>Phase 6 — 2026</span><span data-fr>Phase 6 — 2026</span></p>
       </div>
       <span style="display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.05);padding:8px 14px;border-radius:100px;width:fit-content;"><span data-en>Notify me when available →</span><span data-fr>Me prévenir à la sortie →</span></span>
@@ -301,9 +346,9 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name">Business Plan Essentials</p>
       <p class="card-desc"><span data-en>A full business plan generated from your existing Validator data. Enter your access code and your concept data pre-fills automatically.</span><span data-fr>Un business plan complet généré à partir de vos données Validator existantes. Entrez votre code d'accès et vos données se pré-remplissent automatiquement.</span></p>
       <div class="card-price">
-        <p class="price-main">€499</p>
-        <p class="price-alt">MAD 4,990 · $549</p>
-        <span class="price-saving"><span data-en>Loyalty rate — save €100</span><span data-fr>Tarif fidélité — économisez 100€</span></span>
+        <p class="price-main" data-price-main="bp_standalone">€499</p>
+        <p class="price-alt" data-price-alt="bp_standalone">MAD 4,990 · $549</p>
+        <span class="price-saving"><span data-en data-save-en="bp_standalone">Loyalty rate — save €100</span><span data-fr data-save-fr="bp_standalone">Tarif fidélité — économisez 100€</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>15–25 page professional business plan</span><span data-fr>Business plan professionnel de 15 à 25 pages</span></li>
@@ -319,8 +364,8 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name">Menu Engineer</p>
       <p class="card-desc"><span data-en>Transform your validated concept into a complete menu package. Branded document, costed recipe matrix, and strategy report with Brand Identity Kit.</span><span data-fr>Transformez votre concept validé en un pack menu complet. Document personnalisé, matrice de recettes costée, et rapport stratégique avec kit d'identité de marque.</span></p>
       <div class="card-price">
-        <p class="price-main">€399</p>
-        <p class="price-alt">MAD 3,990 · $449</p>
+        <p class="price-main" data-price-main="menu_standard">€399</p>
+        <p class="price-alt" data-price-alt="menu_standard">MAD 3,990 · $449</p>
       </div>
       <ul class="card-includes">
         <li><span data-en>Branded, print-ready menu document</span><span data-fr>Document menu personnalisé, prêt à imprimer</span></li>
@@ -338,9 +383,9 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <p class="card-name">Menu Engineer</p>
       <p class="card-desc"><span data-en>Already have both the Validator and Business Plan? Add Menu Engineer at a loyalty rate. Your full concept context enriches every output.</span><span data-fr>Vous avez déjà le Validator et le Business Plan ? Ajoutez Menu Engineer à tarif fidélité. Votre contexte complet enrichit chaque livrable.</span></p>
       <div class="card-price">
-        <p class="price-main">€349</p>
-        <p class="price-alt">MAD 3,490 · $389</p>
-        <span class="price-saving"><span data-en>Loyalty rate — save €50</span><span data-fr>Tarif fidélité — économisez 50€</span></span>
+        <p class="price-main" data-price-main="menu_loyalty">€349</p>
+        <p class="price-alt" data-price-alt="menu_loyalty">MAD 3,490 · $389</p>
+        <span class="price-saving"><span data-en data-save-en="menu_loyalty">Loyalty rate — save €50</span><span data-fr data-save-fr="menu_loyalty">Tarif fidélité — économisez 50€</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Branded, print-ready menu document</span><span data-fr>Document menu personnalisé, prêt à imprimer</span></li>
