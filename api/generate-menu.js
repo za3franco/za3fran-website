@@ -147,7 +147,7 @@ Specific requests: ${intake.additional_notes || 'none'}
 
 Design 3-6 sections appropriate to this concept type and cuisine. Total items should be realistic for the format (a fast-casual concept needs fewer items than a full-service restaurant). Return ONLY the JSON object.`;
 
-  const text = await callClaude(model, system, user, 3000, 60000);
+  const text = await callClaude(model, system, user, 3000, 40000);
   return parseJsonResponse(text);
 }
 
@@ -181,7 +181,7 @@ ${sectionList}
 
 List 3-6 realistic ingredients per item (used for costing in the next step). Prices should be realistic for a ${concept.ticket || 'mid-range'} ticket concept. Return ONLY the JSON object — write every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 6000, 75000);
+  const text = await callClaude(model, system, user, 6000, 60000);
   return parseJsonResponse(text);
 }
 
@@ -217,7 +217,7 @@ ${itemList}
 
 Target food cost percentage should generally fall between 25-35% depending on item type. All monetary values in ${currency}, raw numbers only (no currency symbols). Return ONLY the JSON object — cost every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 6000, 75000);
+  const text = await callClaude(model, system, user, 6000, 55000);
   return parseJsonResponse(text);
 }
 
@@ -304,7 +304,7 @@ Generate the full report now. Return only the HTML document.`;
 async function generateStrategyReport(model, concept, architecture, items, costing, intake, currency, language) {
   const system = buildStrategyReportSystemPrompt(language);
   const user = buildStrategyReportUserPrompt(concept, architecture, items, costing, intake, currency, language);
-  return await callClaude(model, system, user, 16000, 90000);
+  return await callClaude(model, system, user, 16000, 75000);
 }
 
 // ── Templated branded menu document (not Claude — for print-CSS reliability) ──
@@ -576,9 +576,24 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('[generate-menu] Error:', err.message);
+    const { data: currentRun } = await supabase
+      .from('menu_engineer_runs')
+      .select('output_json')
+      .eq('id', runId)
+      .maybeSingle();
+
     await supabase
       .from('menu_engineer_runs')
-      .update({ status: 'error' })
+      .update({
+        status: 'error',
+        output_json: {
+          ...((currentRun && currentRun.output_json) || {}),
+          status: 'error',
+          error_message: err.message,
+          error_stack: (err.stack || '').slice(0, 2000),
+          error_at: new Date().toISOString(),
+        },
+      })
       .eq('id', runId)
       .then(() => {}, () => {});
     return res.status(500).json({ error: err.message });

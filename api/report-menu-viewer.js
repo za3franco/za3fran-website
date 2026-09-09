@@ -227,7 +227,7 @@ export default async function handler(req, res) {
   }
 
   // ── Not generated yet — trigger generation if not already running ──
-  if (run.status === 'pending_generation') {
+  if (run.status === 'pending_generation' || run.status === 'error') {
     await supabase
       .from('menu_engineer_runs')
       .update({ status: 'generating' })
