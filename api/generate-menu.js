@@ -97,10 +97,14 @@ async function callClaude(model, systemPrompt, userPrompt, maxTokens, timeoutMs)
     if (!resp.ok) {
       throw new Error('Anthropic API error: ' + (data.error?.message || JSON.stringify(data)));
     }
-    if (!data.content?.[0]?.text) {
+    // Sonnet 5 uses adaptive thinking by default, which can insert a
+    // "thinking" content block before the actual text block — never
+    // assume content[0] is the text; find it by type instead.
+    const textBlock = (data.content || []).find((block) => block.type === 'text');
+    if (!textBlock || !textBlock.text) {
       throw new Error('Anthropic API returned empty content');
     }
-    return data.content[0].text.trim();
+    return textBlock.text.trim();
   } finally {
     clearTimeout(timer);
   }
