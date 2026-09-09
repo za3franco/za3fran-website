@@ -74,40 +74,33 @@ const DENSITY_SPACING = {
 };
 
 // ── Anthropic API call helpers ────────────────────────────────
-async function callClaude(model, systemPrompt, userPrompt, maxTokens, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }],
-      }),
-      signal: controller.signal,
-    });
-    const data = await resp.json();
-    if (!resp.ok) {
-      throw new Error('Anthropic API error: ' + (data.error?.message || JSON.stringify(data)));
-    }
-    // Sonnet 5 uses adaptive thinking by default, which can insert a
-    // "thinking" content block before the actual text block — never
-    // assume content[0] is the text; find it by type instead.
-    const textBlock = (data.content || []).find((block) => block.type === 'text');
-    if (!textBlock || !textBlock.text) {
-      throw new Error('Anthropic API returned empty content');
-    }
-    return textBlock.text.trim();
-  } finally {
-    clearTimeout(timer);
+async function callClaude(model, systemPrompt, userPrompt, maxTokens) {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01',
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+  const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error('Anthropic API error: ' + (data.error?.message || JSON.stringify(data)));
   }
+  // Sonnet 5 uses adaptive thinking by default, which can insert a
+  // "thinking" content block before the actual text block — never
+  // assume content[0] is the text; find it by type instead.
+  const textBlock = (data.content || []).find((block) => block.type === 'text');
+  if (!textBlock || !textBlock.text) {
+    throw new Error('Anthropic API returned empty content');
+  }
+  return textBlock.text.trim();
 }
 
 function parseJsonResponse(text) {
@@ -151,7 +144,7 @@ Specific requests: ${intake.additional_notes || 'none'}
 
 Design 3-6 sections appropriate to this concept type and cuisine. Total items should be realistic for the format (a fast-casual concept needs fewer items than a full-service restaurant). Return ONLY the JSON object.`;
 
-  const text = await callClaude(model, system, user, 7000, 90000);
+  const text = await callClaude(model, system, user, 7000);
   return parseJsonResponse(text);
 }
 
@@ -185,7 +178,7 @@ ${sectionList}
 
 List 3-6 realistic ingredients per item (used for costing in the next step). Prices should be realistic for a ${concept.ticket || 'mid-range'} ticket concept. Return ONLY the JSON object — write every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 12000, 120000);
+  const text = await callClaude(model, system, user, 12000);
   return parseJsonResponse(text);
 }
 
@@ -221,7 +214,7 @@ ${itemList}
 
 Target food cost percentage should generally fall between 25-35% depending on item type. All monetary values in ${currency}, raw numbers only (no currency symbols). Return ONLY the JSON object — cost every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 12000, 120000);
+  const text = await callClaude(model, system, user, 12000);
   return parseJsonResponse(text);
 }
 
@@ -308,7 +301,7 @@ Generate the full report now. Return only the HTML document.`;
 async function generateStrategyReport(model, concept, architecture, items, costing, intake, currency, language) {
   const system = buildStrategyReportSystemPrompt(language);
   const user = buildStrategyReportUserPrompt(concept, architecture, items, costing, intake, currency, language);
-  return await callClaude(model, system, user, 20000, 150000);
+  return await callClaude(model, system, user, 20000);
 }
 
 // ── Templated branded menu document (not Claude — for print-CSS reliability) ──
