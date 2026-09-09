@@ -10,7 +10,7 @@
 // and Validator endpoints (SUPABASE_URL / SUPABASE_SERVICE_KEY) — no
 // new env vars needed here.
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -19,7 +19,7 @@ const supabase = createClient(
 
 const TENANT_ID = 'za3fran';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error_code: 'method_not_allowed', error: 'Method not allowed.' });
@@ -134,4 +134,4 @@ module.exports = async function handler(req, res) {
     console.error('verify-menu-access: unexpected error', err);
     return res.status(500).json({ error_code: 'server_error', error: 'Something went wrong — please try again.' });
   }
-};
+}
