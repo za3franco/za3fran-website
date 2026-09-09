@@ -7,14 +7,14 @@
 // resolving Stripe price IDs) happens in api/submit-menu-engineer.js.
 //
 // Uses the same Supabase service credentials as the existing BP Essentials
-// and Validator endpoints (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY) — no
+// and Validator endpoints (SUPABASE_URL / SUPABASE_SERVICE_KEY) — no
 // new env vars needed here.
 
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_KEY
 );
 
 const TENANT_ID = 'za3fran';
