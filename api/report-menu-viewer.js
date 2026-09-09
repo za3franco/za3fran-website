@@ -85,7 +85,8 @@ function renderGenerating(id, accessCode, view) {
   <div class="spinner"></div>
   <p class="label" style="justify-content:center;">Menu Engineer</p>
   <h1>Generating your deliverables</h1>
-  <p>This usually takes a few minutes. This page will update automatically — no need to refresh.</p>
+  <p>We're building your branded menu, costed recipe matrix, and strategy report. This typically takes <strong style="color:#FAFAF7;">2–4 minutes</strong>. This page updates automatically — no need to refresh.</p>
+  <p id="elapsedNote" style="font-size:12px;color:#5a6378;margin-top:-8px;">Just started…</p>
 </div>
 <form id="autoform" method="POST" action="/api/report-menu-viewer" style="display:none;">
   <input type="hidden" name="id" value="${id}">
@@ -94,12 +95,33 @@ function renderGenerating(id, accessCode, view) {
 </form>
 <script>
   var pollId = ${JSON.stringify(id)};
+  var startTime = Date.now();
+  var elapsedEl = document.getElementById('elapsedNote');
+
+  function updateElapsed() {
+    var secs = Math.floor((Date.now() - startTime) / 1000);
+    var mins = Math.floor(secs / 60);
+    var rem = secs % 60;
+    if (mins > 0) {
+      elapsedEl.textContent = mins + 'm ' + rem + 's elapsed';
+    } else {
+      elapsedEl.textContent = secs + 's elapsed';
+    }
+    if (secs > 300) {
+      elapsedEl.textContent += ' — taking longer than usual, but still working';
+    }
+  }
+  setInterval(updateElapsed, 1000);
+
   function poll() {
     fetch('/api/menu-status?id=' + encodeURIComponent(pollId))
       .then(function(r){ return r.json(); })
       .then(function(data){
         if (data.ready) {
           document.getElementById('autoform').submit();
+        } else if (data.status === 'error') {
+          elapsedEl.textContent = 'Something went wrong. Please contact hello@za3fran.io with your access code.';
+          elapsedEl.style.color = '#e07070';
         } else {
           setTimeout(poll, 5000);
         }
