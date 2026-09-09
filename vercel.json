@@ -3,7 +3,8 @@
   "functions": {
     "api/webhook-validator.js":     { "maxDuration": 300 },
     "api/webhook-business-plan.js": { "maxDuration": 300 },
-    "api/generate-bp.js":           { "maxDuration": 300 }
+    "api/generate-bp.js":           { "maxDuration": 300 },
+    "api/webhook-menu-engineer.js": { "maxDuration": 300 }
   },
   "rewrites": [
     { "source": "/api/currency",              "destination": "/api/currency.js" },
