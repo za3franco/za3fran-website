@@ -213,7 +213,7 @@ export default async function handler(req, res) {
   <p style="color:#888880;font-size:12px;margin:0;">© Za3fran Consulting · <a href="https://za3fran.io" style="color:#C9862A;text-decoration:none;">za3fran.io</a></p>
 </div></div></body></html>`;
 
-    await fetch('https://api.brevo.com/v3/smtp/email', {
+    const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
       body: JSON.stringify({
@@ -224,8 +224,17 @@ export default async function handler(req, res) {
       }),
     });
 
+    if (!brevoResponse.ok) {
+      const brevoErrorBody = await brevoResponse.text();
+      console.error(`[webhook-menu] Brevo email FAILED (${brevoResponse.status}) for ${customerEmail}, run: ${runId}. Body: ${brevoErrorBody}`);
+      // Non-fatal for the webhook response — payment already succeeded and the
+      // run record is finalized. But surface it clearly so it's not mistaken
+      // for a successful send.
+      return res.status(200).json({ received: true, runId, accessCode, emailSent: false, emailError: brevoResponse.status });
+    }
+
     console.log(`[webhook-menu] Email sent to ${customerEmail}. Run: ${runId}`);
-    return res.status(200).json({ received: true, runId, accessCode });
+    return res.status(200).json({ received: true, runId, accessCode, emailSent: true });
 
   } catch (err) {
     console.error('[webhook-menu] Error:', err.message);
