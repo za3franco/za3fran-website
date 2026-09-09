@@ -85,7 +85,7 @@ function renderGenerating(id, accessCode, view) {
   <div class="spinner"></div>
   <p class="label" style="justify-content:center;">Menu Engineer</p>
   <h1>Generating your deliverables</h1>
-  <p>We're building your branded menu, costed recipe matrix, and strategy report. This typically takes <strong style="color:#FAFAF7;">2–4 minutes</strong>. This page updates automatically — no need to refresh.</p>
+  <p>We're building your branded menu, costed recipe matrix, and strategy report. This typically takes <strong style="color:#FAFAF7;">3–7 minutes</strong>. This page updates automatically — no need to refresh.</p>
   <p id="elapsedNote" style="font-size:12px;color:#5a6378;margin-top:-8px;">Just started…</p>
 </div>
 <form id="autoform" method="POST" action="/api/report-menu-viewer" style="display:none;">
@@ -107,7 +107,7 @@ function renderGenerating(id, accessCode, view) {
     } else {
       elapsedEl.textContent = secs + 's elapsed';
     }
-    if (secs > 300) {
+    if (secs > 480) {
       elapsedEl.textContent += ' — taking longer than usual, but still working';
     }
   }
