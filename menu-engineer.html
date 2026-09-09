@@ -484,6 +484,19 @@ var PRICES = {
 
 function isFr(){ return document.body.classList.contains('lang-fr'); }
 
+function verifyErrorMessage(errorCode, fallback) {
+  var MSG = {
+    invalid_code:   { en: 'Please enter your access code.', fr: 'Veuillez entrer votre code d\'accès.' },
+    not_found:      { en: 'We couldn\u2019t find that access code. Please check your email and try again.', fr: 'Code d\'accès introuvable. Vérifiez votre email et réessayez.' },
+    report_pending: { en: 'Your Validator report is still being generated. Please try again in a few minutes.', fr: 'Votre rapport Validator est encore en cours de génération. Réessayez dans quelques minutes.' },
+    project_missing:{ en: 'We found your report but couldn\u2019t link it to a project. Please contact hello@za3fran.io.', fr: 'Rapport trouvé mais non lié à un projet. Contactez hello@za3fran.io.' },
+    server_error:   { en: 'Something went wrong — please try again.', fr: 'Une erreur est survenue — réessayez.' }
+  };
+  var entry = MSG[errorCode];
+  if (!entry) return fallback || (isFr() ? 'Une erreur est survenue — réessayez.' : 'Something went wrong — please try again.');
+  return isFr() ? entry.fr : entry.en;
+}
+
 function verifyCode() {
   var code = document.getElementById('accessCode').value.trim().toUpperCase();
   if (!code || code.length < 6) {
@@ -507,6 +520,10 @@ function verifyCode() {
     btn.disabled = false;
     btn.innerHTML = '<span data-en>Verify access code</span><span data-fr>Vérifier le code</span>';
 
+    if (data.error_code) {
+      setStatus(verifyErrorMessage(data.error_code, data.error), 'error');
+      return;
+    }
     if (data.error) {
       setStatus(data.error, 'error');
       return;
