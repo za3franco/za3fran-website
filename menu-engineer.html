@@ -671,8 +671,8 @@ function handleSubmit() {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    if (data.url) {
-      window.location.href = data.url;
+    if (data.checkoutUrl) {
+      window.location.href = data.checkoutUrl;
     } else {
       btn.disabled = false;
       btn.innerHTML = '<span data-en>Proceed to payment →</span><span data-fr>Procéder au paiement →</span>';
