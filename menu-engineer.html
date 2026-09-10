@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Menu Engineer — Za3fran</title>
-<meta name="description" content="Transform your validated F&B concept into a complete, branded menu package. Branded document, costed recipe matrix, and menu strategy report.">
+<meta name="description" content="Deep recipe costing, sourcing recommendations, and menu engineering strategy for your F&B concept — a genuine working tool, not just a report.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -31,7 +31,6 @@ a{color:inherit;text-decoration:none;}
 img{max-width:100%;display:block;}
 ::selection{background:var(--copper);color:var(--black);}
 
-/* bilingual toggle */
 body:not(.lang-fr) [data-fr]{display:none;}
 body.lang-fr [data-en]{display:none;}
 #langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
@@ -46,7 +45,6 @@ body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
 .wa-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .wa-btn:hover .wa-tip{opacity:1;}
 
-/* nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
 nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
 nav .wrap{display:flex;justify-content:space-between;align-items:center;}
@@ -56,25 +54,21 @@ nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
 .navlinks a:hover::after{width:100%;}
 .navlinks a:hover{color:var(--white);}
-@media(max-width:640px){
-  .logo span:last-child{display:none;}
-}
+@media(max-width:640px){ .logo span:last-child{display:none;} }
 
-/* hero + access card */
 .hero{padding:150px 32px 70px;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:start;}
 .eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:22px;display:flex;gap:10px;align-items:center;}
 .eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
 .hero h1{font-size:clamp(34px,4.8vw,50px);line-height:1.12;letter-spacing:-.01em;margin-bottom:20px;}
 .hero p.sub{color:var(--muted);font-size:15.5px;line-height:1.7;margin-bottom:32px;}
 
-.hero-deliverables{display:flex;flex-direction:column;gap:14px;margin-bottom:32px;}
+.hero-deliverables{display:flex;flex-direction:column;gap:16px;margin-bottom:32px;}
 .hero-del-item{display:flex;align-items:flex-start;gap:14px;font-size:13.5px;color:var(--white);line-height:1.5;}
 .hero-del-num{font-family:'Cormorant Garamond';font-size:15px;color:var(--copper);width:22px;flex-shrink:0;}
 
 .hero-note{font-size:12.5px;color:var(--muted);}
 .hero-note a{color:var(--copper-bright);}
 
-/* access card */
 .access-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,134,42,.25);border-radius:16px;padding:34px;position:sticky;top:100px;}
 .access-card-title{font-family:'Cormorant Garamond';font-size:20px;color:var(--white);margin-bottom:8px;}
 .access-card-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:26px;}
@@ -90,6 +84,7 @@ input[type="text"], input[type="email"], select, textarea{
 input::placeholder, textarea::placeholder{color:var(--muted);}
 input:focus, select:focus, textarea:focus{border-color:rgba(201,134,42,.6);}
 select option{background:var(--charcoal2);color:var(--white);}
+textarea{resize:vertical;min-height:90px;line-height:1.6;}
 
 .btn-verify{width:100%;padding:13px;background:rgba(201,134,42,.15);border:1px solid rgba(201,134,42,.4);border-radius:100px;
   font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--copper-bright);cursor:pointer;transition:all .2s;}
@@ -117,45 +112,10 @@ select option{background:var(--charcoal2);color:var(--white);}
 .no-validator-link{text-align:center;margin-top:18px;font-size:12.5px;color:var(--muted);}
 .no-validator-link a{color:var(--copper-bright);}
 
-/* form section */
 .form-section{max-width:1180px;margin:0 auto;padding:0 32px 80px;display:none;}
 .form-section.visible{display:block;}
 .form-section-title{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid rgba(201,134,42,.2);}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;}
-.form-block{display:flex;flex-direction:column;gap:20px;}
 .field-hint{font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
-
-.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.style-option{position:relative;cursor:pointer;}
-.style-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
-.style-label{display:block;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;transition:all .2s;}
-.style-option input:checked + .style-label{border-color:var(--copper);background:rgba(201,134,42,.1);}
-.style-label:hover{border-color:rgba(201,134,42,.4);}
-.style-label-name{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;}
-.style-label-desc{font-size:11.5px;color:var(--muted);line-height:1.4;}
-
-.color-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
-.swatch{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .15s;position:relative;}
-.swatch:hover{transform:scale(1.15);}
-.swatch.active{border-color:var(--white);}
-.swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;mix-blend-mode:difference;}
-
-.hex-row{display:flex;gap:12px;align-items:center;}
-.hex-preview{width:38px;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;transition:background .2s;}
-
-.logo-upload-area{border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;}
-.logo-upload-area:hover{border-color:rgba(201,134,42,.5);background:rgba(201,134,42,.04);}
-.logo-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.logo-upload-icon{font-size:22px;margin-bottom:8px;opacity:.5;}
-.logo-upload-text{font-size:12.5px;color:var(--muted);line-height:1.5;}
-.logo-upload-text strong{color:var(--copper-bright);font-weight:700;}
-.logo-preview{display:none;margin-top:12px;align-items:center;gap:12px;}
-.logo-preview.visible{display:flex;}
-.logo-preview img{max-height:40px;max-width:120px;object-fit:contain;border-radius:4px;}
-.logo-remove{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'DM Sans',sans-serif;}
-.logo-remove:hover{color:#e07070;}
-
-textarea{resize:vertical;min-height:90px;line-height:1.6;}
 
 .submit-area{max-width:1180px;margin:0 auto 80px;padding:0 32px;display:none;}
 .submit-area.visible{display:block;}
@@ -170,16 +130,18 @@ textarea{resize:vertical;min-height:90px;line-height:1.6;}
 .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .submit-note{font-size:11.5px;color:var(--muted);margin-top:8px;}
 
-/* what section */
 .what-section{background:var(--charcoal);padding:80px 32px;}
 .what-inner{max-width:1180px;margin:0 auto;}
 .section-title{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:16px;}
 .what-title{font-family:'Cormorant Garamond';font-size:32px;color:var(--white);margin-bottom:44px;}
-.deliverables-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
-.del-block{background:var(--charcoal2);padding:32px;}
+.deliverables-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
+.del-block{background:var(--charcoal2);padding:36px;}
 .del-num{font-family:'Cormorant Garamond';font-size:32px;color:rgba(201,134,42,.35);line-height:1;margin-bottom:14px;}
-.del-block h3{font-family:'Cormorant Garamond';font-size:18px;color:var(--white);margin-bottom:10px;}
+.del-block h3{font-family:'Cormorant Garamond';font-size:19px;color:var(--white);margin-bottom:12px;}
 .del-block p{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.del-list{list-style:none;margin-bottom:14px;}
+.del-list li{font-size:13px;color:var(--muted);padding-left:18px;position:relative;line-height:1.6;margin-bottom:4px;}
+.del-list li::before{content:'—';position:absolute;left:0;color:var(--copper);}
 .del-tag{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper-bright);background:rgba(201,134,42,.12);padding:4px 10px;border-radius:100px;}
 
 footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal2);}
@@ -194,8 +156,6 @@ footer .foot-bottom a:hover{color:var(--white);}
   .hero{grid-template-columns:1fr;padding:130px 20px 40px;gap:36px;}
   .access-card{position:static;}
   .form-section, .submit-area{padding-left:20px;padding-right:20px;}
-  .form-grid{grid-template-columns:1fr;}
-  .style-grid{grid-template-columns:1fr;}
   .submit-inner{grid-template-columns:1fr;}
   .submit-right{text-align:left;}
   .deliverables-strip{grid-template-columns:1fr;}
@@ -206,7 +166,6 @@ footer .foot-bottom a:hover{color:var(--white);}
 </head>
 <body>
 
-<!-- WHATSAPP FLOATING BUTTON -->
 <a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
   <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
@@ -230,18 +189,16 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </nav>
 
-<!-- ── HERO + ACCESS CARD ──────────────────────────────── -->
 <div class="hero">
 
   <div class="hero-left">
     <p class="eyebrow"><span data-en>Menu Engineer</span><span data-fr>Menu Engineer</span></p>
-    <h1><span data-en>From validated concept<br>to <em>complete menu.</em></span><span data-fr>Du concept validé<br>au <em>menu complet.</em></span></h1>
-    <p class="sub"><span data-en>Three professional deliverables generated from your concept data — a branded, print-ready menu, a costed recipe matrix, and a full menu strategy report with Brand Identity Starter Kit.</span><span data-fr>Trois livrables professionnels générés à partir de vos données de concept — un menu personnalisé prêt à imprimer, une matrice de recettes costée, et un rapport stratégique complet avec kit d'identité de marque.</span></p>
+    <h1><span data-en>Deep recipe costing.<br>Real <em>menu engineering.</em></span><span data-fr>Costing de recettes approfondi.<br>Véritable <em>ingénierie de menu.</em></span></h1>
+    <p class="sub"><span data-en>Two professional deliverables built from your concept data — a strategy report grounded in real menu engineering discipline, and a working costing workbook you'll actually use to run your kitchen.</span><span data-fr>Deux livrables professionnels générés à partir de vos données de concept — un rapport stratégique ancré dans une véritable discipline d'ingénierie de menu, et un classeur de costing que vous utiliserez réellement pour piloter votre cuisine.</span></p>
 
     <div class="hero-deliverables">
-      <div class="hero-del-item"><span class="hero-del-num">01</span><span><span data-en>Branded menu document — typography, layout, and voice derived from your concept</span><span data-fr>Document menu personnalisé — typographie, mise en page et ton dérivés de votre concept</span></span></div>
-      <div class="hero-del-item"><span class="hero-del-num">02</span><span><span data-en>Costed recipe matrix (XLSX) — every item with food cost %, selling price, and margin</span><span data-fr>Matrice de recettes costée (XLSX) — chaque article avec % food cost, prix et marge</span></span></div>
-      <div class="hero-del-item"><span class="hero-del-num">03</span><span><span data-en>Menu strategy report — local sourcing, pricing logic, Brand Identity Kit, gap analysis</span><span data-fr>Rapport stratégique — sourcing local, logique de prix, kit de marque, analyse des opportunités</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">01</span><span><span data-en>Strategy Report — menu architecture, pricing psychology, Stars/Plowhorses/Puzzles/Dogs projection, and supplier sourcing by category</span><span data-fr>Rapport stratégique — architecture du menu, psychologie des prix, projection Stars/Plowhorses/Puzzles/Dogs, et sourcing fournisseurs par catégorie</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">02</span><span><span data-en>Costing Workbook — one tab per recipe with live formulas, a sales-mix recap, and a market list for ordering</span><span data-fr>Classeur de costing — un onglet par recette avec formules dynamiques, un récap sales-mix, et une liste de marché pour vos commandes</span></span></div>
     </div>
 
     <p class="hero-note">
@@ -282,7 +239,7 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="field-group" id="emailGroup" style="display:none;">
       <label class="field-label"><span data-en>Confirmation email</span><span data-fr>Email de confirmation</span></label>
       <input type="email" id="userEmail" placeholder="you@example.com">
-      <p style="font-size:11.5px;color:var(--muted);margin-top:8px;"><span data-en>Your three deliverables and access link will be sent here.</span><span data-fr>Vos trois livrables et le lien d'accès seront envoyés ici.</span></p>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:8px;"><span data-en>Your deliverables and access link will be sent here.</span><span data-fr>Vos livrables et le lien d'accès seront envoyés ici.</span></p>
     </div>
 
     <div class="field-group" id="languageGroup" style="display:none;">
@@ -294,7 +251,7 @@ footer .foot-bottom a:hover{color:var(--white);}
     </div>
 
     <button class="btn-verify" id="btnContinue" style="display:none;margin-top:8px;background:rgba(201,134,42,.25);border-color:var(--copper);" onclick="continueToForm()">
-      <span data-en>Continue to brand preferences →</span><span data-fr>Continuer vers les préférences de marque →</span>
+      <span data-en>Continue →</span><span data-fr>Continuer →</span>
     </button>
 
     <p class="no-validator-link">
@@ -304,121 +261,20 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </div>
 
-<!-- ── BRAND PREFERENCES FORM ─────────────────────────── -->
 <section class="form-section" id="formSection">
-  <p class="form-section-title"><span data-en>Brand &amp; menu preferences</span><span data-fr>Préférences de marque &amp; menu</span></p>
-
-  <div class="form-grid">
-
-    <div class="form-block">
-
-      <div class="field-group">
-        <label class="field-label"><span data-en>Visual style</span><span data-fr>Style visuel</span></label>
-        <p class="field-hint"><span data-en>The look and feel of your branded menu document. Claude infers details from your concept positioning, but this sets the overall direction.</span><span data-fr>L'apparence de votre document menu. Claude infère les détails de votre positionnement, mais ceci fixe la direction générale.</span></p>
-        <div class="style-grid">
-
-          <label class="style-option">
-            <input type="radio" name="visualStyle" value="modern_minimal" checked>
-            <span class="style-label">
-              <span class="style-label-name"><span data-en>Modern &amp; Minimal</span><span data-fr>Moderne &amp; Minimal</span></span>
-              <span class="style-label-desc"><span data-en>Clean, geometric, generous white space</span><span data-fr>Épuré, géométrique, espace généreux</span></span>
-            </span>
-          </label>
-
-          <label class="style-option">
-            <input type="radio" name="visualStyle" value="warm_artisanal">
-            <span class="style-label">
-              <span class="style-label-name"><span data-en>Warm &amp; Artisanal</span><span data-fr>Chaleureux &amp; Artisanal</span></span>
-              <span class="style-label-desc"><span data-en>Organic, handcrafted, textured feel</span><span data-fr>Organique, artisanal, texturé</span></span>
-            </span>
-          </label>
-
-          <label class="style-option">
-            <input type="radio" name="visualStyle" value="bold_contemporary">
-            <span class="style-label">
-              <span class="style-label-name"><span data-en>Bold &amp; Contemporary</span><span data-fr>Audacieux &amp; Contemporain</span></span>
-              <span class="style-label-desc"><span data-en>Strong typography, high contrast</span><span data-fr>Typographie forte, contraste élevé</span></span>
-            </span>
-          </label>
-
-          <label class="style-option">
-            <input type="radio" name="visualStyle" value="elegant_refined">
-            <span class="style-label">
-              <span class="style-label-name"><span data-en>Elegant &amp; Refined</span><span data-fr>Élégant &amp; Raffiné</span></span>
-              <span class="style-label-desc"><span data-en>Fine dining register, serif-forward, luxury</span><span data-fr>Registre gastronomique, serif, luxe</span></span>
-            </span>
-          </label>
-
-          <label class="style-option" style="grid-column:span 2;">
-            <input type="radio" name="visualStyle" value="casual_vibrant">
-            <span class="style-label">
-              <span class="style-label-name"><span data-en>Casual &amp; Vibrant</span><span data-fr>Décontracté &amp; Vibrant</span></span>
-              <span class="style-label-desc"><span data-en>Relaxed, colorful, approachable energy</span><span data-fr>Détendu, coloré, accessible</span></span>
-            </span>
-          </label>
-
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label"><span data-en>Brand primary color</span><span data-fr>Couleur principale de marque</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(<span data-en>optional</span><span data-fr>optionnel</span>)</span></label>
-        <p class="field-hint"><span data-en>Pick a preset or enter your own hex code. Leave blank and Claude will infer from your concept.</span><span data-fr>Choisissez une couleur ou entrez un code hex. Laissez vide et Claude déduira de votre concept.</span></p>
-        <div class="color-row" id="swatchRow">
-          <div class="swatch" style="background:#C9862A;" data-hex="#C9862A" onclick="selectSwatch(this)" title="Amber"></div>
-          <div class="swatch" style="background:#8B2635;" data-hex="#8B2635" onclick="selectSwatch(this)" title="Burgundy"></div>
-          <div class="swatch" style="background:#2C5F2E;" data-hex="#2C5F2E" onclick="selectSwatch(this)" title="Forest"></div>
-          <div class="swatch" style="background:#1B3A4B;" data-hex="#1B3A4B" onclick="selectSwatch(this)" title="Deep teal"></div>
-          <div class="swatch" style="background:#7B5EA7;" data-hex="#7B5EA7" onclick="selectSwatch(this)" title="Plum"></div>
-          <div class="swatch" style="background:#C2714F;" data-hex="#C2714F" onclick="selectSwatch(this)" title="Terracotta"></div>
-          <div class="swatch" style="background:#2B2B2B;" data-hex="#2B2B2B" onclick="selectSwatch(this)" title="Charcoal"></div>
-          <div class="swatch" style="background:#E8C84A;" data-hex="#E8C84A" onclick="selectSwatch(this)" title="Gold"></div>
-        </div>
-        <div class="hex-row">
-          <div class="hex-preview" id="hexPreview" style="background:transparent;"></div>
-          <input type="text" id="hexInput" placeholder="#RRGGBB" maxlength="7" style="flex:1;" oninput="handleHexInput(this.value)">
-        </div>
-      </div>
-
-    </div>
-
-    <div class="form-block">
-
-      <div class="field-group">
-        <label class="field-label"><span data-en>Logo</span><span data-fr>Logo</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(<span data-en>optional</span><span data-fr>optionnel</span>)</span></label>
-        <p class="field-hint"><span data-en>PNG or SVG recommended. If not provided, a styled typographic treatment of your concept name is generated instead.</span><span data-fr>PNG ou SVG recommandé. Sans logo, un traitement typographique stylisé de votre nom de concept est généré.</span></p>
-        <div class="logo-upload-area" id="logoUploadArea">
-          <input type="file" id="logoFile" accept=".png,.svg,.jpg,.jpeg,.webp" onchange="handleLogoUpload(event)">
-          <div class="logo-upload-icon">↑</div>
-          <p class="logo-upload-text"><span data-en><strong>Click to upload</strong> or drag and drop<br>PNG, SVG, JPG — max 2MB</span><span data-fr><strong>Cliquez pour téléverser</strong> ou glissez-déposez<br>PNG, SVG, JPG — max 2 Mo</span></p>
-        </div>
-        <div class="logo-preview" id="logoPreview">
-          <img id="logoPreviewImg" src="" alt="Logo preview">
-          <span id="logoFileName" style="font-size:12.5px;color:var(--muted);flex:1;"></span>
-          <button class="logo-remove" onclick="removeLogo()"><span data-en>Remove</span><span data-fr>Retirer</span></button>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label"><span data-en>Brand references</span><span data-fr>Références de marque</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(<span data-en>optional</span><span data-fr>optionnel</span>)</span></label>
-        <p class="field-hint"><span data-en>Describe the mood, aesthetic, or restaurants that inspire you. This guides tone, item naming, and visual direction.</span><span data-fr>Décrivez l'ambiance, l'esthétique ou les restaurants qui vous inspirent. Ceci guide le ton et la direction visuelle.</span></p>
-        <textarea id="brandRefs" placeholder="e.g. Industrial Moroccan mood, think Zico Casa. Dark palette, bold typography."></textarea>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label"><span data-en>Specific menu requests</span><span data-fr>Demandes spécifiques pour le menu</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(<span data-en>optional</span><span data-fr>optionnel</span>)</span></label>
-        <textarea id="additionalNotes" placeholder="e.g. Must include a dedicated mezze section. Avoid pork." style="min-height:70px;"></textarea>
-      </div>
-
-    </div>
+  <p class="form-section-title"><span data-en>Anything specific we should know?</span><span data-fr>Quelque chose de spécifique à savoir ?</span></p>
+  <div class="field-group" style="max-width:600px;">
+    <label class="field-label"><span data-en>Dietary restrictions, must-have items, or other requests</span><span data-fr>Restrictions alimentaires, incontournables ou autres demandes</span> <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(<span data-en>optional</span><span data-fr>optionnel</span>)</span></label>
+    <p class="field-hint"><span data-en>e.g. "Must include a dedicated vegetarian section," "Avoid pork," "Weekend brunch menu required."</span><span data-fr>ex. « Doit inclure une section végétarienne dédiée », « Éviter le porc », « Menu brunch le week-end requis ».</span></p>
+    <textarea id="additionalNotes" placeholder="e.g. Must include a dedicated vegetarian section. Avoid pork. Focus on locally-sourced seafood."></textarea>
   </div>
 </section>
 
-<!-- ── SUBMIT AREA ─────────────────────────────────────── -->
 <div class="submit-area" id="submitArea">
   <div class="submit-inner">
     <div class="submit-summary">
-      <h3><span data-en>Ready to generate your menu package</span><span data-fr>Prêt à générer votre pack menu</span></h3>
-      <p><span data-en>Three deliverables — branded menu document, XLSX costing matrix, and strategy report — will be generated and sent to your email within a few minutes of payment. 1 free regeneration included.</span><span data-fr>Trois livrables — document menu, matrice de coûts XLSX et rapport stratégique — seront générés et envoyés à votre email quelques minutes après le paiement. 1 régénération gratuite incluse.</span></p>
+      <h3><span data-en>Ready to generate your Menu Engineering package</span><span data-fr>Prêt à générer votre pack Menu Engineering</span></h3>
+      <p><span data-en>Your Strategy Report and Costing Workbook will be generated and sent to your email a few minutes after payment. 1 free regeneration included.</span><span data-fr>Votre rapport stratégique et votre classeur de costing seront générés et envoyés à votre email quelques minutes après le paiement. 1 régénération gratuite incluse.</span></p>
       <p class="submit-note" style="margin-top:10px;"><span data-en>Secure checkout via Stripe. Your concept data is retrieved securely via your access code.</span><span data-fr>Paiement sécurisé via Stripe. Vos données de concept sont récupérées de manière sécurisée via votre code d'accès.</span></p>
     </div>
     <div class="submit-right">
@@ -432,29 +288,33 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </div>
 
-<!-- ── WHAT YOU GET ─────────────────────────────────────── -->
 <section class="what-section">
   <div class="what-inner">
-    <p class="section-title"><span data-en>Three deliverables, one purchase</span><span data-fr>Trois livrables, un seul achat</span></p>
-    <h2 class="what-title"><span data-en>Everything your menu needs to launch</span><span data-fr>Tout ce qu'il faut pour lancer votre menu</span></h2>
+    <p class="section-title"><span data-en>Two deliverables, one purchase</span><span data-fr>Deux livrables, un seul achat</span></p>
+    <h2 class="what-title"><span data-en>A tool you'll actually use to run your kitchen</span><span data-fr>Un outil que vous utiliserez réellement pour piloter votre cuisine</span></h2>
     <div class="deliverables-strip">
       <div class="del-block">
         <p class="del-num">01</p>
-        <h3><span data-en>Branded Menu Document</span><span data-fr>Document Menu Personnalisé</span></h3>
-        <p><span data-en>A complete, print-ready menu with visual identity derived from your concept — typography, layout density, item naming style, and description voice tailored to your positioning and cuisine type. Print to PDF directly from your browser. Za3fran appears only as a small footer credit.</span><span data-fr>Un menu complet, prêt à imprimer, avec une identité visuelle dérivée de votre concept. Imprimez en PDF directement depuis votre navigateur. Za3fran n'apparaît que comme une petite mention en pied de page.</span></p>
-        <span class="del-tag">HTML → PDF</span>
+        <h3><span data-en>Menu Strategy Report</span><span data-fr>Rapport Stratégique Menu</span></h3>
+        <p><span data-en>Grounded in real menu engineering discipline — not design guidance.</span><span data-fr>Ancré dans une véritable discipline d'ingénierie de menu — pas de conseils design.</span></p>
+        <ul class="del-list">
+          <li><span data-en>Menu architecture &amp; market fit rationale</span><span data-fr>Rationnel d'architecture &amp; d'adéquation marché</span></li>
+          <li><span data-en>Pricing strategy &amp; menu psychology</span><span data-fr>Stratégie de prix &amp; psychologie du menu</span></li>
+          <li><span data-en>Stars/Plowhorses/Puzzles/Dogs projection</span><span data-fr>Projection Stars/Plowhorses/Puzzles/Dogs</span></li>
+          <li><span data-en>Supplier &amp; sourcing recommendations by category</span><span data-fr>Recommandations fournisseurs &amp; sourcing par catégorie</span></li>
+        </ul>
+        <span class="del-tag"><span data-en>HTML report · permanent link</span><span data-fr>Rapport HTML · lien permanent</span></span>
       </div>
       <div class="del-block">
         <p class="del-num">02</p>
-        <h3><span data-en>Costed Recipe Matrix</span><span data-fr>Matrice de Recettes Costée</span></h3>
-        <p><span data-en>Every menu item as a row: section, item name, ingredients, quantities, unit costs (benchmark-estimated in your currency, clearly labeled), food cost per dish, target selling price, food cost %, and gross margin. Summary tab with overall ratios and break-even cross-reference.</span><span data-fr>Chaque article en ligne : section, nom, ingrédients, quantités, coûts unitaires (estimés, clairement identifiés), food cost par plat, prix de vente cible, % food cost et marge brute. Onglet de synthèse avec ratios globaux.</span></p>
+        <h3><span data-en>Costing Workbook</span><span data-fr>Classeur de Costing</span></h3>
+        <p><span data-en>A genuine working tool, not a summary sheet — live Excel formulas throughout.</span><span data-fr>Un véritable outil de travail, pas une simple feuille récapitulative — formules Excel dynamiques partout.</span></p>
+        <ul class="del-list">
+          <li><span data-en>One tab per recipe — ingredients, yield ratios, seasoning allowance, food cost %, margin</span><span data-fr>Un onglet par recette — ingrédients, ratios de rendement, allocation d'assaisonnement, % food cost, marge</span></li>
+          <li><span data-en>Recap tab — editable sales-mix volume estimates, live profitability classification</span><span data-fr>Onglet récap — estimations de volumes éditables, classification de rentabilité en direct</span></li>
+          <li><span data-en>Market List tab — aggregated ordering reference with adjustable multiplier</span><span data-fr>Onglet Liste de Marché — référence de commande agrégée avec multiplicateur ajustable</span></li>
+        </ul>
         <span class="del-tag"><span data-en>XLSX — Excel / Google Sheets</span><span data-fr>XLSX — Excel / Google Sheets</span></span>
-      </div>
-      <div class="del-block">
-        <p class="del-num">03</p>
-        <h3><span data-en>Menu Strategy Report</span><span data-fr>Rapport Stratégie Menu</span></h3>
-        <p><span data-en>The intelligence layer — menu architecture rationale, pricing strategy, local sourcing recommendations for your region, pre-opening menu engineering preview, gap analysis, and a Brand Identity Starter Kit with color palette, typography pairing, and tone of voice guide.</span><span data-fr>La couche d'intelligence — logique d'architecture du menu, stratégie de prix, recommandations de sourcing local, aperçu d'ingénierie de menu, analyse des opportunités, et un kit d'identité de marque complet.</span></p>
-        <span class="del-tag"><span data-en>HTML report · permanent link</span><span data-fr>Rapport HTML · lien permanent</span></span>
       </div>
     </div>
   </div>
@@ -474,7 +334,7 @@ footer .foot-bottom a:hover{color:var(--white);}
 <script>
 var state = {
   accessCode: '', conceptName: '', conceptDetail: '', projectId: '',
-  currency: 'EUR', priceTier: 'standard', logoBase64: '', logoMime: '', verified: false
+  currency: 'EUR', priceTier: 'standard', verified: false
 };
 
 var PRICES = {
@@ -520,14 +380,8 @@ function verifyCode() {
     btn.disabled = false;
     btn.innerHTML = '<span data-en>Verify access code</span><span data-fr>Vérifier le code</span>';
 
-    if (data.error_code) {
-      setStatus(verifyErrorMessage(data.error_code, data.error), 'error');
-      return;
-    }
-    if (data.error) {
-      setStatus(data.error, 'error');
-      return;
-    }
+    if (data.error_code) { setStatus(verifyErrorMessage(data.error_code, data.error), 'error'); return; }
+    if (data.error) { setStatus(data.error, 'error'); return; }
 
     state.conceptName   = data.concept_name   || '';
     state.conceptDetail = data.concept_detail || '';
@@ -591,62 +445,11 @@ function continueToForm() {
   setStatus('', '');
 }
 
-function selectSwatch(el) {
-  document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('active'); });
-  el.classList.add('active');
-  var hex = el.getAttribute('data-hex');
-  document.getElementById('hexInput').value = hex;
-  document.getElementById('hexPreview').style.background = hex;
-}
-
-function handleHexInput(val) {
-  val = val.trim();
-  document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('active'); });
-  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-    document.getElementById('hexPreview').style.background = val;
-    document.querySelectorAll('.swatch').forEach(function(s) {
-      if (s.getAttribute('data-hex').toLowerCase() === val.toLowerCase()) s.classList.add('active');
-    });
-  } else {
-    document.getElementById('hexPreview').style.background = 'transparent';
-  }
-}
-
-function handleLogoUpload(event) {
-  var file = event.target.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) {
-    alert(isFr() ? 'Le logo doit faire moins de 2 Mo.' : 'Logo file must be under 2MB.');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    state.logoBase64 = e.target.result.split(',')[1];
-    state.logoMime   = file.type;
-    document.getElementById('logoPreviewImg').src = e.target.result;
-    document.getElementById('logoFileName').textContent = file.name;
-    document.getElementById('logoPreview').classList.add('visible');
-    document.getElementById('logoUploadArea').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-
-function removeLogo() {
-  state.logoBase64 = '';
-  state.logoMime   = '';
-  document.getElementById('logoFile').value = '';
-  document.getElementById('logoPreview').classList.remove('visible');
-  document.getElementById('logoUploadArea').style.display = 'block';
-}
-
 function handleSubmit() {
   if (!state.verified) return;
 
   var email    = document.getElementById('userEmail').value.trim();
   var language = document.getElementById('reportLanguage').value;
-  var style    = document.querySelector('input[name="visualStyle"]:checked').value;
-  var hexColor = document.getElementById('hexInput').value.trim();
-  var brandRef = document.getElementById('brandRefs').value.trim();
   var addNotes = document.getElementById('additionalNotes').value.trim();
 
   if (!email || !email.includes('@')) {
@@ -665,8 +468,7 @@ function handleSubmit() {
     body: JSON.stringify({
       access_code: state.accessCode, project_id: state.projectId, email: email,
       language: language, currency: state.currency, price_tier: state.priceTier,
-      visual_style: style, brand_color: hexColor || null, brand_refs: brandRef || null,
-      additional_notes: addNotes || null, logo_base64: state.logoBase64 || null, logo_mime: state.logoMime || null
+      additional_notes: addNotes || null
     })
   })
   .then(function(r) { return r.json(); })
@@ -694,9 +496,7 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
   var params = new URLSearchParams(window.location.search);
   if (params.get('loyalty') === 'true') {
     var sub = document.querySelector('.access-card-sub');
-    if (sub) {
-      sub.innerHTML = '<span data-en>Enter your access code to confirm your loyalty rate (€349).</span><span data-fr>Entrez votre code d\'accès pour confirmer votre tarif fidélité (349€).</span>';
-    }
+    if (sub) sub.innerHTML = '<span data-en>Enter your access code to confirm your loyalty rate (€349).</span><span data-fr>Entrez votre code d\'accès pour confirmer votre tarif fidélité (349€).</span>';
   }
 })();
 
