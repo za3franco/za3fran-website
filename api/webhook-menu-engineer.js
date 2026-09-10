@@ -161,15 +161,14 @@ export default async function handler(req, res) {
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre paiement pour <strong>${conceptName}</strong> est confirmé. Vos trois livrables Menu Engineer sont en cours de préparation :</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre paiement pour <strong>${conceptName}</strong> est confirmé. Vos livrables Menu Engineer sont en cours de préparation :</p>
   <ul style="color:#1a1a1a;line-height:1.9;margin:0 0 24px;padding-left:20px;">
-    <li>Document menu personnalisé (prêt à imprimer)</li>
-    <li>Matrice de recettes costée (XLSX)</li>
-    <li>Rapport stratégie menu + kit d'identité de marque</li>
+    <li>Rapport stratégique — architecture, psychologie des prix, projection Stars/Plowhorses/Puzzles/Dogs, sourcing fournisseurs</li>
+    <li>Classeur de costing — un onglet par recette avec formules dynamiques, récap sales-mix, liste de marché</li>
   </ul>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Cliquez sur le bouton ci-dessous pour accéder à vos livrables. La première ouverture déclenchera la génération (quelques minutes).</p>
   <div style="text-align:center;margin:0 0 32px;">
-    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mon pack Menu →</a>
+    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mes livrables →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
     <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès</p>
@@ -191,15 +190,14 @@ export default async function handler(req, res) {
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your payment for <strong>${conceptName}</strong> is confirmed. Your three Menu Engineer deliverables are being prepared:</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your payment for <strong>${conceptName}</strong> is confirmed. Your Menu Engineer deliverables are being prepared:</p>
   <ul style="color:#1a1a1a;line-height:1.9;margin:0 0 24px;padding-left:20px;">
-    <li>Branded menu document (print-ready)</li>
-    <li>Costed recipe matrix (XLSX)</li>
-    <li>Menu strategy report + Brand Identity Starter Kit</li>
+    <li>Strategy Report — menu architecture, pricing psychology, Stars/Plowhorses/Puzzles/Dogs projection, supplier sourcing</li>
+    <li>Costing Workbook — one tab per recipe with live formulas, sales-mix recap, market ordering list</li>
   </ul>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Click below to access your deliverables. The first time you open it, generation will start automatically (a few minutes).</p>
   <div style="text-align:center;margin:0 0 32px;">
-    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Access my Menu package →</a>
+    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Access my deliverables →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
     <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your access code</p>

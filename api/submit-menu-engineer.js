@@ -5,9 +5,9 @@
 // their access code client-side via /api/verify-menu-access.
 // This endpoint RE-VERIFIES server-side (never trusts client-sent
 // price_tier/currency — those are recomputed from the DB) and
-// stores the full brand intake (including logo base64, which is
-// too large for Stripe metadata) in a pending menu_engineer_runs
-// row before creating the checkout session.
+// stores the intake (currently just optional customer notes) in
+// a pending menu_engineer_runs row before creating the checkout
+// session.
 // ============================================================
 
 import Stripe from 'stripe';
@@ -21,7 +21,6 @@ const supabase = createClient(
 );
 
 const TENANT_ID = 'za3fran';
-const MAX_LOGO_BASE64_LENGTH = 2.8 * 1024 * 1024; // ~2MB binary, base64-inflated
 
 function generateRunId() {
   return `me_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -37,12 +36,7 @@ export default async function handler(req, res) {
       access_code,
       email,
       language: requestedLanguage,
-      visual_style,
-      brand_color,
-      brand_refs,
       additional_notes,
-      logo_base64,
-      logo_mime,
     } = req.body || {};
 
     if (!access_code) {
@@ -50,9 +44,6 @@ export default async function handler(req, res) {
     }
     if (!email || !email.includes('@')) {
       return res.status(400).json({ error: 'A valid email is required.' });
-    }
-    if (logo_base64 && logo_base64.length > MAX_LOGO_BASE64_LENGTH) {
-      return res.status(400).json({ error: 'Logo file is too large. Please use a file under 2MB.' });
     }
 
     const code = access_code.toUpperCase().trim();
@@ -115,8 +106,8 @@ export default async function handler(req, res) {
     // ── Canonical currency comes from the project, not the client ──
     const currency = normalizeCurrency(project.currency || submission.currency || 'EUR');
 
-    // Language IS a genuine user preference (which language they want the
-    // report in) — honour their form selection if valid, else fall back.
+    // Language IS a genuine user preference — honour their form selection
+    // if valid, else fall back.
     const language = ['en', 'fr'].includes(requestedLanguage)
       ? requestedLanguage
       : (project.language || submission.language || 'en');
@@ -130,7 +121,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── Store full intake in Supabase (logo base64 too large for Stripe metadata) ──
+    // ── Store intake in Supabase ──
     const runId = generateRunId();
 
     const { error: insertError } = await supabase.from('menu_engineer_runs').insert({
@@ -138,9 +129,6 @@ export default async function handler(req, res) {
       project_id: project.id,
       currency,
       language,
-      brand_primary_color: brand_color || null,
-      brand_style: visual_style || null,
-      logo_provided: !!logo_base64,
       status: 'pending_payment',
       output_json: {
         status: 'pending_payment',
@@ -148,10 +136,7 @@ export default async function handler(req, res) {
         submission_id: submission.id,
         price_tier: priceTier,
         intake: {
-          brand_refs: brand_refs || null,
           additional_notes: additional_notes || null,
-          logo_base64: logo_base64 || null,
-          logo_mime: logo_mime || null,
         },
       },
     });
