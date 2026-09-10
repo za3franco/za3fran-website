@@ -141,7 +141,7 @@ IMPORTANT — before finalizing: think through what a well-informed local compet
 
 List 3-6 realistic ingredients per item (used for costing in the next step). Prices should be realistic for a ${concept.ticket || 'mid-range'} ticket concept. Return ONLY the JSON object — write every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 12000);
+  const text = await callClaude(model, system, user, 16000);
   return parseJsonResponse(text);
 }
 
@@ -192,7 +192,7 @@ For supplier_recommendations: name REAL, specific sources relevant to the concep
 
 Return ONLY the JSON object — cost every ingredient of every item, do not truncate.`;
 
-  const text = await callClaude(model, system, user, 14000);
+  const text = await callClaude(model, system, user, 28000);
   return parseJsonResponse(text);
 }
 
@@ -696,27 +696,52 @@ export default async function handler(req, res) {
     console.log(`[generate-menu] Starting generation for run ${runId} (model: ${model})`);
 
     // ── Pass 1: Architecture ──
-    const architecture = await generateArchitecture(model, concept, intake, currency, language);
+    let architecture;
+    try {
+      architecture = await generateArchitecture(model, concept, intake, currency, language);
+    } catch (err) {
+      throw new Error(`Pass 1 (architecture) failed: ${err.message}`);
+    }
     console.log(`[generate-menu] Pass 1 complete: ${architecture.sections.length} sections`);
 
     // ── Pass 2: Items ──
-    const items = await generateItems(model, concept, intake, architecture, language);
+    let items;
+    try {
+      items = await generateItems(model, concept, intake, architecture, language);
+    } catch (err) {
+      throw new Error(`Pass 2 (items) failed: ${err.message}`);
+    }
     console.log(`[generate-menu] Pass 2 complete: ${items.items.length} items`);
 
     // ── Pass 3: Costing + suppliers ──
-    const costing = await generateCosting(model, items, concept, currency, language);
+    let costing;
+    try {
+      costing = await generateCosting(model, items, concept, currency, language);
+    } catch (err) {
+      throw new Error(`Pass 3 (costing) failed: ${err.message}`);
+    }
     console.log(`[generate-menu] Pass 3 complete: ${costing.recipes.length} recipes costed, ${(costing.supplier_recommendations || []).length} supplier categories`);
 
     // ── Pass 4: Strategy report ──
-    const reportHtml = await generateStrategyReport(model, concept, architecture, items, costing, currency, language);
+    let reportHtml;
+    try {
+      reportHtml = await generateStrategyReport(model, concept, architecture, items, costing, currency, language);
+    } catch (err) {
+      throw new Error(`Pass 4 (strategy report) failed: ${err.message}`);
+    }
     if (!reportHtml.startsWith('<!DOCTYPE') && !reportHtml.startsWith('<html')) {
-      throw new Error('Strategy report did not return valid HTML');
+      throw new Error('Pass 4 (strategy report) did not return valid HTML');
     }
     console.log(`[generate-menu] Pass 4 complete: ${reportHtml.length} chars`);
 
     // ── Costing workbook ──
-    const xlsxBuffer = await buildCostingWorkbook(items, costing, currency);
-    const xlsxUrl = await uploadXlsx(runId, xlsxBuffer);
+    let xlsxUrl;
+    try {
+      const xlsxBuffer = await buildCostingWorkbook(items, costing, currency);
+      xlsxUrl = await uploadXlsx(runId, xlsxBuffer);
+    } catch (err) {
+      throw new Error(`Costing workbook build/upload failed: ${err.message}`);
+    }
     console.log(`[generate-menu] XLSX uploaded: ${xlsxUrl}`);
 
     // ── Save everything ──
