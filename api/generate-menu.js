@@ -1,29 +1,35 @@
 // ============================================================
 // /api/generate-menu.js
-// Menu Engineer generation pipeline — REPOSITIONED as a pure
-// costing / analysis / piloting tool. Visual menu design was
-// deliberately removed (belongs to a future Marketing & Brand
-// tool instead). Two deliverables now:
-//   1. Strategy Report — menu engineering discipline: architecture
-//      rationale, pricing psychology, Stars/Plowhorses/Puzzles/Dogs
-//      projection, and supplier/sourcing recommendations.
-//   2. Costing Workbook — a genuine working recipe-costing tool:
-//      one tab per recipe with live formulas (yield ratios,
-//      seasoning allowance, food cost %, margin), a Recap tab with
-//      editable sales-mix volume estimates and menu engineering
-//      classification, and a Market List tab for ordering.
+// Menu Engineer generation pipeline — a genuine production-
+// planning tool, not just an analysis report.
 //
-// 3-pass Claude generation for structured data, 1 pass for the
-// HTML report:
+// 3 structured-data Claude passes + 1 HTML pass:
 //   Pass 1 — menu architecture (sections, item counts, voice)
 //   Pass 2 — item list + descriptions
-//   Pass 3 — recipe costing data (ingredients, yields, seasoning)
-//            + supplier/sourcing recommendations by category
+//   Pass 3 — recipe costing (ingredients, yields, seasoning, method),
+//            section attachment rates + item popularity weights
+//            (drives the sales-mix formulas), and a CONSOLIDATED
+//            supplier list (3-5 real foodservice distributors, not
+//            fragmented per-category retail sources)
 //   Pass 4 (HTML) — strategy report
 //
-// No manual per-call timeouts — relies solely on the function's
-// own maxDuration (600s) as the ceiling, matching the pattern
-// already proven stable on Validator and BP Essentials.
+// Costing workbook (ExcelJS):
+//   - One tab per recipe: method block (editable), ingredient lines
+//     with live formulas (yield ratio, seasoning allowance, food
+//     cost %, margin)
+//   - Recap & Sales Mix tab: Daily Covers is the single editable
+//     driver cell. Each item's Est. Weekly Units is a LIVE FORMULA
+//     (Daily Covers x Operating Days x Attachment Rate % x
+//     Popularity Weight %), pulled from Validator's covers data as
+//     a starting point. A covers-weighted blended food cost % is
+//     computed via SUMPRODUCT.
+//   - Market List tab: ingredient quantities aggregated via live
+//     cross-sheet formulas tied to each recipe's Est. Weekly Units
+//     (not a static batch assumption). A Current Stock column
+//     drives MAX(0, Needed - Stock) replenishment logic.
+//
+// No manual per-call timeouts - relies solely on the function's
+// own maxDuration (600s) as the ceiling.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -36,7 +42,8 @@ const supabase = createClient(
 );
 
 const STORAGE_BUCKET = 'menu-engineer-deliverables';
-const MARKET_LIST_REFERENCE_BATCH = 10; // base quantities shown per 10 portions of each item
+const DEFAULT_DAILY_COVERS = 50;
+const DEFAULT_OPERATING_DAYS_PER_WEEK = 7;
 
 export const config = { api: { bodyParser: true }, maxDuration: 600 };
 
@@ -60,8 +67,6 @@ async function callClaude(model, systemPrompt, userPrompt, maxTokens) {
   if (!resp.ok) {
     throw new Error('Anthropic API error: ' + (data.error?.message || JSON.stringify(data)));
   }
-  // Sonnet 5+ can insert a "thinking" content block before the text block —
-  // never assume content[0] is the text; find it by type.
   const textBlock = (data.content || []).find((block) => block.type === 'text');
   if (!textBlock || !textBlock.text) {
     throw new Error('Anthropic API returned empty content');
@@ -85,7 +90,7 @@ async function generateArchitecture(model, concept, intake, currency, language) 
   const user = `Design the menu architecture for this concept. Return JSON matching exactly this schema:
 {
   "sections": [{"name": "<section name, in ${language === 'fr' ? 'French' : 'English'}>", "item_count": <integer>, "rationale": "<why this section and count, max 150 chars>"}],
-  "menu_voice": "<3-4 words describing appropriate writing tone for item names/descriptions, e.g. 'direct, appetite-driven, concise'>",
+  "menu_voice": "<3-4 words describing appropriate writing tone for item names/descriptions>",
   "total_items": <integer, sum of all section item_count>
 }
 
@@ -137,58 +142,68 @@ SPECIFIC REQUESTS: ${intake.additional_notes || 'none'}
 SECTIONS TO FILL (write exactly this many items per section):
 ${sectionList}
 
-IMPORTANT — before finalizing: think through what a well-informed local competitor analysis and this audience's expectations would demand from this menu, and make sure every real opportunity is already represented as an actual item below. Do not identify a gap and then leave it unaddressed. Do not include filler items that don't earn their place — every item should be something you'd stand behind if asked "why is this here?"
+IMPORTANT — before finalizing: think through what a well-informed local competitor analysis and this audience's expectations would demand from this menu, and make sure every real opportunity is already represented as an actual item below. Do not identify a gap and then leave it unaddressed. Do not include filler items that don't earn their place.
 
-List 3-6 realistic ingredients per item (used for costing in the next step). Prices should be realistic for a ${concept.ticket || 'mid-range'} ticket concept. Return ONLY the JSON object — write every item, do not truncate.`;
+List 3-6 realistic ingredients per item (used for costing in the next step). Return ONLY the JSON object — write every item, do not truncate.`;
 
   const text = await callClaude(model, system, user, 16000);
   return parseJsonResponse(text);
 }
 
-// ── PASS 3: Recipe costing + supplier recommendations ───────────
+// ── PASS 3: Recipe costing, sales-mix weighting, suppliers ──────
 const CATEGORY_LIST = 'Produce, Protein, Dairy, Dry Goods & Pantry, Spices & Seasoning, Beverage, Other';
 
-async function generateCosting(model, items, concept, currency, language) {
-  const system = `You are an F&B cost accountant and procurement specialist working across MENA and European markets, with deep knowledge of realistic ingredient costs, yield/trim loss ratios, and local sourcing options. You never compute totals yourself — you provide the raw inputs (unit costs, yield percentages, quantities) that a spreadsheet will calculate live. Return ONLY valid JSON, no markdown, no preamble.`;
+async function generateCosting(model, items, architecture, concept, currency, language) {
+  const system = `You are an F&B cost accountant, kitchen operations specialist, and procurement specialist working across MENA and European markets. You provide realistic ingredient costs, yield ratios, and prep methods. For sourcing, you recommend OPERATIONALLY PRACTICAL supplier lists — always real foodservice/catering distributors or wholesale markets who actually service restaurant accounts of the relevant scale, never small retail shops or industrial-scale producers who would not take on a single-unit restaurant as a client. You minimize the total number of suppliers recommended, since every additional supplier multiplies the number of orders, deliveries, and invoices an operator has to manage — you strongly prefer broadline distributors that cover multiple ingredient categories over fragmenting sourcing across many single-category specialists. You never compute cost totals yourself — you provide the raw inputs that a spreadsheet calculates live. Return ONLY valid JSON, no markdown, no preamble.`;
 
   const itemList = items.items.map((it, i) =>
     `${i + 1}. ${it.name} (${it.section}) — ingredients: ${it.ingredients.join(', ')} — target price: ${it.suggested_price}`
   ).join('\n');
 
-  const user = `Provide recipe costing inputs and supplier recommendations for this menu, in ${currency}. Return JSON matching exactly this schema:
+  const sectionNames = architecture.sections.map((s) => s.name).join(', ');
+
+  const user = `Provide recipe costing, sales-mix weighting, and supplier recommendations for this menu, in ${currency}. Return JSON matching exactly this schema:
 {
   "recipes": [
     {
       "name": "<must match item name exactly>",
+      "method": "<3-6 numbered prep steps as plain text, e.g. '1. Sear the... 2. Reduce the... 3. Plate with...', max 500 chars total — a practical starting point the kitchen can edit>",
+      "popularity_weight_percent": <integer, this item's share of demand WITHIN its section — all items in the same section should sum to approximately 100>,
       "ingredient_lines": [
         {
           "ingredient": "<name>",
           "category": "<one of: ${CATEGORY_LIST}>",
           "unit": "<kg|g|l|ml|piece|bunch|dozen>",
-          "ap_cost_per_unit": <number, benchmark AS-PURCHASED cost per unit in ${currency}, clearly a realistic regional estimate>,
-          "yield_percent": <integer 1-100, usable yield after trim/peel/prep loss — 100 if no loss (e.g. canned goods, packaged items); lower for items with real trim loss (e.g. 75-85 for many fresh vegetables, 60-70 for whole fish before filleting)>,
-          "net_qty_required": <number, the actual quantity of this ingredient that ends up in the finished dish, same unit as above>
+          "ap_cost_per_unit": <number, benchmark AS-PURCHASED cost per unit in ${currency}>,
+          "yield_percent": <integer 1-100, usable yield after trim/peel/prep loss>,
+          "net_qty_required": <number, quantity actually used in the finished dish, same unit as above>
         }
       ],
-      "seasoning_percent": <integer 3-6, allowance for salt/pepper/oil/misc seasoning not individually itemized>
+      "seasoning_percent": <integer 3-6>
     }
   ],
-  "supplier_recommendations": [
-    {
-      "category": "<one of: ${CATEGORY_LIST}>",
-      "sources": [
-        {"name": "<real supplier, wholesale market, or specialty source name>", "type": "<Wholesale market|Specialty supplier|Retail chain|Local producer>", "notes": "<why relevant to this concept and region, max 140 chars>"}
-      ]
-    }
-  ]
+  "section_attachment_rates": [
+    {"section": "<one of: ${sectionNames}>", "attachment_rate_percent": <integer 1-100, realistic % of covers who order from this section — e.g. ~90 for a Mains section, ~30-40 for Desserts or Starters, adjust for this concept's service style>}
+  ],
+  "supplier_recommendations": {
+    "strategy_note": "<1-2 sentences on the consolidation approach for this concept, max 200 chars>",
+    "suppliers": [
+      {
+        "name": "<real foodservice distributor, catering wholesaler, or wholesale market — NOT a retail shop or industrial producer>",
+        "type": "<Foodservice Distributor|Wholesale Market|Specialty Supplier>",
+        "categories_covered": ["<one or more of: ${CATEGORY_LIST}>"],
+        "notes": "<why this fits this concept's scale and region, max 140 chars>"
+      }
+    ]
+  }
 }
 
-CONCEPT REGION: ${concept.city || 'Not specified'}, cuisine: ${concept.cuisine || 'Not specified'}
+CONCEPT REGION: ${concept.city || 'Not specified'}, cuisine: ${concept.cuisine || 'Not specified'}, format: ${concept.type || 'Not specified'}
 
 ITEMS TO COST (list every ingredient from each item below as a costed line):
 ${itemList}
 
-For supplier_recommendations: name REAL, specific sources relevant to the concept's region. For Morocco specifically, reference real options like Derb Omar (Casablanca wholesale market), regional souks, Marjane/Carrefour for retail sourcing, or named specialty importers where relevant to the category. Provide 2-3 sources per category that actually appears in this menu's ingredients — do not invent categories with no ingredients.
+SUPPLIER GUIDANCE: Recommend a MINIMAL, practical list — aim for 3-5 total suppliers covering every category used above, not 2-3 sources per category. Prioritize real foodservice/catering distributors or wholesale markets that would realistically take on an account of this concept's scale. For Morocco specifically, real options include Derb Omar (Casablanca wholesale market) and named foodservice distributors — not generic retail chains. Only add a specialty single-category supplier if a genuine ingredient requires it.
 
 Return ONLY the JSON object — cost every ingredient of every item, do not truncate.`;
 
@@ -196,7 +211,7 @@ Return ONLY the JSON object — cost every ingredient of every item, do not trun
   return parseJsonResponse(text);
 }
 
-// ── JS-side cost computation (grounds the report in real numbers, independent of Excel formulas) ──
+// ── JS-side cost computation (grounds the report in real numbers) ──
 function computeRecipeCost(recipe) {
   let subtotal = 0;
   (recipe.ingredient_lines || []).forEach((line) => {
@@ -213,9 +228,9 @@ function computeRecipeCost(recipe) {
 function buildStrategyReportSystemPrompt(language) {
   return `You are a senior menu engineering consultant. You produce the Menu Strategy Report — a rigorous, practical analysis grounded in real menu engineering discipline (architecture, pricing psychology, profitability classification, sourcing), not a design document. This is a paid deliverable; write it as if billing for genuine expertise.
 
-LANGUAGE: Write the entire report in ${language === 'fr' ? 'French' : 'English'}. Be fully consistent — never mix languages.
+LANGUAGE: Write the entire report in ${language === 'fr' ? 'French' : 'English'}. Be fully consistent.
 
-TONE: Direct, specific, no filler. Balanced — name real strengths and real risks.
+TONE: Direct, specific, no filler. Balanced.
 
 FORMAT RULES — NON-NEGOTIABLE:
 - Output is a single, self-contained HTML document. No markdown, no code fences, no backticks.
@@ -230,22 +245,22 @@ FORMAT RULES — NON-NEGOTIABLE:
   .callout { page-break-inside: avoid; }
 - Every <section> needs style="page-break-inside:avoid;" inline (except the cover).
 - Color palette: Background #FAFAF7, section headers #0F1F3D (navy), accent #C9862A (copper), body text #1a1a1a, muted #888880.
-- Typography: Headings 'Cormorant Garamond', Georgia, serif — load from Google Fonts. Body 'DM Sans', Arial, sans-serif.
-- Visual weight: use color and callout boxes sparingly — reserve navy/copper callout treatment for the "This Week" box only. Most of the report should read as clean typography with generous white space, not colored blocks. Keep paragraphs concise — 2 tight paragraphs beat 4 padded ones.
+- Typography: Headings 'Cormorant Garamond', Georgia, serif. Body 'DM Sans', Arial, sans-serif.
+- Visual weight: sparing use of color/callouts — reserve navy/copper treatment for the "This Week" box only. Generous white space, concise paragraphs.
 - Do not truncate any section.
 
 REQUIRED STRUCTURE:
-1. COVER: Concept name (large, serif, navy), "Menu Strategy Report" label in copper uppercase, date.
-2. MENU ARCHITECTURE & MARKET FIT: why these sections and this balance were chosen — 2-3 paragraphs. Reference 2-3 specific items by name and the market opportunity or audience need each fills (this is a retrospective validation of decisions already made in the final menu, not a list of things still missing — do not suggest adding or removing items).
-3. PRICING STRATEGY & MENU PSYCHOLOGY: how price points relate to the target ticket and market context, plus practical pricing psychology relevant to this concept (price anchoring, ending conventions appropriate to the region, how higher and lower-priced items relate to each other on the page) — 2-3 paragraphs, reference the actual cost/price data provided.
-4. MENU ENGINEERING MATRIX: a table projecting each item's likely classification — Star / Plowhorse / Puzzle / Dog — based on food cost % and price-point positioning (since real sales data doesn't exist pre-launch, frame this explicitly as a projection to revisit with actual POS data after opening, not a final verdict). Include brief rationale per item or group.
-5. SUPPLIER & SOURCING RECOMMENDATIONS: organized by food category, name the real suppliers/markets/sources provided, with brief guidance on why each fits this concept.
+1. COVER: Concept name, "Menu Strategy Report" label in copper uppercase, date.
+2. MENU ARCHITECTURE & MARKET FIT: why these sections and this balance — 2-3 paragraphs, reference 2-3 specific items and the need each fills.
+3. PRICING STRATEGY & MENU PSYCHOLOGY: price points vs. target ticket, pricing psychology relevant to this concept — 2-3 paragraphs.
+4. MENU ENGINEERING MATRIX: a table projecting each item's likely classification — Star / Plowhorse / Puzzle / Dog — based on food cost % and pricing (explicitly framed as a pre-launch projection to revisit with real POS data).
+5. SUPPLIER & SOURCING STRATEGY: present the CONSOLIDATED supplier list provided (not one source per category) — explain why this small set was chosen (operational simplicity: fewer orders, deliveries, invoices) and which categories each supplier covers.
 6. THIS WEEK BOX: 2 immediate actions, dark navy background, copper accent text.
-7. CLOSING: subtle CTA — "This report was generated by Za3fran's Menu Engineer. Visit za3fran.io or email hello@za3fran.io." Print instruction: "To save this report as a PDF, use your browser's Print function and select 'Save as PDF.'"
+7. CLOSING: subtle CTA — "This report was generated by Za3fran's Menu Engineer. Visit za3fran.io or email hello@za3fran.io." Print instruction included.
 
-Do not include any visual/graphic design guidance, brand identity kits, social media direction, or menu layout design — this report covers menu engineering analysis only. Visual branding and marketing direction are handled by a separate tool.
+Do not include visual/graphic design guidance, brand identity kits, or social media direction — this report covers menu engineering analysis only.
 
-OUTPUT REQUIREMENT: Return ONLY the HTML document. Start with <!DOCTYPE html> and end with </html>. No preamble, no explanation.`;
+OUTPUT REQUIREMENT: Return ONLY the HTML document. Start with <!DOCTYPE html> and end with </html>.`;
 }
 
 function buildStrategyReportUserPrompt(concept, architecture, items, costing, currency, language) {
@@ -262,9 +277,9 @@ function buildStrategyReportUserPrompt(concept, architecture, items, costing, cu
     return `${it.name} [${it.section}] — ${it.description}${it.addresses_gap ? ` (addresses: ${it.addresses_gap})` : ''} — ${costLine}`;
   }).join('\n');
 
-  const supplierSummary = (costing.supplier_recommendations || []).map((cat) =>
-    `${cat.category}: ${cat.sources.map((s) => `${s.name} (${s.type}) — ${s.notes}`).join('; ')}`
-  ).join('\n');
+  const supplierBlock = costing.supplier_recommendations || {};
+  const supplierSummary = `Strategy: ${supplierBlock.strategy_note || ''}\n` +
+    (supplierBlock.suppliers || []).map((s) => `${s.name} (${s.type}) — covers: ${(s.categories_covered || []).join(', ')} — ${s.notes}`).join('\n');
 
   return `Generate the Menu Strategy Report for this concept. Today's date: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
 
@@ -272,7 +287,6 @@ CONCEPT: ${concept.concept_name || 'Concept'}
 Type/cuisine: ${concept.type || ''} / ${concept.cuisine || ''}
 City: ${concept.city || 'Not provided'}
 Positioning: ${concept.description || 'Not provided'}
-Differentiation: ${concept.differentiation || 'Not provided'}
 Target ticket: ${concept.ticket || 'Not provided'} ${currency}
 Audience: ${Array.isArray(concept.audience) ? concept.audience.join(', ') : (concept.audience || 'Not provided')}
 
@@ -282,7 +296,7 @@ ${sectionSummary}
 MENU ITEMS WITH ESTIMATED COSTING:
 ${itemSummary}
 
-SUPPLIER RECOMMENDATIONS BY CATEGORY:
+CONSOLIDATED SUPPLIER LIST:
 ${supplierSummary}
 
 Generate the full report now. Return only the HTML document.`;
@@ -346,7 +360,20 @@ function buildRecipeSheet(workbook, item, recipe, currency, usedNames) {
   subCell.value = `${item.section} \u00b7 Target selling price: ${item.suggested_price} ${currency}`;
   subCell.font = { size: 10, italic: true, color: { argb: 'FF888880' } };
 
-  const headerRowIdx = 4;
+  sheet.getCell('A3').value = 'Method (editable)';
+  sheet.getCell('A3').font = { bold: true, size: 10, color: { argb: COPPER } };
+
+  const methodStartRow = 4;
+  const methodRows = 5;
+  sheet.mergeCells(`A${methodStartRow}:H${methodStartRow + methodRows - 1}`);
+  const methodCell = sheet.getCell(`A${methodStartRow}`);
+  methodCell.value = recipe.method || '1. \n2. \n3. ';
+  methodCell.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+  methodCell.font = { size: 11 };
+  methodCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBFAF7' } };
+  methodCell.border = { top: { style: 'thin', color: { argb: 'FFE0DDD5' } }, bottom: { style: 'thin', color: { argb: 'FFE0DDD5' } } };
+
+  const headerRowIdx = methodStartRow + methodRows + 1;
   const headers = ['Ingredient', 'Category', 'Unit', `AP Cost/Unit (${currency})`, 'Yield %', 'Net Qty Required', 'Raw Qty to Purchase', `Line Cost (${currency})`];
   const headerRow = sheet.getRow(headerRowIdx);
   headers.forEach((h, i) => { headerRow.getCell(i + 1).value = h; });
@@ -354,6 +381,7 @@ function buildRecipeSheet(workbook, item, recipe, currency, usedNames) {
 
   let rowIdx = headerRowIdx + 1;
   const firstIngredientRow = rowIdx;
+  const ingredientCells = [];
   (recipe.ingredient_lines || []).forEach((line) => {
     const row = sheet.getRow(rowIdx);
     row.getCell(1).value = line.ingredient;
@@ -372,6 +400,11 @@ function buildRecipeSheet(workbook, item, recipe, currency, usedNames) {
     if ((rowIdx - firstIngredientRow) % 2 === 1) {
       for (let c = 1; c <= 8; c++) row.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_ROW } };
     }
+    ingredientCells.push({
+      ingredient: line.ingredient,
+      unit: line.unit,
+      rawQtyCell: `'${sheetName}'!$G$${rowIdx}`,
+    });
     rowIdx++;
   });
   const lastIngredientRow = rowIdx - 1;
@@ -424,35 +457,58 @@ function buildRecipeSheet(workbook, item, recipe, currency, usedNames) {
     sellingPriceCell: `'${sheetName}'!$H$${priceRow}`,
     foodCostPctCell: `'${sheetName}'!$H$${fcPctRow}`,
     marginCell: `'${sheetName}'!$H$${marginRow}`,
+    ingredientCells,
   };
 }
 
-function buildRecapSheet(workbook, items, recipeRefs, currency) {
+function buildRecapSheet(workbook, items, recipeRefs, sectionAttachmentRates, dailyCovers, currency) {
   const sheet = workbook.addWorksheet('Recap & Sales Mix');
   sheet.properties.tabColor = { argb: NAVY };
   sheet.columns = [
-    { width: 26 }, { width: 16 }, { width: 14 }, { width: 14 },
-    { width: 12 }, { width: 14 }, { width: 16 }, { width: 16 },
-    { width: 16 }, { width: 14 },
+    { width: 26 }, { width: 16 }, { width: 13 }, { width: 13 },
+    { width: 11 }, { width: 13 }, { width: 13 }, { width: 13 },
+    { width: 14 }, { width: 15 }, { width: 16 }, { width: 13 },
   ];
 
-  sheet.mergeCells('A1:J1');
+  sheet.mergeCells('A1:L1');
   sheet.getCell('A1').value = 'Menu Recap & Sales Mix Analysis';
   sheet.getCell('A1').font = { name: 'Georgia', size: 16, bold: true, color: { argb: NAVY } };
   sheet.getRow(1).height = 28;
 
-  sheet.mergeCells('A2:J2');
-  sheet.getCell('A2').value = 'Enter your estimated monthly units sold per item in the highlighted column to see blended profitability and a projected Star/Plowhorse/Puzzle/Dog classification.';
+  sheet.mergeCells('A2:L2');
+  sheet.getCell('A2').value = 'Adjust Daily Covers below to see weekly units, weighted food cost, and market list quantities update live.';
   sheet.getCell('A2').font = { size: 10, italic: true, color: { argb: 'FF888880' } };
 
-  const headerRowIdx = 4;
-  const headers = ['Item', 'Section', `Total Cost (${currency})`, `Selling Price (${currency})`, 'Food Cost %', `Gross Margin (${currency})`, 'Est. Monthly Units', `Est. Revenue (${currency})`, `Est. Contribution (${currency})`, 'Classification'];
+  sheet.getCell('A4').value = 'Daily Covers';
+  sheet.getCell('A4').font = { bold: true };
+  sheet.getCell('B4').value = dailyCovers;
+  sheet.getCell('B4').font = { bold: true, size: 13 };
+  sheet.getCell('B4').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PRICE_HIGHLIGHT } };
+  sheet.getCell('C4').value = '(from your Validator concept data — adjust to test scenarios)';
+  sheet.getCell('C4').font = { size: 9, italic: true, color: { argb: 'FF888880' } };
+
+  sheet.getCell('A5').value = 'Operating Days / Week';
+  sheet.getCell('A5').font = { bold: true };
+  sheet.getCell('B5').value = DEFAULT_OPERATING_DAYS_PER_WEEK;
+  sheet.getCell('B5').font = { bold: true, size: 13 };
+  sheet.getCell('B5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PRICE_HIGHLIGHT } };
+
+  const DAILY_COVERS_CELL = '$B$4';
+  const OPERATING_DAYS_CELL = '$B$5';
+
+  const headerRowIdx = 7;
+  const headers = ['Item', 'Section', `Total Cost (${currency})`, `Selling Price (${currency})`, 'Food Cost %', `Gross Margin (${currency})`, 'Attachment Rate %', 'Popularity Weight %', 'Est. Weekly Units', `Est. Weekly Revenue (${currency})`, `Est. Weekly Contribution (${currency})`, 'Classification'];
   const headerRow = sheet.getRow(headerRowIdx);
   headers.forEach((h, i) => { headerRow.getCell(i + 1).value = h; });
-  styleHeaderRow(headerRow, 10);
+  styleHeaderRow(headerRow, 12);
+
+  const attachmentBySection = {};
+  (sectionAttachmentRates || []).forEach((s) => { attachmentBySection[s.section] = s.attachment_rate_percent; });
 
   let rowIdx = headerRowIdx + 1;
   const firstDataRow = rowIdx;
+  const recapUnitsCellByItem = {};
+
   items.forEach((item) => {
     const ref = recipeRefs[item.name];
     if (!ref) return;
@@ -467,42 +523,59 @@ function buildRecapSheet(workbook, items, recipeRefs, currency) {
     row.getCell(5).numFmt = '0.0%';
     row.getCell(6).value = { formula: ref.marginCell };
     row.getCell(6).numFmt = '#,##0.00';
-    row.getCell(7).value = 0;
-    row.getCell(7).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PRICE_HIGHLIGHT } };
-    row.getCell(8).value = { formula: `G${rowIdx}*D${rowIdx}` };
-    row.getCell(8).numFmt = '#,##0.00';
-    row.getCell(9).value = { formula: `G${rowIdx}*F${rowIdx}` };
-    row.getCell(9).numFmt = '#,##0.00';
+    row.getCell(7).value = (attachmentBySection[item.section] || 50) / 100;
+    row.getCell(7).numFmt = '0%';
+    row.getCell(8).value = (item.popularity_weight_percent || 20) / 100;
+    row.getCell(8).numFmt = '0%';
+    row.getCell(9).value = { formula: `${DAILY_COVERS_CELL}*${OPERATING_DAYS_CELL}*G${rowIdx}*H${rowIdx}` };
+    row.getCell(9).numFmt = '#,##0';
+    row.getCell(9).font = { bold: true, color: { argb: COPPER } };
+    row.getCell(10).value = { formula: `I${rowIdx}*D${rowIdx}` };
+    row.getCell(10).numFmt = '#,##0.00';
+    row.getCell(11).value = { formula: `I${rowIdx}*F${rowIdx}` };
+    row.getCell(11).numFmt = '#,##0.00';
     if ((rowIdx - firstDataRow) % 2 === 1) {
-      for (let c = 1; c <= 9; c++) row.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_ROW } };
+      for (let c = 1; c <= 11; c++) row.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_ROW } };
     }
+    recapUnitsCellByItem[item.name] = `'Recap & Sales Mix'!$I$${rowIdx}`;
     rowIdx++;
   });
   const lastDataRow = rowIdx - 1;
 
   const avgMargin = `AVERAGE(F${firstDataRow}:F${lastDataRow})`;
-  const avgUnits = `AVERAGE(G${firstDataRow}:G${lastDataRow})`;
+  const avgUnits = `AVERAGE(I${firstDataRow}:I${lastDataRow})`;
   for (let r = firstDataRow; r <= lastDataRow; r++) {
-    sheet.getCell(`J${r}`).value = {
-      formula: `IF(AND(F${r}>=${avgMargin},G${r}>=${avgUnits}),"Star",IF(AND(F${r}>=${avgMargin},G${r}<${avgUnits}),"Puzzle",IF(AND(F${r}<${avgMargin},G${r}>=${avgUnits}),"Plowhorse","Dog")))`,
+    sheet.getCell(`L${r}`).value = {
+      formula: `IF(AND(F${r}>=${avgMargin},I${r}>=${avgUnits}),"Star",IF(AND(F${r}>=${avgMargin},I${r}<${avgUnits}),"Puzzle",IF(AND(F${r}<${avgMargin},I${r}>=${avgUnits}),"Plowhorse","Dog")))`,
     };
-    sheet.getCell(`J${r}`).font = { bold: true };
+    sheet.getCell(`L${r}`).font = { bold: true };
   }
 
   const totalRow = lastDataRow + 2;
   sheet.getCell(`A${totalRow}`).value = 'TOTAL / BLENDED';
   sheet.getCell(`A${totalRow}`).font = { bold: true, color: { argb: NAVY } };
-  sheet.getCell(`H${totalRow}`).value = { formula: `SUM(H${firstDataRow}:H${lastDataRow})` };
-  sheet.getCell(`H${totalRow}`).numFmt = '#,##0.00';
-  sheet.getCell(`H${totalRow}`).font = { bold: true, color: { argb: COPPER } };
-  sheet.getCell(`I${totalRow}`).value = { formula: `SUM(I${firstDataRow}:I${lastDataRow})` };
-  sheet.getCell(`I${totalRow}`).numFmt = '#,##0.00';
-  sheet.getCell(`I${totalRow}`).font = { bold: true, color: { argb: COPPER } };
+  sheet.getCell(`J${totalRow}`).value = { formula: `SUM(J${firstDataRow}:J${lastDataRow})` };
+  sheet.getCell(`J${totalRow}`).numFmt = '#,##0.00';
+  sheet.getCell(`J${totalRow}`).font = { bold: true, color: { argb: COPPER } };
+  sheet.getCell(`K${totalRow}`).value = { formula: `SUM(K${firstDataRow}:K${lastDataRow})` };
+  sheet.getCell(`K${totalRow}`).numFmt = '#,##0.00';
+  sheet.getCell(`K${totalRow}`).font = { bold: true, color: { argb: COPPER } };
+
+  const weightedRow = totalRow + 1;
+  sheet.getCell(`A${weightedRow}`).value = 'Covers-Weighted Blended Food Cost %';
+  sheet.getCell(`A${weightedRow}`).font = { bold: true, color: { argb: NAVY } };
+  sheet.getCell(`E${weightedRow}`).value = {
+    formula: `SUMPRODUCT(C${firstDataRow}:C${lastDataRow},I${firstDataRow}:I${lastDataRow})/SUMPRODUCT(D${firstDataRow}:D${lastDataRow},I${firstDataRow}:I${lastDataRow})`,
+  };
+  sheet.getCell(`E${weightedRow}`).numFmt = '0.0%';
+  sheet.getCell(`E${weightedRow}`).font = { bold: true, color: { argb: COPPER }, size: 12 };
 
   sheet.views = [{ state: 'frozen', ySplit: headerRowIdx }];
+
+  return recapUnitsCellByItem;
 }
 
-function buildMarketListSheet(workbook, costing, currency, referenceBatchSize) {
+function buildMarketListSheet(workbook, recipeIngredientData, recapUnitsCellByItem, currency) {
   const sheet = workbook.addWorksheet('Market List');
   sheet.properties.tabColor = { argb: COPPER };
   sheet.columns = [
@@ -511,36 +584,29 @@ function buildMarketListSheet(workbook, costing, currency, referenceBatchSize) {
   ];
 
   sheet.mergeCells('A1:H1');
-  sheet.getCell('A1').value = 'Market List \u2014 Ordering Reference';
+  sheet.getCell('A1').value = 'Market List \u2014 Weekly Ordering';
   sheet.getCell('A1').font = { name: 'Georgia', size: 16, bold: true, color: { argb: NAVY } };
   sheet.getRow(1).height = 28;
 
   sheet.mergeCells('A2:H2');
-  sheet.getCell('A2').value = `Base quantities shown for ${referenceBatchSize} portions of each menu item. Adjust the Order Multiplier column to match your real order volume \u2014 e.g. set to 5 for 50 portions of each item.`;
+  sheet.getCell('A2').value = 'Needed Qty is tied live to the Recap tab\u2019s Est. Weekly Units \u2014 adjust Daily Covers there to see quantities update here. Enter your Current Stock to get the actual quantity to order.';
   sheet.getCell('A2').font = { size: 10, italic: true, color: { argb: 'FF888880' } };
 
-  // Aggregate ingredients across all recipes (matched by name + unit)
   const aggregated = {};
-  costing.recipes.forEach((recipe) => {
-    (recipe.ingredient_lines || []).forEach((line) => {
+  recipeIngredientData.forEach(({ itemName, category, ingredientCells }) => {
+    const unitsCell = recapUnitsCellByItem[itemName];
+    if (!unitsCell) return;
+    ingredientCells.forEach((line) => {
       const key = `${line.ingredient.trim().toLowerCase()}|${line.unit}`;
-      const yieldFactor = (line.yield_percent || 100) / 100;
-      const rawQty = yieldFactor > 0 ? line.net_qty_required / yieldFactor : line.net_qty_required;
       if (!aggregated[key]) {
-        aggregated[key] = {
-          ingredient: line.ingredient,
-          category: line.category || 'Other',
-          unit: line.unit,
-          apCost: line.ap_cost_per_unit,
-          totalRawQtyPerPortion: 0,
-        };
+        aggregated[key] = { ingredient: line.ingredient, category, unit: line.unit, terms: [] };
       }
-      aggregated[key].totalRawQtyPerPortion += rawQty;
+      aggregated[key].terms.push(`${line.rawQtyCell}*${unitsCell}`);
     });
   });
 
   const headerRowIdx = 4;
-  const headers = ['Ingredient', 'Category', 'Unit', `AP Cost/Unit (${currency})`, `Base Qty (${referenceBatchSize} portions)`, 'Order Multiplier', 'Total Order Qty', `Total Order Cost (${currency})`];
+  const headers = ['Ingredient', 'Category', 'Unit', 'Needed Qty (Weekly)', 'Current Stock', 'Qty to Order', `AP Cost/Unit (${currency})`, `Order Cost (${currency})`];
   const headerRow = sheet.getRow(headerRowIdx);
   headers.forEach((h, i) => { headerRow.getCell(i + 1).value = h; });
   styleHeaderRow(headerRow, 8);
@@ -550,20 +616,31 @@ function buildMarketListSheet(workbook, costing, currency, referenceBatchSize) {
   const sorted = Object.values(aggregated).sort((a, b) =>
     a.category.localeCompare(b.category) || a.ingredient.localeCompare(b.ingredient)
   );
+
+  const apCostByKey = {};
+  recipeIngredientData.forEach(({ ingredientCellsWithCost }) => {
+    (ingredientCellsWithCost || []).forEach((line) => {
+      const key = `${line.ingredient.trim().toLowerCase()}|${line.unit}`;
+      if (!(key in apCostByKey)) apCostByKey[key] = line.ap_cost_per_unit;
+    });
+  });
+
   sorted.forEach((ing) => {
+    const key = `${ing.ingredient.trim().toLowerCase()}|${ing.unit}`;
     const row = sheet.getRow(rowIdx);
     row.getCell(1).value = ing.ingredient;
     row.getCell(2).value = ing.category;
     row.getCell(3).value = ing.unit;
-    row.getCell(4).value = ing.apCost;
+    row.getCell(4).value = { formula: ing.terms.join('+') };
     row.getCell(4).numFmt = '#,##0.00';
-    row.getCell(5).value = Math.round(ing.totalRawQtyPerPortion * referenceBatchSize * 100) / 100;
-    row.getCell(5).numFmt = '#,##0.00';
-    row.getCell(6).value = 1;
-    row.getCell(6).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PRICE_HIGHLIGHT } };
-    row.getCell(7).value = { formula: `E${rowIdx}*F${rowIdx}` };
+    row.getCell(5).value = 0;
+    row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PRICE_HIGHLIGHT } };
+    row.getCell(6).value = { formula: `MAX(0,D${rowIdx}-E${rowIdx})` };
+    row.getCell(6).numFmt = '#,##0.00';
+    row.getCell(6).font = { bold: true };
+    row.getCell(7).value = apCostByKey[key] || 0;
     row.getCell(7).numFmt = '#,##0.00';
-    row.getCell(8).value = { formula: `G${rowIdx}*D${rowIdx}` };
+    row.getCell(8).value = { formula: `F${rowIdx}*G${rowIdx}` };
     row.getCell(8).numFmt = '#,##0.00';
     if ((rowIdx - firstDataRow) % 2 === 1) {
       for (let c = 1; c <= 8; c++) row.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_ROW } };
@@ -573,7 +650,7 @@ function buildMarketListSheet(workbook, costing, currency, referenceBatchSize) {
   const lastDataRow = rowIdx - 1;
 
   const totalRow = lastDataRow + 2;
-  sheet.getCell(`A${totalRow}`).value = 'TOTAL ORDER COST';
+  sheet.getCell(`A${totalRow}`).value = 'TOTAL ORDER COST (this week)';
   sheet.getCell(`A${totalRow}`).font = { bold: true, color: { argb: NAVY } };
   sheet.getCell(`H${totalRow}`).value = { formula: `SUM(H${firstDataRow}:H${lastDataRow})` };
   sheet.getCell(`H${totalRow}`).numFmt = '#,##0.00';
@@ -582,7 +659,7 @@ function buildMarketListSheet(workbook, costing, currency, referenceBatchSize) {
   sheet.views = [{ state: 'frozen', ySplit: headerRowIdx }];
 }
 
-async function buildCostingWorkbook(items, costing, currency) {
+async function buildCostingWorkbook(items, costing, concept, currency) {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'Za3fran Menu Engineer';
   workbook.created = new Date();
@@ -590,6 +667,7 @@ async function buildCostingWorkbook(items, costing, currency) {
   const usedNames = new Set();
   const recipeRefs = {};
   const itemsWithRecipes = [];
+  const recipeIngredientData = [];
 
   items.items.forEach((item) => {
     const recipe = costing.recipes.find((r) => r.name === item.name);
@@ -597,10 +675,19 @@ async function buildCostingWorkbook(items, costing, currency) {
     const ref = buildRecipeSheet(workbook, item, recipe, currency, usedNames);
     recipeRefs[item.name] = ref;
     itemsWithRecipes.push(item);
+    recipeIngredientData.push({
+      itemName: item.name,
+      category: (recipe.ingredient_lines[0] && recipe.ingredient_lines[0].category) || 'Other',
+      ingredientCells: ref.ingredientCells,
+      ingredientCellsWithCost: recipe.ingredient_lines,
+    });
   });
 
-  buildRecapSheet(workbook, itemsWithRecipes, recipeRefs, currency);
-  buildMarketListSheet(workbook, costing, currency, MARKET_LIST_REFERENCE_BATCH);
+  const parsedCovers = parseInt(concept.covers, 10);
+  const dailyCovers = (!isNaN(parsedCovers) && parsedCovers > 0) ? parsedCovers : DEFAULT_DAILY_COVERS;
+
+  const recapUnitsCellByItem = buildRecapSheet(workbook, itemsWithRecipes, recipeRefs, costing.section_attachment_rates, dailyCovers, currency);
+  buildMarketListSheet(workbook, recipeIngredientData, recapUnitsCellByItem, currency);
 
   return await workbook.xlsx.writeBuffer();
 }
@@ -673,6 +760,7 @@ export default async function handler(req, res) {
       type: submission?.concept_type,
       city: submission?.city,
       ticket: submission?.ticket,
+      covers: submission?.covers,
       audience: submission?.audience,
       description: submission?.description,
       differentiation: submission?.differentiation,
@@ -683,8 +771,6 @@ export default async function handler(req, res) {
     const language = run.language || 'en';
     const model = getModel('menuEngineer');
 
-    // Write the resolved model immediately — ground truth for debugging,
-    // unlike model_used which was previously only set once at payment time.
     await supabase
       .from('menu_engineer_runs')
       .update({
@@ -695,7 +781,6 @@ export default async function handler(req, res) {
 
     console.log(`[generate-menu] Starting generation for run ${runId} (model: ${model})`);
 
-    // ── Pass 1: Architecture ──
     let architecture;
     try {
       architecture = await generateArchitecture(model, concept, intake, currency, language);
@@ -704,7 +789,6 @@ export default async function handler(req, res) {
     }
     console.log(`[generate-menu] Pass 1 complete: ${architecture.sections.length} sections`);
 
-    // ── Pass 2: Items ──
     let items;
     try {
       items = await generateItems(model, concept, intake, architecture, language);
@@ -713,16 +797,14 @@ export default async function handler(req, res) {
     }
     console.log(`[generate-menu] Pass 2 complete: ${items.items.length} items`);
 
-    // ── Pass 3: Costing + suppliers ──
     let costing;
     try {
-      costing = await generateCosting(model, items, concept, currency, language);
+      costing = await generateCosting(model, items, architecture, concept, currency, language);
     } catch (err) {
       throw new Error(`Pass 3 (costing) failed: ${err.message}`);
     }
-    console.log(`[generate-menu] Pass 3 complete: ${costing.recipes.length} recipes costed, ${(costing.supplier_recommendations || []).length} supplier categories`);
+    console.log(`[generate-menu] Pass 3 complete: ${costing.recipes.length} recipes costed, ${(costing.supplier_recommendations?.suppliers || []).length} suppliers`);
 
-    // ── Pass 4: Strategy report ──
     let reportHtml;
     try {
       reportHtml = await generateStrategyReport(model, concept, architecture, items, costing, currency, language);
@@ -734,17 +816,15 @@ export default async function handler(req, res) {
     }
     console.log(`[generate-menu] Pass 4 complete: ${reportHtml.length} chars`);
 
-    // ── Costing workbook ──
     let xlsxUrl;
     try {
-      const xlsxBuffer = await buildCostingWorkbook(items, costing, currency);
+      const xlsxBuffer = await buildCostingWorkbook(items, costing, concept, currency);
       xlsxUrl = await uploadXlsx(runId, xlsxBuffer);
     } catch (err) {
       throw new Error(`Costing workbook build/upload failed: ${err.message}`);
     }
     console.log(`[generate-menu] XLSX uploaded: ${xlsxUrl}`);
 
-    // ── Save everything ──
     const mergedOutputJson = {
       ...(run.output_json || {}),
       status: 'complete',
