@@ -872,25 +872,6 @@ nav.nav-pushed{top:2.5rem;}
 </div>
 
 <script>
-function setLang(l) {
-  document.getElementById('body').classList.toggle('lang-fr', l === 'fr');
-  document.getElementById('btn-en').classList.toggle('active', l === 'en');
-  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
-  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
-    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
-  });
-  updateBundleBannerText();
-  localStorage.setItem('za3fran_lang', l);
-}
-
-(function() {
-  const saved = localStorage.getItem('za3fran_lang');
-  if (saved === 'fr') setLang('fr');
-  else setLang('en');
-})();
-
-function isFr() { return document.getElementById('body').classList.contains('lang-fr'); }
-
 var BUNDLE_CONFIG = {
   bundle_bp: {
     purchaseType: 'bundle',
@@ -969,6 +950,25 @@ function updateBundleBannerText() {
     ? 'Vous êtes sur le parcours <strong style="color:#C9862A;">' + label + ' — ' + price + '</strong>. Complétez le formulaire pour tout recevoir.'
     : 'You\'re on the <strong style="color:#C9862A;">' + label + ' — ' + price + '</strong> path. Complete the form to get everything.';
 }
+
+function setLang(l) {
+  document.getElementById('body').classList.toggle('lang-fr', l === 'fr');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
+  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
+    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+  updateBundleBannerText();
+  localStorage.setItem('za3fran_lang', l);
+}
+
+(function() {
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') setLang('fr');
+  else setLang('en');
+})();
+
+function isFr() { return document.getElementById('body').classList.contains('lang-fr'); }
 
 var CURRENCY = 'EUR';
 var PRICES = {
