@@ -13,9 +13,16 @@
 // 8. Update submission: status → 'paid', set report_id
 // 9. Send delivery email via Brevo
 //
-// Additional flow (Bundle = Validator + BP Essentials):
-// 10. Create pending BP run record in business_plan_essentials_runs
-// 11. Send single combined delivery email with both report links
+// Additional flow (Bundle variants):
+// 10a. purchase_type 'bundle' or 'bundle_full' → create pending BP run
+//      record in business_plan_essentials_runs
+// 10b. purchase_type 'bundle_menu' or 'bundle_full' → create pending
+//      Menu Engineer run record in menu_engineer_runs (ready for
+//      on-demand generation — no separate intake form was filled
+//      since the customer bought via the bundle CTA, so intake
+//      notes are empty and can be filled in via regeneration later)
+// 11. Send single combined delivery email with all purchased report
+//     links
 // =============================================================
 
 import Stripe from 'stripe';
@@ -453,11 +460,11 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     .update({ status: 'paid', report_id: reportId })
     .eq('id', submission.id);
 
-  // ── Step 7: If BUNDLE — create pending BP run record ──────────
+  // ── Step 7a: If BP bundle — create pending BP run record ──────
   let bpReportId   = null;
   let bpAccessCode = null;
 
-  if (purchaseType === 'bundle') {
+  if (purchaseType === 'bundle' || purchaseType === 'bundle_full') {
     try {
       bpAccessCode = generateAccessCode();
       bpReportId   = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -480,9 +487,47 @@ async function processReport(customerEmail, sessionId, purchaseType) {
       console.log(`[Bundle] BP pending record created: ${bpReportId} / ${bpAccessCode}`);
     } catch (err) {
       console.error('[Bundle] BP record creation failed (non-fatal):', err.message);
-      // Validator delivery still proceeds; BP can be re-triggered manually
       bpReportId   = null;
       bpAccessCode = null;
+    }
+  }
+
+  // ── Step 7b: If Menu bundle — create pending Menu Engineer run ──
+  let menuReportId   = null;
+  let menuAccessCode = null;
+
+  if (purchaseType === 'bundle_menu' || purchaseType === 'bundle_full') {
+    try {
+      menuAccessCode = generateAccessCode();
+      menuReportId   = `me_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+      await supabase.from('menu_engineer_runs').insert({
+        id:          menuReportId,
+        project_id:  projectId,
+        output_html: null,
+        output_xlsx_url: null,
+        access_code: menuAccessCode,
+        currency:    submission.currency || 'EUR',
+        language:    submission.language || 'en',
+        status:      'pending_generation',
+        model_used:  getModel('menuEngineer'),
+        output_json: {
+          status:               'pending_generation',
+          validator_report_id:  reportId,
+          submission_id:        submission.id,
+          intake: {
+            // No separate intake form was filled for a bundle purchase —
+            // the customer can regenerate later with specific notes if needed.
+            additional_notes: null,
+          },
+        },
+      });
+
+      console.log(`[Bundle] Menu Engineer pending record created: ${menuReportId} / ${menuAccessCode}`);
+    } catch (err) {
+      console.error('[Bundle] Menu Engineer record creation failed (non-fatal):', err.message);
+      menuReportId   = null;
+      menuAccessCode = null;
     }
   }
 
@@ -494,7 +539,22 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   const isFr        = submission.language === 'fr' ||
     (submission.description && /[àâäéèêëîïôöùûüçœæ]/i.test(submission.description));
 
-  const isBundle = purchaseType === 'bundle' && bpReportId;
+  const hasBP   = (purchaseType === 'bundle' || purchaseType === 'bundle_full') && bpReportId;
+  const hasMenu = (purchaseType === 'bundle_menu' || purchaseType === 'bundle_full') && menuReportId;
+  const isBundle = hasBP || hasMenu;
+
+  let bundleLabel_en = 'Concept Validator';
+  let bundleLabel_fr = 'Concept Validator';
+  if (hasBP && hasMenu) {
+    bundleLabel_en = 'Validator + Business Plan + Menu Engineer';
+    bundleLabel_fr = 'Validator + Business Plan + Menu Engineer';
+  } else if (hasBP) {
+    bundleLabel_en = 'Validator + Business Plan Essentials';
+    bundleLabel_fr = 'Validator + Business Plan Essentials';
+  } else if (hasMenu) {
+    bundleLabel_en = 'Validator + Menu Engineer';
+    bundleLabel_fr = 'Validator + Menu Engineer';
+  }
 
   const emailSubject = isFr
     ? (isBundle
@@ -504,10 +564,10 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         ? `Your Za3fran deliverables are ready — ${conceptName}`
         : `Your Za3fran report is ready — ${conceptName}`);
 
-  // ── Bundle email includes both Validator + BP access ──────────
+  // ── BP section (bundle / bundle_full) ──────────────────────────
   const bpUrl = bpReportId ? `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}` : null;
 
-  const bundleSection_en = isBundle ? `
+  const bpSection_en = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Business Plan Essentials</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Business Plan Essentials is ready to generate. Click below and enter your access code to start (generation takes 3–5 minutes).</p>
@@ -520,7 +580,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
 
-  const bundleSection_fr = isBundle ? `
+  const bpSection_fr = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Business Plan Essentials</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre Business Plan Essentials est prêt à générer. Cliquez ci-dessous et entrez votre code d'accès pour démarrer (génération : 3–5 minutes).</p>
@@ -533,8 +593,37 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
 
+  // ── Menu Engineer section (bundle_menu / bundle_full) ───────────
+  const menuUrl = menuReportId ? `${BASE_URL}/api/report-menu-viewer?id=${menuReportId}` : null;
+
+  const menuSection_en = hasMenu ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Menu Engineer</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Menu Engineer deliverables — a Strategy Report and Costing Workbook — are ready to generate. Click below and enter your access code to start (generation takes 3–7 minutes).</p>
+  <div style="text-align:center;margin:0 0 24px;">
+    <a href="${menuUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Access my Menu Engineer →</a>
+  </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Menu Engineer access code</p>
+    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${menuAccessCode}</p>
+  </div>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${menuUrl}" style="color:#C9862A;">${menuUrl}</a></p>` : '';
+
+  const menuSection_fr = hasMenu ? `
+  <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
+  <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Menu Engineer</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Vos livrables Menu Engineer — un rapport stratégique et un classeur de costing — sont prêts à générer. Cliquez ci-dessous et entrez votre code d'accès pour démarrer (génération : 3–7 minutes).</p>
+  <div style="text-align:center;margin:0 0 24px;">
+    <a href="${menuUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Menu Engineer →</a>
+  </div>
+  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Menu Engineer</p>
+    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${menuAccessCode}</p>
+  </div>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${menuUrl}" style="color:#C9862A;">${menuUrl}</a></p>` : '';
+
   // Upsell section for Validator-only buyers (points to BP standalone at €499)
-  const upsellSection_en = !isBundle ? `
+  const upsellSection_en = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Next step:</strong> Turn this report into a complete Business Plan with financial projections.</p>
   <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">€499</strong> <span style="text-decoration:line-through;color:#888880;">€599</span> — your exclusive returning-client rate.</p>
@@ -542,7 +631,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Get my Business Plan — €499 →</a>
   </div>` : '';
 
-  const upsellSection_fr = !isBundle ? `
+  const upsellSection_fr = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Prochaine étape :</strong> Transformez ce rapport en Business Plan complet avec projections financières.</p>
   <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">499 €</strong> <span style="text-decoration:line-through;color:#888880;">599 €</span> — tarif fidélité exclusif.</p>
@@ -555,7 +644,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
 <div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
 <div style="background:#0F1F3D;padding:40px;text-align:center;">
   <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
-  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${isBundle ? 'Validator + Business Plan Essentials' : 'Concept Validator'}</p>
+  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${bundleLabel_fr}</p>
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
@@ -569,7 +658,8 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-  ${bundleSection_fr}
+  ${bpSection_fr}
+  ${menuSection_fr}
   ${upsellSection_fr}
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:32px 0;">
   <p style="color:#888880;font-size:13px;margin:0;">Questions ? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
@@ -582,7 +672,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
 <div style="max-width:600px;margin:40px auto;background:#FAFAF7;border-radius:4px;overflow:hidden;">
 <div style="background:#0F1F3D;padding:40px;text-align:center;">
   <p style="font-family:Georgia,serif;font-size:28px;color:#C9862A;margin:0;letter-spacing:2px;">ZA3FRAN</p>
-  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${isBundle ? 'Validator + Business Plan Essentials' : 'Concept Validator'}</p>
+  <p style="color:#888880;font-size:12px;margin:8px 0 0;letter-spacing:1px;text-transform:uppercase;">${bundleLabel_en}</p>
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
@@ -596,7 +686,8 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-  ${bundleSection_en}
+  ${bpSection_en}
+  ${menuSection_en}
   ${upsellSection_en}
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:32px 0;">
   <p style="color:#888880;font-size:13px;margin:0;">Questions? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
@@ -630,7 +721,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     console.error('Brevo email error:', err);
   }
 
-  console.log(`[processReport] Complete. reportId: ${reportId}${isBundle ? `, bpReportId: ${bpReportId}` : ''}`);
+  console.log(`[processReport] Complete. reportId: ${reportId}${hasBP ? `, bpReportId: ${bpReportId}` : ''}${hasMenu ? `, menuReportId: ${menuReportId}` : ''}`);
 }
 
 // ── Extract structured JSON from HTML via Haiku ───────────────

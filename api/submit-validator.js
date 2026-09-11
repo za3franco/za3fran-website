@@ -21,8 +21,10 @@ export default async function handler(req, res) {
   }
 
   const currency = normalizeCurrency(data.currency || 'EUR');
-  // purchaseType: 'validator' (default) or 'bundle' (Validator + BP Essentials)
-  const purchaseType = data.purchase_type === 'bundle' ? 'bundle' : 'validator';
+  // purchaseType: 'validator' (default), 'bundle' (Validator + BP),
+  // 'bundle_menu' (Validator + Menu Engineer), or 'bundle_full' (all three)
+  const VALID_PURCHASE_TYPES = ['validator', 'bundle', 'bundle_menu', 'bundle_full'];
+  const purchaseType = VALID_PURCHASE_TYPES.includes(data.purchase_type) ? data.purchase_type : 'validator';
 
   // ── STEP 1: Save to Supabase ──
   try {
@@ -87,8 +89,8 @@ export default async function handler(req, res) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://za3fran.io';
 
     // Resolve correct price ID from lib/currency.js
-    // 'bundle' → Validator + BP bundle price
-    // 'validator' → Validator only price
+    // 'validator' → Validator only · 'bundle' → Validator + BP
+    // 'bundle_menu' → Validator + Menu Engineer · 'bundle_full' → all three
     const priceId = getPriceId(purchaseType, currency);
 
     const session = await stripe.checkout.sessions.create({
