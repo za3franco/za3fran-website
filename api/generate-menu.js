@@ -243,7 +243,13 @@ FORMAT RULES — NON-NEGOTIABLE:
   h2, h3 { page-break-after: avoid; }
   table { page-break-inside: avoid; }
   .callout { page-break-inside: avoid; }
-- Every <section> needs style="page-break-inside:avoid;" inline (except the cover).
+- Every single one of the 7 numbered sections below MUST be its own <section style="page-break-inside:avoid;"> element (plus page-break-before:always except the cover) — never let any heading or block of content sit outside a <section> wrapper, and never split a section's content across two <div> siblings that aren't both inside the same <section>. This applies with no exceptions to the Supplier section.
+
+PRINT/PAGINATION — COMMON MISTAKES, AVOID ALL OF THESE:
+1. COVER HEIGHT: the cover section's total height (title, subtitle, meta rows, all padding combined) must comfortably fit within a single A4 page after typical browser print margins (~270mm usable height). Keep the cover's vertical padding modest — do not use large spacer blocks, do not set min-height or height larger than the content needs, do not vertically center content using a technique that inflates total block height (e.g. min-height:100vh). Let the cover size naturally to its content and stay clearly under one page. This is the single most common failure — check your cover's total content height mentally before finalizing.
+2. Because Section 2 immediately follows the cover with page-break-before:always, if the cover overflows onto a second page it pushes Section 2's content to overflow awkwardly too. Fixing the cover height (rule 1) is what prevents this cascade — do not try to compensate by shrinking Section 2 instead.
+3. MENU ENGINEERING MATRIX TABLE (Section 4): never put the rationale text in a narrow table column — a narrow column forces heavy word-wrapping and makes every row very tall. Instead, structure each item as TWO stacked table rows: Row A has the compact columns (Item | Section | Price | Food Cost % | Gross Margin | Classification badge); Row B is a single cell with colspan spanning the full table width, containing the rationale in smaller muted text (e.g. font-size:12px; color:#888880; padding:2px 8px 10px;) directly beneath Row A, with no visible border between A and B so they read as one entry. This keeps each item compact instead of tall.
+4. SUPPLIER SECTION (Section 5): the entire block — heading, strategy note, and every supplier card — must be wrapped together in one container with style="page-break-inside:avoid;" so it either fits entirely on the current page or the WHOLE block moves together to the next page. Never let some supplier cards render on one page and the rest on the next — if the group doesn't fit in remaining space, it must move as a unit, not split mid-list. With only 3-5 suppliers this should comfortably fit on one page once formatted compactly.
 - Color palette: Background #FAFAF7, section headers #0F1F3D (navy), accent #C9862A (copper), body text #1a1a1a, muted #888880.
 - Typography: Headings 'Cormorant Garamond', Georgia, serif. Body 'DM Sans', Arial, sans-serif.
 - Visual weight: sparing use of color/callouts — reserve navy/copper treatment for the "This Week" box only. Generous white space, concise paragraphs.
@@ -253,8 +259,8 @@ REQUIRED STRUCTURE:
 1. COVER: Concept name, "Menu Strategy Report" label in copper uppercase, date.
 2. MENU ARCHITECTURE & MARKET FIT: why these sections and this balance — 2-3 paragraphs, reference 2-3 specific items and the need each fills.
 3. PRICING STRATEGY & MENU PSYCHOLOGY: price points vs. target ticket, pricing psychology relevant to this concept — 2-3 paragraphs.
-4. MENU ENGINEERING MATRIX: a table projecting each item's likely classification — Star / Plowhorse / Puzzle / Dog — based on food cost % and pricing (explicitly framed as a pre-launch projection to revisit with real POS data).
-5. SUPPLIER & SOURCING STRATEGY: present the CONSOLIDATED supplier list provided (not one source per category) — explain why this small set was chosen (operational simplicity: fewer orders, deliveries, invoices) and which categories each supplier covers.
+4. MENU ENGINEERING MATRIX: a table projecting each item's likely classification — Star / Plowhorse / Puzzle / Dog — based on food cost % and pricing (explicitly framed as a pre-launch projection to revisit with real POS data). Use the two-row-per-item table pattern described in the pagination rules above (compact row + full-width rationale row) — never a narrow rationale column.
+5. SUPPLIER & SOURCING STRATEGY: present the CONSOLIDATED supplier list provided (not one source per category) — explain why this small set was chosen (operational simplicity: fewer orders, deliveries, invoices) and which categories each supplier covers. Wrap the entire heading + note + all supplier cards in one page-break-inside:avoid container per the pagination rules above.
 6. THIS WEEK BOX: 2 immediate actions, dark navy background, copper accent text.
 7. CLOSING: subtle CTA — "This report was generated by Za3fran's Menu Engineer. Visit za3fran.io or email hello@za3fran.io." Print instruction included.
 
