@@ -23,7 +23,6 @@ h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:400;}
 ::-webkit-scrollbar-track{background:var(--black);}
 ::-webkit-scrollbar-thumb{background:var(--copper-dark);border-radius:2px;}
 
-/* ── LANGUAGE ── */
 .en,.fr{display:none;}
 body .en{display:block;}
 body .fr{display:none;}
@@ -35,7 +34,6 @@ body .fr-inline{display:none;}
 body.lang-fr .fr-inline{display:inline;}
 body.lang-fr .en-inline{display:none;}
 
-/* ── BUNDLE BANNER ── */
 #bundle-banner{
   position:fixed;top:0;left:0;right:0;z-index:150;
   background:var(--navy);border-bottom:1px solid rgba(201,134,42,0.4);
@@ -44,7 +42,6 @@ body.lang-fr .en-inline{display:none;}
 }
 #bundle-banner.show{display:flex;}
 
-/* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
   justify-content:space-between;padding:1.25rem 4rem;background:rgba(10,10,10,0.95);
   backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);}
@@ -65,7 +62,6 @@ nav.nav-pushed{top:2.5rem;}
   transition:all 0.2s;font-family:'DM Sans',sans-serif;}
 .lang-btn.active{background:var(--copper);color:var(--black);}
 
-/* ── HERO ── */
 .v-hero{padding:10rem 4rem 5rem;position:relative;overflow:hidden;text-align:center;}
 .v-hero.bundle-mode{padding-top:13rem;}
 .v-hero-bg{position:absolute;inset:0;z-index:0;
@@ -93,7 +89,6 @@ nav.nav-pushed{top:2.5rem;}
 .v-price-divider{width:0.5px;height:32px;background:var(--border);}
 .v-price-desc{font-size:0.78rem;color:rgba(250,250,247,0.45);max-width:180px;line-height:1.5;}
 
-/* ── FORM CONTAINER ── */
 .v-form-wrap{max-width:860px;margin:0 auto;padding:0 4rem 8rem;}
 .v-section{margin-bottom:3.5rem;}
 .v-section-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:2rem;
@@ -103,7 +98,6 @@ nav.nav-pushed{top:2.5rem;}
 .v-section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;}
 .v-section-title em{font-style:italic;color:var(--copper);}
 
-/* ── FIELDS ── */
 .v-row{display:grid;gap:1.25rem;margin-bottom:1.25rem;}
 .v-row.two{grid-template-columns:1fr 1fr;align-items:start;}
 .v-row.three{grid-template-columns:1fr 1fr 1fr;align-items:start;}
@@ -132,7 +126,6 @@ nav.nav-pushed{top:2.5rem;}
 .v-err{font-size:0.72rem;color:var(--error);margin-top:0.25rem;display:none;}
 .v-err.show{display:block;}
 
-/* ── PILLS ── */
 .v-pills{display:flex;flex-wrap:wrap;gap:0.5rem;}
 .v-pill{display:none;}
 .v-pill-label{padding:0.5rem 1rem;border:0.5px solid rgba(201,134,42,0.2);
@@ -142,7 +135,6 @@ nav.nav-pushed{top:2.5rem;}
   background:rgba(201,134,42,0.08);}
 .v-pill-label:hover{border-color:rgba(201,134,42,0.5);color:rgba(250,250,247,0.8);}
 
-/* ── SUBMIT AREA ── */
 .v-submit-wrap{border-top:0.5px solid var(--border);padding-top:3rem;margin-top:3rem;}
 .v-submit-summary{background:var(--charcoal);border:0.5px solid var(--border);
   padding:2rem;margin-bottom:2rem;}
@@ -173,7 +165,6 @@ nav.nav-pushed{top:2.5rem;}
 .btn-submit.loading .btn-label{opacity:0.6;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── SUCCESS STATE ── */
 .v-success{display:none;text-align:center;padding:6rem 4rem;max-width:640px;margin:0 auto;}
 .v-success.show{display:block;}
 .v-success-icon{width:72px;height:72px;border:0.5px solid var(--copper);border-radius:50%;
@@ -183,7 +174,6 @@ nav.nav-pushed{top:2.5rem;}
 .v-success-h em{font-style:italic;color:var(--copper);}
 .v-success-p{font-size:0.9rem;line-height:1.8;color:rgba(250,250,247,0.55);margin-bottom:2rem;}
 
-/* ── REVIEW SCREEN ── */
 .v-review{display:none;max-width:860px;margin:0 auto;padding:0 4rem 8rem;}
 .v-review.show{display:block;}
 .v-review-header{text-align:center;padding:3rem 0 3rem;border-bottom:0.5px solid var(--border);margin-bottom:3rem;}
@@ -234,7 +224,6 @@ nav.nav-pushed{top:2.5rem;}
   transition:color 0.2s;width:100%;padding:0.5rem;}
 .btn-back:hover{color:var(--copper);}
 
-/* ── BUNDLE TOGGLE ── */
 .v-bundle-toggle{border:0.5px solid var(--border);margin-bottom:1.5rem;overflow:hidden;}
 .v-bundle-option{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 1.5rem;
   cursor:pointer;transition:background 0.2s;position:relative;}
@@ -256,10 +245,8 @@ nav.nav-pushed{top:2.5rem;}
 .v-bundle-list{font-size:0.78rem;color:#C9862A;margin:0.75rem 0 0;
   letter-spacing:0.08em;text-transform:uppercase;}
 
-/* ── DIVIDER ── */
 .v-div{width:40px;height:0.5px;background:var(--copper);margin:1.5rem 0;}
 
-/* ── RESPONSIVE ── */
 @media(max-width:768px){
   nav{padding:1rem 1.5rem;}
   .v-hero{padding:8rem 1.5rem 3rem;}
@@ -272,12 +259,10 @@ nav.nav-pushed{top:2.5rem;}
   #bundle-banner{padding:0.65rem 1rem;font-size:0.72rem;}
 }
 
-/* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 .fade-up{animation:fadeUp 0.6s ease both;}
 .d1{animation-delay:0.1s;}.d2{animation-delay:0.2s;}.d3{animation-delay:0.3s;}
 </style>
-  <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -288,7 +273,6 @@ nav.nav-pushed{top:2.5rem;}
 </head>
 <body id="body">
 
-<!-- BUNDLE BANNER — shown when ?bundle=true -->
 <div id="bundle-banner">
   <span style="color:#C9862A;font-size:0.9rem;">✦</span>
   <span id="bundle-banner-text" style="color:rgba(250,250,247,0.9);"></span>
@@ -296,7 +280,6 @@ nav.nav-pushed{top:2.5rem;}
     style="background:none;border:none;color:rgba(136,136,128,0.6);cursor:pointer;font-size:1rem;padding:0 0.25rem;line-height:1;flex-shrink:0;margin-left:0.5rem;">✕</button>
 </div>
 
-<!-- NAV -->
 <nav id="nav">
   <a href="/" class="nav-logo">
     <div class="nav-mark">
@@ -305,8 +288,8 @@ nav.nav-pushed{top:2.5rem;}
     <span class="nav-name">Za3fran<span>.io</span></span>
   </a>
   <div class="nav-right">
-    <a href="/platform" class="nav-back en">← Back to platform</a>
-    <a href="/platform" class="nav-back fr">← Retour à la plateforme</a>
+    <a href="/pricing" class="nav-back en">← Back to pricing</a>
+    <a href="/pricing" class="nav-back fr">← Retour aux tarifs</a>
     <div class="nav-lang">
       <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
       <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">FR</button>
@@ -314,15 +297,14 @@ nav.nav-pushed{top:2.5rem;}
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="v-hero" id="v-hero">
   <div class="v-hero-bg"></div>
   <div class="v-hero-grid"></div>
   <div class="v-hero-content">
     <div class="v-eyebrow fade-up en">Za3fran Digital · Concept Validator</div>
     <div class="v-eyebrow fade-up fr">Za3fran Digital · Validateur de Concept</div>
-    <h1 class="v-h1 fade-up d1 en">Your concept.<br><em>Validated.</em></h1>
-    <h1 class="v-h1 fade-up d1 fr">Votre concept.<br><em>Validé.</em></h1>
+    <h1 class="v-h1 fade-up d1 en" id="hero-h1-en">Your concept.<br><em>Validated.</em></h1>
+    <h1 class="v-h1 fade-up d1 fr" id="hero-h1-fr">Votre concept.<br><em>Validé.</em></h1>
     <p class="v-sub fade-up d2 en">A 20-page strategic analysis built on real data — delivered to your inbox.</p>
     <p class="v-sub fade-up d2 fr">Une analyse stratégique de 20 pages sur données réelles — dans votre boîte mail.</p>
     <div class="v-what fade-up d2">
@@ -342,7 +324,6 @@ nav.nav-pushed{top:2.5rem;}
         <span class="v-what-label fr">Sections stratégiques</span>
       </div>
     </div>
-    <!-- Standard price band (Validator only) -->
     <div class="v-price-band fade-up d3" id="hero-price-band-standard">
       <span class="v-price-label en">One-time fee</span>
       <span class="v-price-label fr">Frais uniques</span>
@@ -352,26 +333,23 @@ nav.nav-pushed{top:2.5rem;}
       <span class="v-price-desc en">Full report · Secure payment · Instant delivery</span>
       <span class="v-price-desc fr">Rapport complet · Paiement sécurisé · Livraison instantanée</span>
     </div>
-    <!-- Bundle price band (shown when ?bundle=true) -->
     <div class="fade-up d3" id="hero-price-band-bundle" style="display:none;padding:1.25rem 2rem;border:0.5px solid rgba(201,134,42,0.4);background:rgba(201,134,42,0.06);max-width:480px;margin:0 auto;">
-      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" class="en">Validator + Business Plan Essentials Bundle</div>
-      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" class="fr">Bundle Validator + Business Plan Essentials</div>
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" id="hero-bundle-label-en" class="en">Validator + Business Plan Essentials Bundle</div>
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin-bottom:0.75rem;" id="hero-bundle-label-fr" class="fr">Bundle Validator + Business Plan Essentials</div>
       <div style="display:flex;align-items:baseline;gap:0.75rem;justify-content:center;margin-bottom:0.5rem;">
         <span style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--copper);" id="hero-bundle-price-band">€699</span>
-        <span style="font-size:0.75rem;color:var(--muted);" class="en">one-time · two products · two reports</span>
-        <span style="font-size:0.75rem;color:var(--muted);" class="fr">paiement unique · deux produits · deux rapports</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="en">one-time · secure payment</span>
+        <span style="font-size:0.75rem;color:var(--muted);" class="fr">paiement unique · sécurisé</span>
       </div>
-      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" class="en">✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ <span id="hero-bundle-save">Save €99</span></div>
-      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" class="fr">✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ <span id="hero-bundle-save-fr">Économisez 99€</span></div>
+      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" id="hero-bundle-list-en" class="en"></div>
+      <div style="font-size:0.75rem;color:rgba(201,134,42,0.7);text-align:center;" id="hero-bundle-list-fr" class="fr"></div>
     </div>
   </div>
 </div>
 
-<!-- FORM -->
 <div class="v-form-wrap">
   <form id="validator-form" novalidate>
 
-    <!-- SECTION 1: CONTACT -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">01</span>
@@ -430,7 +408,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SECTION 2: CONCEPT -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">02</span>
@@ -489,7 +466,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SECTION 3: LOCATION & MARKET -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">03</span>
@@ -531,7 +507,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SECTION 4: FINANCIALS -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">04</span>
@@ -578,7 +553,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SECTION 5: COMPETITION -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">05</span>
@@ -603,7 +577,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SECTION 6: CONTEXT -->
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">06</span>
@@ -648,7 +621,6 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
-    <!-- SUBMIT -->
     <div class="v-submit-wrap">
       <div class="v-submit-summary">
         <div class="v-summary-title en">What you'll receive</div>
@@ -670,10 +642,10 @@ nav.nav-pushed{top:2.5rem;}
         </div>
         <div class="v-total" id="form-total-bundle" style="display:none;">
           <div>
-            <div class="v-total-label en">Bundle total · Validator + Business Plan</div>
-            <div class="v-total-label fr">Total bundle · Validator + Business Plan</div>
-            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="en">Includes both products · <span id="form-bundle-save">Save €99</span></div>
-            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="fr">Inclut les deux produits · <span id="form-bundle-save-fr">Économisez 99€</span></div>
+            <div class="v-total-label" id="form-bundle-label-en">Bundle total · Validator + Business Plan</div>
+            <div class="v-total-label" id="form-bundle-label-fr" style="display:none;">Total bundle · Validator + Business Plan</div>
+            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="en">Includes all products · <span id="form-bundle-save">Save €99</span></div>
+            <div style="font-size:0.72rem;color:rgba(201,134,42,0.6);margin-top:0.25rem;" class="fr">Inclut tous les produits · <span id="form-bundle-save-fr">Économisez 99€</span></div>
           </div>
           <span class="v-total-price" id="submit-bundle-price">€699</span>
         </div>
@@ -693,7 +665,6 @@ nav.nav-pushed{top:2.5rem;}
   </form>
 </div>
 
-<!-- REVIEW SCREEN -->
 <div class="v-review" id="v-review">
   <div class="v-review-header">
     <span class="v-review-eyebrow en">Step 2 of 2 — Review your submission</span>
@@ -704,7 +675,6 @@ nav.nav-pushed{top:2.5rem;}
     <p class="v-review-notice fr"><strong>Important :</strong> votre rapport est généré une seule fois. Vérifiez ci-dessous avant de procéder au paiement.</p>
   </div>
 
-  <!-- Block 1 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">01 — Your details</span>
@@ -721,7 +691,6 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Block 2 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">02 — Your concept</span>
@@ -739,7 +708,6 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Block 3 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">03 — Location &amp; market</span>
@@ -755,7 +723,6 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Block 4 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">04 — Financial parameters</span>
@@ -772,7 +739,6 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Block 5 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">05 — Competitive landscape</span>
@@ -785,7 +751,6 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Block 6 -->
   <div class="v-rblock">
     <div class="v-rblock-head">
       <span class="v-rblock-title en">06 — Project context</span>
@@ -801,10 +766,8 @@ nav.nav-pushed{top:2.5rem;}
     </div>
   </div>
 
-  <!-- Confirm & Pay -->
   <div class="v-review-confirm">
-    <!-- Package toggle -->
-    <div style="margin-bottom:1.5rem;">
+    <div id="standard-toggle-wrap" style="margin-bottom:1.5rem;">
       <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin:0 0 0.75rem;">
         <span class="en">Choose your package</span>
         <span class="fr">Choisissez votre offre</span>
@@ -844,6 +807,31 @@ nav.nav-pushed{top:2.5rem;}
       </div>
     </div>
 
+    <div id="locked-package-wrap" style="display:none;margin-bottom:1.5rem;">
+      <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper);margin:0 0 0.75rem;">
+        <span class="en">Your package</span>
+        <span class="fr">Votre offre</span>
+      </p>
+      <div class="v-bundle-toggle">
+        <div class="v-bundle-option selected" style="cursor:default;">
+          <div class="v-bundle-radio"></div>
+          <div class="v-bundle-content">
+            <div class="v-bundle-label" id="locked-package-label-en"></div>
+            <div class="v-bundle-label" id="locked-package-label-fr" style="display:none;"></div>
+            <div class="v-bundle-desc" id="locked-package-desc-en"></div>
+            <div class="v-bundle-desc" id="locked-package-desc-fr" style="display:none;"></div>
+            <div class="v-bundle-list" id="locked-package-list-en"></div>
+            <div class="v-bundle-list" id="locked-package-list-fr" style="display:none;"></div>
+          </div>
+          <div class="v-bundle-price" id="locked-package-price"></div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:0.72rem;margin-top:0.75rem;">
+        <a href="/pricing" style="color:var(--muted);" class="en">Want a different package? See all options →</a>
+        <a href="/pricing" style="color:var(--muted);" class="fr">Vous voulez une autre offre ? Voir toutes les options →</a>
+      </p>
+    </div>
+
     <div class="v-review-total">
       <div class="v-review-total-left">
         <span class="v-review-total-label en">Total · One-time payment</span>
@@ -870,7 +858,6 @@ nav.nav-pushed{top:2.5rem;}
   </div>
 </div>
 
-<!-- SUCCESS STATE -->
 <div class="v-success" id="v-success">
   <div class="v-success-icon">✦</div>
   <h2 class="v-success-h en">Your report is<br><em>on its way.</em></h2>
@@ -885,7 +872,6 @@ nav.nav-pushed{top:2.5rem;}
 </div>
 
 <script>
-// ── LANGUAGE ──
 function setLang(l) {
   document.getElementById('body').classList.toggle('lang-fr', l === 'fr');
   document.getElementById('btn-en').classList.toggle('active', l === 'en');
@@ -893,7 +879,6 @@ function setLang(l) {
   document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
     el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
   });
-  // Update bundle banner text if visible
   updateBundleBannerText();
   localStorage.setItem('za3fran_lang', l);
 }
@@ -906,52 +891,96 @@ function setLang(l) {
 
 function isFr() { return document.getElementById('body').classList.contains('lang-fr'); }
 
-// ── BUNDLE PRE-SELECTION ──
-var BUNDLE_PRESELECTED = false;
+var BUNDLE_CONFIG = {
+  bundle_bp: {
+    purchaseType: 'bundle',
+    mode: 'toggle',
+    label_en: 'Validator + Business Plan Essentials Bundle',
+    label_fr: 'Bundle Validator + Business Plan Essentials',
+    heroTitle_en: 'Your concept.<br><em>Validated — and planned.</em>',
+    heroTitle_fr: 'Votre concept.<br><em>Validé — et planifié.</em>',
+    listLine_en: '✦ Concept Validator &nbsp;✦ Business Plan Essentials',
+    listLine_fr: '✦ Concept Validator &nbsp;✦ Business Plan Essentials',
+    desc_en: 'Validator report + full business plan with benchmark financial projections — ready to show investors.',
+    desc_fr: 'Rapport Validator + business plan complet avec projections financières benchmark — prêt investisseurs.',
+    prices: { EUR:'€699', MAD:'MAD 6 990', USD:'$749' },
+    save: { EUR:'Save €99', MAD:'Save MAD 990', USD:'Save $99' },
+    save_fr: { EUR:'Économisez 99€', MAD:'Économisez 990 MAD', USD:'Économisez 99$' },
+  },
+  bundle_menu: {
+    purchaseType: 'bundle_menu',
+    mode: 'locked',
+    label_en: 'Validator + Menu Engineer Bundle',
+    label_fr: 'Bundle Validator + Menu Engineer',
+    heroTitle_en: 'Your concept.<br><em>Validated — and costed.</em>',
+    heroTitle_fr: 'Votre concept.<br><em>Validé — et costé.</em>',
+    listLine_en: '✦ Concept Validator &nbsp;✦ Menu Engineer',
+    listLine_fr: '✦ Concept Validator &nbsp;✦ Menu Engineer',
+    desc_en: 'Validator report + deep recipe costing, sourcing recommendations, and menu engineering strategy.',
+    desc_fr: 'Rapport Validator + costing de recettes approfondi, recommandations de sourcing et stratégie de menu engineering.',
+    prices: { EUR:'€499', MAD:'MAD 4 990', USD:'$549' },
+    save: { EUR:'Save €99', MAD:'Save MAD 990', USD:'Save $99' },
+    save_fr: { EUR:'Économisez 99€', MAD:'Économisez 990 MAD', USD:'Économisez 99$' },
+  },
+  bundle_full: {
+    purchaseType: 'bundle_full',
+    mode: 'locked',
+    label_en: 'Full Journey Bundle',
+    label_fr: 'Formule Parcours Complet',
+    heroTitle_en: 'Your concept.<br><em>Fully built.</em>',
+    heroTitle_fr: 'Votre concept.<br><em>Entièrement construit.</em>',
+    listLine_en: '✦ Concept Validator &nbsp;✦ Business Plan &nbsp;✦ Menu Engineer',
+    listLine_fr: '✦ Concept Validator &nbsp;✦ Business Plan &nbsp;✦ Menu Engineer',
+    desc_en: 'Validator report + business plan + deep recipe costing and menu engineering strategy — the complete project launch package.',
+    desc_fr: 'Rapport Validator + business plan + costing de recettes et stratégie de menu engineering — le pack complet de lancement.',
+    prices: { EUR:'€849', MAD:'MAD 8 490', USD:'$949' },
+    save: { EUR:'Save €248', MAD:'Save MAD 2,480', USD:'Save $248' },
+    save_fr: { EUR:'Économisez 248€', MAD:'Économisez 2 480 MAD', USD:'Économisez 248$' },
+  }
+};
+
+var BUNDLE_TYPE = 'validator';
 
 (function() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('bundle') === 'true') {
-    BUNDLE_PRESELECTED = true;
-    // Show banner immediately
+  const raw = params.get('bundle');
+  if (raw === 'true' || raw === 'bundle_bp') BUNDLE_TYPE = 'bundle_bp';
+  else if (raw === 'bundle_menu') BUNDLE_TYPE = 'bundle_menu';
+  else if (raw === 'bundle_full') BUNDLE_TYPE = 'bundle_full';
+
+  if (BUNDLE_TYPE !== 'validator') {
     const banner = document.getElementById('bundle-banner');
     if (banner) banner.classList.add('show');
-    // Push nav and hero down
     const nav = document.getElementById('nav');
     if (nav) nav.classList.add('nav-pushed');
     const hero = document.getElementById('v-hero');
     if (hero) hero.classList.add('bundle-mode');
-    // Hero price swap and banner text run after all functions are defined
-    // (handled in DOMContentLoaded below and currency fetch callback)
   }
 })();
 
 function updateBundleBannerText() {
   const el = document.getElementById('bundle-banner-text');
   if (!el) return;
-  if (!BUNDLE_PRESELECTED) return;
+  if (BUNDLE_TYPE === 'validator') return;
+  const cfg = BUNDLE_CONFIG[BUNDLE_TYPE];
+  const price = cfg.prices[CURRENCY] || cfg.prices.EUR;
+  const label = isFr() ? cfg.label_fr : cfg.label_en;
   el.innerHTML = isFr()
-    ? 'Vous êtes sur le parcours <strong style="color:#C9862A;">Validator + Business Plan Essentials — ' + (PRICES.bundle[CURRENCY] || '€699') + '</strong>. Complétez le formulaire pour les deux produits.'
-    : 'You\'re on the <strong style="color:#C9862A;">Validator + Business Plan Essentials — ' + (PRICES.bundle[CURRENCY] || '€699') + '</strong> path. Complete the form to get both.';
+    ? 'Vous êtes sur le parcours <strong style="color:#C9862A;">' + label + ' — ' + price + '</strong>. Complétez le formulaire pour tout recevoir.'
+    : 'You\'re on the <strong style="color:#C9862A;">' + label + ' — ' + price + '</strong> path. Complete the form to get everything.';
 }
 
-// ── CURRENCY ──
 var CURRENCY = 'EUR';
 var PRICES = {
   validator:  { EUR: '€199',  MAD: 'MAD 1 990', USD: '$219' },
-  bundle:     { EUR: '€699',  MAD: 'MAD 6 990', USD: '$749' },
-  bundleList: { EUR: '€798',  MAD: 'MAD 7 980', USD: '$868' },
 };
-var BUNDLE_SAVE = { EUR: 'Save €99', MAD: 'Save MAD 990', USD: 'Save $99' };
-var BUNDLE_SAVE_FR = { EUR: 'Économisez 99€', MAD: 'Économisez 990 MAD', USD: 'Économisez 99$' };
 
 fetch('/api/currency')
   .then(r => r.json())
   .then(data => {
     CURRENCY = data.currency || 'EUR';
     updatePriceDisplays();
-    // Update bundle UI now that currency is known
-    if (BUNDLE_PRESELECTED) {
+    if (BUNDLE_TYPE !== 'validator') {
       updateBundleHeroUI();
       updateBundleBannerText();
       updateFormBundleTotal();
@@ -962,41 +991,53 @@ fetch('/api/currency')
 function updatePriceDisplays() {
   const c = CURRENCY;
   const vp = PRICES.validator[c] || PRICES.validator.EUR;
-  const bp = PRICES.bundle[c] || PRICES.bundle.EUR;
-  const bl = PRICES.bundleList[c] || PRICES.bundleList.EUR;
 
   const el = id => document.getElementById(id);
-  if (el('hero-price'))         el('hero-price').textContent = vp;
-  if (el('submit-price'))       el('submit-price').textContent = vp;
-  if (el('price-validator-opt'))el('price-validator-opt').textContent = vp;
-  if (el('price-bundle-opt'))   el('price-bundle-opt').textContent = bp;
-  if (el('price-bundle-list'))  el('price-bundle-list').textContent = bl;
+  if (el('hero-price'))          el('hero-price').textContent = vp;
+  if (el('submit-price'))        el('submit-price').textContent = vp;
+  if (el('price-validator-opt')) el('price-validator-opt').textContent = vp;
 
-  // Bundle hero price band
-  if (el('hero-bundle-price-band'))  el('hero-bundle-price-band').textContent = bp;
-  if (el('hero-bundle-save'))        el('hero-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
-  if (el('hero-bundle-save-fr'))     el('hero-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
-
-  // Bundle form total
-  if (el('submit-bundle-price'))     el('submit-bundle-price').textContent = bp;
-  if (el('form-bundle-save'))        el('form-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
-  if (el('form-bundle-save-fr'))     el('form-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
-
-  // Save badge text in review toggle
-  document.querySelectorAll('.v-bundle-save').forEach((el, i) => {
-    el.textContent = (i % 2 === 0) ? (BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR) : (BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR);
+  const bpCfg = BUNDLE_CONFIG.bundle_bp;
+  const bp = bpCfg.prices[c] || bpCfg.prices.EUR;
+  const bl = { EUR:'€798', MAD:'MAD 7 980', USD:'$868' }[c] || '€798';
+  if (el('price-bundle-opt'))  el('price-bundle-opt').textContent = bp;
+  if (el('price-bundle-list')) el('price-bundle-list').textContent = bl;
+  document.querySelectorAll('.v-bundle-save').forEach((elx, i) => {
+    elx.textContent = (i % 2 === 0) ? (bpCfg.save[c] || bpCfg.save.EUR) : (bpCfg.save_fr[c] || bpCfg.save_fr.EUR);
   });
 
   updateReviewTotal();
 }
 
 function updateBundleHeroUI() {
-  // Swap hero price band
+  if (BUNDLE_TYPE === 'validator') return;
+  const cfg = BUNDLE_CONFIG[BUNDLE_TYPE];
+  const c = CURRENCY;
+
+  const h1en = document.getElementById('hero-h1-en');
+  const h1fr = document.getElementById('hero-h1-fr');
+  if (h1en) h1en.innerHTML = cfg.heroTitle_en;
+  if (h1fr) h1fr.innerHTML = cfg.heroTitle_fr;
+
   const standard = document.getElementById('hero-price-band-standard');
   const bundle   = document.getElementById('hero-price-band-bundle');
   if (standard) standard.style.display = 'none';
   if (bundle)   bundle.style.display   = 'block';
-  // Swap form total
+
+  const price = cfg.prices[c] || cfg.prices.EUR;
+  const priceEl = document.getElementById('hero-bundle-price-band');
+  if (priceEl) priceEl.textContent = price;
+  const labelEnEl = document.getElementById('hero-bundle-label-en');
+  const labelFrEl = document.getElementById('hero-bundle-label-fr');
+  if (labelEnEl) labelEnEl.textContent = cfg.label_en;
+  if (labelFrEl) labelFrEl.textContent = cfg.label_fr;
+  const listEnEl = document.getElementById('hero-bundle-list-en');
+  const listFrEl = document.getElementById('hero-bundle-list-fr');
+  const saveEn = cfg.save[c] || cfg.save.EUR;
+  const saveFr = cfg.save_fr[c] || cfg.save_fr.EUR;
+  if (listEnEl) listEnEl.innerHTML = cfg.listLine_en + ' &nbsp;✦ ' + saveEn;
+  if (listFrEl) listFrEl.innerHTML = cfg.listLine_fr + ' &nbsp;✦ ' + saveFr;
+
   const formStd = document.getElementById('form-total-validator');
   const formBdl = document.getElementById('form-total-bundle');
   if (formStd) formStd.style.display = 'none';
@@ -1004,15 +1045,18 @@ function updateBundleHeroUI() {
 }
 
 function updateFormBundleTotal() {
+  if (BUNDLE_TYPE === 'validator') return;
+  const cfg = BUNDLE_CONFIG[BUNDLE_TYPE];
   const c = CURRENCY;
-  const bp = PRICES.bundle[c] || PRICES.bundle.EUR;
+  const price = cfg.prices[c] || cfg.prices.EUR;
   const el = id => document.getElementById(id);
-  if (el('submit-bundle-price')) el('submit-bundle-price').textContent = bp;
-  if (el('form-bundle-save'))    el('form-bundle-save').textContent = BUNDLE_SAVE[c] || BUNDLE_SAVE.EUR;
-  if (el('form-bundle-save-fr')) el('form-bundle-save-fr').textContent = BUNDLE_SAVE_FR[c] || BUNDLE_SAVE_FR.EUR;
+  if (el('submit-bundle-price')) el('submit-bundle-price').textContent = price;
+  if (el('form-bundle-save'))    el('form-bundle-save').textContent = cfg.save[c] || cfg.save.EUR;
+  if (el('form-bundle-save-fr')) el('form-bundle-save-fr').textContent = cfg.save_fr[c] || cfg.save_fr.EUR;
+  if (el('form-bundle-label-en')) el('form-bundle-label-en').textContent = 'Bundle total · ' + cfg.label_en;
+  if (el('form-bundle-label-fr')) el('form-bundle-label-fr').textContent = 'Total bundle · ' + cfg.label_fr;
 }
 
-// ── PACKAGE SELECTION ──
 var PURCHASE_TYPE = 'validator';
 
 function selectPackage(type) {
@@ -1024,13 +1068,28 @@ function selectPackage(type) {
 
 function updateReviewTotal() {
   const c = CURRENCY;
+
+  if (BUNDLE_TYPE === 'bundle_menu' || BUNDLE_TYPE === 'bundle_full') {
+    const cfg = BUNDLE_CONFIG[BUNDLE_TYPE];
+    const price = cfg.prices[c] || cfg.prices.EUR;
+    const rp = document.getElementById('review-price');
+    if (rp) rp.textContent = price;
+    const descEn = document.getElementById('review-total-desc-en');
+    const descFr = document.getElementById('review-total-desc-fr');
+    if (descEn) descEn.textContent = cfg.label_en;
+    if (descFr) descFr.textContent = cfg.label_fr;
+    if (descEn) descEn.style.display = isFr() ? 'none' : 'block';
+    if (descFr) descFr.style.display = isFr() ? 'block' : 'none';
+    return;
+  }
+
+  const bpCfg = BUNDLE_CONFIG.bundle_bp;
   const price = PURCHASE_TYPE === 'bundle'
-    ? (PRICES.bundle[c] || PRICES.bundle.EUR)
+    ? (bpCfg.prices[c] || bpCfg.prices.EUR)
     : (PRICES.validator[c] || PRICES.validator.EUR);
   const rp = document.getElementById('review-price');
   if (rp) rp.textContent = price;
 
-  // Update submit-price on form too
   const sp = document.getElementById('submit-price');
   if (sp) sp.textContent = PRICES.validator[CURRENCY] || PRICES.validator.EUR;
 
@@ -1047,7 +1106,6 @@ function updateReviewTotal() {
   if (descFr) descFr.style.display = isFr() ? 'block' : 'none';
 }
 
-// ── VALIDATION ──
 function validateForm() {
   let valid = true;
   const required = ['f-name','f-email','f-country','f-role','f-concept-name',
@@ -1112,7 +1170,6 @@ function collectData() {
   };
 }
 
-// ── LABEL MAPS ──
 const TYPE_LABELS = {
   restaurant_casual:'Casual dining',restaurant_fine:'Fine dining',
   cafe_brunch:'Café / Brunch',fast_casual:'Fast casual / QSR',
@@ -1179,8 +1236,39 @@ function populateReview(data) {
   set('r-timeline',        TIMELINE_LABELS[data.timeline] || data.timeline);
   set('r-context',         data.additional);
 
-  // Pre-select bundle if arriving from bundle CTA, otherwise validator-only
-  selectPackage(BUNDLE_PRESELECTED ? 'bundle' : 'validator');
+  const standardWrap = document.getElementById('standard-toggle-wrap');
+  const lockedWrap    = document.getElementById('locked-package-wrap');
+
+  if (BUNDLE_TYPE === 'bundle_menu' || BUNDLE_TYPE === 'bundle_full') {
+    if (standardWrap) standardWrap.style.display = 'none';
+    if (lockedWrap) lockedWrap.style.display = 'block';
+
+    const cfg = BUNDLE_CONFIG[BUNDLE_TYPE];
+    PURCHASE_TYPE = cfg.purchaseType;
+
+    const price = cfg.prices[CURRENCY] || cfg.prices.EUR;
+    const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    const setHtml = (id, val) => { const e = document.getElementById(id); if (e) e.innerHTML = val; };
+    setEl('locked-package-label-en', cfg.label_en);
+    setEl('locked-package-label-fr', cfg.label_fr);
+    setEl('locked-package-desc-en', cfg.desc_en);
+    setEl('locked-package-desc-fr', cfg.desc_fr);
+    setHtml('locked-package-list-en', cfg.listLine_en);
+    setHtml('locked-package-list-fr', cfg.listLine_fr);
+    setEl('locked-package-price', price);
+
+    document.getElementById('locked-package-label-en').style.display = isFr() ? 'none' : 'block';
+    document.getElementById('locked-package-label-fr').style.display = isFr() ? 'block' : 'none';
+    document.getElementById('locked-package-desc-en').style.display = isFr() ? 'none' : 'block';
+    document.getElementById('locked-package-desc-fr').style.display = isFr() ? 'block' : 'none';
+    document.getElementById('locked-package-list-en').style.display = isFr() ? 'none' : 'block';
+    document.getElementById('locked-package-list-fr').style.display = isFr() ? 'block' : 'none';
+  } else {
+    if (standardWrap) standardWrap.style.display = 'block';
+    if (lockedWrap) lockedWrap.style.display = 'none';
+    selectPackage(BUNDLE_TYPE === 'bundle_bp' ? 'bundle' : 'validator');
+  }
+
   updateReviewTotal();
 }
 
@@ -1203,7 +1291,6 @@ function editSection(num) {
 
 function backToForm() { showForm(); }
 
-// ── FORM SUBMIT → SHOW REVIEW ──
 document.getElementById('validator-form').addEventListener('submit', function(e) {
   e.preventDefault();
   const errEl = document.getElementById('form-err');
@@ -1234,7 +1321,6 @@ document.getElementById('validator-form').addEventListener('submit', function(e)
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 
-// ── CONFIRM & PAY ──
 async function proceedToPayment() {
   const btn   = document.getElementById('confirm-btn');
   const errEl = document.getElementById('review-err');
@@ -1246,7 +1332,7 @@ async function proceedToPayment() {
   if (typeof gtag !== 'undefined') {
     gtag('event', 'begin_checkout', {
       event_category: 'conversion',
-      event_label: PURCHASE_TYPE === 'bundle' ? 'bundle_checkout' : 'validator_checkout',
+      event_label: PURCHASE_TYPE,
       currency: data.currency || 'EUR'
     });
   }
@@ -1276,15 +1362,13 @@ async function proceedToPayment() {
   }
 }
 
-// Remove error state on input
 document.querySelectorAll('.v-input, .v-select, .v-textarea').forEach(el => {
   el.addEventListener('input', () => el.classList.remove('error'));
   el.addEventListener('change', () => el.classList.remove('error'));
 });
 
-// ── BUNDLE UI INIT (runs after all functions defined) ──
 document.addEventListener('DOMContentLoaded', function() {
-  if (BUNDLE_PRESELECTED) {
+  if (BUNDLE_TYPE !== 'validator') {
     updateBundleHeroUI();
     updateBundleBannerText();
   }
