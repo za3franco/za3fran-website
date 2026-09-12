@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Za3fran — Your Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#0a0e18;color:#FAFAF7;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:.1em;margin-bottom:3rem;text-align:center;}
+.logo span{color:#C9862A;}
+
+/* ---- Gate screen ---- */
+.gate{max-width:440px;width:100%;text-align:center;}
+.eyebrow{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:#C9862A;
+  margin-bottom:1.5rem;display:block;}
+h1{font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:300;
+  line-height:1.15;margin-bottom:1rem;}
+h1 em{font-style:italic;color:#C9862A;}
+.sub{font-size:.85rem;color:rgba(250,250,247,.45);line-height:1.7;margin-bottom:2.5rem;}
+input{width:100%;background:rgba(255,255,255,.04);border:.5px solid rgba(201,134,42,.3);
+  color:#FAFAF7;font-family:'DM Sans',sans-serif;font-size:1.1rem;padding:1rem;
+  text-align:center;letter-spacing:.2em;text-transform:uppercase;outline:none;
+  margin-bottom:1rem;transition:border-color .2s;}
+input:focus{border-color:#C9862A;}
+.btn{width:100%;background:#C9862A;color:#0a0e18;border:none;
+  font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;padding:1rem;cursor:pointer;
+  transition:background .2s;}
+.btn:hover{background:#E7A63E;}
+.err{color:#e05a5a;font-size:.8rem;margin-bottom:1rem;padding:.75rem;
+  border:.5px solid rgba(224,90,90,.3);display:none;}
+.hint{font-size:.72rem;color:rgba(136,136,128,.5);margin-top:1.5rem;line-height:1.6;}
+.hint a{color:#C9862A;text-decoration:none;}
+
+/* ---- Dashboard screen ---- */
+.dash{max-width:640px;width:100%;display:none;}
+.dash-header{text-align:center;margin-bottom:2.5rem;}
+.concept-name{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:.4rem;}
+.concept-name em{font-style:italic;color:#C9862A;}
+.dash-sub{font-size:.75rem;color:rgba(250,250,247,.35);letter-spacing:.05em;}
+
+.tool-card{border:.5px solid rgba(201,134,42,.2);background:rgba(15,31,61,.5);
+  padding:1.5rem 1.75rem;margin-bottom:1rem;display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.tool-info{flex:1;min-width:200px;}
+.tool-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:.35rem;}
+.tool-status{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;display:inline-flex;
+  align-items:center;gap:.4rem;}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+.status-complete .dot{background:#5fb98a;}
+.status-complete{color:#5fb98a;}
+.status-generating .dot{background:#C9862A;animation:pulse 1.4s ease infinite;}
+.status-generating{color:#C9862A;}
+.status-error .dot{background:#e05a5a;}
+.status-error{color:#e05a5a;}
+.status-none .dot{background:rgba(250,250,247,.2);}
+.status-none{color:rgba(250,250,247,.3);}
+@keyframes pulse{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
+
+.tool-action{white-space:nowrap;}
+.tool-btn{display:inline-block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:#C9862A;text-decoration:none;padding:.6rem 1.25rem;border:.5px solid rgba(201,134,42,.4);
+  transition:all .2s;}
+.tool-btn:hover{background:#C9862A;color:#0a0e18;}
+.tool-btn.disabled{color:rgba(250,250,247,.25);border-color:rgba(250,250,247,.1);
+  pointer-events:none;}
+.upsell{margin-top:1.5rem;text-align:center;font-size:.75rem;color:rgba(250,250,247,.35);line-height:1.7;}
+.upsell a{color:#C9862A;text-decoration:none;}
+
+.loading, .error-screen{text-align:center;}
+.loading{color:rgba(250,250,247,.4);font-size:.85rem;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="logo">Za3fran<span>.io</span></div>
+
+  <!-- GATE -->
+  <div class="gate" id="gate">
+    <span class="eyebrow">Your Project</span>
+    <h1>Access your <em>project</em></h1>
+    <p class="sub">Enter your access code — you'll find it in any of your Za3fran delivery emails.</p>
+    <form id="gateForm">
+      <input type="text" id="codeInput" placeholder="Access code" maxlength="8"
+        autocapitalize="characters" autocomplete="off" spellcheck="false">
+      <div class="err" id="gateErr">Code not found. Check your email and try again.</div>
+      <button type="submit" class="btn">Access →</button>
+    </form>
+    <p class="hint">No code received? Check spam or write to <a href="mailto:hello@za3fran.io">hello@za3fran.io</a></p>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading" style="display:none;">Loading your project…</div>
+
+  <!-- DASHBOARD -->
+  <div class="dash" id="dash">
+    <div class="dash-header">
+      <div class="concept-name" id="conceptName"></div>
+      <div class="dash-sub">Your Za3fran project — every tool in one place</div>
+    </div>
+    <div id="toolList"></div>
+    <div class="upsell" id="upsell"></div>
+  </div>
+</div>
+
+<script>
+const TOOL_META = {
+  validator:      { label: 'Concept Validator',        pricingAnchor: 'validator' },
+  business_plan:  { label: 'Business Plan Essentials',  pricingAnchor: 'business-plan' },
+  menu_engineer:  { label: 'Menu Engineer',             pricingAnchor: 'menu-engineer' }
+};
+
+const STATUS_LABEL = {
+  complete: 'Ready',
+  generating: 'Generating…',
+  error: 'Error — refresh or contact us',
+  none: 'Not purchased'
+};
+
+function qs(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function showGateError() {
+  document.getElementById('gateErr').style.display = 'block';
+}
+
+async function loadProject(code) {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    const resp = await fetch(`/api/project-status?code=${encodeURIComponent(code)}`);
+    if (!resp.ok) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('gate').style.display = 'block';
+      showGateError();
+      // update URL to drop the bad code so a refresh doesn't loop
+      history.replaceState(null, '', window.location.pathname);
+      return;
+    }
+    const data = await resp.json();
+    renderDashboard(data, code);
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('gate').style.display = 'block';
+    showGateError();
+  }
+}
+
+function renderDashboard(data, code) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('dash').style.display = 'block';
+  document.getElementById('conceptName').textContent = data.project.concept_name || 'Your Concept';
+
+  const listEl = document.getElementById('toolList');
+  listEl.innerHTML = '';
+
+  let anyGenerating = false;
+  const missingTools = [];
+
+  data.tools.forEach(tool => {
+    const meta = TOOL_META[tool.key] || { label: tool.name };
+    const statusKey = tool.purchased ? tool.status : 'none';
+    if (statusKey === 'generating') anyGenerating = true;
+    if (!tool.purchased) missingTools.push(meta.label);
+
+    const card = document.createElement('div');
+    card.className = 'tool-card';
+    card.innerHTML = `
+      <div class="tool-info">
+        <div class="tool-name">${meta.label}</div>
+        <div class="tool-status status-${statusKey}"><span class="dot"></span>${STATUS_LABEL[statusKey]}</div>
+      </div>
+      <div class="tool-action">
+        ${tool.purchased && tool.viewer_url
+          ? `<a class="tool-btn" href="${tool.viewer_url}">${statusKey === 'complete' ? 'View →' : 'Open →'}</a>`
+          : `<a class="tool-btn" href="/pricing.html#${meta.pricingAnchor}">Add this tool →</a>`}
+      </div>
+    `;
+    listEl.appendChild(card);
+  });
+
+  const upsellEl = document.getElementById('upsell');
+  if (missingTools.length > 0) {
+    upsellEl.innerHTML = `Want more from this project? <a href="/pricing.html">See all tools and bundles →</a>`;
+  } else {
+    upsellEl.innerHTML = '';
+  }
+
+  // If something is still generating, poll for updates
+  if (anyGenerating) {
+    setTimeout(() => loadProject(code), 15000);
+  }
+}
+
+document.getElementById('gateForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const code = document.getElementById('codeInput').value.toUpperCase().trim();
+  if (!code) return;
+  document.getElementById('gateErr').style.display = 'none';
+  history.replaceState(null, '', `?code=${encodeURIComponent(code)}`);
+  loadProject(code);
+});
+
+// Auto-load if a code is already in the URL (from an email link)
+const initialCode = qs('code');
+if (initialCode) {
+  document.getElementById('codeInput').value = initialCode.toUpperCase();
+  loadProject(initialCode.toUpperCase());
+}
+</script>
+</body>
+</html>
