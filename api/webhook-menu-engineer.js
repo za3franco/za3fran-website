@@ -1,15 +1,19 @@
 // ============================================================
-// /api/webhook-menu-engineer.js
+// /api/webhook-menu-engineer.js  (v3 — unified project access code)
 // Stripe webhook: payment confirmed → finalize pending intake row
-// → send delivery email. Claude generation is deferred to
-// /api/generate-menu.js, triggered on-demand by the report viewer
-// the first time the customer opens their report — same pattern
-// as webhook-business-plan.js v2.
+// → send delivery email. Claude generation stays deferred to
+// /api/generate-menu.js, triggered on-demand by the report viewer.
+//
+// v3 change: no longer mints its own access_code for the run.
+// Instead resolves the project's single unified access_code via
+// /lib/project-access.js — reusing the code from the customer's
+// Validator purchase if the project already has one.
 // ============================================================
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { getModel } from '../lib/claude-config.js';
+import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 
 const stripe   = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -26,13 +30,6 @@ async function getRawBody(req) {
     req.on('end',  () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
-}
-
-function generateAccessCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
 }
 
 export default async function handler(req, res) {
@@ -116,8 +113,8 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── 4. Generate access code + finalize the run record ────
-    const accessCode = generateAccessCode();
+    // ── 4. Resolve the project's unified access code, finalize run ──
+    const accessCode = await getOrCreateProjectAccessCode(supabase, run.project_id);
     const mergedOutputJson = {
       ...(run.output_json || {}),
       status: 'pending_generation',
@@ -140,13 +137,14 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true, error: 'update_failed' });
     }
 
-    console.log(`[webhook-menu] Run finalized: ${runId} / ${accessCode}`);
+    console.log(`[webhook-menu] Run finalized: ${runId} (shared code ${accessCode})`);
 
     // ── 5. Send delivery email via Brevo ──────────────────────
-    const BASE_URL  = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
-    const reportUrl = `${BASE_URL}/api/report-menu-viewer?id=${runId}`;
-    const firstName = customerName ? customerName.split(' ')[0] : (meta.language === 'fr' ? 'bonjour' : 'there');
-    const isFr       = meta.language === 'fr';
+    const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
+    const reportUrl   = `${BASE_URL}/api/report-menu-viewer?id=${runId}&code=${encodeURIComponent(accessCode)}`;
+    const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
+    const firstName   = customerName ? customerName.split(' ')[0] : (meta.language === 'fr' ? 'bonjour' : 'there');
+    const isFr        = meta.language === 'fr';
 
     const subject = isFr
       ? `Votre pack Menu Engineer — ${conceptName}`
@@ -171,8 +169,11 @@ export default async function handler(req, res) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mes livrables →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès</p>
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès Za3fran</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
+  </div>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Accéder à mon tableau de bord →</a>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0 0 24px;">1 régénération gratuite est incluse avec votre achat, accessible depuis votre rapport.</p>
@@ -200,8 +201,11 @@ export default async function handler(req, res) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Access my deliverables →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your access code</p>
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your Za3fran access code</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
+  </div>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Go to my project dashboard →</a>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0 0 24px;">1 free regeneration is included with your purchase, accessible from your report.</p>

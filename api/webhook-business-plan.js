@@ -1,12 +1,21 @@
 // ============================================================
-// /api/webhook-business-plan.js  (v2 — on-demand generation)
+// /api/webhook-business-plan.js  (v3 — unified project access code)
 // Stripe webhook: payment confirmed → save pending record → send email.
-// Claude generation moved to /api/generate-bp.js (triggered by report viewer).
+// Claude generation stays in /api/generate-bp.js (triggered by report viewer).
+//
+// v3 change: no longer mints its own access_code for the BP run.
+// Instead resolves the project's single unified access_code via
+// /lib/project-access.js — reusing the code the customer already
+// has (from their Validator purchase) if the project already has
+// one, or minting it here if this happens to be the very first
+// purchase on the project (e.g. a standalone BP sale with no prior
+// Validator record, if that path is ever used).
 // ============================================================
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { getModel } from '../lib/claude-config.js';
+import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 
 const stripe   = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -23,13 +32,6 @@ async function getRawBody(req) {
     req.on('end',  () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
-}
-
-function generateAccessCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
 }
 
 export default async function handler(req, res) {
@@ -103,9 +105,13 @@ export default async function handler(req, res) {
       projectId = newProject?.id || null;
     }
 
-    // ── 3. Save PENDING BP run record ────────────────────────
-    const bpAccessCode = generateAccessCode();
-    const bpReportId   = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    // ── 3. Resolve the project's unified access code ─────────
+    // Reuses the code from the customer's Validator purchase in the
+    // normal case; mints one only if this project somehow has none yet.
+    const bpAccessCode = await getOrCreateProjectAccessCode(supabase, projectId);
+
+    // ── 4. Save PENDING BP run record, tagged with that code ──
+    const bpReportId = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     await supabase.from('business_plan_essentials_runs').insert({
       id:          bpReportId,
@@ -119,13 +125,14 @@ export default async function handler(req, res) {
       output_json: { validator_report_id: meta.reportId, submission_id: meta.submissionId, status: 'pending' },
     });
 
-    console.log(`[webhook-bp] Pending record saved: ${bpReportId} / ${bpAccessCode}`);
+    console.log(`[webhook-bp] Pending record saved: ${bpReportId} (shared code ${bpAccessCode})`);
 
-    // ── 4. Send delivery email via Brevo ─────────────────────
-    const BASE_URL  = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
-    const reportUrl = `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}`;
-    const firstName = name ? name.split(' ')[0] : 'there';
-    const isFr      = language === 'fr';
+    // ── 5. Send delivery email via Brevo ─────────────────────
+    const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
+    const reportUrl   = `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}&code=${encodeURIComponent(bpAccessCode)}`;
+    const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(bpAccessCode)}`;
+    const firstName   = name ? name.split(' ')[0] : 'there';
+    const isFr        = language === 'fr';
     const conceptName = meta.conceptName || 'your concept';
 
     const subject = isFr
@@ -147,8 +154,11 @@ export default async function handler(req, res) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mon Business Plan →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès</p>
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès Za3fran</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
+  </div>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Accéder à mon tableau de bord →</a>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0;">Questions ? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
@@ -171,8 +181,11 @@ export default async function handler(req, res) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Access my Business Plan →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your access code</p>
+    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your Za3fran access code</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
+  </div>
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Go to my project dashboard →</a>
   </div>
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0;">Questions? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>

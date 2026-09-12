@@ -8,27 +8,34 @@
 // 3. Look up submission in Supabase by email
 // 4. Generate report HTML via Claude API
 // 5. Extract report_json via Haiku
-// 6. Store report HTML + report_json in validator_reports
-// 7. Create/upsert za3fran_user + za3fran_project records
-// 8. Update submission: status → 'paid', set report_id
-// 9. Send delivery email via Brevo
+// 6. Create/upsert za3fran_user + za3fran_project records
+// 7. Resolve the project's unified access code (mint on first
+//    purchase, reuse on every purchase after) — see /lib/project-access.js
+// 8. Store report HTML + report_json in validator_reports, tagged
+//    with that same unified code
+// 9. Update submission: status → 'paid', set report_id
+// 10. Send delivery email via Brevo, including a link to the
+//     unified project dashboard (/project.html)
 //
 // Additional flow (Bundle variants):
-// 10a. purchase_type 'bundle' or 'bundle_full' → create pending BP run
-//      record in business_plan_essentials_runs
-// 10b. purchase_type 'bundle_menu' or 'bundle_full' → create pending
+// 11a. purchase_type 'bundle' or 'bundle_full' → create pending BP run
+//      record in business_plan_essentials_runs, tagged with the SAME
+//      unified access code — not a separately minted one
+// 11b. purchase_type 'bundle_menu' or 'bundle_full' → create pending
 //      Menu Engineer run record in menu_engineer_runs (ready for
 //      on-demand generation — no separate intake form was filled
 //      since the customer bought via the bundle CTA, so intake
-//      notes are empty and can be filled in via regeneration later)
-// 11. Send single combined delivery email with all purchased report
-//     links
+//      notes are empty and can be filled in via regeneration later),
+//      also tagged with the SAME unified access code
+// 12. Send single combined delivery email with all purchased report
+//     links plus the dashboard link
 // =============================================================
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
 import { getModel } from '../lib/claude-config.js';
+import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 
 // ── Clients ──────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -51,16 +58,6 @@ async function getRawBody(req) {
     req.on('end',  () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
-}
-
-// ── Helper: generate access code ─────────────────────────────
-function generateAccessCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return code;
 }
 
 // ── Helper: build Claude prompt ───────────────────────────────
@@ -375,29 +372,9 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     console.error('[Phase 4] report_json extraction failed (non-fatal):', err.message);
   }
 
-  // ── Step 4: Save Validator report ─────────────────────────────
-  const accessCode = generateAccessCode();
-  const reportId   = `rpt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-
-  const { error: insertError } = await supabase
-    .from('validator_reports')
-    .insert({
-      id:          reportId,
-      submission_id: submission.id,
-      report_html: reportHtml,
-      report_json: reportJson,
-      access_code: accessCode,
-      created_at:  new Date().toISOString(),
-    });
-
-  if (insertError) {
-    console.error('Failed to store Validator report in Supabase:', insertError);
-    return;
-  }
-
-  console.log(`Validator report stored. ID: ${reportId}, Code: ${accessCode}`);
-
-  // ── Step 5: Create/upsert user + project records ──────────────
+  // ── Step 4: Create/upsert user + project records ───────────────
+  // (Moved ahead of report insert — we need projectId in hand before we
+  // can resolve the project's unified access code in Step 5.)
   let userId    = null;
   let projectId = null;
 
@@ -454,20 +431,49 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     console.error('User/project creation failed (non-fatal):', err.message);
   }
 
-  // ── Step 6: Update submission status ──────────────────────────
+  // ── Step 5: Resolve the project's unified access code ──────────
+  // First purchase on this project mints the code; every subsequent
+  // purchase (BP, Menu, or another Validator run under the same project)
+  // reuses this exact same code. This is now the ONLY access code the
+  // customer ever needs, and the only one shown in delivery emails.
+  const accessCode = await getOrCreateProjectAccessCode(supabase, projectId);
+
+  // ── Step 6: Save Validator report, tagged with the unified code ──
+  const reportId = `rpt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+
+  const { error: insertError } = await supabase
+    .from('validator_reports')
+    .insert({
+      id:          reportId,
+      submission_id: submission.id,
+      report_html: reportHtml,
+      report_json: reportJson,
+      access_code: accessCode,
+      created_at:  new Date().toISOString(),
+    });
+
+  if (insertError) {
+    console.error('Failed to store Validator report in Supabase:', insertError);
+    return;
+  }
+
+  console.log(`Validator report stored. ID: ${reportId}, Code: ${accessCode}`);
+
+  // ── Step 7: Update submission status ──────────────────────────
   await supabase
     .from('validator_submissions')
     .update({ status: 'paid', report_id: reportId })
     .eq('id', submission.id);
 
-  // ── Step 7a: If BP bundle — create pending BP run record ──────
+  // ── Step 8a: If BP bundle — create pending BP run record ──────
+  // Reuses the unified project accessCode — does NOT mint its own.
   let bpReportId   = null;
   let bpAccessCode = null;
 
   if (purchaseType === 'bundle' || purchaseType === 'bundle_full') {
     try {
-      bpAccessCode = generateAccessCode();
       bpReportId   = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      bpAccessCode = accessCode;
 
       await supabase.from('business_plan_essentials_runs').insert({
         id:          bpReportId,
@@ -484,7 +490,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         },
       });
 
-      console.log(`[Bundle] BP pending record created: ${bpReportId} / ${bpAccessCode}`);
+      console.log(`[Bundle] BP pending record created: ${bpReportId} (shared code ${bpAccessCode})`);
     } catch (err) {
       console.error('[Bundle] BP record creation failed (non-fatal):', err.message);
       bpReportId   = null;
@@ -492,14 +498,15 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     }
   }
 
-  // ── Step 7b: If Menu bundle — create pending Menu Engineer run ──
+  // ── Step 8b: If Menu bundle — create pending Menu Engineer run ──
+  // Reuses the unified project accessCode — does NOT mint its own.
   let menuReportId   = null;
   let menuAccessCode = null;
 
   if (purchaseType === 'bundle_menu' || purchaseType === 'bundle_full') {
     try {
-      menuAccessCode = generateAccessCode();
       menuReportId   = `me_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      menuAccessCode = accessCode;
 
       await supabase.from('menu_engineer_runs').insert({
         id:          menuReportId,
@@ -523,7 +530,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         },
       });
 
-      console.log(`[Bundle] Menu Engineer pending record created: ${menuReportId} / ${menuAccessCode}`);
+      console.log(`[Bundle] Menu Engineer pending record created: ${menuReportId} (shared code ${menuAccessCode})`);
     } catch (err) {
       console.error('[Bundle] Menu Engineer record creation failed (non-fatal):', err.message);
       menuReportId   = null;
@@ -531,9 +538,10 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     }
   }
 
-  // ── Step 8: Send delivery email ───────────────────────────────
+  // ── Step 9: Send delivery email ───────────────────────────────
   const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
   const reportUrl   = `${BASE_URL}/report/${reportId}`;
+  const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
   const conceptName = submission.concept_name || 'your concept';
   const firstName   = submission.name ? submission.name.split(' ')[0] : 'there';
   const isFr        = submission.language === 'fr' ||
@@ -564,63 +572,58 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         ? `Your Za3fran deliverables are ready — ${conceptName}`
         : `Your Za3fran report is ready — ${conceptName}`);
 
+  // ── Dashboard section — NEW, additive. Points every customer at the
+  //    unified project dashboard, regardless of how many tools they
+  //    bought. Sits right under the main access code box. ────────────
+  const dashboardSection_en = `
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Go to my project dashboard →</a>
+  </div>
+  <p style="color:#888880;font-size:13px;text-align:center;margin:0 0 32px;">Your dashboard lists every Za3fran tool for this project in one place — bookmark it.</p>`;
+
+  const dashboardSection_fr = `
+  <div style="text-align:center;margin:0 0 32px;">
+    <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Accéder à mon tableau de bord →</a>
+  </div>
+  <p style="color:#888880;font-size:13px;text-align:center;margin:0 0 32px;">Votre tableau de bord regroupe tous vos outils Za3fran pour ce projet — mettez-le en favori.</p>`;
+
   // ── BP section (bundle / bundle_full) ──────────────────────────
-  const bpUrl = bpReportId ? `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}` : null;
+  const bpUrl = bpReportId ? `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}&code=${encodeURIComponent(accessCode)}` : null;
 
   const bpSection_en = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Business Plan Essentials</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Business Plan Essentials is ready to generate. Click below and enter your access code to start (generation takes 3–5 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Business Plan Essentials is ready to generate. Click below to start (generation takes 3–5 minutes) — same access code as above.</p>
   <div style="text-align:center;margin:0 0 24px;">
     <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Access my Business Plan →</a>
-  </div>
-  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
-    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Business Plan access code</p>
-    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
-  </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
+  </div>` : '';
 
   const bpSection_fr = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Business Plan Essentials</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre Business Plan Essentials est prêt à générer. Cliquez ci-dessous et entrez votre code d'accès pour démarrer (génération : 3–5 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre Business Plan Essentials est prêt à générer. Cliquez ci-dessous pour démarrer (génération : 3–5 minutes) — même code d'accès que ci-dessus.</p>
   <div style="text-align:center;margin:0 0 24px;">
     <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Business Plan →</a>
-  </div>
-  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
-    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Business Plan</p>
-    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${bpAccessCode}</p>
-  </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${bpUrl}" style="color:#C9862A;">${bpUrl}</a></p>` : '';
+  </div>` : '';
 
   // ── Menu Engineer section (bundle_menu / bundle_full) ───────────
-  const menuUrl = menuReportId ? `${BASE_URL}/api/report-menu-viewer?id=${menuReportId}` : null;
+  const menuUrl = menuReportId ? `${BASE_URL}/api/report-menu-viewer?id=${menuReportId}&code=${encodeURIComponent(accessCode)}` : null;
 
   const menuSection_en = hasMenu ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Menu Engineer</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Menu Engineer deliverables — a Strategy Report and Costing Workbook — are ready to generate. Click below and enter your access code to start (generation takes 3–7 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Menu Engineer deliverables — a Strategy Report and Costing Workbook — are ready to generate. Click below to start (generation takes 3–7 minutes) — same access code as above.</p>
   <div style="text-align:center;margin:0 0 24px;">
     <a href="${menuUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Access my Menu Engineer →</a>
-  </div>
-  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
-    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Menu Engineer access code</p>
-    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${menuAccessCode}</p>
-  </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${menuUrl}" style="color:#C9862A;">${menuUrl}</a></p>` : '';
+  </div>` : '';
 
   const menuSection_fr = hasMenu ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Menu Engineer</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Vos livrables Menu Engineer — un rapport stratégique et un classeur de costing — sont prêts à générer. Cliquez ci-dessous et entrez votre code d'accès pour démarrer (génération : 3–7 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Vos livrables Menu Engineer — un rapport stratégique et un classeur de costing — sont prêts à générer. Cliquez ci-dessous pour démarrer (génération : 3–7 minutes) — même code d'accès que ci-dessus.</p>
   <div style="text-align:center;margin:0 0 24px;">
     <a href="${menuUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Menu Engineer →</a>
-  </div>
-  <div style="background:#f0f0ee;border-radius:4px;padding:20px;text-align:center;margin:0 0 24px;">
-    <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Menu Engineer</p>
-    <p style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${menuAccessCode}</p>
-  </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${menuUrl}" style="color:#C9862A;">${menuUrl}</a></p>` : '';
+  </div>` : '';
 
   // Upsell section for Validator-only buyers (points to BP standalone at €499)
   const upsellSection_en = purchaseType === 'validator' ? `
@@ -654,9 +657,10 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mon rapport →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Code d'accès Validator</p>
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès Za3fran</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
   </div>
+  ${dashboardSection_fr}
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   ${bpSection_fr}
   ${menuSection_fr}
@@ -682,9 +686,10 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">View my report →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
-    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Validator access code</p>
+    <p style="font-size:12px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your Za3fran access code</p>
     <p style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:#0F1F3D;margin:0;letter-spacing:4px;">${accessCode}</p>
   </div>
+  ${dashboardSection_en}
   <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   ${bpSection_en}
   ${menuSection_en}

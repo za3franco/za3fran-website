@@ -5,9 +5,16 @@
 // GET  /api/report-viewer?id=rpt_xxx
 //      Returns the access gate HTML page
 //
+// GET  /api/report-viewer?id=rpt_xxx&code=XXXXXXXX
+//      NEW: if code is correct, returns the report HTML directly
+//      (skips the manual gate) — this is how links from the unified
+//      project dashboard (/project.html) work. If code is missing
+//      or wrong, falls back to the normal gate page unchanged.
+//
 // POST /api/report-viewer?id=rpt_xxx
 //      Body: { code: "K7XMQR4N" }
 //      Validates code, returns report HTML or error
+//      (unchanged — still used by the gate page's own form)
 // =============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -30,8 +37,26 @@ export default async function handler(req, res) {
     return res.status(400).send(errorPage('Invalid report link.'));
   }
 
-  // ── GET: serve the access gate page ─────────────────────────
+  // ── GET: serve report directly if a valid code is in the URL,
+  //         otherwise serve the access gate page (unchanged behaviour
+  //         for links that don't carry a code) ─────────────────────
   if (req.method === 'GET') {
+    const urlCode = (req.query.code || '').toString().trim().toUpperCase();
+
+    if (urlCode) {
+      const { data: report, error } = await supabase
+        .from('validator_reports')
+        .select('id, report_html, access_code')
+        .eq('id', id)
+        .single();
+
+      if (!error && report && report.access_code && urlCode === report.access_code.toUpperCase()) {
+        return res.status(200).send(report.report_html);
+      }
+      // Wrong or unresolvable code in the URL — fall through to the
+      // normal manual gate below rather than erroring out.
+    }
+
     return res.status(200).send(buildGatePage(id));
   }
 
