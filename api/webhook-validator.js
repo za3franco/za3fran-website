@@ -34,8 +34,25 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
+import { Agent, setGlobalDispatcher } from 'undici';
 import { getModel } from '../lib/claude-config.js';
 import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
+
+// ── Raise Node's default fetch timeout ──────────────────────────
+// Node's built-in fetch (undici) times out waiting for a response after
+// 300s by default — independent of, and shorter than, Vercel's own
+// maxDuration for this function (800s, see vercel.json). A single
+// 32,000-token Claude generation can legitimately take longer than 300s
+// to return anything at all (Anthropic's non-streaming endpoint sends
+// nothing until the full response is ready), so without this the fetch
+// to Anthropic gets killed by Node itself well before Vercel's own
+// timeout would ever fire. This raises that ceiling to just under the
+// function's maxDuration, leaving headroom for the rest of the work
+// (JSON extraction, Supabase writes, email send) to still complete.
+setGlobalDispatcher(new Agent({
+  headersTimeout: 750_000,
+  bodyTimeout: 750_000,
+}));
 
 // ── Clients ──────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
