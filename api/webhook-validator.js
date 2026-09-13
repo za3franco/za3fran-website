@@ -312,18 +312,37 @@ export default async function handler(req, res) {
   return res.status(200).json({ received: true });
 }
 
+// ── Helper: retry a Supabase call a few times before giving up ──
+// Added after observing repeated transient 'Gateway Timeout' errors from
+// Supabase's REST layer (PostgREST) in production — direct SQL against
+// the same database succeeded instantly each time these hit, pointing to
+// an intermittent network/gateway blip rather than a data or code issue.
+// A single blip should not cost a customer their already-paid-for report.
+async function withRetry(fn, attempts = 3, delayMs = 1500) {
+  let lastResult;
+  for (let i = 0; i < attempts; i++) {
+    lastResult = await fn();
+    if (!lastResult.error) return lastResult;
+    console.error(`[withRetry] Attempt ${i + 1}/${attempts} failed:`, lastResult.error.message || lastResult.error);
+    if (i < attempts - 1) await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  return lastResult;
+}
+
 // ── Async report processing ───────────────────────────────────
 async function processReport(customerEmail, sessionId, purchaseType) {
   console.log(`[processReport] Starting for: ${customerEmail}, type: ${purchaseType}`);
 
-  // ── Step 1: Look up submission ───────────────────────────────
-  const { data: submissions, error: fetchError } = await supabase
-    .from('validator_submissions')
-    .select('*')
-    .eq('email', customerEmail)
-    .eq('status', 'pending_payment')
-    .order('created_at', { ascending: false })
-    .limit(1);
+  // ── Step 1: Look up submission (with retry — see withRetry above) ──
+  const { data: submissions, error: fetchError } = await withRetry(() =>
+    supabase
+      .from('validator_submissions')
+      .select('*')
+      .eq('email', customerEmail)
+      .eq('status', 'pending_payment')
+      .order('created_at', { ascending: false })
+      .limit(1)
+  );
 
   if (fetchError || !submissions || submissions.length === 0) {
     console.error('No matching submission found for:', customerEmail, fetchError);
