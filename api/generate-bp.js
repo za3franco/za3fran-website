@@ -1,14 +1,33 @@
 // ============================================================
-// /api/generate-bp.js  (v11 — calibrated per-section page budgets)
+// /api/generate-bp.js  (v12 — no manual timeouts, undici fix)
 // Single streaming Haiku pass. Per-section content sized to fill A4 pages
 // at ~85% density. Target: 17-19 pages total. Replaces v10 "120 words max"
 // approach (which under-filled pages and forced CSS hacks).
-// At 150 t/s: ~25k tokens out = ~167s. maxDuration: 300 in vercel.json.
+// At 150 t/s: ~25k tokens out = ~167s. maxDuration: 450 in vercel.json.
+//
+// v12 change: removed the manual AbortController/260s timeout that was
+// here previously — that pattern is explicitly against this project's
+// own standing rule (a per-call abort shorter than maxDuration has
+// already caused a real production incident once; see project
+// instructions). Now relies solely on maxDuration, like every other
+// generation file. Also raises Node's own default undici network
+// timeout (300s) via a custom dispatcher, since that default sits
+// below maxDuration and would otherwise kill the call regardless of
+// what maxDuration allows.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
+import { Agent, setGlobalDispatcher } from 'undici';
 
 const HAIKU = 'claude-haiku-4-5-20251001';
+
+// Raise Node's default fetch timeout so it doesn't cut the call off
+// before Vercel's own maxDuration (450s) would. Leaves ~30s buffer
+// for the Supabase write after the stream completes.
+setGlobalDispatcher(new Agent({
+  headersTimeout: 420_000,
+  bodyTimeout: 420_000,
+}));
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -46,16 +65,13 @@ export default async function handler(req, res) {
 
   var html = '';
   try {
-    var ctrl = new AbortController();
-    var timer = setTimeout(function() { ctrl.abort(); }, 260000);
-
     var r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', signal: ctrl.signal,
+      method: 'POST',
       headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': process.env.ANTHROPIC_API_KEY },
       body: JSON.stringify({ model: HAIKU, max_tokens: 32000, stream: true, messages: [{ role: 'user', content: buildPrompt(ctx) }] }),
     });
 
-    if (!r.ok) { clearTimeout(timer); var e = await r.json(); throw new Error('API ' + r.status + ': ' + JSON.stringify((e.error||{}).message||'')); }
+    if (!r.ok) { var e = await r.json(); throw new Error('API ' + r.status + ': ' + JSON.stringify((e.error||{}).message||'')); }
 
     var reader = r.body.getReader();
     var dec = new TextDecoder();
@@ -75,7 +91,6 @@ export default async function handler(req, res) {
         try { var ev = JSON.parse(raw); if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') html += ev.delta.text; } catch(e) {}
       }
     }
-    clearTimeout(timer);
     console.log('[bp] Stream done: ' + html.length + ' chars');
 
   } catch(err) {

@@ -30,11 +30,33 @@
 //
 // No manual per-call timeouts - relies solely on the function's
 // own maxDuration (600s) as the ceiling.
+//
+// v2 addition: raised Node's own default undici network timeout
+// (300s) via a custom dispatcher. That default sits below this
+// function's 600s maxDuration and is independent of it — Pass 3
+// alone requests up to 28,000 tokens on a non-streaming call, and
+// could individually exceed 300s on a slow day, which would get
+// silently killed by Node itself regardless of how much of the
+// 600s maxDuration budget was still unused. This exact failure mode
+// hit /api/webhook-validator.js in production; this file was still
+// exposed to it even though it already correctly avoids manual
+// AbortController timeouts.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
 import { getModel } from '../lib/claude-config.js';
 import ExcelJS from 'exceljs';
+import { Agent, setGlobalDispatcher } from 'undici';
+
+// Raise Node's default fetch timeout so no individual Claude call in
+// this file's 4-pass pipeline gets cut off by Node itself before this
+// function's own 600s maxDuration would. Leaves ~30s buffer under that
+// ceiling for the ExcelJS workbook build/upload and Supabase writes
+// that happen after the last Claude call completes.
+setGlobalDispatcher(new Agent({
+  headersTimeout: 570_000,
+  bodyTimeout: 570_000,
+}));
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
