@@ -3,7 +3,7 @@
   "functions": {
     "api/webhook-validator.js":     { "maxDuration": 800 },
     "api/webhook-business-plan.js": { "maxDuration": 300 },
-    "api/generate-bp.js":           { "maxDuration": 300 },
+    "api/generate-bp.js":           { "maxDuration": 450 },
     "api/webhook-menu-engineer.js": { "maxDuration": 300 },
     "api/generate-menu.js": { "maxDuration": 600 }
   },
