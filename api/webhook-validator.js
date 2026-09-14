@@ -352,6 +352,25 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   const submission = submissions[0];
   console.log(`Found submission: ${submission.id} for concept: ${submission.concept_name}`);
 
+  // ── Atomic claim — prevents two overlapping webhook executions (e.g.
+  // from a Stripe retry landing while a slow first attempt is still
+  // running) from both processing the same submission and both sending
+  // a report + email. The UPDATE's .eq('status','pending_payment')
+  // condition means only ONE concurrent request can actually match and
+  // update this row; Postgres guarantees that at the row level. Every
+  // other concurrent request gets zero rows back and bails out here.
+  const { data: claimed, error: claimError } = await supabase
+    .from('validator_submissions')
+    .update({ status: 'processing' })
+    .eq('id', submission.id)
+    .eq('status', 'pending_payment')
+    .select('id');
+
+  if (claimError || !claimed || claimed.length === 0) {
+    console.log(`[processReport] Submission ${submission.id} already claimed by another run — skipping duplicate.`);
+    return;
+  }
+
   // ── Step 2: Generate Validator report HTML via Claude ─────────
   let reportHtml;
   const validatorModel = getModel('validator');

@@ -24,6 +24,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+// ── Helper: retry a Supabase call a few times before giving up ──
+// Added after observing repeated transient 'Gateway Timeout' errors from
+// Supabase's REST layer in production — direct SQL against the same
+// database succeeded instantly each time these hit, pointing to an
+// intermittent network/gateway blip rather than a missing report. A
+// customer's "Access my report" link should not 404 over a blip.
+async function withRetry(fn, attempts = 3, delayMs = 1200) {
+  let lastResult;
+  for (let i = 0; i < attempts; i++) {
+    lastResult = await fn();
+    if (!lastResult.error) return lastResult;
+    console.error(`[withRetry] Attempt ${i + 1}/${attempts} failed:`, lastResult.error.message || lastResult.error);
+    if (i < attempts - 1) await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  return lastResult;
+}
+
 // In-memory attempt tracking (resets on cold start — acceptable for this use case)
 // Key: reportId, Value: { attempts: number, lockedAt: timestamp|null }
 const attemptTracker = {};
@@ -44,11 +61,13 @@ export default async function handler(req, res) {
     const urlCode = (req.query.code || '').toString().trim().toUpperCase();
 
     if (urlCode) {
-      const { data: report, error } = await supabase
-        .from('validator_reports')
-        .select('id, report_html, access_code')
-        .eq('id', id)
-        .single();
+      const { data: report, error } = await withRetry(() =>
+        supabase
+          .from('validator_reports')
+          .select('id, report_html, access_code')
+          .eq('id', id)
+          .single()
+      );
 
       if (!error && report && report.access_code && urlCode === report.access_code.toUpperCase()) {
         return res.status(200).send(report.report_html);
@@ -93,11 +112,13 @@ export default async function handler(req, res) {
     }
 
     // ── Fetch report from Supabase ───────────────────────────
-    const { data: report, error } = await supabase
-      .from('validator_reports')
-      .select('id, report_html, access_code')
-      .eq('id', id)
-      .single();
+    const { data: report, error } = await withRetry(() =>
+      supabase
+        .from('validator_reports')
+        .select('id, report_html, access_code')
+        .eq('id', id)
+        .single()
+    );
 
     if (error || !report) {
       return res.status(404).json({ error: 'Report not found.' });
