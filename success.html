@@ -4,175 +4,335 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran — Payment Confirmed</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #0F1F3D;
-    font-family: 'DM Sans', Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .card {
-    background: #FAFAF7;
-    border-radius: 4px;
-    padding: 64px 56px;
-    max-width: 560px;
-    width: 100%;
-    text-align: center;
-  }
-  .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: #C9862A;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .logo-sub {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #888880;
-    margin-bottom: 48px;
-  }
-  .check {
-    width: 64px;
-    height: 64px;
-    background: #C9862A;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 32px;
-  }
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 34px;
-    font-weight: 600;
-    color: #0F1F3D;
-    line-height: 1.2;
-    margin-bottom: 16px;
-  }
-  .subtitle {
-    font-size: 15px;
-    color: #1a1a1a;
-    line-height: 1.75;
-    margin-bottom: 40px;
-  }
-  .info-box {
-    background: #f7f7f5;
-    border-left: 3px solid #C9862A;
-    padding: 20px 24px;
-    text-align: left;
-    border-radius: 2px;
-    margin-bottom: 40px;
-  }
-  .info-box p {
-    font-size: 14px;
-    color: #1a1a1a;
-    line-height: 1.75;
-    margin: 0;
-  }
-  .steps { text-align: left; margin-bottom: 40px; }
-  .step { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-  .step-num {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    background: #0F1F3D;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: #C9862A;
-    margin-top: 1px;
-  }
-  .step-text { font-size: 14px; color: #1a1a1a; line-height: 1.7; }
-  hr { border: none; border-top: 1px solid #e8e8e4; margin-bottom: 24px; }
-  .footer-note { font-size: 13px; color: #888880; line-height: 1.7; }
-  .footer-note a { color: #C9862A; text-decoration: none; }
-  @media (max-width: 520px) {
-    .card { padding: 40px 24px; }
-    h1 { font-size: 28px; }
-  }
-</style>
-  <!-- Google Analytics GA4 — Za3fran -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-X7Q3Q8ZKRE');
-  </script>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
 
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+::selection{background:var(--copper);color:var(--black);}
+
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
+
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);transition:all .35s;}
+nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:16px 40px;}
+.logo{font-family:'Cormorant Garamond';font-size:20px;display:flex;align-items:center;gap:10px;}
+.navlinks{display:flex;gap:28px;font-size:13.5px;color:var(--muted);align-items:center;}
+.navlinks a:hover{color:var(--white);}
+@media(max-width:640px){ nav{padding:18px 20px;} nav.scrolled{padding:14px 20px;} .navlinks{gap:16px;font-size:12.5px;} }
+
+main{max-width:620px;margin:0 auto;padding:170px 32px 100px;text-align:center;}
+
+.state{display:none;}
+.state.active{display:block;animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+.spinner{width:36px;height:36px;border:3px solid rgba(201,134,42,.2);border-top-color:var(--copper);border-radius:50%;margin:0 auto 28px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.check{width:64px;height:64px;background:var(--copper);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 30px;}
+
+h1{font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin-bottom:16px;}
+.sub{color:var(--muted);font-size:15px;line-height:1.75;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;}
+
+.info-box{background:var(--charcoal2);border-left:3px solid var(--copper);padding:22px 26px;text-align:left;border-radius:6px;margin-bottom:32px;}
+.info-box p{font-size:14px;color:rgba(250,250,247,.85);line-height:1.75;margin:0;}
+
+.dash-box{background:rgba(201,134,42,.06);border:1px solid rgba(201,134,42,.25);border-radius:10px;padding:26px 28px;margin-bottom:32px;display:none;}
+.dash-box.show{display:block;}
+.dash-box .db-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+.dash-box .db-code{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--white);letter-spacing:.15em;margin-bottom:18px;}
+.btn-dash{display:inline-block;background:var(--copper);color:var(--black);padding:14px 32px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;}
+.btn-dash:hover{background:var(--copper-bright);transform:translateY(-1px);}
+
+.steps{text-align:left;margin-bottom:32px;}
+.step{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;}
+.step-num{flex-shrink:0;width:26px;height:26px;background:var(--copper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--black);margin-top:1px;}
+.step-text{font-size:13.5px;color:rgba(250,250,247,.75);line-height:1.7;}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.08);margin-bottom:24px;}
+.footer-note{font-size:12.5px;color:var(--muted);line-height:1.7;}
+.footer-note a{color:var(--copper-bright);}
+
+footer{border-top:1px solid rgba(255,255,255,.08);padding:40px 0;background:var(--charcoal2);margin-top:60px;}
+footer .foot-bottom{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:16px;}
+footer .foot-bottom a{color:var(--muted);}
+footer .foot-bottom a:hover{color:var(--white);}
+
+@media(max-width:520px){
+  main{padding:130px 20px 60px;}
+  footer .foot-bottom{flex-direction:column;text-align:center;}
+}
+</style>
 </head>
 <body>
-<div class="card">
 
-  <div class="logo">Za3fran</div>
-  <div class="logo-sub">Concept Validator</div>
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
 
-  <div class="check">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-  </div>
-
-  <h1>Payment confirmed.<br>Your report is being prepared.</h1>
-
-  <p class="subtitle">
-    Our system is now analysing your submission and generating your personalised Concept Validation Report. This takes 2–4 minutes.
-  </p>
-
-  <div class="info-box">
-    <p><strong>Check your email.</strong> You'll receive your report link and a unique access code at the address you provided. The email comes from <strong>hello@za3fran.io</strong> — check your spam folder if you don't see it within 5 minutes.</p>
-  </div>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">Open the email from Za3fran — subject: <em>"Your Za3fran report is ready"</em></div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">Click the <strong>View my report</strong> button in the email</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">Enter the <strong>8-character access code</strong> shown in the email to unlock your report</div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-text">Save your report as PDF via your browser's Print → Save as PDF function</div>
-    </div>
-  </div>
-
-  <hr>
-
-  <p class="footer-note">
-    Report not arrived after 10 minutes? Email <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> with your concept name and we'll resolve it immediately.<br><br>
-    © Za3fran Consulting · <a href="https://za3fran.io">za3fran.io</a>
-  </p>
-
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
 </div>
 
-  <script>
-    // GA4 — Purchase conversion event
-    // Fires when customer lands on the success page after Stripe payment
+<nav id="nav">
+  <a href="/" class="logo">
+    <img src="/assets/logo.png" alt="Za3fran" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+    <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+  </a>
+  <div class="navlinks">
+    <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+    <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- STATE 1: Confirming (brief, while checkout-status resolves) -->
+  <div class="state active" id="state-confirming">
+    <div class="spinner"></div>
+    <h1><span data-en>Confirming your payment...</span><span data-fr>Confirmation de votre paiement...</span></h1>
+    <p class="sub"><span data-en>One moment — this only takes a second.</span><span data-fr>Un instant — cela ne prend qu'une seconde.</span></p>
+  </div>
+
+  <!-- STATE 2: Confirmed (main state — shows immediately once purchase_type resolves) -->
+  <div class="state" id="state-confirmed">
+    <div class="check">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0e18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <h1 id="headline-en" data-en>Payment confirmed.</h1>
+    <h1 id="headline-fr" data-fr>Paiement confirmé.</h1>
+    <p class="sub" id="subline-en" data-en></p>
+    <p class="sub" id="subline-fr" data-fr></p>
+
+    <div class="info-box">
+      <p><strong><span data-en>Check your email.</span><span data-fr>Vérifiez votre boîte mail.</span></strong>
+      <span data-en> You'll receive your access code and a link to your deliverable(s) at the address you provided. The email comes from <strong>hello@za3fran.io</strong> — check your spam folder if you don't see it within a few minutes.</span>
+      <span data-fr> Vous recevrez votre code d'accès et un lien vers votre / vos livrable(s) à l'adresse que vous avez fournie. L'email provient de <strong>hello@za3fran.io</strong> — vérifiez vos spams si vous ne le voyez pas dans les prochaines minutes.</span></p>
+    </div>
+
+    <!-- Reveals once checkout-status confirms the access code exists -->
+    <div class="dash-box" id="dashBox">
+      <p class="db-label"><span data-en>Your project access code</span><span data-fr>Votre code d'accès projet</span></p>
+      <p class="db-code" id="dashCode">—</p>
+      <a href="#" class="btn-dash" id="dashLink"><span data-en>Go to my project dashboard →</span><span data-fr>Accéder à mon tableau de bord →</span></a>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><span data-en>Open the email from Za3fran — subject line mentions your concept name.</span><span data-fr>Ouvrez l'email de Za3fran — l'objet mentionne le nom de votre concept.</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><span data-en>Use the button in the email, or the dashboard link above once it appears, to view your deliverable(s).</span><span data-fr>Utilisez le bouton dans l'email, ou le lien du tableau de bord ci-dessus dès qu'il apparaît, pour consulter vos livrables.</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><span data-en>Your project dashboard lists every tool you've purchased in one place — bookmark it for next time.</span><span data-fr>Votre tableau de bord regroupe tous les outils achetés en un seul endroit — mettez-le en favori.</span></div>
+      </div>
+    </div>
+
+    <hr class="div">
+    <p class="footer-note">
+      <span data-en>Deliverable not arrived after 15 minutes? Email <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> with your concept name and we'll resolve it immediately.</span>
+      <span data-fr>Livrable non reçu après 15 minutes ? Écrivez à <a href="mailto:hello@za3fran.io">hello@za3fran.io</a> avec le nom de votre concept et nous résoudrons cela immédiatement.</span>
+    </p>
+  </div>
+
+  <!-- STATE 3: No session (someone landed here directly) -->
+  <div class="state" id="state-missing">
+    <h1><span data-en>Nothing to confirm here.</span><span data-fr>Rien à confirmer ici.</span></h1>
+    <p class="sub"><span data-en>This page confirms a purchase right after checkout. If you're looking for your report, check your delivery email for your access code and dashboard link.</span><span data-fr>Cette page confirme un achat juste après le paiement. Si vous cherchez votre rapport, consultez votre email de livraison pour votre code d'accès et le lien du tableau de bord.</span></p>
+    <a href="/platform" class="btn-dash"><span data-en>Go to the Platform →</span><span data-fr>Aller à la Plateforme →</span></a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="foot-bottom">
+    <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    <div style="display:flex;gap:24px;">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+      <a href="/privacy" data-en>Privacy</a><a href="/privacy" data-fr>Confidentialité</a>
+      <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Lang ──
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(b => b.classList.toggle('active', b.dataset.l === l));
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  setLang(saved === 'fr' ? 'fr' : 'en');
+})();
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  setLang(b.dataset.l);
+});
+function isFr(){ return document.body.classList.contains('lang-fr'); }
+
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+
+// ── Tool-specific messaging ──
+// Keyed by the normalized purchase_type/type value coming back from
+// checkout-status.js. 'default' covers anything unrecognized (e.g. a
+// future tool whose metadata key hasn't been added here yet) so the
+// page never shows a blank or broken message.
+const TOOL_COPY = {
+  validator: {
+    en: "Your Concept Validator report is being prepared — a 20-page strategic analysis, on its way to your inbox.",
+    fr: "Votre rapport Concept Validator est en cours de préparation — une analyse stratégique de 20 pages, en route vers votre boîte mail."
+  },
+  bundle: {
+    en: "Your Concept Validator report and Business Plan Essentials are both being prepared — everything arrives under one project.",
+    fr: "Votre rapport Concept Validator et votre Business Plan Essentials sont tous deux en cours de préparation — tout arrive sous un seul projet."
+  },
+  bundle_menu: {
+    en: "Your Concept Validator report and Menu Engineer deliverables are both being prepared — everything arrives under one project.",
+    fr: "Votre rapport Concept Validator et vos livrables Menu Engineer sont tous deux en cours de préparation — tout arrive sous un seul projet."
+  },
+  bundle_full: {
+    en: "Your Concept Validator report, Business Plan Essentials, and Menu Engineer deliverables are all being prepared — everything arrives under one project.",
+    fr: "Votre rapport Concept Validator, votre Business Plan Essentials et vos livrables Menu Engineer sont tous en cours de préparation — tout arrive sous un seul projet."
+  },
+  business_plan_essentials: {
+    en: "Your Business Plan Essentials is being prepared — a complete, investor-ready business plan, on its way to your inbox.",
+    fr: "Votre Business Plan Essentials est en cours de préparation — un business plan complet, prêt pour les investisseurs, en route vers votre boîte mail."
+  },
+  menu_engineer: {
+    en: "Your Menu Engineer deliverables — a Strategy Report and Costing Workbook — are being prepared.",
+    fr: "Vos livrables Menu Engineer — un rapport stratégique et un classeur de costing — sont en cours de préparation."
+  },
+  default: {
+    en: "Your deliverable is being prepared and will be sent to your inbox shortly.",
+    fr: "Votre livrable est en cours de préparation et vous sera envoyé prochainement par email."
+  }
+};
+
+function showState(id) {
+  document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+async function fetchCheckoutStatus(sessionId) {
+  const res = await fetch('/api/checkout-status?session_id=' + encodeURIComponent(sessionId));
+  if (!res.ok) throw new Error('checkout-status error ' + res.status);
+  return res.json();
+}
+
+function renderConfirmed(data) {
+  const copy = TOOL_COPY[data.purchase_type] || TOOL_COPY.default;
+  document.getElementById('subline-en').textContent = copy.en;
+  document.getElementById('subline-fr').textContent = copy.fr;
+  showState('state-confirmed');
+
+  if (typeof gtag !== 'undefined') {
     gtag('event', 'purchase_confirmed', {
       event_category: 'conversion',
-      event_label: 'validator_purchase'
+      event_label: data.purchase_type || 'unknown'
     });
-  </script>
+  }
+
+  if (data.ready && data.access_code) {
+    revealDashboard(data);
+  }
+}
+
+function revealDashboard(data) {
+  document.getElementById('dashCode').textContent = data.access_code;
+  document.getElementById('dashLink').href = data.dashboard_url;
+  document.getElementById('dashBox').classList.add('show');
+}
+
+// ── Poll in the background for up to ~60s for the access code.
+//    Never blocks the main confirmation message — that's already shown.
+//    Validator-only purchases generate the full report inline before
+//    the access code even exists, so this can legitimately time out
+//    without ever revealing the dashboard box; the email is still the
+//    reliable path in that case, and the page already says so. ──
+function pollForAccessCode(sessionId, attempts) {
+  if (attempts <= 0) return;
+  setTimeout(async () => {
+    try {
+      const data = await fetchCheckoutStatus(sessionId);
+      if (data.ready && data.access_code) {
+        revealDashboard(data);
+        return;
+      }
+    } catch (e) { /* silent — next attempt will retry */ }
+    pollForAccessCode(sessionId, attempts - 1);
+  }, 5000);
+}
+
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+
+  if (!sessionId) {
+    showState('state-missing');
+    return;
+  }
+
+  try {
+    const data = await fetchCheckoutStatus(sessionId);
+    renderConfirmed(data);
+    if (!data.ready) {
+      pollForAccessCode(sessionId, 12); // ~60s at 5s intervals
+    }
+  } catch (err) {
+    console.error(err);
+    // Fail soft into the generic confirmed state rather than an error
+    // page — the payment succeeded (that's why Stripe sent them here);
+    // we just couldn't enrich the message. Email is still coming.
+    renderConfirmed({ purchase_type: 'default', ready: false });
+  }
+})();
+</script>
 </body>
 </html>
-
