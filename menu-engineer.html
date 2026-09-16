@@ -144,10 +144,18 @@ textarea{resize:vertical;min-height:90px;line-height:1.6;}
 .del-list li::before{content:'—';position:absolute;left:0;color:var(--copper);}
 .del-tag{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper-bright);background:rgba(201,134,42,.12);padding:4px 10px;border-radius:100px;}
 
-footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal2);}
-footer .foot-bottom{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:16px;}
-footer .foot-bottom a{color:var(--muted);}
-footer .foot-bottom a:hover{color:var(--white);}
+footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.foot-grid h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.foot-grid ul{list-style:none;}
+.foot-grid li{margin-bottom:10px;font-size:13.5px;color:var(--muted);}
+.foot-grid li a:hover{color:var(--copper-bright);}
+.foot-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px;}
+@media(max-width:760px){
+  .foot-grid{grid-template-columns:1fr 1fr;gap:32px 24px;}
+  .foot-grid > div:first-child{grid-column:1 / -1;}
+}
+@media(max-width:480px){ .foot-grid{grid-template-columns:1fr;} }
 
 @keyframes spin{to{transform:rotate(360deg);}}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(201,134,42,.3);border-top-color:var(--copper);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
@@ -160,7 +168,6 @@ footer .foot-bottom a:hover{color:var(--white);}
   .submit-right{text-align:left;}
   .deliverables-strip{grid-template-columns:1fr;}
   .what-section{padding:56px 20px;}
-  footer .foot-bottom{flex-direction:column;text-align:center;}
 }
 </style>
 </head>
@@ -321,12 +328,41 @@ footer .foot-bottom a:hover{color:var(--white);}
 </section>
 
 <footer>
-  <div class="foot-bottom">
-    <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
-    <div style="display:flex;gap:24px;">
-      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
-      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
-      <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px">Za3fran<span style="color:var(--copper)">.io</span></div>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
+      </div>
+      <div>
+        <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
+        <ul>
+          <li><a href="/validator">Concept Validator</a></li>
+          <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Menu Engineer</span></a></li>
+          <li><a href="/business-plan">Business Plan Essentials</a></li>
+          <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Pricing</h4><h4 data-fr>Tarifs</h4>
+        <ul>
+          <li><a href="/pricing"><span data-en>All packages</span><span data-fr>Toutes les formules</span></a></li>
+          <li><a href="/validator?bundle=bundle_full"><span data-en>Full journey bundle</span><span data-fr>Formule parcours complet</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
+        <ul>
+          <li><a href="/#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="/privacy"><span data-en>Privacy</span><span data-fr>Confidentialité</span></a></li>
+          <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
+          <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
     </div>
   </div>
 </footer>
@@ -506,10 +542,18 @@ window.addEventListener('scroll', () => {
   document.body.classList.toggle('scrolled', window.scrollY > 120);
 });
 
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === l));
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') setLang('fr');
+})();
 document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
-  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
-  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  setLang(b.dataset.l);
 });
 </script>
 
