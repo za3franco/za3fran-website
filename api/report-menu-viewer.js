@@ -32,6 +32,14 @@
 //    legitimate run could not still be in progress.
 //  - Toolbar now includes a link back to the unified project
 //    dashboard, using the run's own access_code.
+//
+// v3 (Workstream 2 — report-viewer consistency pass):
+//  - A brute-force lockout (5 attempts / 30 minutes, matching
+//    report-viewer.js and report-bp-viewer.js's thresholds) is now
+//    applied to both GET-with-code and POST attempts — previously
+//    this viewer had no rate limiting at all on guessing codes.
+//  - A small AI-generated-content disclaimer is now included in the
+//    toolbar, per the standing branding-standard requirement.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -48,6 +56,35 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
 // still 'generating' past this point could not still legitimately be in
 // progress, so it's safe to treat as stuck and restart.
 const STALE_GENERATION_MS = 12 * 60 * 1000;
+
+// In-memory attempt tracking (resets on cold start — acceptable for this use case)
+const attemptTracker = {};
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+function checkLockout(id) {
+  const tracker = attemptTracker[id];
+  if (!tracker || !tracker.lockedAt) return null;
+  const elapsed = Date.now() - tracker.lockedAt;
+  if (elapsed >= LOCKOUT_MS) {
+    attemptTracker[id] = { attempts: 0, lockedAt: null };
+    return null;
+  }
+  return Math.ceil((LOCKOUT_MS - elapsed) / 60000);
+}
+
+function recordFailedAttempt(id) {
+  const tracker = attemptTracker[id] || { attempts: 0, lockedAt: null };
+  tracker.attempts = (tracker.attempts || 0) + 1;
+  if (tracker.attempts >= MAX_ATTEMPTS) {
+    tracker.lockedAt = Date.now();
+  }
+  attemptTracker[id] = tracker;
+}
+
+function resetAttempts(id) {
+  attemptTracker[id] = { attempts: 0, lockedAt: null };
+}
 
 function parseCookies(header) {
   const list = {};
@@ -85,6 +122,7 @@ function pageShell(bodyContent, title) {
   input[type="text"]:focus{border-color:#C9862A;}
   button{width:100%;padding:14px;background:#C9862A;border:none;border-radius:100px;color:#0a0e18;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
   button:hover{background:#E7A63E;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
   .error{color:#e07070;font-size:13px;margin:-8px 0 16px;}
   .spinner{width:32px;height:32px;border:3px solid rgba(201,134,42,.25);border-top-color:#C9862A;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px;}
   @keyframes spin{to{transform:rotate(360deg);}}
@@ -112,6 +150,18 @@ function renderGate(id, errorMsg) {
   </form>
 </div>`;
   return pageShell(body, 'Enter your access code — Za3fran');
+}
+
+// ── Lockout page ───────────────────────────────────────────────
+function renderLocked(minutesLeft) {
+  const body = `
+<div class="card">
+  <p class="logo"><img src="${BASE_URL}/assets/logo.png" alt="Za3fran">Za3fran<span>.io</span></p>
+  <p class="label">Menu Engineer</p>
+  <h1>Too many attempts</h1>
+  <p>Access is locked for about ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''} after several incorrect codes. Check your delivery email or contact <a href="mailto:hello@za3fran.io" style="color:#E7A63E;">hello@za3fran.io</a>.</p>
+</div>`;
+  return pageShell(body, 'Access locked — Za3fran');
 }
 
 // ── Generating / polling page ─────────────────────────────────
@@ -206,8 +256,11 @@ function injectToolbar(html, run, id) {
   ${run.output_xlsx_url ? `<a href="${run.output_xlsx_url}" style="color:#FAFAF7;text-decoration:none;" target="_blank">Download Costing Workbook (XLSX)</a>` : ''}
   <span style="margin-left:auto;color:#8b93a8;font-size:11px;">Use your browser's Print function to save as PDF</span>
 </div>
-<div style="height:52px;"></div>
-<style>@media print { .za3fran-toolbar { display: none !important; } }</style>`;
+<div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
+  This report was AI-generated using Za3fran's F&amp;B expertise frameworks — please review for accuracy before acting on it.
+</div>
+<div style="height:78px;"></div>
+<style>@media print { .za3fran-toolbar, .za3fran-toolbar + div { display: none !important; } }</style>`;
 
   if (html.includes('<body')) {
     return html.replace(/<body([^>]*)>/i, `<body$1>${toolbar}`);
@@ -246,17 +299,32 @@ export default async function handler(req, res) {
   const cookieCode = cookies[cookieKey];
   const bodyCode = (source.access_code || '').toString().trim().toUpperCase();
 
+  // ── Lockout check — only applies to a genuine submitted code,
+  //    not a cookie replay (a cookie only ever holds an already
+  //    verified-correct code). ─────────────────────────────────
+  if (bodyCode) {
+    const minutesLeft = checkLockout(id);
+    if (minutesLeft !== null) {
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(renderLocked(minutesLeft));
+    }
+  }
+
   let authenticatedCode = null;
 
   if (bodyCode) {
     if (bodyCode === run.access_code) {
       authenticatedCode = bodyCode;
     } else if (req.method === 'POST') {
+      recordFailedAttempt(id);
       // Only show an explicit "incorrect code" error for a deliberate form
       // submission. A GET link with a stale/wrong code in the URL just
       // falls through to a clean gate below, same as the other viewers.
       res.setHeader('Content-Type', 'text/html');
       return res.status(401).send(renderGate(id, 'Incorrect access code. Please check your email and try again.'));
+    } else {
+      // Wrong code via GET — count it too, but fall through to a clean gate.
+      recordFailedAttempt(id);
     }
   } else if (cookieCode && cookieCode === run.access_code) {
     authenticatedCode = cookieCode;
@@ -267,6 +335,7 @@ export default async function handler(req, res) {
     return res.status(200).send(renderGate(id, null));
   }
 
+  resetAttempts(id);
   res.setHeader('Set-Cookie', `${cookieKey}=${encodeURIComponent(authenticatedCode)}; Path=/; HttpOnly; Max-Age=7200; SameSite=Lax`);
 
   if (run.output_html) {
@@ -275,10 +344,6 @@ export default async function handler(req, res) {
   }
 
   // ── Not generated yet — trigger generation if not already running ──
-  // Also treats a 'generating' run as eligible for restart once it's past
-  // generate-menu.js's own maxDuration — see STALE_GENERATION_MS above.
-  // generate-menu.js has no internal guard against a second concurrent
-  // run, so this only fires once a real run could not still be in flight.
   let shouldTrigger = run.status === 'pending_generation' || run.status === 'error';
 
   if (run.status === 'generating') {
