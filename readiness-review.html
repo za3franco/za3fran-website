@@ -489,6 +489,10 @@ async function submitDecisions(){
 
   document.getElementById('confirmBtn').disabled = true;
   document.getElementById('confirmBtnFr').disabled = true;
+  var origEnLabel = document.getElementById('confirmBtn').textContent;
+  var origFrLabel = document.getElementById('confirmBtnFr').textContent;
+  document.getElementById('confirmBtn').textContent = 'Saving…';
+  document.getElementById('confirmBtnFr').textContent = 'Enregistrement…';
 
   try {
     var res = await fetch('/api/crr-decide', {
@@ -501,15 +505,23 @@ async function submitDecisions(){
       errEl.textContent = data.message || data.error || (lang === 'fr' ? 'Une erreur est survenue.' : 'Something went wrong.');
       document.getElementById('confirmBtn').disabled = false;
       document.getElementById('confirmBtnFr').disabled = false;
+      document.getElementById('confirmBtn').textContent = origEnLabel;
+      document.getElementById('confirmBtnFr').textContent = origFrLabel;
       return;
     }
     // Re-fetch full status to re-render remaining/cleared state accurately.
     var fresh = await fetchStatus(currentCode);
     renderStatus(fresh);
+    // The result (cleared banner or the next remaining risk cards) renders above
+    // the sticky footer — without this, a submit from a scrolled-down position
+    // can look like nothing happened even though it succeeded.
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     errEl.textContent = lang === 'fr' ? 'Erreur réseau. Réessayez.' : 'Network error. Please try again.';
     document.getElementById('confirmBtn').disabled = false;
     document.getElementById('confirmBtnFr').disabled = false;
+    document.getElementById('confirmBtn').textContent = origEnLabel;
+    document.getElementById('confirmBtnFr').textContent = origFrLabel;
   }
 }
 document.getElementById('confirmBtn').addEventListener('click', submitDecisions);
