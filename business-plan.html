@@ -169,23 +169,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </nav>
 
-<div class="v-success" id="v-success" style="display:none;text-align:center;padding:180px 32px 120px;max-width:640px;margin:0 auto;">
-  <div style="width:72px;height:72px;border:0.5px solid var(--copper);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;font-size:1.5rem;">✦</div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;margin-bottom:1rem;line-height:1.2;">
-    <span data-en>Your Business Plan<br><em>is on its way.</em></span>
-    <span data-fr>Votre Business Plan<br><em>est en route.</em></span>
-  </h2>
-  <p style="font-size:0.9rem;line-height:1.8;color:var(--muted);margin-bottom:2rem;">
-    <span data-en>Check your inbox — your 15–25 page business plan will arrive within 5 minutes, along with your project access code. Check spam if you don't see it.</span>
-    <span data-fr>Consultez votre boîte mail — votre business plan de 15–25 pages arrivera dans 5 minutes, avec votre code d'accès projet. Vérifiez vos spams.</span>
-  </p>
-  <a href="/platform" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper-bright);">
-    <span data-en>← Return to the Platform</span>
-    <span data-fr>← Retour à la Plateforme</span>
-  </a>
-</div>
-
-<div class="hero" id="hero-main">
+<div class="hero">
 
   <div class="hero-left">
     <p class="eyebrow"><span data-en>Business Plan Essentials</span><span data-fr>Business Plan Essentials</span></p>
@@ -241,7 +225,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </div>
 
-<section class="what-section" id="what-section">
+<section class="what-section">
   <div class="what-inner">
     <p class="section-title"><span data-en>What's included</span><span data-fr>Ce qui est inclus</span></p>
     <h2 class="what-title"><span data-en>Everything generated directly from your Validator submission</span><span data-fr>Tout généré directement depuis votre soumission Validator</span></h2>
@@ -286,7 +270,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   </div>
 </section>
 
-<section class="process" id="process-section">
+<section class="process">
   <div class="process-inner">
     <p class="section-title"><span data-en>How it works</span><span data-fr>Comment ça fonctionne</span></p>
     <h2 class="what-title" style="margin-bottom:0;"><span data-en>From access code to business plan</span><span data-fr>Du code d'accès au business plan</span></h2>
@@ -430,25 +414,6 @@ document.getElementById('accessCode').addEventListener('input', function() {
 document.getElementById('accessCode').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') proceedToPayment();
 });
-
-// ── Handle Stripe success redirect ──
-// INTERIM: submit-business-plan.js's success_url still points back here
-// with ?session_id=. Once /success.html exists and success_url is updated
-// to a dedicated /business-plan/success route (coordinated change), this
-// block should be removed.
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('session_id')) {
-    document.getElementById('hero-main').style.display = 'none';
-    document.getElementById('what-section').style.display = 'none';
-    document.getElementById('process-section').style.display = 'none';
-    document.getElementById('v-success').style.display = 'block';
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'purchase_confirmed', { event_category: 'conversion', event_label: 'business_plan_purchase' });
-    }
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-})();
 </script>
 </body>
 </html>
