@@ -75,7 +75,20 @@ module.exports = async function handler(req, res) {
       { method: 'GET' }
     );
     var projects = await projRes.json();
-    if (!projRes.ok || !projects || !projects.length) {
+
+    if (!projRes.ok || !Array.isArray(projects)) {
+      console.error('crr-decide: unexpected Supabase response', {
+        status: projRes.status,
+        body: projects
+      });
+      res.status(502).json({
+        error: 'upstream_lookup_failed',
+        status: projRes.status,
+        detail: (projects && projects.message) || 'Supabase did not return the expected result — check SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY.'
+      });
+      return;
+    }
+    if (!projects.length) {
       res.status(404).json({ error: 'project_not_found' });
       return;
     }
