@@ -29,6 +29,16 @@
 //      also tagged with the SAME unified access code
 // 12. Send single combined delivery email with all purchased report
 //     links plus the dashboard link
+//
+// v3.1 fix: the Validator-only upsell section in the delivery email
+// previously showed the Business Plan add-on price as "€499 (was
+// €599)". €599 was never a real charged price for the standalone BP
+// add-on — it was an inflated anchor number that was never live (see
+// Workstream 2 pricing correction). Worse, €599 is now the REAL price
+// of the Validator+BP bundle, a different product — reusing it here as
+// a fake "was" price would actively mislead a customer who later sees
+// the genuine €599 bundle elsewhere. Fixed to state the real €499 rate
+// plainly, with no fabricated "was" price.
 // =============================================================
 
 import Stripe from 'stripe';
@@ -681,10 +691,11 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   </div>` : '';
 
   // Upsell section for Validator-only buyers (points to BP standalone at €499)
+  // v3.1: no fake "was €599" — €499 is simply stated as the real returning-client rate.
   const upsellSection_en = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Next step:</strong> Turn this report into a complete Business Plan with financial projections.</p>
-  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">€499</strong> <span style="text-decoration:line-through;color:#888880;">€599</span> — your exclusive returning-client rate.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">€499</strong> — your exclusive returning-client rate.</p>
   <div style="text-align:center;margin:0 0 8px;">
     <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Get my Business Plan — €499 →</a>
   </div>` : '';
@@ -692,7 +703,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   const upsellSection_fr = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Prochaine étape :</strong> Transformez ce rapport en Business Plan complet avec projections financières.</p>
-  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">499 €</strong> <span style="text-decoration:line-through;color:#888880;">599 €</span> — tarif fidélité exclusif.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">499 €</strong> — tarif fidélité exclusif.</p>
   <div style="text-align:center;margin:0 0 8px;">
     <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Obtenir mon Business Plan — 499 € →</a>
   </div>` : '';
