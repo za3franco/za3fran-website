@@ -11,6 +11,11 @@
 // was ever saved to build it from. Now: if the save fails, checkout is
 // never created, and the person sees a clear error instead of paying for
 // nothing.
+//
+// v3 fix (Workstream 2): success_url now points at the unified
+// /success.html page instead of /validator/success. success.html
+// resolves purchase_type and the project's access code itself via
+// /api/checkout-status, so no per-tool intermediate route is needed.
 
 import Stripe from 'stripe';
 import { getPriceId, normalizeCurrency } from '../lib/currency.js';
@@ -129,7 +134,7 @@ export default async function handler(req, res) {
         language:       data.language || 'en',
         purchase_type:  purchaseType,  // ← webhook reads this to decide whether to chain BP
       },
-      success_url: `${baseUrl}/validator/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/validator`,
       locale: data.language === 'fr' ? 'fr' : 'en',
     });

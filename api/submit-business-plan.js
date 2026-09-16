@@ -3,6 +3,14 @@
 // Handles Business Plan Essentials checkout initiation.
 // User arrives from Validator report upsell CTA with their access code.
 // Creates Stripe checkout session and returns the URL.
+//
+// v2 fix (Workstream 2): success_url now points at the unified
+// /success.html page instead of back to /business-plan?session_id=.
+// success.html resolves purchase_type and the project's access code
+// itself via /api/checkout-status, so no per-tool intermediate route
+// is needed. business-plan.html's own inline session_id handling
+// (added as an interim shim before this fix landed) can now be
+// removed — it's dead code once this success_url change is live.
 // ============================================================
 
 import Stripe from 'stripe';
@@ -92,7 +100,7 @@ export default async function handler(req, res) {
         conceptName,
         customerName: customerName || '',
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io'}/business-plan?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io'}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${process.env.SITE_URL || 'https://www.za3fran.io'}/business-plan`,
     });
 

@@ -8,6 +8,12 @@
 // stores the intake (currently just optional customer notes) in
 // a pending menu_engineer_runs row before creating the checkout
 // session.
+//
+// v2 fix (Workstream 2): success_url now points at the unified
+// /success.html page instead of back to /menu-engineer?session_id=.
+// success.html resolves purchase_type (metadata.type = 'menu_engineer',
+// already set below) and the project's access code itself via
+// /api/checkout-status, so no per-tool intermediate route is needed.
 // ============================================================
 
 import Stripe from 'stripe';
@@ -165,7 +171,7 @@ export default async function handler(req, res) {
         priceTier,
         conceptName,
       },
-      success_url: `${baseUrl}/menu-engineer?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/menu-engineer`,
       locale: language === 'fr' ? 'fr' : 'en',
     });
