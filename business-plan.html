@@ -5,426 +5,341 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran — Business Plan Essentials</title>
 <meta name="description" content="A complete, professional business plan generated directly from your Concept Validator data. Benchmark-estimated financials in your currency. Delivered in under 5 minutes.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+
 :root{
-  --black:#0a0a0a;--charcoal:#1a1a1a;--copper:#C9862A;--copper-light:#E4A84C;
-  --copper-dark:#9E6618;--navy:#0F1F3D;--white:#FAFAF7;--muted:#888880;
-  --border:rgba(201,134,42,0.2);--border-light:rgba(201,134,42,0.08);--error:#e05a5a;
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;font-size:16px;}
-body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);
-  overflow-x:hidden;min-height:100vh;}
-h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:400;}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:var(--copper-dark);border-radius:2px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+img{max-width:100%;display:block;}
+::selection{background:var(--copper);color:var(--black);}
 
-/* LANGUAGE */
-.en,.fr{display:none;}
-body .en{display:block;}body.lang-fr .fr{display:block;}body.lang-fr .en{display:none;}
-.en-inline,.fr-inline{display:none;}
-body .en-inline{display:inline;}body.lang-fr .fr-inline{display:inline;}
-body.lang-fr .en-inline{display:none;}
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
-  justify-content:space-between;padding:1.25rem 4rem;
-  background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);
-  border-bottom:0.5px solid var(--border);}
-.nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;}
-.nav-mark img{width:36px;height:36px;object-fit:contain;display:block;}
-.nav-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;
-  letter-spacing:0.08em;color:var(--white);}
-.nav-name span{color:var(--copper);}
-.nav-right{display:flex;align-items:center;gap:1.5rem;}
-.nav-back{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--muted);text-decoration:none;transition:color 0.2s;}
-.nav-back:hover{color:var(--copper);}
-.nav-lang{display:flex;border:0.5px solid var(--border);}
-.lang-btn{font-size:0.65rem;letter-spacing:0.1em;padding:0.35rem 0.65rem;
-  background:none;border:none;cursor:pointer;color:var(--muted);
-  transition:all 0.2s;font-family:'DM Sans',sans-serif;}
-.lang-btn.active{background:var(--copper);color:var(--black);}
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
 
-/* HERO */
-.hero{padding:10rem 4rem 6rem;position:relative;overflow:hidden;text-align:center;}
-.hero-bg{position:absolute;inset:0;z-index:0;
-  background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(201,134,42,0.06) 0%,transparent 70%);}
-.hero-grid{position:absolute;inset:0;z-index:0;
-  background-image:linear-gradient(rgba(201,134,42,0.03) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(201,134,42,0.03) 1px,transparent 1px);
-  background-size:60px 60px;}
-.hero-content{position:relative;z-index:1;max-width:760px;margin:0 auto;}
-.eyebrow{display:inline-block;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;
-  color:var(--copper);margin-bottom:1.75rem;padding:0.4rem 1rem;border:0.5px solid var(--border);}
-.hero h1{font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.05;font-weight:300;margin-bottom:1rem;}
-.hero h1 em{font-style:italic;color:var(--copper);}
-.hero-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2vw,1.5rem);
-  font-weight:300;font-style:italic;color:var(--muted);margin-bottom:2.5rem;}
-.hero-pills{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem;}
-.pill{font-size:0.7rem;letter-spacing:0.12em;padding:0.4rem 1rem;
-  border:0.5px solid var(--border);color:rgba(250,250,247,0.5);text-transform:uppercase;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
+nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.navlinks{display:flex;gap:34px;font-size:14px;color:var(--muted);align-items:center;}
+.navlinks a{position:relative;}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
+.navlinks a:hover::after{width:100%;}
+.navlinks a:hover{color:var(--white);}
+@media(max-width:640px){ .logo span:last-child{display:none;} }
 
-/* WHAT'S INCLUDED */
-.included{max-width:1100px;margin:0 auto;padding:5rem 4rem;}
-.section-header{text-align:center;margin-bottom:4rem;}
-.section-header h2{font-size:clamp(2rem,4vw,3.5rem);font-weight:300;line-height:1.1;}
-.section-header h2 em{font-style:italic;color:var(--copper);}
-.section-header p{font-size:0.9rem;color:var(--muted);line-height:1.7;
-  max-width:520px;margin:1rem auto 0;}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
-.card{padding:2rem;border:0.5px solid var(--border);background:rgba(255,255,255,0.02);}
-.card-icon{font-size:1.2rem;margin-bottom:1rem;opacity:0.6;}
-.card h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;
-  margin-bottom:0.75rem;line-height:1.2;}
-.card p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
-.card .tag{display:inline-block;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--copper);padding:0.2rem 0.6rem;border:0.5px solid var(--border);margin-top:0.75rem;}
+.hero{padding:150px 32px 70px;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:start;}
+.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:22px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+.hero h1{font-size:clamp(34px,4.8vw,50px);line-height:1.12;letter-spacing:-.01em;margin-bottom:20px;}
+.hero p.sub{color:var(--muted);font-size:15.5px;line-height:1.7;margin-bottom:32px;}
 
-/* PROCESS */
-.process{background:var(--charcoal);padding:5rem 4rem;}
-.process-inner{max-width:860px;margin:0 auto;}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem;}
-.step{display:flex;flex-direction:column;gap:0.75rem;}
-.step-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;
-  color:rgba(201,134,42,0.25);line-height:1;}
-.step h4{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;}
-.step p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
+.hero-deliverables{display:flex;flex-direction:column;gap:16px;margin-bottom:28px;}
+.hero-del-item{display:flex;align-items:flex-start;gap:14px;font-size:13.5px;color:var(--white);line-height:1.5;}
+.hero-del-num{font-family:'Cormorant Garamond';font-size:15px;color:var(--copper);width:22px;flex-shrink:0;}
 
-/* CHECKOUT SECTION */
-.checkout{max-width:680px;margin:0 auto;padding:5rem 4rem 8rem;}
-.checkout-box{border:0.5px solid var(--border);padding:3rem;}
-.checkout-eyebrow{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--copper);display:block;margin-bottom:1.5rem;}
-.checkout h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;
-  margin-bottom:0.75rem;line-height:1.2;}
-.checkout h2 em{font-style:italic;color:var(--copper);}
-.checkout-sub{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:2rem;}
-.field{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.25rem;}
-.label{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
-.input{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(201,134,42,0.2);
-  color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:300;
-  padding:0.85rem 1rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
-.input:focus{border-color:var(--copper);background:rgba(201,134,42,0.04);}
-.input.error{border-color:var(--error);}
-.input::placeholder{color:rgba(136,136,128,0.4);}
-.checkout-divider{height:0.5px;background:var(--border);margin:2rem 0;}
-.price-line{display:flex;align-items:center;justify-content:space-between;
-  padding:1.25rem 0;border-top:0.5px solid var(--border);margin-top:1.5rem;}
-.price-label{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
-.price-display{font-family:'Cormorant Garamond',serif;font-size:2.5rem;
-  font-weight:300;color:var(--copper);}
-.err-msg{color:var(--error);font-size:0.82rem;margin-bottom:1rem;
-  padding:0.75rem 1rem;border:0.5px solid rgba(224,90,90,0.2);display:none;}
-.err-msg.show{display:block;}
-.btn-pay{width:100%;font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;
-  padding:1.25rem 2rem;background:var(--copper);color:var(--black);border:none;
-  cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;
-  transition:background 0.2s,transform 0.15s;display:flex;align-items:center;
-  justify-content:center;gap:0.75rem;}
-.btn-pay:hover:not(:disabled){background:var(--copper-light);transform:translateY(-1px);}
-.btn-pay:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-.btn-pay .spinner{width:16px;height:16px;border:2px solid rgba(10,10,10,0.3);
-  border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
-.btn-pay.loading .spinner{display:block;}
-.btn-pay.loading .label{opacity:0.6;}
+.new-user-callout{background:rgba(201,134,42,.06);border:1px solid rgba(201,134,42,.22);border-radius:12px;padding:20px 22px;margin-bottom:28px;}
+.new-user-callout p.nu-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin-bottom:8px;}
+.new-user-callout p.nu-body{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:10px;}
+.new-user-callout a.nu-cta{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--copper-bright);}
+
+.hero-note{font-size:12.5px;color:var(--muted);}
+.hero-note a{color:var(--copper-bright);}
+
+.access-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,134,42,.25);border-radius:16px;padding:34px;position:sticky;top:100px;}
+.access-card-title{font-family:'Cormorant Garamond';font-size:20px;color:var(--white);margin-bottom:8px;}
+.access-card-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:26px;}
+
+.field-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block;}
+.field-group{margin-bottom:18px;}
+
+input[type="text"]{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--white);outline:none;
+  transition:border-color .2s;-webkit-appearance:none;text-transform:uppercase;letter-spacing:.1em;
+}
+input::placeholder{color:var(--muted);text-transform:none;letter-spacing:normal;}
+input:focus{border-color:rgba(201,134,42,.6);}
+
+.divider{border:none;border-top:1px solid rgba(255,255,255,.08);margin:22px 0;}
+
+.price-reveal{margin-top:4px;padding:18px 20px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;}
+.price-reveal-amount{font-family:'Cormorant Garamond';font-size:32px;color:var(--white);line-height:1;}
+.price-reveal-desc{font-size:12px;color:var(--muted);margin-top:6px;}
+
+.btn-submit-card{width:100%;padding:15px;background:var(--copper);border:none;border-radius:100px;
+  font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--black);cursor:pointer;transition:all .2s;}
+.btn-submit-card:hover:not(:disabled){background:var(--copper-bright);transform:translateY(-1px);}
+.btn-submit-card:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+.form-err{color:#e07070;font-size:12.5px;margin-top:12px;display:none;line-height:1.6;}
+.form-err.show{display:block;}
+
+.submit-note{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.6;text-align:center;}
+.no-validator-link{text-align:center;margin-top:18px;font-size:12.5px;color:var(--muted);}
+.no-validator-link a{color:var(--copper-bright);}
+
+.what-section{background:var(--charcoal);padding:80px 32px;}
+.what-inner{max-width:1180px;margin:0 auto;}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:16px;}
+.what-title{font-family:'Cormorant Garamond';font-size:32px;color:var(--white);margin-bottom:44px;}
+.deliverables-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
+.del-block{background:var(--charcoal2);padding:32px 30px;}
+.del-num{font-family:'Cormorant Garamond';font-size:28px;color:rgba(201,134,42,.35);line-height:1;margin-bottom:12px;}
+.del-block h3{font-family:'Cormorant Garamond';font-size:18px;color:var(--white);margin-bottom:10px;}
+.del-block p{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:12px;}
+.del-tag{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper-bright);background:rgba(201,134,42,.12);padding:4px 10px;border-radius:100px;}
+
+.process{background:var(--black);padding:80px 32px;}
+.process-inner{max-width:1180px;margin:0 auto;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:44px;}
+.step{display:flex;flex-direction:column;gap:10px;}
+.step-num{font-family:'Cormorant Garamond';font-size:40px;font-weight:300;color:rgba(201,134,42,.3);line-height:1;}
+.step h4{font-family:'Cormorant Garamond';font-size:19px;color:var(--white);}
+.step p{font-size:13.5px;color:var(--muted);line-height:1.7;}
+
+footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal2);}
+footer .foot-bottom{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:16px;}
+footer .foot-bottom a{color:var(--muted);}
+footer .foot-bottom a:hover{color:var(--white);}
+
 @keyframes spin{to{transform:rotate(360deg);}}
-.checkout-small{text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);
-  margin-top:1rem;line-height:1.6;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,10,10,.3);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 
-/* SUCCESS */
-.v-success{display:none;text-align:center;padding:6rem 4rem;max-width:640px;margin:0 auto;}
-.v-success.show{display:block;}
-.v-success-icon{width:72px;height:72px;border:0.5px solid var(--copper);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;font-size:1.5rem;}
-.v-success-h{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;
-  margin-bottom:1rem;line-height:1.2;}
-.v-success-h em{font-style:italic;color:var(--copper);}
-.v-success-p{font-size:0.9rem;line-height:1.8;color:rgba(250,250,247,0.55);margin-bottom:2rem;}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  nav{padding:1rem 1.5rem;}
-  .hero{padding:8rem 1.5rem 4rem;}
-  .included{padding:4rem 1.5rem;}
-  .process{padding:4rem 1.5rem;}
-  .checkout{padding:4rem 1.5rem 6rem;}
-  .checkout-box{padding:2rem 1.5rem;}
-  .grid-3{grid-template-columns:1fr;}
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;padding:130px 20px 40px;gap:36px;}
+  .access-card{position:static;}
+  .deliverables-strip{grid-template-columns:1fr;}
   .steps{grid-template-columns:1fr;}
+  .what-section, .process{padding:56px 20px;}
+  footer .foot-bottom{flex-direction:column;text-align:center;}
 }
 </style>
 </head>
-<body id="body">
+<body>
 
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-mark"><img src="assets/za3fran-mark.svg" alt="Za3fran" onerror="this.style.display='none'"></div>
-    <span class="nav-name">Za3fran<span>.io</span></span>
-  </a>
-  <div class="nav-right">
-    <a href="/platform" class="nav-back en">← Back to platform</a>
-    <a href="/platform" class="nav-back fr">← Retour à la plateforme</a>
-    <div class="nav-lang">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">FR</button>
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
+
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
+      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+    </a>
+    <div class="navlinks">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="eyebrow">Za3fran Digital · Business Plan Essentials</div>
-    <h1 class="en">Your concept, <em>formalized.</em></h1>
-    <h1 class="fr">Votre concept, <em>formalisé.</em></h1>
-    <p class="hero-sub en">A complete, investor-ready business plan generated from your Validator data.</p>
-    <p class="hero-sub fr">Un business plan complet, prêt pour les investisseurs, généré depuis votre Validator.</p>
-    <div class="hero-pills">
-      <span class="pill en">15–25 pages</span>
-      <span class="pill en">Benchmark financials</span>
-      <span class="pill en">Bilingual EN/FR</span>
-      <span class="pill en">Delivered in 5 min</span>
-      <span class="pill fr">15–25 pages</span>
-      <span class="pill fr">Projections benchmark</span>
-      <span class="pill fr">Bilingue EN/FR</span>
-      <span class="pill fr">Livré en 5 min</span>
+
+  <div class="hero-left">
+    <p class="eyebrow"><span data-en>Business Plan Essentials</span><span data-fr>Business Plan Essentials</span></p>
+    <h1><span data-en>Your concept,<br><em>formalized.</em></span><span data-fr>Votre concept,<br><em>formalisé.</em></span></h1>
+    <p class="sub"><span data-en>A complete, investor-ready business plan generated directly from your Validator data — no additional forms, no extra inputs.</span><span data-fr>Un business plan complet, prêt pour les investisseurs, généré directement depuis vos données Validator — sans formulaire ni saisie supplémentaire.</span></p>
+
+    <div class="hero-deliverables">
+      <div class="hero-del-item"><span class="hero-del-num">01</span><span><span data-en>Executive summary, market analysis, positioning and risk analysis — sourced directly from your Validator data</span><span data-fr>Résumé exécutif, analyse de marché, positionnement et analyse des risques — depuis vos données Validator</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">02</span><span><span data-en>Year 1–3 financial projections in your currency — startup costs, revenue, break-even, ROI (benchmark-estimated, clearly labeled)</span><span data-fr>Projections financières A1–A3 dans votre devise — coûts de lancement, revenus, seuil de rentabilité, ROI (estimations benchmark, clairement étiquetées)</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">03</span><span><span data-en>Menu strategy, operational model, marketing approach and a 6-month pre-opening timeline — directional, benchmark-based</span><span data-fr>Stratégie menu, modèle opérationnel, approche marketing et calendrier pré-ouverture 6 mois — directionnel, basé sur benchmarks</span></span></div>
     </div>
-    <!-- Price block: returning client €499 + bundle callout -->
-    <div style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:0.75rem;padding:1.5rem 2rem;border:0.5px solid var(--border);background:rgba(201,134,42,0.04);">
-      <div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;">
-        <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--copper);" id="hero-price">€499</span>
-        <span style="font-size:0.75rem;color:var(--muted);" class="en">for existing Validator clients</span>
-        <span style="font-size:0.75rem;color:var(--muted);" class="fr">pour les clients Validator existants</span>
-      </div>
-      <div style="height:0.5px;width:100%;background:rgba(201,134,42,0.15);"></div>
-      <div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;">
-        <span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:rgba(201,134,42,0.6);" id="hero-bundle-price">€699</span>
-        <span style="font-size:0.72rem;color:rgba(250,250,247,0.35);" class="en">bundled with Concept Validator — <span id="hero-save">save €99</span></span>
-        <span style="font-size:0.72rem;color:rgba(250,250,247,0.35);" class="fr">avec le Concept Validator — <span id="hero-save-fr">économisez 99€</span></span>
-        <a href="/validator?bundle=true" style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="en">Start with bundle →</a>
-        <a href="/validator?bundle=true" style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="fr">Commencer avec le bundle →</a>
-      </div>
+
+    <div class="new-user-callout">
+      <p class="nu-label"><span data-en>First time? Start with the bundle</span><span data-fr>Première fois ? Commencez avec le bundle</span></p>
+      <p class="nu-body"><span data-en>Haven't done the Concept Validator yet? Get both together for <strong style="color:var(--copper-bright)" id="nu-bundle-price">€599</strong> — <span id="nu-bundle-save">save €99</span> versus buying separately.</span><span data-fr>Pas encore fait le Concept Validator ? Obtenez les deux ensemble pour <strong style="color:var(--copper-bright)" id="nu-bundle-price-fr">599€</strong> — <span id="nu-bundle-save-fr">économisez 99€</span> par rapport à un achat séparé.</span></p>
+      <a href="/validator?bundle=bundle_bp" class="nu-cta"><span data-en>Start with the bundle →</span><span data-fr>Commencer avec le bundle →</span></a>
     </div>
+
+    <p class="hero-note">
+      <span data-en>Already have a Validator report? Enter your access code to the right. New to Za3fran? <a href="/pricing">See bundle options →</a></span>
+      <span data-fr>Vous avez déjà un rapport Validator ? Entrez votre code d'accès à droite. Nouveau chez Za3fran ? <a href="/pricing">Voir les formules →</a></span>
+    </p>
+  </div>
+
+  <div class="access-card" id="accessCard">
+    <p class="access-card-title"><span data-en>Enter your Validator access code</span><span data-fr>Entrez votre code d'accès Validator</span></p>
+    <p class="access-card-sub"><span data-en>Your code was delivered by email after your Concept Validator purchase. It links to your concept data — your Business Plan is generated from it automatically.</span><span data-fr>Votre code vous a été envoyé par email après votre achat du Concept Validator. Il est lié à vos données de concept — votre Business Plan en est généré automatiquement.</span></p>
+
+    <div class="field-group">
+      <label class="field-label"><span data-en>Validator access code</span><span data-fr>Code d'accès Validator</span></label>
+      <input type="text" id="accessCode" placeholder="e.g. 45GJXD6W" maxlength="12">
+    </div>
+
+    <div class="price-reveal">
+      <p class="price-reveal-amount" id="revealPrice">€499</p>
+      <p class="price-reveal-desc" id="revealDesc"><span data-en>One-time payment · Returning Validator client rate</span><span data-fr>Paiement unique · Tarif client Validator existant</span></p>
+    </div>
+
+    <hr class="divider">
+
+    <button class="btn-submit-card" id="btnSubmit" onclick="proceedToPayment()">
+      <span class="btn-label"><span data-en>Proceed to payment →</span><span data-fr>Procéder au paiement →</span></span>
+    </button>
+
+    <p class="form-err" id="form-err"></p>
+
+    <p class="submit-note"><span data-en>Secure payment via Stripe · Business plan generated from your Validator data · Delivered within 5 minutes</span><span data-fr>Paiement sécurisé via Stripe · Business plan généré depuis vos données Validator · Livré en 5 minutes</span></p>
+
+    <p class="no-validator-link">
+      <span data-en>No Validator report yet? <a href="/pricing">See bundle options</a></span>
+      <span data-fr>Pas encore de rapport Validator ? <a href="/pricing">Voir les formules</a></span>
+    </p>
   </div>
 </div>
 
-<!-- WHAT'S INCLUDED -->
-<div class="included">
-  <div class="section-header">
-    <h2 class="en">What's <em>included</em></h2>
-    <h2 class="fr">Ce qui est <em>inclus</em></h2>
-    <p class="en">Everything generated directly from your Validator submission — no additional forms, no extra inputs.</p>
-    <p class="fr">Tout est généré directement depuis votre soumission Validator — aucun formulaire ni saisie supplémentaire.</p>
-  </div>
-  <div class="grid-3">
-    <div class="card">
-      <div class="card-icon">✦</div>
-      <h3 class="en">Executive Summary & Market Analysis</h3>
-      <h3 class="fr">Résumé exécutif & Analyse de marché</h3>
-      <p class="en">Deepened from your Validator data. Market opportunity, competitive positioning, target audience profiles.</p>
-      <p class="fr">Approfondi depuis vos données Validator. Opportunité de marché, positionnement, profils audience.</p>
-      <span class="tag en">From Validator data</span>
-      <span class="tag fr">Depuis les données Validator</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">◈</div>
-      <h3 class="en">Financial Projections Y1–Y3</h3>
-      <h3 class="fr">Projections Financières A1–A3</h3>
-      <p class="en">Startup cost range, revenue projections in your currency, cost structure ratios, break-even, ROI.</p>
-      <p class="fr">Fourchette investissement, projections CA dans votre devise, ratios charges, point mort, ROI.</p>
-      <span class="tag en">Benchmark-estimated · Labeled</span>
-      <span class="tag fr">Estimations benchmark · Étiquetées</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">◇</div>
-      <h3 class="en">Menu, Operations & Marketing</h3>
-      <h3 class="fr">Menu, Opérations & Marketing</h3>
-      <p class="en">Menu structure, staffing model, service design, pre-opening timeline, marketing channels.</p>
-      <p class="fr">Structure menu, modèle staffing, design service, calendrier pré-ouverture, canaux marketing.</p>
-      <span class="tag en">Directional · Benchmark-based</span>
-      <span class="tag fr">Directionnel · Basé sur benchmarks</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">▲</div>
-      <h3 class="en">Risk Analysis & Mitigations</h3>
-      <h3 class="fr">Analyse des risques & Mitigations</h3>
-      <p class="en">Critical risks identified in your Validator report, with mitigation strategies and contingency plans.</p>
-      <p class="fr">Risques critiques identifiés dans votre rapport Validator, avec stratégies de mitigation.</p>
-      <span class="tag en">From Validator data</span>
-      <span class="tag fr">Depuis les données Validator</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">○</div>
-      <h3 class="en">Pre-Opening Timeline</h3>
-      <h3 class="fr">Calendrier pré-ouverture</h3>
-      <p class="en">6-month phased roadmap from validation to launch — D-180 through D-0.</p>
-      <p class="fr">Feuille de route 6 mois de la validation au lancement — J-180 jusqu'à J-0.</p>
-      <span class="tag en">Directional · Labeled</span>
-      <span class="tag fr">Directionnel · Étiqueté</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">✧</div>
-      <h3 class="en">Recommendations & Next Steps</h3>
-      <h3 class="fr">Recommandations & Prochaines étapes</h3>
-      <p class="en">Prioritized action plan with clear path to deeper tools: Menu Engineer, Financial Builder, Business Plan Pro.</p>
-      <p class="fr">Plan d'action prioritaire avec chemin vers les outils approfondis : Menu Engineer, Financial Builder, Plan Pro.</p>
-      <span class="tag en">From Validator data</span>
-      <span class="tag fr">Depuis les données Validator</span>
+<section class="what-section">
+  <div class="what-inner">
+    <p class="section-title"><span data-en>What's included</span><span data-fr>Ce qui est inclus</span></p>
+    <h2 class="what-title"><span data-en>Everything generated directly from your Validator submission</span><span data-fr>Tout généré directement depuis votre soumission Validator</span></h2>
+    <div class="deliverables-strip">
+      <div class="del-block">
+        <p class="del-num">01</p>
+        <h3><span data-en>Executive Summary &amp; Market Analysis</span><span data-fr>Résumé exécutif &amp; Analyse de marché</span></h3>
+        <p><span data-en>Deepened from your Validator data. Market opportunity, competitive positioning, target audience profiles.</span><span data-fr>Approfondi depuis vos données Validator. Opportunité de marché, positionnement, profils audience.</span></p>
+        <span class="del-tag"><span data-en>From Validator data</span><span data-fr>Depuis les données Validator</span></span>
+      </div>
+      <div class="del-block">
+        <p class="del-num">02</p>
+        <h3><span data-en>Financial Projections Y1–Y3</span><span data-fr>Projections Financières A1–A3</span></h3>
+        <p><span data-en>Startup cost range, revenue projections in your currency, cost structure ratios, break-even, ROI.</span><span data-fr>Fourchette investissement, projections CA dans votre devise, ratios charges, point mort, ROI.</span></p>
+        <span class="del-tag"><span data-en>Benchmark-estimated · Labeled</span><span data-fr>Estimations benchmark · Étiquetées</span></span>
+      </div>
+      <div class="del-block">
+        <p class="del-num">03</p>
+        <h3><span data-en>Menu, Operations &amp; Marketing</span><span data-fr>Menu, Opérations &amp; Marketing</span></h3>
+        <p><span data-en>Menu structure, staffing model, service design, pre-opening timeline, marketing channels.</span><span data-fr>Structure menu, modèle staffing, design service, calendrier pré-ouverture, canaux marketing.</span></p>
+        <span class="del-tag"><span data-en>Directional · Benchmark-based</span><span data-fr>Directionnel · Basé sur benchmarks</span></span>
+      </div>
+      <div class="del-block">
+        <p class="del-num">04</p>
+        <h3><span data-en>Risk Analysis &amp; Mitigations</span><span data-fr>Analyse des risques &amp; Mitigations</span></h3>
+        <p><span data-en>Critical risks identified in your Validator report, with mitigation strategies and contingency plans.</span><span data-fr>Risques critiques identifiés dans votre rapport Validator, avec stratégies de mitigation.</span></p>
+        <span class="del-tag"><span data-en>From Validator data</span><span data-fr>Depuis les données Validator</span></span>
+      </div>
+      <div class="del-block">
+        <p class="del-num">05</p>
+        <h3><span data-en>Pre-Opening Timeline</span><span data-fr>Calendrier pré-ouverture</span></h3>
+        <p><span data-en>6-month phased roadmap from validation to launch — D-180 through D-0.</span><span data-fr>Feuille de route 6 mois de la validation au lancement — J-180 jusqu'à J-0.</span></p>
+        <span class="del-tag"><span data-en>Directional · Labeled</span><span data-fr>Directionnel · Étiqueté</span></span>
+      </div>
+      <div class="del-block">
+        <p class="del-num">06</p>
+        <h3><span data-en>Recommendations &amp; Next Steps</span><span data-fr>Recommandations &amp; Prochaines étapes</span></h3>
+        <p><span data-en>Prioritized action plan with clear path to deeper tools: Menu Engineer, Financial Builder, Business Plan Pro.</span><span data-fr>Plan d'action prioritaire avec chemin vers les outils approfondis : Menu Engineer, Financial Builder, Plan Pro.</span></p>
+        <span class="del-tag"><span data-en>From Validator data</span><span data-fr>Depuis les données Validator</span></span>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- PROCESS -->
-<div class="process">
+<section class="process">
   <div class="process-inner">
-    <div class="section-header" style="text-align:left;">
-      <h2 class="en">How it <em>works</em></h2>
-      <h2 class="fr">Comment ça <em>fonctionne</em></h2>
-    </div>
+    <p class="section-title"><span data-en>How it works</span><span data-fr>Comment ça fonctionne</span></p>
+    <h2 class="what-title" style="margin-bottom:0;"><span data-en>From access code to business plan</span><span data-fr>Du code d'accès au business plan</span></h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
-        <h4 class="en">Enter your Validator access code</h4>
-        <h4 class="fr">Saisissez votre code d'accès Validator</h4>
-        <p class="en">The code from your Validator report delivery email. Your concept data is already in the system.</p>
-        <p class="fr">Le code de votre email de livraison du rapport Validator. Vos données sont déjà dans le système.</p>
+        <h4><span data-en>Enter your Validator access code</span><span data-fr>Saisissez votre code d'accès Validator</span></h4>
+        <p><span data-en>The code from your Validator report delivery email. Your concept data is already in the system.</span><span data-fr>Le code de votre email de livraison du rapport Validator. Vos données sont déjà dans le système.</span></p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h4 class="en">Pay once</h4>
-        <h4 class="fr">Payez une fois</h4>
-        <p class="en">Secure Stripe payment. <span id="step2-price">€499</span> one-time for existing Validator clients. No subscription.</p>
-        <p class="fr">Paiement Stripe sécurisé. <span id="step2-price-fr">499€</span> paiement unique pour les clients Validator existants. Sans abonnement.</p>
+        <h4><span data-en>Pay once</span><span data-fr>Payez une fois</span></h4>
+        <p><span data-en>Secure Stripe payment — a one-time fee for existing Validator clients. No subscription.</span><span data-fr>Paiement Stripe sécurisé — un paiement unique pour les clients Validator existants. Sans abonnement.</span></p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
-        <h4 class="en">Receive your Business Plan</h4>
-        <h4 class="fr">Recevez votre Business Plan</h4>
-        <p class="en">Your complete 15–25 page business plan arrives by email within 5 minutes, with a private access link.</p>
-        <p class="fr">Votre business plan complet de 15 à 25 pages arrive par email dans 5 minutes, avec lien d'accès privé.</p>
+        <h4><span data-en>Receive your Business Plan</span><span data-fr>Recevez votre Business Plan</span></h4>
+        <p><span data-en>Your complete 15–25 page business plan arrives by email within 5 minutes, with a private access link.</span><span data-fr>Votre business plan complet de 15 à 25 pages arrive par email dans 5 minutes, avec lien d'accès privé.</span></p>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- CHECKOUT -->
-<div class="checkout" id="checkout-section">
-  <div class="checkout-box" id="checkout-box">
-
-    <!-- New user callout -->
-    <div style="background:rgba(201,134,42,0.05);border:0.5px solid rgba(201,134,42,0.25);padding:1.25rem 1.5rem;margin-bottom:2rem;">
-      <p style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);margin-bottom:0.5rem;" class="en">First time? Start with the bundle</p>
-      <p style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);margin-bottom:0.5rem;" class="fr">Première fois ? Commencez avec le bundle</p>
-      <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="en">Haven't done the Concept Validator yet? Get both together — Validator + Business Plan Essentials for <strong style="color:var(--copper);" id="box-bundle-price">€699</strong> (save €99).</p>
-      <p style="font-size:0.82rem;color:rgba(250,250,247,0.5);line-height:1.6;margin-bottom:0.75rem;" class="fr">Pas encore fait le Concept Validator ? Obtenez les deux ensemble — Validator + Business Plan Essentials pour <strong style="color:var(--copper);" id="box-bundle-price-fr">699€</strong> (économisez 99€).</p>
-      <a href="/validator?bundle=true" style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="en">Get Validator + Business Plan →</a>
-      <a href="/validator?bundle=true" style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--copper);text-decoration:none;" class="fr">Obtenir Validator + Business Plan →</a>
+<footer>
+  <div class="foot-bottom">
+    <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    <div style="display:flex;gap:24px;">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+      <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
     </div>
-
-    <!-- Divider with label -->
-    <div style="height:0.5px;background:var(--border);margin-bottom:2rem;position:relative;">
-      <span style="position:absolute;top:-0.6rem;left:50%;transform:translateX(-50%);background:var(--charcoal);padding:0 0.75rem;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);" class="en">Already have a Validator report?</span>
-      <span style="position:absolute;top:-0.6rem;left:50%;transform:translateX(-50%);background:var(--charcoal);padding:0 0.75rem;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);" class="fr">Vous avez déjà un rapport Validator ?</span>
-    </div>
-
-    <span class="checkout-eyebrow en">Enter your access code & pay</span>
-    <span class="checkout-eyebrow fr">Saisissez votre code d'accès & payez</span>
-    <h2 class="en">Get your <em>Business Plan</em></h2>
-    <h2 class="fr">Obtenez votre <em>Business Plan</em></h2>
-    <p class="checkout-sub en">Enter the access code from your Concept Validator delivery email. Your concept data will be retrieved automatically. <strong style="color:rgba(201,134,42,0.7);font-weight:400;">Returning client rate: <span id="checkout-returning">€499</span></strong></p>
-    <p class="checkout-sub fr">Saisissez le code d'accès de votre email de livraison du Concept Validator. Vos données seront récupérées automatiquement. <strong style="color:rgba(201,134,42,0.7);font-weight:400;">Tarif fidélité : <span id="checkout-returning-fr">499€</span></strong></p>
-
-    <div class="field">
-      <label class="label en" for="f-code">Validator access code <span style="color:var(--copper)">*</span></label>
-      <label class="label fr" for="f-code">Code d'accès Validator <span style="color:var(--copper)">*</span></label>
-      <input class="input" type="text" id="f-code" maxlength="8"
-        placeholder="e.g. ZA3F7X2K" autocapitalize="characters" autocomplete="off" spellcheck="false">
-    </div>
-
-    <div class="checkout-divider"></div>
-
-    <div class="price-line">
-      <div>
-        <div class="price-label en">Total · One-time payment</div>
-        <div class="price-label fr">Total · Paiement unique</div>
-      </div>
-      <div class="price-display" id="checkout-price">€499</div>
-    </div>
-
-    <div class="err-msg" id="err-msg"></div>
-
-    <button class="btn-pay" id="pay-btn" onclick="proceedToPayment()">
-      <div class="spinner"></div>
-      <span class="label en">Proceed to payment →</span>
-      <span class="label fr">Procéder au paiement →</span>
-    </button>
-    <p class="checkout-small en">Secure payment via Stripe · Business plan generated from your Validator data · Delivered within 5 minutes</p>
-    <p class="checkout-small fr">Paiement sécurisé via Stripe · Business plan généré depuis vos données Validator · Livré en 5 minutes</p>
   </div>
-</div>
-
-<!-- SUCCESS -->
-<div class="v-success" id="v-success">
-  <div class="v-success-icon">✦</div>
-  <h2 class="v-success-h en">Your Business Plan<br><em>is on its way.</em></h2>
-  <h2 class="v-success-h fr">Votre Business Plan<br><em>est en route.</em></h2>
-  <p class="v-success-p en">Check your inbox — your 15–25 page business plan will arrive within 5 minutes. Check spam if you don't see it.</p>
-  <p class="v-success-p fr">Consultez votre boîte mail — votre business plan de 15–25 pages arrivera dans 5 minutes. Vérifiez vos spams.</p>
-  <a href="/platform" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper);text-decoration:none;">
-    <span class="en">← Return to the Platform</span>
-    <span class="fr">← Retour à la Plateforme</span>
-  </a>
-</div>
+</footer>
 
 <script>
-// ── LANGUAGE ──
-function setLang(l){
-  document.getElementById('body').classList.toggle('lang-fr', l==='fr');
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-fr').classList.toggle('active', l==='fr');
-  localStorage.setItem('za3fran_lang', l);
-}
-(function(){
-  const saved = localStorage.getItem('za3fran_lang');
-  if(saved === 'fr') setLang('fr');
-  else setLang('en');
-})();
+// ── LANG / SCROLL (matches Menu Engineer's canonical pattern) ──
+function isFr(){ return document.body.classList.contains('lang-fr'); }
 
-function isFr(){ return document.getElementById('body').classList.contains('lang-fr'); }
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+});
 
 // ── CURRENCY ──
 var CURRENCY = 'EUR';
-var PRICE_RETURNING = { EUR: '€499',      MAD: 'MAD 4 990', USD: '$549' };
-var PRICE_BUNDLE    = { EUR: '€699',      MAD: 'MAD 6 990', USD: '$749' };
-var PRICE_SAVE_EN   = { EUR: 'save €99',  MAD: 'save MAD 990', USD: 'save $99' };
-var PRICE_SAVE_FR   = { EUR: 'économisez 99€', MAD: 'économisez 990 MAD', USD: 'économisez 99$' };
+var PRICE_RETURNING = { EUR:{main:'€499', desc_en:'One-time payment · Returning Validator client rate', desc_fr:'Paiement unique · Tarif client Validator existant'},
+                         MAD:{main:'MAD 4,990', desc_en:'One-time payment · Returning Validator client rate', desc_fr:'Paiement unique · Tarif client Validator existant'},
+                         USD:{main:'$549', desc_en:'One-time payment · Returning Validator client rate', desc_fr:'Paiement unique · Tarif client Validator existant'} };
+var PRICE_BUNDLE = { EUR:'€599', MAD:'MAD 5,990', USD:'$649' };
+var SAVE_EN = { EUR:'save €99', MAD:'save MAD 990', USD:'save $99' };
+var SAVE_FR = { EUR:'économisez 99€', MAD:'économisez 990 MAD', USD:'économisez 99$' };
 
 fetch('/api/currency')
   .then(r => r.json())
   .then(data => {
     CURRENCY = data.currency || 'EUR';
-    const p   = PRICE_RETURNING[CURRENCY];
-    const pb  = PRICE_BUNDLE[CURRENCY];
-    const ps  = PRICE_SAVE_EN[CURRENCY];
-    const psf = PRICE_SAVE_FR[CURRENCY];
-    const el  = (id) => document.getElementById(id);
-    if(el('hero-price'))           el('hero-price').textContent = p;
-    if(el('hero-bundle-price'))    el('hero-bundle-price').textContent = pb;
-    if(el('hero-save'))            el('hero-save').textContent = ps;
-    if(el('hero-save-fr'))         el('hero-save-fr').textContent = psf;
-    if(el('checkout-price'))       el('checkout-price').textContent = p;
-    if(el('checkout-returning'))   el('checkout-returning').textContent = p;
-    if(el('checkout-returning-fr'))el('checkout-returning-fr').textContent = p;
-    if(el('box-bundle-price'))     el('box-bundle-price').textContent = pb;
-    if(el('box-bundle-price-fr'))  el('box-bundle-price-fr').textContent = pb;
-    if(el('step2-price'))          el('step2-price').textContent = p;
-    if(el('step2-price-fr'))       el('step2-price-fr').textContent = p;
+    var p = PRICE_RETURNING[CURRENCY] || PRICE_RETURNING.EUR;
+    document.getElementById('revealPrice').textContent = p.main;
+    document.getElementById('nu-bundle-price').textContent = PRICE_BUNDLE[CURRENCY] || PRICE_BUNDLE.EUR;
+    document.getElementById('nu-bundle-price-fr').textContent = PRICE_BUNDLE[CURRENCY] || PRICE_BUNDLE.EUR;
+    document.getElementById('nu-bundle-save').textContent = SAVE_EN[CURRENCY] || SAVE_EN.EUR;
+    document.getElementById('nu-bundle-save-fr').textContent = SAVE_FR[CURRENCY] || SAVE_FR.EUR;
   })
   .catch(() => {});
 
@@ -433,19 +348,16 @@ fetch('/api/currency')
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   if(code) {
-    const inp = document.getElementById('f-code');
+    const inp = document.getElementById('accessCode');
     if(inp) inp.value = code.toUpperCase();
-    setTimeout(() => {
-      document.getElementById('checkout-section')?.scrollIntoView({ behavior:'smooth', block:'center' });
-    }, 500);
   }
 })();
 
-// ── PAYMENT ──
+// ── PAYMENT ── (existing /api/submit-business-plan contract — accessCode, currency, language)
 async function proceedToPayment() {
-  const btn   = document.getElementById('pay-btn');
-  const errEl = document.getElementById('err-msg');
-  const code  = document.getElementById('f-code').value.toUpperCase().trim();
+  const btn   = document.getElementById('btnSubmit');
+  const errEl = document.getElementById('form-err');
+  const code  = document.getElementById('accessCode').value.toUpperCase().trim();
   errEl.classList.remove('show');
 
   if(!code || code.length < 6) {
@@ -457,7 +369,7 @@ async function proceedToPayment() {
   }
 
   btn.disabled = true;
-  btn.classList.add('loading');
+  btn.innerHTML = '<span class="spinner"></span>' + (isFr() ? 'Préparation du paiement…' : 'Preparing checkout…');
 
   try {
     const res = await fetch('/api/submit-business-plan', {
@@ -478,7 +390,7 @@ async function proceedToPayment() {
         : 'An error occurred. Try again or contact hello@za3fran.io.');
       errEl.classList.add('show');
       btn.disabled = false;
-      btn.classList.remove('loading');
+      btn.innerHTML = '<span class="btn-label"><span data-en>Proceed to payment →</span><span data-fr>Procéder au paiement →</span></span>';
       return;
     }
 
@@ -492,26 +404,16 @@ async function proceedToPayment() {
       : 'An error occurred. Try again or contact hello@za3fran.io.';
     errEl.classList.add('show');
     btn.disabled = false;
-    btn.classList.remove('loading');
+    btn.innerHTML = '<span class="btn-label"><span data-en>Proceed to payment →</span><span data-fr>Procéder au paiement →</span></span>';
   }
 }
 
-// ── Handle Stripe success redirect ──
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('session_id')) {
-    const box = document.getElementById('checkout-box');
-    if(box) box.style.display = 'none';
-    document.getElementById('v-success').classList.add('show');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-})();
-
-// Remove error on input
-document.getElementById('f-code').addEventListener('input', function() {
-  document.getElementById('err-msg').classList.remove('show');
+document.getElementById('accessCode').addEventListener('input', function() {
+  document.getElementById('form-err').classList.remove('show');
+});
+document.getElementById('accessCode').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') proceedToPayment();
 });
 </script>
 </body>
 </html>
-
