@@ -125,6 +125,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:al
 nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
 nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-product-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-left:1px solid rgba(255,255,255,.15);padding-left:16px;transition:color .2s;}
+.nav-product-label:hover{color:var(--copper-bright);}
 .navlinks{display:flex;gap:34px;font-size:14px;color:var(--muted);align-items:center;}
 .navlinks a{position:relative;}
 .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
@@ -132,6 +135,7 @@ nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .navlinks a:hover{color:var(--white);}
 @media(max-width:640px){
   .logo span:last-child{display:none;}
+  .nav-product-label{display:none;}
 }
 
 /* hero */
@@ -285,10 +289,13 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
 <nav id="nav">
   <div class="wrap">
-    <a href="/" class="logo">
-      <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
-      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
-    </a>
+    <div class="nav-left">
+      <a href="/" class="logo">
+        <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
+        <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+      </a>
+      <a href="/platform" class="nav-product-label">Za3fran Digital</a>
+    </div>
     <div class="navlinks">
       <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
       <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
@@ -305,7 +312,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
 <!-- ── NEW USERS ──────────────────────────────────────── -->
 <section class="pricing-section">
-  <p class="section-title"><span data-en>New to Za3fran — Start here</span><span data-fr>Nouveau chez Za3fran — Commencez ici</span></p>
+  <p class="section-title"><span data-en>New to Za3fran Digital — Start here</span><span data-fr>Nouveau chez Za3fran Digital — Commencez ici</span></p>
   <div class="cards-grid col-3">
 
     <div class="card">
@@ -478,17 +485,29 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
 <!-- ── DELIVERABLES ─────────────────────────────────── -->
 <section class="pricing-section">
-  <p class="section-title"><span data-en>What Menu Engineer delivers</span><span data-fr>Ce que livre Menu Engineer</span></p>
+  <p class="section-title"><span data-en>What each tool delivers</span><span data-fr>Ce que livre chaque outil</span></p>
   <div class="deliverables-grid">
     <div class="deliverable">
       <p class="deliverable-num">01</p>
-      <h3><span data-en>Menu Strategy Report</span><span data-fr>Rapport Stratégie Menu</span></h3>
-      <p><span data-en>Grounded in real menu engineering discipline — menu architecture rationale, pricing strategy and psychology, a Stars/Plowhorses/Puzzles/Dogs profitability projection, and supplier &amp; sourcing recommendations organized by food category with real named sources.</span><span data-fr>Ancré dans une véritable discipline d'ingénierie de menu — rationnel d'architecture, stratégie et psychologie des prix, une projection de rentabilité Stars/Plowhorses/Puzzles/Dogs, et des recommandations de fournisseurs &amp; sourcing organisées par catégorie avec des sources réelles nommées.</span></p>
+      <h3><span data-en>Concept Validator — Validation Report</span><span data-fr>Concept Validator — Rapport de validation</span></h3>
+      <p><span data-en>A 20-page strategic analysis covering market fit, competitor intelligence, financial viability, positioning, and a full risk register with mitigation strategies — the foundation every downstream tool builds on.</span><span data-fr>Une analyse stratégique de 20 pages couvrant l'adéquation marché, l'intelligence concurrentielle, la viabilité financière, le positionnement, et un registre des risques complet avec stratégies de mitigation — la base sur laquelle s'appuient tous les outils suivants.</span></p>
       <span class="deliverable-tag"><span data-en>HTML report · permanent link</span><span data-fr>Rapport HTML · lien permanent</span></span>
     </div>
     <div class="deliverable">
       <p class="deliverable-num">02</p>
-      <h3><span data-en>Costing Workbook</span><span data-fr>Classeur de Costing</span></h3>
+      <h3><span data-en>Business Plan Essentials — Business Plan</span><span data-fr>Business Plan Essentials — Business Plan</span></h3>
+      <p><span data-en>A 15–25 page investor-ready document — executive summary, deepened market analysis, Year 1–3 financial projections in your currency, menu and operations strategy, risk analysis, and a 6-month pre-opening timeline.</span><span data-fr>Un document de 15 à 25 pages prêt pour les investisseurs — résumé exécutif, analyse de marché approfondie, projections financières A1–A3 dans votre devise, stratégie menu et opérations, analyse des risques, et calendrier pré-ouverture 6 mois.</span></p>
+      <span class="deliverable-tag"><span data-en>Bilingual · your currency</span><span data-fr>Bilingue · votre devise</span></span>
+    </div>
+    <div class="deliverable">
+      <p class="deliverable-num">03</p>
+      <h3><span data-en>Menu Engineer — Menu Strategy Report</span><span data-fr>Menu Engineer — Rapport Stratégie Menu</span></h3>
+      <p><span data-en>Grounded in real menu engineering discipline — menu architecture rationale, pricing strategy and psychology, a Stars/Plowhorses/Puzzles/Dogs profitability projection, and supplier &amp; sourcing recommendations organized by food category with real named sources.</span><span data-fr>Ancré dans une véritable discipline d'ingénierie de menu — rationnel d'architecture, stratégie et psychologie des prix, une projection de rentabilité Stars/Plowhorses/Puzzles/Dogs, et des recommandations de fournisseurs &amp; sourcing organisées par catégorie avec des sources réelles nommées.</span></p>
+      <span class="deliverable-tag"><span data-en>HTML report · permanent link</span><span data-fr>Rapport HTML · lien permanent</span></span>
+    </div>
+    <div class="deliverable">
+      <p class="deliverable-num">04</p>
+      <h3><span data-en>Menu Engineer — Costing Workbook</span><span data-fr>Menu Engineer — Classeur de Costing</span></h3>
       <p><span data-en>A genuine working tool, not a summary sheet. One tab per recipe with live formulas — yield/trim ratios, seasoning allowance, food cost %, margin. A Recap tab for editable sales-mix volume estimates and live profitability classification. A Market List tab for ordering.</span><span data-fr>Un véritable outil de travail, pas une simple feuille récapitulative. Un onglet par recette avec formules dynamiques — ratios de rendement, allocation d'assaisonnement, % food cost, marge. Un onglet Récap pour vos estimations de volumes éditables et une classification de rentabilité en direct. Un onglet Liste de Marché pour vos commandes.</span></p>
       <span class="deliverable-tag"><span data-en>XLSX — Excel / Google Sheets</span><span data-fr>XLSX — Excel / Google Sheets</span></span>
     </div>
@@ -577,7 +596,15 @@ document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
   document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
   document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  localStorage.setItem('za3fran_lang', b.dataset.l);
 });
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') {
+    document.body.classList.add('lang-fr');
+    document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === 'fr'));
+  }
+})();
 
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('a[href^="/validator"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'pricing_validator_cta'})));
@@ -622,6 +649,13 @@ async function submitWL(){
   try {
     const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
     if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    // Save to the waitlist database in parallel — non-fatal if it fails,
+    // since the email notification (below) is still the primary signal.
+    fetch('/api/submit-waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, country, role, tools, message, language: isFr ? 'fr' : 'en' })
+    }).catch(()=>{});
     const tasks = [
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))
