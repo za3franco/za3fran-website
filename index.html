@@ -17,17 +17,17 @@
     USD:{en:'Validate My Concept — $219',      fr:'Valider mon concept — $219'}
   };
   var BUNDLE_LABEL = {
-    MAD:{en:'Validator + Business Plan — MAD 6,990', fr:'Validator + Business Plan — 6 990 MAD'},
-    EUR:{en:'Validator + Business Plan — €699',      fr:'Validator + Business Plan — 699€'},
-    USD:{en:'Validator + Business Plan — $749',      fr:'Validator + Business Plan — $749'}
+    MAD:{en:'Validator + Business Plan — MAD 5,990', fr:'Validator + Business Plan — 5 990 MAD'},
+    EUR:{en:'Validator + Business Plan — €599',      fr:'Validator + Business Plan — 599€'},
+    USD:{en:'Validator + Business Plan — $649',      fr:'Validator + Business Plan — $649'}
   };
   var BP_TILE_PRICE = {
-    MAD:{en:'MAD 6,990 with Validator · MAD 4,990 standalone', fr:'6 990 MAD avec Validator · 4 990 MAD seul'},
-    EUR:{en:'€699 with Validator · €499 standalone',           fr:'699€ avec Validator · 499€ seul'},
-    USD:{en:'$749 with Validator · $549 standalone',           fr:'$749 avec Validator · $549 seul'}
+    MAD:{en:'MAD 5,990 with Validator · MAD 4,990 standalone', fr:'5 990 MAD avec Validator · 4 990 MAD seul'},
+    EUR:{en:'€599 with Validator · €499 standalone',           fr:'599€ avec Validator · 499€ seul'},
+    USD:{en:'$649 with Validator · $549 standalone',           fr:'$649 avec Validator · $549 seul'}
   };
   var VALIDATOR_PRICE = { MAD:'MAD 1,990', EUR:'€199', USD:'$219' };
-  var BUNDLE_PRICE    = { MAD:'MAD 6,990', EUR:'€699', USD:'$749' };
+  var BUNDLE_PRICE    = { MAD:'MAD 5,990', EUR:'€599', USD:'$649' };
   var BUNDLE_SAVE = {
     MAD:{en:'Save MAD 990', fr:'Économisez 990 MAD'},
     EUR:{en:'Save €99',     fr:'Économisez 99€'},
@@ -374,11 +374,11 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
       </select>
       <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
       <div class="checks">
-        <label class="check"><input type="checkbox" class="m_tool" value="Concept Validator"><span>Concept Validator</span></label>
-        <label class="check"><input type="checkbox" class="m_tool" value="Menu Engineer"><span>Menu Engineer</span></label>
-        <label class="check"><input type="checkbox" class="m_tool" value="Business Plan"><span>Business Plan</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Financial Builder"><span>Financial Builder</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Staffing Builder"><span>Staffing Builder</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Marketing Strategy"><span>Marketing</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="SOP Generator"><span>SOP Generator</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Business Plan Pro"><span>Business Plan Pro</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Intelligence Dashboard"><span>Intelligence</span></label>
       </div>
       <textarea class="minp mtxt" id="m_msg" rows="2" placeholder="Anything specific we should know? (optional) / Quelque chose à nous dire ? (facultatif)"></textarea>
@@ -672,7 +672,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
         <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
         <ul>
           <li><a href="/validator">Concept Validator</a></li>
-          <li><a href="/platform"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></a></li>
+          <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></a></li>
           <li><a href="/business-plan">Business Plan Essentials</a></li>
           <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
         </ul>
@@ -681,6 +681,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
         <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
         <ul>
           <li><a href="#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="/privacy"><span data-en>Privacy</span><span data-fr>Confidentialité</span></a></li>
           <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
           <li><a href="tel:+212648960306">+212 648 960 306</a></li>
           <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
