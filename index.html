@@ -790,6 +790,13 @@ async function submitWL(){
   try {
     const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
     if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    // Save to the waitlist database in parallel — non-fatal if it fails,
+    // since the email notification (below) is still the primary signal.
+    fetch('/api/submit-waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, country, role, tools, message, language: isFr ? 'fr' : 'en' })
+    }).catch(()=>{});
     const tasks = [
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))

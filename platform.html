@@ -51,10 +51,10 @@
     document.querySelectorAll('[data-bp-pro-price]').forEach(function(el){ el.textContent = BP_PRO_PRICE[c][el.getAttribute('data-bp-pro-price')]; });
     document.querySelectorAll('[data-menu-price]').forEach(function(el){ el.textContent = MENU_PRICE[c][el.getAttribute('data-menu-price')]; });
     document.querySelectorAll('[data-menu-loyalty-price]').forEach(function(el){ el.textContent = MENU_LOYALTY_PRICE[c][el.getAttribute('data-menu-loyalty-price')]; });
-    var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
-    var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
-    var se=document.getElementById('bp-save-en'); if(se) se.textContent = BUNDLE_SAVE[c].en;
-    var sf=document.getElementById('bp-save-fr'); if(sf) sf.textContent = BUNDLE_SAVE[c].fr;
+    document.querySelectorAll('[data-bundle-price]').forEach(function(el){ el.textContent = BUNDLE_PRICE[c]; });
+    document.querySelectorAll('[data-bundle-save-en]').forEach(function(el){ el.textContent = BUNDLE_SAVE[c].en; });
+    document.querySelectorAll('[data-bundle-save-fr]').forEach(function(el){ el.textContent = BUNDLE_SAVE[c].fr; });
+    document.querySelectorAll('[data-validator-price]').forEach(function(el){ el.textContent = VALIDATOR_PRICE[c]; });
   }
   function detectCurrency(){
     fetch('/api/currency').then(function(r){return r.json();}).then(function(d){setCurrency(d.currency||'EUR');}).catch(function(){setCurrency('EUR');});
@@ -135,7 +135,9 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
 nav.scrolled{background:rgba(10,14,24,.92);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 0;}
 nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.nav-left{display:flex;align-items:center;gap:16px;}
 .logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.nav-product-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-left:1px solid rgba(255,255,255,.15);padding-left:16px;}
 .navlinks{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--muted);}
 .navlinks a{position:relative;}
 .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
@@ -143,7 +145,7 @@ nav .wrap{display:flex;justify-content:space-between;align-items:center;}
 .navlinks a:hover{color:var(--white);}
 .navcta{border:1px solid var(--copper);padding:9px 20px;border-radius:100px;font-size:13px;transition:.25s;}
 .navcta:hover{background:var(--copper);color:var(--black);}
-@media(max-width:640px){ .logo span:last-child{display:none;} .navlinks{gap:16px;font-size:12.5px;} }
+@media(max-width:640px){ .logo span:last-child{display:none;} .nav-product-label{display:none;} .navlinks{gap:16px;font-size:12.5px;} }
 
 section{position:relative;padding:110px 0;}
 .tint-a{background:var(--black);}
@@ -155,15 +157,15 @@ section{position:relative;padding:110px 0;}
 .reveal.is-visible{opacity:1;transform:translateY(0);}
 
 /* HERO */
-.hero{min-height:78vh;display:flex;align-items:center;padding-top:120px;position:relative;overflow:hidden;}
+.hero{min-height:74vh;display:flex;align-items:center;padding-top:130px;position:relative;overflow:hidden;}
 .wash{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.32;}
 .hero .w1{width:600px;height:600px;top:-15%;right:-10%;background:radial-gradient(circle,var(--copper) 0%,transparent 70%);}
 .hero .w2{width:520px;height:520px;bottom:-20%;left:-10%;background:radial-gradient(circle,var(--navy-bright) 0%,transparent 70%);}
 .hero .wrap{position:relative;z-index:2;text-align:center;}
-.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:24px;display:flex;gap:10px;align-items:center;justify-content:center;}
-.eyebrow::before,.eyebrow::after{content:'';width:24px;height:1px;background:var(--copper);}
 .hero h1{font-size:clamp(42px,6.2vw,80px);line-height:1.04;margin-bottom:22px;}
-.hero p.sub{color:var(--muted);font-size:18px;max-width:600px;margin:0 auto 40px;line-height:1.7;}
+.hero p.sub{color:var(--muted);font-size:17px;max-width:680px;margin:0 auto 30px;line-height:1.7;}
+.hero-tools-line{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto 40px;max-width:760px;}
+.hero-tools-line span{font-size:12px;color:rgba(250,250,247,.7);border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:100px;}
 .btn-primary{background:var(--copper);color:var(--black);padding:17px 34px;border-radius:100px;font-weight:700;font-size:14.5px;display:inline-block;transition:transform .3s,box-shadow .3s;}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(201,134,42,.28);}
 .link-secondary{font-size:14px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;transition:.25s;}
@@ -181,7 +183,7 @@ section{position:relative;padding:110px 0;}
 /* JOURNEY */
 .journey-rail{position:relative;padding-left:36px;}
 .journey-rail::before{content:'';position:absolute;left:11px;top:10px;bottom:10px;width:1px;background:linear-gradient(to bottom, var(--copper) 0%, rgba(201,134,42,.15) 55%, transparent 100%);}
-.j-item{position:relative;padding:26px 28px;margin-bottom:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .3s,transform .25s;}
+.j-item{position:relative;padding:26px 28px;margin-bottom:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .3s,transform .25s;display:block;}
 .j-item:hover{border-color:rgba(201,134,42,.35);transform:translateX(4px);}
 .j-item::before{content:'';position:absolute;left:-30px;top:32px;width:11px;height:11px;border-radius:50%;background:var(--black);border:2px solid var(--copper);}
 .j-item.live::before{background:var(--copper);}
@@ -193,7 +195,6 @@ section{position:relative;padding:110px 0;}
 .j-status.headline{background:rgba(201,134,42,.15);color:var(--copper-bright);}
 .j-desc{color:var(--muted);font-size:14px;line-height:1.65;max-width:640px;margin-bottom:10px;}
 .j-price{font-size:13px;color:var(--copper-bright);font-weight:700;}
-.j-cta{font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;margin-left:14px;}
 
 /* PRICING TEASER */
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
@@ -208,8 +209,12 @@ section{position:relative;padding:110px 0;}
 .price-col .p-cta{display:block;text-align:center;margin-top:auto;padding:12px;padding-top:12px;border-radius:100px;border:1px solid rgba(255,255,255,.2);font-size:13px;transition:.3s;}
 .price-col.feat .p-cta{background:var(--copper);color:var(--black);border:none;font-weight:700;}
 .price-col .p-cta:hover{border-color:var(--copper);}
-.price-teaser-more{text-align:center;margin-top:32px;}
-@media(max-width:900px){.price-grid{grid-template-columns:1fr;}}
+.next-step-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px;}
+.next-step-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px;}
+.next-step-box h4{font-family:'Cormorant Garamond';font-size:19px;margin-bottom:8px;}
+.next-step-box p{color:var(--muted);font-size:13.5px;line-height:1.65;margin-bottom:16px;}
+.next-step-box a{font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;}
+@media(max-width:900px){.price-grid{grid-template-columns:1fr;} .next-step-grid{grid-template-columns:1fr;}}
 
 /* SAMPLE */
 .sample-panel{background:linear-gradient(150deg,var(--navy),var(--black));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:44px;margin-top:50px;}
@@ -220,7 +225,13 @@ section{position:relative;padding:110px 0;}
 .score-ring .sr-lbl{font-size:9px;color:var(--muted);}
 .sample-metric .sm-num{font-family:'Cormorant Garamond';font-size:24px;color:var(--white);}
 .sample-metric .sm-lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
-@media(max-width:700px){.sample-grid{grid-template-columns:1fr 1fr;gap:20px;}}
+.sample-more-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;}
+.sample-more-card{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;}
+.sample-more-card .sml{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin-bottom:14px;}
+.sample-more-card ul{list-style:none;}
+.sample-more-card li{font-size:13.5px;color:rgba(250,250,247,.8);padding:7px 0 7px 18px;position:relative;line-height:1.5;}
+.sample-more-card li::before{content:'—';position:absolute;left:0;color:var(--copper);}
+@media(max-width:700px){.sample-grid{grid-template-columns:1fr 1fr;gap:20px;} .sample-more-grid{grid-template-columns:1fr;}}
 
 /* WAITLIST / FAQ */
 .faq-item{padding:22px 0;border-top:1px solid rgba(255,255,255,.08);}
@@ -287,7 +298,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         <label class="check"><input type="checkbox" class="m_tool" value="Marketing Plan"><span>Marketing Plan</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Pre-Opening Tool"><span>Pre-Opening Tool</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Business Plan Pro"><span>Business Plan Pro</span></label>
-        <label class="check"><input type="checkbox" class="m_tool" value="Intelligence Dashboard"><span>Intelligence</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="SOP Generator"><span>SOP Generator</span></label>
       </div>
       <textarea class="minp mtxt" id="m_msg" rows="2" placeholder="Anything specific we should know? (optional) / Quelque chose à nous dire ? (facultatif)"></textarea>
       <button class="mbtn" data-en onclick="submitWL()">Join the Waitlist</button>
@@ -310,10 +321,13 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
 <nav id="nav">
   <div class="wrap">
-    <a href="/" class="logo">
-      <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
-      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
-    </a>
+    <div class="nav-left">
+      <a href="/" class="logo">
+        <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
+        <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+      </a>
+      <span class="nav-product-label">Za3fran Digital</span>
+    </div>
     <div class="navlinks">
       <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
       <a href="#pricing" class="navcta" data-en>Get Started</a><a href="#pricing" class="navcta" data-fr>Commencer</a>
@@ -326,9 +340,18 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
   <div class="wash w1"></div>
   <div class="wash w2"></div>
   <div class="wrap">
-    <div class="eyebrow"><span data-en>Za3fran Digital</span><span data-fr>Za3fran Digital</span></div>
     <h1><span data-en>One profile.<br><em>Every tool.</em></span><span data-fr>Un profil.<br><em>Tous les outils.</em></span></h1>
-    <p class="sub"><span data-en>An AI-powered ecosystem built for restaurant and hospitality project owners — from a free first read on your concept to an investor-ready business plan, without filling in the same information twice.</span><span data-fr>Un écosystème d'outils IA pensé pour les porteurs de projets F&amp;B — d'une première lecture gratuite de votre concept jusqu'à un business plan prêt pour les investisseurs, sans jamais ressaisir la même information.</span></p>
+    <p class="sub"><span data-en>An AI-powered ecosystem built for restaurant and hospitality project owners — concept validation, financial planning, menu engineering, staffing and marketing, and pre-opening execution, all built from one shared concept profile. Start free with a first read on your concept, and grow into a complete, investor-ready project file without ever re-entering your data.</span><span data-fr>Un écosystème d'outils IA pensé pour les porteurs de projets F&amp;B — validation de concept, planification financière, ingénierie de menu, staffing et marketing, et exécution pré-ouverture, le tout à partir d'un profil concept partagé. Commencez gratuitement avec une première lecture de votre concept, et développez un dossier complet prêt pour les investisseurs sans jamais ressaisir vos données.</span></p>
+    <div class="hero-tools-line">
+      <span data-en>Concept Scorecard</span><span data-fr>Concept Scorecard</span>
+      <span>Concept Validator</span>
+      <span>Business Plan Essentials</span>
+      <span>Menu Engineer</span>
+      <span data-en>Financial Builder</span><span data-fr>Financial Builder</span>
+      <span data-en>Staffing &amp; Marketing</span><span data-fr>Staffing &amp; Marketing</span>
+      <span data-en>Pre-Opening Tool</span><span data-fr>Outil Pré-Ouverture</span>
+      <span>Business Plan Pro</span>
+    </div>
     <div class="hero-ctas">
       <a href="/scorecard" class="btn-primary" data-en>Start Free — Get My Scorecard</a><a href="/scorecard" class="btn-primary" data-fr>Commencer — Score gratuit</a>
       <a href="#journey" class="link-secondary" data-en>See how it works ↓</a><a href="#journey" class="link-secondary" data-fr>Comment ça marche ↓</a>
@@ -371,21 +394,21 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     <p class="measure reveal" style="color:var(--muted);margin-bottom:50px;line-height:1.7"><span data-en>Each step is useful on its own — but run in sequence, they build into a complete, investor-grade project file.</span><span data-fr>Chaque étape est utile seule — mais enchaînées, elles construisent un dossier complet, prêt pour les investisseurs.</span></p>
 
     <div class="journey-rail reveal">
-      <div class="j-item live">
+      <a href="/scorecard" class="j-item live">
         <div class="j-top"><span class="j-name">Concept Scorecard</span><span class="j-status live" data-en>Live · Free</span><span class="j-status live" data-fr>Disponible · Gratuit</span></div>
         <p class="j-desc"><span data-en>A 10-question instant read on your concept — a score out of 100, five sub-scores, and your single biggest blind spot.</span><span data-fr>Une lecture instantanée en 10 questions — un score sur 100, cinq sous-scores, et votre principal angle mort.</span></p>
-      </div>
-      <div class="j-item live">
+      </a>
+      <a href="/validator" class="j-item live">
         <div class="j-top"><span class="j-name">Concept Validator</span><span class="j-status live" data-en>Live</span><span class="j-status live" data-fr>Disponible</span></div>
         <p class="j-desc"><span data-en>A 20-page strategic analysis — market fit, competitor intelligence, financial viability, full risk register.</span><span data-fr>Une analyse stratégique de 20 pages — adéquation marché, intelligence concurrentielle, viabilité financière, registre des risques.</span></p>
         <span class="j-price" data-en data-price="en">€199</span><span class="j-price" data-fr data-price="fr">199€</span>
-      </div>
-      <a href="/business-plan" class="j-item live" style="display:block;text-decoration:none;color:inherit;">
+      </a>
+      <a href="/business-plan" class="j-item live">
         <div class="j-top"><span class="j-name">Business Plan Essentials</span><span class="j-status live" data-en>Live</span><span class="j-status live" data-fr>Disponible</span></div>
         <p class="j-desc"><span data-en>A complete, investor-ready business plan — financials Y1–Y3, market strategy, operations and risk — generated directly from your Validator data.</span><span data-fr>Un business plan complet — financiers A1–A3, stratégie, opérations et risques — généré depuis vos données Validator.</span></p>
         <span class="j-price" data-en data-bp-tile-price="en">€599 with Validator · €499 standalone</span><span class="j-price" data-fr data-bp-tile-price="fr">599€ avec Validator · 499€ seul</span>
       </a>
-      <a href="/menu-engineer" class="j-item live" style="display:block;text-decoration:none;color:inherit;">
+      <a href="/menu-engineer" class="j-item live">
         <div class="j-top"><span class="j-name" data-en>Menu Engineer</span><span class="j-name" data-fr>Menu Engineer</span><span class="j-status live" data-en>Live</span><span class="j-status live" data-fr>Disponible</span></div>
         <p class="j-desc"><span data-en>Turns your validated concept into a costed menu — recipe matrix with live formulas, pricing strategy, supplier sourcing and a market-list workbook.</span><span data-fr>Transforme votre concept validé en menu chiffré — matrice recettes à formules dynamiques, stratégie prix, sourcing fournisseurs et classeur de liste de marché.</span></p>
         <span class="j-price" data-en data-menu-price="en">€399</span><span class="j-price" data-fr data-menu-price="fr">399€</span>
@@ -434,19 +457,8 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         </ul>
         <a href="/scorecard" class="p-cta"><span data-en>Get my score</span><span data-fr>Obtenir mon score</span></a>
       </div>
-      <div class="price-col feat">
-        <div class="p-name" data-en>Validator + Business Plan</div><div class="p-name" data-fr>Validator + Business Plan</div>
-        <div class="p-cost" id="bp-bundle-price">€599</div>
-        <div class="p-note"><span data-en>Save €99 vs. separate</span><span data-fr>Économisez 99€</span></div>
-        <ul>
-          <li><span data-en>20-page strategic analysis</span><span data-fr>Analyse stratégique 20 pages</span></li>
-          <li><span data-en>Investor-ready business plan</span><span data-fr>Business plan prêt investisseurs</span></li>
-          <li><span data-en>Financials, Y1–Y3</span><span data-fr>Financiers, A1–A3</span></li>
-        </ul>
-        <a href="/validator?bundle=bundle_bp" class="p-cta"><span data-en>Start the bundle</span><span data-fr>Démarrer le bundle</span></a>
-      </div>
       <div class="price-col">
-        <div class="p-name" data-en>Validator only</div><div class="p-name" data-fr>Validator seul</div>
+        <div class="p-name">Validator</div>
         <div class="p-cost" data-en data-price="en">€199</div><div class="p-cost" data-fr data-price="fr">199€</div>
         <div class="p-note"><span data-en>3 minutes, real market data</span><span data-fr>3 minutes, données réelles</span></div>
         <ul>
@@ -456,10 +468,30 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         </ul>
         <a href="/validator" class="p-cta"><span data-en>Validate my concept</span><span data-fr>Valider mon concept</span></a>
       </div>
+      <div class="price-col feat">
+        <div class="p-name" data-en>Validator + Business Plan</div><div class="p-name" data-fr>Validator + Business Plan</div>
+        <div class="p-cost" data-bundle-price>€599</div>
+        <div class="p-note"><span data-en><span data-bundle-save-en>Save €99</span> vs. separate</span><span data-fr><span data-bundle-save-fr>Économisez 99€</span> vs séparé</span></div>
+        <ul>
+          <li><span data-en>20-page strategic analysis</span><span data-fr>Analyse stratégique 20 pages</span></li>
+          <li><span data-en>Investor-ready business plan</span><span data-fr>Business plan prêt investisseurs</span></li>
+          <li><span data-en>Financials, Y1–Y3</span><span data-fr>Financiers, A1–A3</span></li>
+        </ul>
+        <a href="/validator?bundle=bundle_bp" class="p-cta"><span data-en>Start the bundle</span><span data-fr>Démarrer le bundle</span></a>
+      </div>
     </div>
 
-    <div class="price-teaser-more reveal">
-      <a href="/pricing" class="link-secondary"><span data-en>See Menu Engineer, loyalty rates, and the full bundle — all packages →</span><span data-fr>Voir Menu Engineer, les tarifs fidélité et le bundle complet — toutes les formules →</span></a>
+    <div class="next-step-grid reveal">
+      <div class="next-step-box">
+        <h4><span data-en>Already have a Validator report?</span><span data-fr>Vous avez déjà un rapport Validator ?</span></h4>
+        <p><span data-en>Add Business Plan Essentials on its own using your access code — your concept data carries over automatically.</span><span data-fr>Ajoutez Business Plan Essentials seul avec votre code d'accès — vos données de concept sont reprises automatiquement.</span></p>
+        <a href="/business-plan"><span data-en>Add Business Plan Essentials — </span><span data-fr>Ajouter Business Plan Essentials — </span><span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span><span data-en> →</span><span data-fr> →</span></a>
+      </div>
+      <div class="next-step-box">
+        <h4><span data-en>Ready to go further?</span><span data-fr>Prêt à aller plus loin ?</span></h4>
+        <p><span data-en>Explore Menu Engineering, loyalty rates, and every bundle combination — see the full picture before you decide.</span><span data-fr>Explorez le Menu Engineering, les tarifs fidélité et toutes les combinaisons de bundles — voyez l'ensemble avant de décider.</span></p>
+        <a href="/pricing"><span data-en>See all prices and bundles →</span><span data-fr>Voir tous les prix et bundles →</span></a>
+      </div>
     </div>
   </div>
 </section>
@@ -482,6 +514,25 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         ↳ <span data-en>Business Plan Essentials unlocked — break-even ~14 months · Year 1 revenue MAD 2.4M · Startup cost MAD 1.2–1.8M</span><span data-fr>Business Plan Essentials débloqué — point mort ~14 mois · CA an 1 MAD 2.4M · Investissement MAD 1.2–1.8M</span>
       </div>
     </div>
+
+    <div class="sample-more-grid reveal">
+      <div class="sample-more-card">
+        <p class="sml"><span data-en>Business Plan Essentials — Sample Output</span><span data-fr>Business Plan Essentials — Exemple de livrable</span></p>
+        <ul>
+          <li><span data-en>15–25 page bilingual business plan, ready to share</span><span data-fr>Business plan bilingue de 15 à 25 pages, prêt à partager</span></li>
+          <li><span data-en>Year 1–3 financial projections in your currency</span><span data-fr>Projections financières A1–A3 dans votre devise</span></li>
+          <li><span data-en>6-month pre-opening timeline, D-180 to D-0</span><span data-fr>Calendrier pré-ouverture 6 mois, J-180 à J-0</span></li>
+        </ul>
+      </div>
+      <div class="sample-more-card">
+        <p class="sml"><span data-en>Menu Engineer — Sample Output</span><span data-fr>Menu Engineer — Exemple de livrable</span></p>
+        <ul>
+          <li><span data-en>Costed recipe matrix — food cost %, margin, live formulas</span><span data-fr>Matrice de recettes chiffrée — % food cost, marge, formules dynamiques</span></li>
+          <li><span data-en>Stars / Plowhorses / Puzzles / Dogs profitability map</span><span data-fr>Cartographie de rentabilité Stars / Plowhorses / Puzzles / Dogs</span></li>
+          <li><span data-en>Consolidated supplier list by category</span><span data-fr>Liste fournisseurs consolidée par catégorie</span></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -493,8 +544,8 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
     <div class="reveal">
       <div class="faq-item">
-        <h4><span data-en>Do I need to buy the Validator before Business Plan Essentials?</span><span data-fr>Dois-je acheter le Validator avant Business Plan Essentials ?</span></h4>
-        <p><span data-en>Business Plan Essentials is generated from your Validator data, so a completed Validator report is required either way. If you're new, the bundle (€599) is the fastest and cheapest way to get both at once. If you already bought the Validator, you can add Business Plan Essentials on its own for €499 — just enter your Validator access code at checkout.</span><span data-fr>Business Plan Essentials est généré depuis vos données Validator, un rapport Validator est donc requis dans tous les cas. Si vous démarrez, le bundle (599€) est le moyen le plus rapide et économique d'obtenir les deux. Si vous avez déjà le Validator, ajoutez Business Plan Essentials seul pour 499€ — entrez simplement votre code d'accès Validator au moment du paiement.</span></p>
+        <h4><span data-en>Do I need to buy the Validator before Business Plan Essentials or Menu Engineer?</span><span data-fr>Dois-je acheter le Validator avant Business Plan Essentials ou Menu Engineer ?</span></h4>
+        <p><span data-en>Yes — both are generated from your Validator data, so a completed Validator report is required either way. If you're new, a bundle (from <span data-bundle-price>€599</span>) is the fastest and cheapest way to get everything at once. If you already bought the Validator, add Business Plan Essentials on its own for <span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span>, or Menu Engineer for <span data-en data-menu-price="en">€399</span><span data-fr data-menu-price="fr">399€</span> — just enter your access code at checkout.</span><span data-fr>Oui — les deux sont générés depuis vos données Validator, un rapport Validator est donc requis dans tous les cas. Si vous démarrez, un bundle (dès <span data-bundle-price>599€</span>) est le moyen le plus rapide et économique de tout obtenir. Si vous avez déjà le Validator, ajoutez Business Plan Essentials seul pour <span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span>, ou Menu Engineer pour <span data-en data-menu-price="en">€399</span><span data-fr data-menu-price="fr">399€</span> — entrez simplement votre code d'accès au moment du paiement.</span></p>
       </div>
       <div class="faq-item">
         <h4><span data-en>What currency will I be charged in?</span><span data-fr>Dans quelle devise serai-je facturé ?</span></h4>
@@ -503,6 +554,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <div class="faq-item">
         <h4><span data-en>Is Menu Engineer available yet?</span><span data-fr>Menu Engineer est-il disponible ?</span></h4>
         <p><span data-en>Yes — Menu Engineer is live. It uses your Validator data to generate a costed recipe matrix, pricing strategy, and supplier sourcing, delivered as a strategy report and a working Excel workbook.</span><span data-fr>Oui — Menu Engineer est disponible. Il utilise vos données Validator pour générer une matrice de recettes chiffrée, une stratégie de prix et du sourcing fournisseurs, livrés sous forme de rapport stratégique et de classeur Excel opérationnel.</span></p>
+      </div>
+      <div class="faq-item">
+        <h4><span data-en>When will Financial Builder and the other tools launch?</span><span data-fr>Quand sortiront Financial Builder et les autres outils ?</span></h4>
+        <p><span data-en>They're in active development, in the order shown above. Join the waitlist and you'll be notified the moment each one goes live.</span><span data-fr>Ils sont en développement actif, dans l'ordre affiché ci-dessus. Rejoignez la liste d'attente pour être notifié dès leur lancement.</span></p>
       </div>
       <div class="faq-item">
         <h4><span data-en>Can consultants use these tools for their own clients?</span><span data-fr>Les consultants peuvent-ils utiliser ces outils pour leurs clients ?</span></h4>
@@ -517,7 +572,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     <div class="foot-grid">
       <div>
         <div class="logo" style="margin-bottom:14px">Za3fran<span style="color:var(--copper)">.io</span></div>
-        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>An AI-powered ecosystem of interconnected tools for building and running restaurants.</span><span data-fr>Un écosystème d'outils IA interconnectés pour construire et piloter des restaurants.</span></p>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
       </div>
       <div>
         <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
@@ -525,7 +580,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
           <li><a href="/validator">Concept Validator</a></li>
           <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Menu Engineer</span></a></li>
           <li><a href="/business-plan">Business Plan Essentials</a></li>
-          <li><a href="/scorecard"><span data-en>Free Scorecard</span><span data-fr>Scorecard gratuit</span></a></li>
+          <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
         </ul>
       </div>
       <div>
@@ -538,9 +593,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <div>
         <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
         <ul>
-          <li><a href="https://za3fran.io/#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="/#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
           <li><a href="/privacy"><span data-en>Privacy</span><span data-fr>Confidentialité</span></a></li>
           <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
           <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
         </ul>
       </div>
@@ -558,10 +614,18 @@ window.addEventListener('scroll', () => {
   document.body.classList.toggle('scrolled', window.scrollY > 40);
 });
 
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === l));
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') setLang('fr');
+})();
 document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
-  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
-  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  setLang(b.dataset.l);
 });
 
 const io = new IntersectionObserver(entries=>{
@@ -573,7 +637,7 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.querySelectorAll('.reveal').forEach(el=>{el.style.transition='none';el.classList.add('is-visible');});
 }
 
-// ── WAITLIST (EmailJS) ──
+// ── WAITLIST (EmailJS + database) ──
 const EMAILJS_PUBLIC_KEY = 'b1vodEoZjP84BKQWg';
 const EMAILJS_SERVICE_ID = 'service_intaecp';
 const EMAILJS_TEMPLATE_USER = 'template_zsiefip';
@@ -612,6 +676,13 @@ async function submitWL(){
   try {
     const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
     if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    // Save to the waitlist database in parallel — non-fatal if it fails,
+    // since the email notification (below) is still the primary signal.
+    fetch('/api/submit-waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, country, role, tools, message, language: isFr ? 'fr' : 'en' })
+    }).catch(()=>{});
     const tasks = [
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))
