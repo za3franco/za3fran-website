@@ -1,223 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy — Za3fran</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Za3fran</title>
+<meta name="description" content="Za3fran's privacy policy — how we collect, use, and protect your data across za3fran.io, the Za3fran Digital tool suite, and Fond de Sauce.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
 
-    :root {
-      --black: #0a0a0a;
-      --charcoal: #1a1a1a;
-      --copper: #C9862A;
-      --navy: #0F1F3D;
-      --white: #FAFAF7;
-      --muted: #888880;
-    }
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;line-height:1.7;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+a{color:var(--copper-bright);text-decoration:none;}
+a:hover{text-decoration:underline;}
+::selection{background:var(--copper);color:var(--black);}
 
-    body {
-      background: var(--white);
-      color: var(--charcoal);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      line-height: 1.7;
-    }
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
 
-    header {
-      border-bottom: 1px solid #e0e0da;
-      padding: 24px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
 
-    .logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--black);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-    }
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
 
-    .logo span {
-      color: var(--copper);
-    }
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,14,24,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);}
+.logo{font-family:'Cormorant Garamond';font-size:20px;display:flex;align-items:center;gap:10px;color:var(--white);}
+.navlinks{display:flex;gap:28px;font-size:13.5px;color:var(--muted);align-items:center;}
+.navlinks a{color:var(--muted);}
+.navlinks a:hover{color:var(--white);text-decoration:none;}
+@media(max-width:640px){ header{padding:18px 20px;} .navlinks{gap:16px;font-size:12.5px;} }
 
-    nav a {
-      font-size: 13px;
-      color: var(--muted);
-      text-decoration: none;
-      margin-left: 32px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
+main{max-width:760px;margin:0 auto;padding:150px 40px 100px;}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);margin-bottom:18px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:22px;height:1px;background:var(--copper);}
+h1{font-size:clamp(32px,5vw,48px);line-height:1.15;margin-bottom:12px;}
+.meta{font-size:13px;color:var(--muted);margin-bottom:52px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08);}
+h2{font-size:21px;color:var(--white);margin-top:44px;margin-bottom:14px;font-weight:500;}
+p{color:rgba(250,250,247,.78);margin-bottom:15px;font-size:15px;}
+ul{padding-left:20px;margin-bottom:15px;}
+ul li{color:rgba(250,250,247,.78);margin-bottom:8px;font-size:15px;}
+strong{color:var(--white);font-weight:600;}
 
-    nav a:hover { color: var(--charcoal); }
+.callout{background:rgba(201,134,42,.06);border:1px solid rgba(201,134,42,.2);border-left:3px solid var(--copper);padding:18px 22px;margin:24px 0;border-radius:4px;}
+.callout p{margin-bottom:0;font-size:14px;color:rgba(250,250,247,.7);}
 
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 80px 40px 120px;
-    }
+.contact-block{background:var(--charcoal2);border-left:3px solid var(--copper);padding:26px 28px;margin-top:52px;border-radius:6px;}
+.contact-block p{margin-bottom:4px;color:rgba(250,250,247,.85);}
 
-    .eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--copper);
-      margin-bottom: 20px;
-    }
+footer{border-top:1px solid rgba(255,255,255,.08);padding:40px 0;background:var(--charcoal2);}
+footer .foot-bottom{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:16px;}
+footer .foot-bottom a{color:var(--muted);}
+footer .foot-bottom a:hover{color:var(--white);}
 
-    h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 5vw, 52px);
-      font-weight: 400;
-      line-height: 1.15;
-      color: var(--black);
-      margin-bottom: 12px;
-    }
-
-    .meta {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 56px;
-      padding-bottom: 40px;
-      border-bottom: 1px solid #e0e0da;
-    }
-
-    h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--black);
-      margin-top: 48px;
-      margin-bottom: 12px;
-    }
-
-    p {
-      color: #2e2e2a;
-      margin-bottom: 16px;
-    }
-
-    a {
-      color: var(--copper);
-      text-decoration: none;
-    }
-
-    a:hover { text-decoration: underline; }
-
-    ul {
-      padding-left: 20px;
-      margin-bottom: 16px;
-    }
-
-    ul li {
-      color: #2e2e2a;
-      margin-bottom: 8px;
-    }
-
-    .contact-block {
-      background: #f0efe9;
-      border-left: 3px solid var(--copper);
-      padding: 24px 28px;
-      margin-top: 48px;
-      border-radius: 2px;
-    }
-
-    .contact-block p { margin-bottom: 4px; }
-
-    footer {
-      border-top: 1px solid #e0e0da;
-      padding: 32px 40px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    @media (max-width: 600px) {
-      header { padding: 20px 24px; }
-      nav { display: none; }
-      main { padding: 48px 24px 80px; }
-      footer { padding: 24px; }
-    }
-  </style>
+@media(max-width:600px){
+  main{padding:120px 20px 70px;}
+  footer .foot-bottom{flex-direction:column;text-align:center;}
+}
+</style>
 </head>
 <body>
 
-  <header>
-    <a class="logo" href="https://za3fran.io">Za3fran<span>.</span></a>
-    <nav>
-      <a href="https://za3fran.io">Home</a>
-      <a href="https://za3fran.io/fond-de-sauce">Fond de Sauce</a>
-    </nav>
-  </header>
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
 
-  <main>
-    <p class="eyebrow">Legal</p>
-    <h1>Privacy Policy</h1>
-    <p class="meta">Last updated: June 2026 &nbsp;·&nbsp; Za3fran Consulting</p>
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
 
-    <p>Za3fran Consulting ("Za3fran", "we", "us") operates the website za3fran.io and the Fond de Sauce editorial publication. This policy explains what information we collect, how we use it, and your rights regarding it.</p>
+<header>
+  <a href="/" class="logo">
+    <img src="/assets/logo.png" alt="Za3fran" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+    <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+  </a>
+  <div class="navlinks">
+    <a href="/" data-en>Home</a><a href="/" data-fr>Accueil</a>
+    <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+    <a href="https://za3fran.io/fond-de-sauce">Fond de Sauce</a>
+  </div>
+</header>
 
-    <h2>Information we collect</h2>
-    <p>We collect information only when you choose to share it with us, including:</p>
-    <ul>
-      <li>Your name and email address if you subscribe to Fond de Sauce or contact us directly</li>
-      <li>Messages you send us via WhatsApp if you interact with our editorial automation tool</li>
-      <li>Basic usage data collected automatically by our hosting provider (Vercel) such as page views and referral sources — this data is aggregated and not linked to individuals</li>
-    </ul>
+<main>
+  <p class="eyebrow"><span data-en>Legal</span><span data-fr>Mentions légales</span></p>
+  <h1><span data-en>Privacy Policy</span><span data-fr>Politique de confidentialité</span></h1>
+  <p class="meta"><span data-en>Last updated: September 2026 · Za3fran Consulting</span><span data-fr>Dernière mise à jour : septembre 2026 · Za3fran Consulting</span></p>
 
-    <h2>How we use your information</h2>
-    <p>We use the information we collect to:</p>
-    <ul>
-      <li>Send you editorial content you have subscribed to</li>
-      <li>Respond to your messages and enquiries</li>
-      <li>Improve the quality and relevance of our content</li>
-      <li>Operate our internal editorial pipeline (topic suggestions submitted via WhatsApp are used solely to inform content planning)</li>
-    </ul>
-    <p>We do not sell, rent, or share your personal information with third parties for marketing purposes.</p>
+  <p><span data-en>Za3fran Consulting ("Za3fran", "we", "us") operates za3fran.io, including the Za3fran Digital tool suite (Concept Scorecard, Concept Validator, Business Plan Essentials, Menu Engineer, and related tools), and the Fond de Sauce editorial publication. This policy explains what information we collect across these services, how we use it, and your rights regarding it.</span>
+  <span data-fr>Za3fran Consulting (« Za3fran », « nous ») exploite za3fran.io, y compris la suite d'outils Za3fran Digital (Concept Scorecard, Concept Validator, Business Plan Essentials, Menu Engineer et outils associés), ainsi que la publication éditoriale Fond de Sauce. Cette politique explique quelles informations nous collectons à travers ces services, comment nous les utilisons, et vos droits à cet égard.</span></p>
 
-    <h2>WhatsApp integration</h2>
-    <p>Za3fran uses the WhatsApp Business API to receive editorial topic suggestions. Messages sent to our WhatsApp number are processed by our automation system and stored securely in our database. This data is used exclusively for internal editorial planning and is not shared with third parties.</p>
+  <h2><span data-en>Information we collect</span><span data-fr>Informations que nous collectons</span></h2>
+  <p><span data-en>We collect information you choose to share with us, including:</span><span data-fr>Nous collectons les informations que vous choisissez de nous communiquer, notamment :</span></p>
+  <ul>
+    <li><span data-en>Your name and email address, when you subscribe to Fond de Sauce, contact us, or submit a form on any Za3fran Digital tool</span><span data-fr>Votre nom et votre adresse email, lorsque vous vous abonnez à Fond de Sauce, nous contactez, ou soumettez un formulaire sur un outil Za3fran Digital</span></li>
+    <li><span data-en>Concept and business information you submit to a Digital tool — for example your concept description, location, target audience, financial parameters, and competitive context — used to generate your report or deliverable</span><span data-fr>Les informations de concept et d'activité que vous soumettez à un outil Digital — par exemple votre description de concept, localisation, audience cible, paramètres financiers et contexte concurrentiel — utilisées pour générer votre rapport ou livrable</span></li>
+    <li><span data-en>Payment information when you purchase a paid tool — processed directly by Stripe; Za3fran never receives or stores your full card number</span><span data-fr>Vos informations de paiement lors de l'achat d'un outil payant — traitées directement par Stripe ; Za3fran ne reçoit ni ne stocke jamais votre numéro de carte complet</span></li>
+    <li><span data-en>Messages you send us via WhatsApp, if you interact with our editorial suggestion tool for Fond de Sauce</span><span data-fr>Les messages que vous nous envoyez via WhatsApp, si vous interagissez avec notre outil de suggestion éditoriale pour Fond de Sauce</span></li>
+    <li><span data-en>Basic usage data collected via Google Analytics (see "Cookies &amp; analytics" below) and by our hosting provider, Vercel — aggregated technical data such as page views and referral sources</span><span data-fr>Des données d'utilisation de base collectées via Google Analytics (voir « Cookies &amp; analytics » ci-dessous) et par notre hébergeur Vercel — données techniques agrégées telles que les pages vues et les sources de référence</span></li>
+  </ul>
 
-    <h2>Data storage and security</h2>
-    <p>Your data is stored on Supabase (EU-West region) and processed via n8n automation infrastructure hosted on Render. We take reasonable technical measures to protect your information from unauthorised access.</p>
+  <h2><span data-en>How we use your information</span><span data-fr>Comment nous utilisons vos informations</span></h2>
+  <p><span data-en>We use the information we collect to:</span><span data-fr>Nous utilisons les informations collectées pour :</span></p>
+  <ul>
+    <li><span data-en>Generate the report or deliverable you requested from a Digital tool, using the AI-generation process described below</span><span data-fr>Générer le rapport ou le livrable demandé via un outil Digital, selon le processus de génération par IA décrit ci-dessous</span></li>
+    <li><span data-en>Process your payment and deliver your access code and report by email</span><span data-fr>Traiter votre paiement et vous transmettre votre code d'accès et votre rapport par email</span></li>
+    <li><span data-en>Send you editorial content you have subscribed to, and respond to your messages and enquiries</span><span data-fr>Vous envoyer le contenu éditorial auquel vous êtes abonné, et répondre à vos messages et demandes</span></li>
+    <li><span data-en>Operate our internal editorial pipeline — topic suggestions submitted via WhatsApp inform content planning only</span><span data-fr>Faire fonctionner notre pipeline éditorial interne — les suggestions de sujets envoyées via WhatsApp servent uniquement à la planification de contenu</span></li>
+    <li><span data-en>Understand aggregate usage of our site so we can improve it</span><span data-fr>Comprendre l'utilisation agrégée de notre site afin de l'améliorer</span></li>
+  </ul>
+  <p><span data-en>We do not sell, rent, or share your personal information with third parties for marketing purposes.</span><span data-fr>Nous ne vendons, ne louons, ni ne partageons vos informations personnelles avec des tiers à des fins marketing.</span></p>
 
-    <h2>Cookies</h2>
-    <p>Za3fran.io does not use tracking cookies or advertising cookies. Our hosting provider may set functional cookies necessary for site delivery.</p>
+  <h2><span data-en>AI-generated reports</span><span data-fr>Rapports générés par IA</span></h2>
+  <p><span data-en>Za3fran Digital tools use Anthropic's Claude API to generate your report from the information you submit. The concept and business data you provide is sent to Anthropic for the sole purpose of generating your deliverable, in accordance with Anthropic's standard API data handling terms. This data is not used by Za3fran to train any model.</span>
+  <span data-fr>Les outils Za3fran Digital utilisent l'API Claude d'Anthropic pour générer votre rapport à partir des informations que vous soumettez. Les données de concept et d'activité que vous fournissez sont envoyées à Anthropic dans le seul but de générer votre livrable, conformément aux conditions standard d'Anthropic concernant le traitement des données via son API. Ces données ne sont pas utilisées par Za3fran pour entraîner un quelconque modèle.</span></p>
 
-    <h2>Your rights</h2>
-    <p>Depending on your location, you may have the right to access, correct, or delete personal information we hold about you. To exercise these rights, contact us at the address below.</p>
+  <h2><span data-en>Payments</span><span data-fr>Paiements</span></h2>
+  <p><span data-en>All payments on za3fran.io are processed by Stripe, a PCI-compliant payment processor. We never see or store your full card number — Stripe handles this directly and shares with us only what's needed to fulfil your order (e.g. your email, the amount paid, and a payment confirmation).</span>
+  <span data-fr>Tous les paiements sur za3fran.io sont traités par Stripe, un prestataire de paiement conforme à la norme PCI. Nous ne voyons ni ne stockons jamais votre numéro de carte complet — Stripe le gère directement et ne nous transmet que les informations nécessaires à l'exécution de votre commande (par exemple votre email, le montant payé et une confirmation de paiement).</span></p>
 
-    <h2>Third-party services</h2>
-    <p>We use the following third-party services to operate our platform:</p>
-    <ul>
-      <li><strong>Vercel</strong> — website hosting</li>
-      <li><strong>Supabase</strong> — database storage</li>
-      <li><strong>Anthropic</strong> — AI-assisted content generation</li>
-      <li><strong>Meta (WhatsApp Business API)</strong> — message reception</li>
-      <li><strong>Google (Gmail)</strong> — internal email automation</li>
-      <li><strong>Unsplash</strong> — editorial photography</li>
-    </ul>
-    <p>Each of these providers operates under their own privacy policies.</p>
+  <h2><span data-en>Cookies &amp; analytics</span><span data-fr>Cookies &amp; analytics</span></h2>
+  <p><span data-en>We use Google Analytics (GA4) to understand aggregate patterns in how visitors use za3fran.io — which pages are visited, general geographic and device trends, and referral sources. Google Analytics sets cookies in your browser for this purpose. We do not use these cookies for advertising, and we do not run advertising or retargeting pixels on za3fran.io.</span>
+  <span data-fr>Nous utilisons Google Analytics (GA4) pour comprendre les tendances générales d'utilisation de za3fran.io par les visiteurs — les pages consultées, les tendances géographiques et techniques générales, ainsi que les sources de référence. Google Analytics place des cookies dans votre navigateur à cette fin. Nous n'utilisons pas ces cookies à des fins publicitaires, et nous ne faisons fonctionner aucun pixel publicitaire ou de reciblage sur za3fran.io.</span></p>
+  <p><span data-en>We also use your browser's local storage (not a cookie) to remember your language preference (EN/FR) between visits — this is purely functional and is never sent to a server or used for tracking.</span>
+  <span data-fr>Nous utilisons également le stockage local de votre navigateur (qui n'est pas un cookie) pour mémoriser votre préférence de langue (EN/FR) d'une visite à l'autre — un usage purement fonctionnel, jamais transmis à un serveur ni utilisé à des fins de suivi.</span></p>
+  <p><span data-en>You can control or disable cookies at any time through your browser settings, or opt out of Google Analytics specifically using Google's browser add-on.</span>
+  <span data-fr>Vous pouvez contrôler ou désactiver les cookies à tout moment via les paramètres de votre navigateur, ou vous désinscrire spécifiquement de Google Analytics à l'aide du module complémentaire de navigateur proposé par Google.</span></p>
 
-    <h2>Changes to this policy</h2>
-    <p>We may update this policy from time to time. The date at the top of this page reflects the most recent revision. Continued use of our services after changes are posted constitutes acceptance of the updated policy.</p>
+  <h2><span data-en>WhatsApp integration</span><span data-fr>Intégration WhatsApp</span></h2>
+  <p><span data-en>Za3fran uses the WhatsApp Business API to receive editorial topic suggestions for Fond de Sauce. Messages sent to our WhatsApp number are processed by our automation system and stored securely in our database. This data is used exclusively for internal editorial planning and is not shared with third parties.</span>
+  <span data-fr>Za3fran utilise l'API WhatsApp Business pour recevoir des suggestions de sujets éditoriaux pour Fond de Sauce. Les messages envoyés à notre numéro WhatsApp sont traités par notre système d'automatisation et stockés en sécurité dans notre base de données. Ces données sont utilisées exclusivement pour la planification éditoriale interne et ne sont pas partagées avec des tiers.</span></p>
 
-    <div class="contact-block">
-      <p><strong>Contact</strong></p>
-      <p>Za3fran Consulting</p>
-      <p>Casablanca, Morocco</p>
-      <p><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></p>
+  <h2><span data-en>Data storage &amp; security</span><span data-fr>Stockage &amp; sécurité des données</span></h2>
+  <p><span data-en>Your data is stored on Supabase (EU-West region) and processed via n8n automation infrastructure. Some of our service providers — including Stripe, Anthropic, and Vercel — may process data outside the EU, in accordance with their own compliance frameworks. We take reasonable technical measures to protect your information from unauthorised access.</span>
+  <span data-fr>Vos données sont stockées sur Supabase (région EU-West) et traitées via notre infrastructure d'automatisation n8n. Certains de nos prestataires — notamment Stripe, Anthropic et Vercel — peuvent traiter des données en dehors de l'UE, conformément à leurs propres cadres de conformité. Nous prenons des mesures techniques raisonnables pour protéger vos informations contre tout accès non autorisé.</span></p>
+
+  <h2><span data-en>Your rights</span><span data-fr>Vos droits</span></h2>
+  <p><span data-en>Depending on your location, you may have the right to access, correct, or delete personal information we hold about you. To exercise these rights, contact us at the address below.</span>
+  <span data-fr>Selon votre localisation, vous pouvez disposer d'un droit d'accès, de rectification ou de suppression des informations personnelles que nous détenons à votre sujet. Pour exercer ces droits, contactez-nous à l'adresse ci-dessous.</span></p>
+
+  <h2><span data-en>Third-party services</span><span data-fr>Services tiers</span></h2>
+  <p><span data-en>We use the following third-party services to operate our platform:</span><span data-fr>Nous utilisons les services tiers suivants pour faire fonctionner notre plateforme :</span></p>
+  <ul>
+    <li><strong>Vercel</strong> — <span data-en>website hosting</span><span data-fr>hébergement du site</span></li>
+    <li><strong>Supabase</strong> — <span data-en>database storage</span><span data-fr>stockage de base de données</span></li>
+    <li><strong>Stripe</strong> — <span data-en>payment processing for Za3fran Digital tools</span><span data-fr>traitement des paiements pour les outils Za3fran Digital</span></li>
+    <li><strong>Anthropic</strong> — <span data-en>AI-assisted content generation, for both Digital tool reports and editorial content</span><span data-fr>génération de contenu assistée par IA, pour les rapports des outils Digital et le contenu éditorial</span></li>
+    <li><strong>Brevo</strong> — <span data-en>transactional and editorial email delivery</span><span data-fr>envoi d'emails transactionnels et éditoriaux</span></li>
+    <li><strong><span data-en>Google Analytics (GA4)</span><span data-fr>Google Analytics (GA4)</span></strong> — <span data-en>aggregate site usage analytics (see "Cookies &amp; analytics" above)</span><span data-fr>analyse agrégée de l'utilisation du site (voir « Cookies &amp; analytics » ci-dessus)</span></li>
+    <li><strong><span data-en>Meta (WhatsApp Business API)</span><span data-fr>Meta (API WhatsApp Business)</span></strong> — <span data-en>message reception for editorial suggestions</span><span data-fr>réception de messages pour les suggestions éditoriales</span></li>
+    <li><strong><span data-en>Google (Gmail)</span><span data-fr>Google (Gmail)</span></strong> — <span data-en>internal email automation</span><span data-fr>automatisation d'emails internes</span></li>
+    <li><strong>Unsplash</strong> — <span data-en>editorial photography</span><span data-fr>photographie éditoriale</span></li>
+  </ul>
+  <p><span data-en>Each of these providers operates under their own privacy policies.</span><span data-fr>Chacun de ces prestataires opère selon sa propre politique de confidentialité.</span></p>
+
+  <div class="callout">
+    <p><span data-en>This policy covers all of za3fran.io, including every Za3fran Digital tool (Scorecard, Validator, Business Plan Essentials, Menu Engineer, and future tools in the suite) and the Fond de Sauce editorial publication — you do not need to accept a separate policy for each.</span>
+    <span data-fr>Cette politique couvre l'intégralité de za3fran.io, y compris chaque outil Za3fran Digital (Scorecard, Validator, Business Plan Essentials, Menu Engineer et les futurs outils de la suite) ainsi que la publication éditoriale Fond de Sauce — vous n'avez pas besoin d'accepter une politique distincte pour chacun.</span></p>
+  </div>
+
+  <h2><span data-en>Changes to this policy</span><span data-fr>Modifications de cette politique</span></h2>
+  <p><span data-en>We may update this policy from time to time — for example as we add new tools to the Za3fran Digital suite. The date at the top of this page reflects the most recent revision. Continued use of our services after changes are posted constitutes acceptance of the updated policy.</span>
+  <span data-fr>Nous pouvons mettre à jour cette politique de temps à autre — par exemple lorsque nous ajoutons de nouveaux outils à la suite Za3fran Digital. La date en haut de cette page reflète la révision la plus récente. La poursuite de l'utilisation de nos services après la publication de modifications vaut acceptation de la politique mise à jour.</span></p>
+
+  <div class="contact-block">
+    <p><strong><span data-en>Contact</span><span data-fr>Contact</span></strong></p>
+    <p>Za3fran Consulting</p>
+    <p><span data-en>Casablanca, Morocco</span><span data-fr>Casablanca, Maroc</span></p>
+    <p><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></p>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-bottom">
+    <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    <div style="display:flex;gap:24px;">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+      <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
     </div>
-  </main>
+  </div>
+</footer>
 
-  <footer>
-    © 2026 Za3fran Consulting — All rights reserved
-  </footer>
-
+<script>
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(b => b.classList.toggle('active', b.dataset.l === l));
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  setLang(saved === 'fr' ? 'fr' : 'en');
+})();
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  setLang(b.dataset.l);
+});
+window.addEventListener('scroll', () => {
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+</script>
 </body>
 </html>
