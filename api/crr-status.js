@@ -8,7 +8,7 @@
 // any downstream tool that wants a plain-English readiness check before purchase.
 
 var SUPABASE_URL = process.env.SUPABASE_URL;
-var SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+var SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 var REGEN_LIMIT = 5;
 var LOW_RISK_VERDICTS = ['VIABLE', 'STRONG'];
 
@@ -26,8 +26,8 @@ async function supabaseFetch(path, options, attempt) {
   var url = SUPABASE_URL + '/rest/v1/' + path;
   var opts = options || {};
   opts.headers = Object.assign({
-    'apikey': SUPABASE_SERVICE_ROLE_KEY,
-    'Authorization': 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY,
+    'apikey': SUPABASE_SERVICE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
     'Content-Type': 'application/json'
   }, opts.headers || {});
 
