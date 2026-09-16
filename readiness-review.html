@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept Readiness Review — Za3fran Digital</title>
+<meta name="robots" content="noindex">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --danger:#C9553A; --ok:#4E9A6A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  min-height:100vh;
+  line-height:1.5;
+}
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+
+a{color:var(--copper-bright);}
+
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 32px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--white);}
+.brand img{height:28px;width:auto;}
+.brand .word{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.25rem;}
+.brand .io{color:var(--copper-bright);}
+.dash-link{font-size:.85rem;color:var(--muted);text-decoration:none;}
+.dash-link:hover{color:var(--white);}
+
+main{max-width:760px;margin:0 auto;padding:48px 24px 96px;}
+
+.gate-card{
+  background:var(--charcoal);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:40px;text-align:center;max-width:440px;margin:80px auto;
+}
+.gate-card input{
+  width:100%;padding:12px 14px;margin:16px 0;border-radius:6px;
+  border:1px solid rgba(255,255,255,.15);background:var(--black);color:var(--white);
+  font-family:'DM Sans',sans-serif;font-size:1rem;text-align:center;letter-spacing:.05em;
+}
+.btn{
+  display:inline-block;padding:12px 24px;border-radius:6px;border:none;
+  background:var(--copper);color:var(--black);font-weight:700;font-size:.95rem;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.btn:hover{background:var(--copper-bright);}
+.btn.secondary{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.25);}
+.btn.secondary:hover{border-color:var(--copper-bright);color:var(--copper-bright);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.err{color:var(--danger);font-size:.85rem;margin-top:8px;min-height:1.2em;}
+
+h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:2.1rem;margin-bottom:6px;}
+.subtitle{color:var(--muted);font-size:.95rem;margin-bottom:28px;}
+
+.verdict-row{display:flex;align-items:center;gap:12px;margin-bottom:32px;flex-wrap:wrap;}
+.verdict-badge{
+  padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;
+  border:1px solid currentColor;
+}
+.verdict-badge.viable{color:var(--ok);}
+.verdict-badge.fragile{color:var(--danger);}
+.score{color:var(--muted);font-size:.85rem;}
+
+.disclaimer{
+  background:rgba(201,85,58,.1);border:1px solid rgba(201,85,58,.4);
+  border-radius:8px;padding:18px 20px;margin-bottom:32px;font-size:.9rem;line-height:1.6;
+}
+.disclaimer strong{color:var(--danger);}
+
+.risk-card{
+  background:var(--charcoal);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:24px;margin-bottom:16px;
+}
+.risk-card.resolved{border-color:rgba(78,154,106,.4);background:rgba(78,154,106,.05);}
+.risk-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.risk-title{font-weight:700;font-size:1.02rem;}
+.risk-tags{display:flex;gap:6px;flex-shrink:0;}
+.tag{font-size:.7rem;padding:3px 9px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);white-space:nowrap;}
+.tag.critical{background:rgba(201,85,58,.18);color:#E8927C;}
+.tag.high{background:rgba(201,85,58,.12);color:#D9A88B;}
+.risk-detail{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px;}
+.risk-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.mitigation-box{width:100%;margin-top:10px;}
+.mitigation-box textarea{
+  width:100%;min-height:70px;padding:10px 12px;border-radius:6px;
+  border:1px solid rgba(255,255,255,.15);background:var(--black);color:var(--white);
+  font-family:'DM Sans',sans-serif;font-size:.9rem;resize:vertical;
+}
+.mitigation-box .hint{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.resolved-tag{color:var(--ok);font-size:.85rem;font-weight:600;}
+
+.footer-actions{
+  position:sticky;bottom:0;background:var(--black);border-top:1px solid rgba(255,255,255,.1);
+  padding:18px 24px;margin-top:8px;display:flex;justify-content:space-between;
+  align-items:center;gap:16px;flex-wrap:wrap;
+}
+.footer-actions .status-line{font-size:.85rem;color:var(--muted);}
+
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-state h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:10px;}
+.empty-state p{color:var(--muted);margin-bottom:24px;}
+
+.cleared-banner{
+  background:rgba(78,154,106,.1);border:1px solid rgba(78,154,106,.4);
+  border-radius:10px;padding:28px;text-align:center;margin-bottom:24px;
+}
+.cleared-banner h2{font-family:'Cormorant Garamond',serif;color:var(--ok);font-size:1.5rem;margin-bottom:8px;}
+
+.hidden{display:none !important;}
+
+.lang-toggle{
+  position:fixed;bottom:20px;right:20px;background:var(--charcoal);
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px;
+  display:flex;gap:2px;z-index:50;
+}
+.lang-toggle button{
+  background:none;border:none;color:var(--muted);padding:6px 12px;border-radius:16px;
+  cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif;font-weight:500;
+}
+.lang-toggle button.active{background:var(--copper);color:var(--black);}
+
+footer.compact{
+  text-align:center;padding:24px;color:var(--muted);font-size:.8rem;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+footer.compact a{color:var(--muted);margin:0 8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/platform.html">
+    <img src="/assets/logo.png" alt="" onerror="this.style.display='none'">
+    <span class="word">Za3fran<span class="io">.io</span></span>
+  </a>
+  <a class="dash-link" id="dashLink" href="/project.html" data-en>Back to dashboard</a>
+  <a class="dash-link" id="dashLinkFr" href="/project.html" data-fr>Retour au tableau de bord</a>
+</header>
+
+<main>
+
+  <!-- GATE: access code entry, shown until a valid code is resolved -->
+  <div class="gate-card" id="gateCard">
+    <h1 style="font-size:1.5rem;" data-en>Enter your access code</h1>
+    <h1 style="font-size:1.5rem;" data-fr>Entrez votre code d'accès</h1>
+    <p class="subtitle" data-en>One code for your whole project.</p>
+    <p class="subtitle" data-fr>Un seul code pour l'ensemble de votre projet.</p>
+    <input type="text" id="codeInput" placeholder="e.g. ESATZMB2" autocomplete="off">
+    <div class="err" id="gateErr"></div>
+    <button class="btn" id="gateSubmit" data-en>Continue</button>
+    <button class="btn" id="gateSubmitFr" data-fr>Continuer</button>
+  </div>
+
+  <!-- MAIN REVIEW CONTENT, shown once a code resolves -->
+  <div id="reviewContent" class="hidden">
+
+    <div class="verdict-row">
+      <h1 id="conceptName" style="width:100%;"></h1>
+    </div>
+    <div class="verdict-row">
+      <span class="verdict-badge" id="verdictBadge"></span>
+      <span class="score" id="scoreLine"></span>
+    </div>
+    <p class="subtitle" data-en>Before you can generate a Business Plan or Menu Strategy from this concept, review what the Validator flagged below.</p>
+    <p class="subtitle" data-fr>Avant de pouvoir générer un Business Plan ou une Stratégie Menu à partir de ce concept, passez en revue ce que le Validator a signalé ci-dessous.</p>
+
+    <div class="disclaimer hidden" id="disclaimerBox">
+      <strong data-en>This concept has unresolved risk flags.</strong>
+      <strong data-fr>Ce concept comporte des risques non résolus.</strong>
+      <p style="margin-top:8px;" data-en>You can proceed by acknowledging each risk below with your own note on how you'll address it — but any Business Plan or Menu Strategy generated from an unresolved Fragile/High-Risk concept is not something you should present to a bank or investor as-is. If you'd rather fix the underlying issue first, use "Revise in Validator" instead — you have <span id="regensLeftFr1"></span> free regenerations left on this project.</p>
+      <p style="margin-top:8px;" data-fr>Vous pouvez continuer en reconnaissant chaque risque ci-dessous avec votre propre note sur la façon dont vous comptez y répondre — mais un Business Plan ou une Stratégie Menu généré à partir d'un concept Fragile/High-Risk non résolu n'est pas présentable tel quel à une banque ou un investisseur. Si vous préférez d'abord corriger le problème, utilisez plutôt « Réviser dans le Validator » — il vous reste <span id="regensLeftFr2"></span> régénérations gratuites sur ce projet.</p>
+    </div>
+
+    <!-- Zero-risk state: light one-click confirmation, per master strategy §9 -->
+    <div class="empty-state hidden" id="emptyState">
+      <h2 data-en>Nothing flagged</h2>
+      <h2 data-fr>Rien à signaler</h2>
+      <p data-en>The Validator didn't flag any risks or financial alerts for this concept.</p>
+      <p data-fr>Le Validator n'a signalé aucun risque ni alerte financière pour ce concept.</p>
+      <button class="btn" id="emptyContinue" data-en>Continue</button>
+      <button class="btn" id="emptyContinueFr" data-fr>Continuer</button>
+    </div>
+
+    <div id="riskList"></div>
+
+    <div class="cleared-banner hidden" id="clearedBanner">
+      <h2 data-en>Cleared</h2>
+      <h2 data-fr>Validé</h2>
+      <p data-en>Every flagged risk has a recorded decision. You can now generate a Business Plan or Menu Strategy for this project.</p>
+      <p data-fr>Chaque risque signalé a une décision enregistrée. Vous pouvez maintenant générer un Business Plan ou une Stratégie Menu pour ce projet.</p>
+      <a class="btn" style="margin-top:16px;display:inline-block;" id="clearedDashLink" href="/project.html" data-en>Go to dashboard</a>
+      <a class="btn" style="margin-top:16px;display:inline-block;" id="clearedDashLinkFr" href="/project.html" data-fr>Aller au tableau de bord</a>
+    </div>
+
+    <div class="footer-actions hidden" id="footerActions">
+      <span class="status-line" id="statusLine"></span>
+      <button class="btn secondary" id="revisePrompt" data-en>Revise in Validator instead</button>
+      <button class="btn secondary" id="revisePromptFr" data-fr>Réviser dans le Validator</button>
+      <button class="btn" id="confirmBtn" data-en>Confirm & continue</button>
+      <button class="btn" id="confirmBtnFr" data-fr>Confirmer &amp; continuer</button>
+    </div>
+    <div class="err" id="submitErr" style="text-align:right;"></div>
+
+  </div>
+
+</main>
+
+<footer class="compact">
+  <span data-en>&copy; 2026 Za3fran Digital</span>
+  <span data-fr>&copy; 2026 Za3fran Digital</span>
+  · <a href="/platform.html" data-en>Platform</a><a href="/platform.html" data-fr>Plateforme</a>
+  · <a href="/pricing.html" data-en>Pricing</a><a href="/pricing.html" data-fr>Tarifs</a>
+  · <a href="/privacy.html" data-en>Privacy</a><a href="/privacy.html" data-fr>Confidentialité</a>
+</footer>
+
+<div class="lang-toggle" id="langtoggle">
+  <button data-l="en">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
+<script>
+// ---- bilingual persistence (canonical pattern, same as every other page) ----
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(function(x){ x.classList.toggle('active', x.dataset.l === l); });
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  var saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') setLang('fr'); else setLang('en');
+})();
+document.getElementById('langtoggle').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  setLang(b.dataset.l);
+});
+
+// ---- cookie helpers (2hr session, matches report viewer standard) ----
+function setCookie(name, value, maxAgeSeconds){
+  document.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAgeSeconds + ';path=/;samesite=lax';
+}
+function getCookie(name){
+  var m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+// ---- state ----
+var currentCode = null;
+var currentItems = [];
+var currentAllCleared = false;
+
+function severityTagClass(sev){
+  if (!sev) return '';
+  var s = sev.toUpperCase();
+  if (s === 'CRITICAL') return 'critical';
+  if (s === 'HIGH') return 'high';
+  return '';
+}
+
+function renderStatus(data){
+  currentCode = currentCode; // unchanged
+  currentItems = data.items || [];
+  currentAllCleared = data.all_cleared;
+
+  document.getElementById('gateCard').classList.add('hidden');
+  document.getElementById('reviewContent').classList.remove('hidden');
+
+  document.getElementById('conceptName').textContent = data.concept_name || '';
+
+  var badge = document.getElementById('verdictBadge');
+  badge.textContent = data.verdict || '';
+  badge.className = 'verdict-badge ' + (['VIABLE','STRONG'].indexOf(data.verdict) > -1 ? 'viable' : 'fragile');
+
+  var scoreLine = document.getElementById('scoreLine');
+  scoreLine.textContent = (data.score !== null && data.score !== undefined) ? ('Score: ' + data.score + '/100') : '';
+
+  if (data.requires_mitigation_text) {
+    document.getElementById('disclaimerBox').classList.remove('hidden');
+    document.getElementById('regensLeftFr1').textContent = data.regenerations_remaining;
+    document.getElementById('regensLeftFr2').textContent = data.regenerations_remaining;
+  }
+
+  if (data.all_cleared) {
+    document.getElementById('riskList').innerHTML = '';
+    document.getElementById('footerActions').classList.add('hidden');
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('clearedBanner').classList.remove('hidden');
+    var dashHref = '/project.html?code=' + encodeURIComponent(currentCode);
+    document.getElementById('clearedDashLink').href = dashHref;
+    document.getElementById('clearedDashLinkFr').href = dashHref;
+    return;
+  }
+
+  if (!data.items.length) {
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('footerActions').classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('clearedBanner').classList.add('hidden');
+  document.getElementById('footerActions').classList.remove('hidden');
+
+  var listEl = document.getElementById('riskList');
+  listEl.innerHTML = '';
+  data.items.forEach(function(item){
+    var card = document.createElement('div');
+    card.className = 'risk-card' + (item.decided ? ' resolved' : '');
+    card.dataset.riskKey = item.risk_key;
+
+    var catLabelEn = item.category === 'financial_alert' ? 'Financial alert' : 'Risk';
+    var catLabelFr = item.category === 'financial_alert' ? 'Alerte financière' : 'Risque';
+
+    var html = '';
+    html += '<div class="risk-head">';
+    html += '  <div class="risk-title">' + escapeHtml(item.title) + '</div>';
+    html += '  <div class="risk-tags">';
+    if (item.severity) html += '<span class="tag ' + severityTagClass(item.severity) + '">' + escapeHtml(item.severity) + '</span>';
+    html += '<span class="tag" data-en>' + catLabelEn + '</span><span class="tag" data-fr>' + catLabelFr + '</span>';
+    html += '  </div>';
+    html += '</div>';
+    html += '<div class="risk-detail">' + escapeHtml(item.detail) + '</div>';
+
+    if (item.decided) {
+      html += '<span class="resolved-tag" data-en>&#10003; Acknowledged</span><span class="resolved-tag" data-fr>&#10003; Reconnu</span>';
+      if (item.decision && item.decision.mitigation_text) {
+        html += '<div class="risk-detail" style="margin-top:8px;font-style:italic;">' + escapeHtml(item.decision.mitigation_text) + '</div>';
+      }
+    } else {
+      html += '<div class="risk-actions">';
+      html += '  <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;">';
+      html += '    <input type="checkbox" class="ack-check">';
+      html += '    <span data-en>I\'ve reviewed this</span><span data-fr>J\'ai pris connaissance de ceci</span>';
+      html += '  </label>';
+      html += '</div>';
+      html += '<div class="mitigation-box">';
+      html += '  <textarea class="mitigation-input" placeholder="Optional: your note on how you\'ll address this"></textarea>';
+      html += '  <div class="hint" data-en>Optional note</div><div class="hint" data-fr>Note facultative</div>';
+      html += '</div>';
+    }
+
+    card.innerHTML = html;
+    listEl.appendChild(card);
+  });
+
+  // If mitigation text is required (Fragile/High-Risk), swap placeholders + make required
+  if (data.requires_mitigation_text) {
+    document.querySelectorAll('.mitigation-input').forEach(function(ta){
+      ta.placeholder = 'Required: how will you address this before proceeding?';
+      ta.dataset.required = 'true';
+    });
+    document.querySelectorAll('.mitigation-box .hint[data-en]').forEach(function(h){ h.textContent = 'Required'; });
+    document.querySelectorAll('.mitigation-box .hint[data-fr]').forEach(function(h){ h.textContent = 'Obligatoire'; });
+  }
+
+  updateStatusLine();
+  document.querySelectorAll('.ack-check').forEach(function(cb){
+    cb.addEventListener('change', updateStatusLine);
+  });
+}
+
+function escapeHtml(s){
+  var d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+function updateStatusLine(){
+  var total = document.querySelectorAll('.risk-card:not(.resolved)').length;
+  var checked = document.querySelectorAll('.ack-check:checked').length;
+  var line = document.getElementById('statusLine');
+  var lang = document.body.classList.contains('lang-fr') ? 'fr' : 'en';
+  if (lang === 'fr') {
+    line.textContent = checked + ' sur ' + total + ' risques restants passés en revue';
+  } else {
+    line.textContent = checked + ' of ' + total + ' remaining risks reviewed';
+  }
+  document.getElementById('confirmBtn').disabled = checked === 0;
+  document.getElementById('confirmBtnFr').disabled = checked === 0;
+}
+
+async function fetchStatus(code){
+  var res = await fetch('/api/crr-status?code=' + encodeURIComponent(code));
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'unknown_error');
+  return data;
+}
+
+async function loadWithCode(code){
+  document.getElementById('gateErr').textContent = '';
+  try {
+    var data = await fetchStatus(code);
+    currentCode = code;
+    setCookie('za3fran_crr_session', code, 7200);
+    var dashHref = '/project.html?code=' + encodeURIComponent(code);
+    document.getElementById('dashLink').href = dashHref;
+    document.getElementById('dashLinkFr').href = dashHref;
+    renderStatus(data);
+  } catch (err) {
+    var lang = document.body.classList.contains('lang-fr') ? 'fr' : 'en';
+    document.getElementById('gateErr').textContent = lang === 'fr'
+      ? 'Code invalide ou projet introuvable.'
+      : 'Invalid code or project not found.';
+  }
+}
+
+document.getElementById('gateSubmit').addEventListener('click', function(){
+  var code = document.getElementById('codeInput').value.trim();
+  if (code) loadWithCode(code);
+});
+document.getElementById('gateSubmitFr').addEventListener('click', function(){
+  var code = document.getElementById('codeInput').value.trim();
+  if (code) loadWithCode(code);
+});
+document.getElementById('codeInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') document.getElementById('gateSubmit').click();
+});
+
+document.getElementById('emptyContinue').addEventListener('click', function(){
+  window.location.href = '/project.html?code=' + encodeURIComponent(currentCode);
+});
+document.getElementById('emptyContinueFr').addEventListener('click', function(){
+  window.location.href = '/project.html?code=' + encodeURIComponent(currentCode);
+});
+
+document.getElementById('revisePrompt').addEventListener('click', goToRevise);
+document.getElementById('revisePromptFr').addEventListener('click', goToRevise);
+function goToRevise(){
+  // Pre-fill wiring on the Validator side is a separate deliverable (submit-validator.js
+  // regeneration path) — this link takes the operator back to the Validator form with
+  // their access code so they can resubmit; it does not yet auto-populate prior answers.
+  window.location.href = '/validator.html?code=' + encodeURIComponent(currentCode) + '&mode=revise';
+}
+
+async function submitDecisions(){
+  var errEl = document.getElementById('submitErr');
+  errEl.textContent = '';
+  var lang = document.body.classList.contains('lang-fr') ? 'fr' : 'en';
+
+  var cards = document.querySelectorAll('.risk-card:not(.resolved)');
+  var decisions = [];
+  var missingRequired = false;
+
+  cards.forEach(function(card){
+    var checked = card.querySelector('.ack-check').checked;
+    if (!checked) return;
+    var textarea = card.querySelector('.mitigation-input');
+    var text = textarea.value.trim();
+    if (textarea.dataset.required === 'true' && !text) {
+      missingRequired = true;
+      textarea.style.borderColor = 'var(--danger)';
+      return;
+    }
+    var titleEl = card.querySelector('.risk-title');
+    var catEn = card.querySelector('.tag[data-en]');
+    decisions.push({
+      risk_key: card.dataset.riskKey,
+      category: (catEn && catEn.textContent === 'Financial alert') ? 'financial_alert' : 'risk',
+      title: titleEl.textContent,
+      mitigation_text: text || undefined
+    });
+  });
+
+  if (missingRequired) {
+    errEl.textContent = lang === 'fr'
+      ? 'Une note est requise pour chaque risque reconnu sur ce verdict.'
+      : 'A note is required for every risk you acknowledge on this verdict.';
+    return;
+  }
+
+  if (!decisions.length) {
+    errEl.textContent = lang === 'fr'
+      ? 'Cochez au moins un risque comme passé en revue avant de continuer.'
+      : 'Check at least one risk as reviewed before continuing.';
+    return;
+  }
+
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('confirmBtnFr').disabled = true;
+
+  try {
+    var res = await fetch('/api/crr-decide', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: currentCode, decisions: decisions })
+    });
+    var data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.message || data.error || (lang === 'fr' ? 'Une erreur est survenue.' : 'Something went wrong.');
+      document.getElementById('confirmBtn').disabled = false;
+      document.getElementById('confirmBtnFr').disabled = false;
+      return;
+    }
+    // Re-fetch full status to re-render remaining/cleared state accurately.
+    var fresh = await fetchStatus(currentCode);
+    renderStatus(fresh);
+  } catch (err) {
+    errEl.textContent = lang === 'fr' ? 'Erreur réseau. Réessayez.' : 'Network error. Please try again.';
+    document.getElementById('confirmBtn').disabled = false;
+    document.getElementById('confirmBtnFr').disabled = false;
+  }
+}
+document.getElementById('confirmBtn').addEventListener('click', submitDecisions);
+document.getElementById('confirmBtnFr').addEventListener('click', submitDecisions);
+
+// ---- auto-load: ?code= in URL, else remembered session cookie, else show gate ----
+(function init(){
+  var params = new URLSearchParams(window.location.search);
+  var urlCode = params.get('code') || params.get('access_code');
+  var cookieCode = getCookie('za3fran_crr_session');
+  var code = urlCode || cookieCode;
+  if (code) {
+    document.getElementById('codeInput').value = code;
+    loadWithCode(code);
+  }
+})();
+</script>
+
+</body>
+</html>
