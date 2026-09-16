@@ -408,7 +408,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
     </a>
     <div class="navlinks" id="navlinks">
       <a href="#disciplines" data-en>Services</a><a href="#disciplines" data-fr>Services</a>
-      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/platform" data-en>Za3fran Digital</a><a href="/platform" data-fr>Za3fran Digital</a>
       <a href="#about" data-en>About</a><a href="#about" data-fr>À propos</a>
       <a href="#contact" class="navcta" data-en>Get Started</a><a href="#contact" class="navcta" data-fr>Commencer</a>
     </div>
@@ -541,6 +541,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 <section class="tint-a" id="scorecard">
   <div class="wrap">
     <div class="section-tag reveal" style="margin-bottom:18px"><span data-en>Za3fran Digital</span><span data-fr>Za3fran Digital</span></div>
+    <p class="measure reveal" style="color:var(--muted);margin-bottom:32px;line-height:1.7;font-size:15.5px">
+      <span data-en>A step-by-step toolkit for building an F&amp;B project — from a free first read on your concept, through a full strategic validation, to an investor-ready business plan and a costed menu. Each step builds on the last, so nothing gets re-entered twice.</span>
+      <span data-fr>Un parcours d'outils pas à pas pour construire un projet F&amp;B — d'une première lecture gratuite de votre concept, à une validation stratégique complète, jusqu'à un business plan prêt pour les investisseurs et un menu chiffré. Chaque étape s'appuie sur la précédente, sans jamais ressaisir vos données.</span>
+    </p>
     <div class="cro-panel reveal">
       <div>
         <h2><span data-en>Get a first read on your <em>concept.</em></span><span data-fr>Première lecture de votre <em>concept.</em></span></h2>
@@ -560,6 +564,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
           <span data-en>The <strong>Za3fran Concept Validator</strong> delivers a 20-page strategic analysis with real local market data, competitor intelligence and financial modelling — for <strong style="color:var(--copper-bright)" data-price="en">€199</strong>.</span>
           <span data-fr>Le <strong>Za3fran Concept Validator</strong> livre une analyse de 20 pages avec données de marché locales — pour <strong style="color:var(--copper-bright)" data-price="fr">199€</strong>.</span>
         </p>
+        <a href="/validator" class="link-secondary" style="display:inline-block;margin-top:4px;"><span data-en>Start with the Validator →</span><span data-fr>Commencer avec le Validator →</span></a>
         <div class="upsell"><span data-en>Most operators start free, then upgrade once they see their score.</span><span data-fr>La plupart des opérateurs démarrent gratuitement, puis passent au Validator après avoir vu leur score.</span></div>
         <p style="margin-top:14px;font-size:13px;color:var(--muted)">
           <span data-en>Already have a Validator report? <a href="/business-plan" style="color:var(--copper-bright)">Get your Business Plan Essentials for €499 →</a></span>
@@ -718,7 +723,15 @@ document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
   document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
   document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  localStorage.setItem('za3fran_lang', b.dataset.l);
 });
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') {
+    document.body.classList.add('lang-fr');
+    document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === 'fr'));
+  }
+})();
 
 document.querySelectorAll('.disc-item').forEach(item=>{
   item.addEventListener('click', ()=>{
