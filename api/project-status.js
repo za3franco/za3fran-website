@@ -88,7 +88,7 @@ export default async function handler(req, res) {
         ? (menu.status === 'complete' ? 'complete' : (menu.status === 'error' ? 'error' : 'generating'))
         : null,
       viewer_url: menu
-        ? `/api/report-menu-viewer?id=${encodeURIComponent(menu.id)}&code=${encodeURIComponent(code)}`
+        ? `/api/report-menu-viewer?id=${encodeURIComponent(menu.id)}&access_code=${encodeURIComponent(code)}`
         : null,
       created_at: menu?.created_at || null,
     },

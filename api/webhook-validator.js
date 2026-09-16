@@ -662,7 +662,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   </div>` : '';
 
   // ── Menu Engineer section (bundle_menu / bundle_full) ───────────
-  const menuUrl = menuReportId ? `${BASE_URL}/api/report-menu-viewer?id=${menuReportId}&code=${encodeURIComponent(accessCode)}` : null;
+  const menuUrl = menuReportId ? `${BASE_URL}/api/report-menu-viewer?id=${menuReportId}&access_code=${encodeURIComponent(accessCode)}` : null;
 
   const menuSection_en = hasMenu ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">

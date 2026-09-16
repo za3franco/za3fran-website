@@ -141,7 +141,7 @@ export default async function handler(req, res) {
 
     // ── 5. Send delivery email via Brevo ──────────────────────
     const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
-    const reportUrl   = `${BASE_URL}/api/report-menu-viewer?id=${runId}&code=${encodeURIComponent(accessCode)}`;
+    const reportUrl   = `${BASE_URL}/api/report-menu-viewer?id=${runId}&access_code=${encodeURIComponent(accessCode)}`;
     const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
     const firstName   = customerName ? customerName.split(' ')[0] : (meta.language === 'fr' ? 'bonjour' : 'there');
     const isFr        = meta.language === 'fr';
