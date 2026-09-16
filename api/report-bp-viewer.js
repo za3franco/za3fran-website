@@ -11,6 +11,22 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+// ── Dashboard return banner ─────────────────────────────────────
+// Injected at serve time (never stored in output_html) so a customer
+// viewing their report can get back to the unified project dashboard.
+// Hidden on print so it never appears in a PDF export of the report.
+function injectDashboardBanner(html, accessCode) {
+  const banner = `
+<div style="position:sticky;top:0;z-index:9999;background:#0F1F3D;color:#FAFAF7;padding:10px 20px;font-family:'DM Sans',Arial,sans-serif;font-size:13px;display:flex;align-items:center;justify-content:space-between;" class="za3fran-dash-banner">
+  <a href="/project.html?code=${encodeURIComponent(accessCode)}" style="color:#C9862A;text-decoration:none;font-weight:600;">&larr; Back to your Za3fran dashboard</a>
+</div>
+<style>@media print { .za3fran-dash-banner { display: none !important; } }</style>`;
+  if (/<body[^>]*>/i.test(html)) {
+    return html.replace(/<body[^>]*>/i, (match) => match + banner);
+  }
+  return banner + html;
+}
+
 export default async function handler(req, res) {
   const reportId = req.query.id;
   if (!reportId) return res.status(404).send(errorPage());
@@ -41,7 +57,7 @@ export default async function handler(req, res) {
   if (report.output_html) {
     return res.status(200)
       .setHeader('Content-Type', 'text/html; charset=utf-8')
-      .send(report.output_html);
+      .send(injectDashboardBanner(report.output_html, report.access_code));
   }
 
   // Correct code — pending or generating
@@ -214,8 +230,14 @@ async function pollStatus() {
       return;
     }
 
-    // Still generating — if >8 polls (2 min) and still 'pending', retry generation call
-    if (pollCount % 8 === 0 && data.status === 'pending') {
+    // Still generating — if >8 polls (2 min) and still not resolved, retry generation call.
+    // Retries on BOTH 'pending' and 'generating': a run stuck at 'generating' with no
+    // progress (e.g. a previous attempt crashed without reaching its own error handler)
+    // has no other way to recover, since nothing else re-triggers it. This is safe to
+    // fire even if a generation is genuinely still in progress — generate-bp.js's own
+    // handler checks status itself and immediately no-ops rather than starting a second
+    // generation, so this can only help a stuck run, never duplicate a running one.
+    if (pollCount % 8 === 0 && (data.status === 'pending' || data.status === 'generating')) {
       generationStarted = false;
       startGeneration();
     }

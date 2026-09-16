@@ -47,6 +47,23 @@ const attemptTracker = {};
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 30 * 60 * 1000; // 30 minutes
 
+// ── Dashboard return banner ─────────────────────────────────────
+// Injected at serve time (never stored in report_html) so a customer
+// viewing their report can get back to the unified project dashboard
+// without having to dig up the email again. Hidden on print so it
+// never appears in a PDF export of the report.
+function injectDashboardBanner(html, accessCode) {
+  const banner = `
+<div style="position:sticky;top:0;z-index:9999;background:#0F1F3D;color:#FAFAF7;padding:10px 20px;font-family:'DM Sans',Arial,sans-serif;font-size:13px;display:flex;align-items:center;justify-content:space-between;" class="za3fran-dash-banner">
+  <a href="/project.html?code=${encodeURIComponent(accessCode)}" style="color:#C9862A;text-decoration:none;font-weight:600;">&larr; Back to your Za3fran dashboard</a>
+</div>
+<style>@media print { .za3fran-dash-banner { display: none !important; } }</style>`;
+  if (/<body[^>]*>/i.test(html)) {
+    return html.replace(/<body[^>]*>/i, (match) => match + banner);
+  }
+  return banner + html;
+}
+
 export default async function handler(req, res) {
   const { id } = req.query;
 
@@ -70,7 +87,7 @@ export default async function handler(req, res) {
       );
 
       if (!error && report && report.access_code && urlCode === report.access_code.toUpperCase()) {
-        return res.status(200).send(report.report_html);
+        return res.status(200).send(injectDashboardBanner(report.report_html, report.access_code));
       }
       // Wrong or unresolvable code in the URL — fall through to the
       // normal manual gate below rather than erroring out.
@@ -148,7 +165,7 @@ export default async function handler(req, res) {
 
     // ── Code correct — reset tracker and return report ───────
     attemptTracker[id] = { attempts: 0, lockedAt: null };
-    return res.status(200).json({ success: true, html: report.report_html });
+    return res.status(200).json({ success: true, html: injectDashboardBanner(report.report_html, report.access_code) });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
