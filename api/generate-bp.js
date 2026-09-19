@@ -18,6 +18,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { Agent, setGlobalDispatcher } from 'undici';
+import crypto from 'crypto';
+
+// Same derivation as api/crr-status.js and api/crr-decide.js — must stay
+// identical across all three files so a risk's key matches regardless of
+// which file computes it.
+function shortHash(text) {
+  return crypto.createHash('sha256').update(String(text || '')).digest('hex').slice(0, 10);
+}
 
 const HAIKU = 'claude-haiku-4-5-20251001';
 
@@ -41,7 +49,7 @@ export default async function handler(req, res) {
   if (!bpRunId) return res.status(400).json({ error: 'bpRunId required' });
 
   var runRes = await supabase.from('business_plan_essentials_runs')
-    .select('id, output_html, output_json, currency, language').eq('id', bpRunId).single();
+    .select('id, project_id, output_html, output_json, currency, language').eq('id', bpRunId).single();
   if (runRes.error || !runRes.data) return res.status(404).json({ error: 'Not found' });
 
   var run = runRes.data;
@@ -49,6 +57,24 @@ export default async function handler(req, res) {
 
   var meta = run.output_json || {};
   if (meta.status === 'generating') return res.status(200).json({ status: 'generating' });
+
+  // ── Concept Readiness Review gate (§3.18, decision #11) ────────────
+  // Generation is blocked (purchase itself is unaffected) until every
+  // currently-flagged Validator risk/alert has a recorded decision.
+  // Checked here, not just client-side, since this endpoint can be hit
+  // directly. Deliberately checked BEFORE the run is marked 'generating'
+  // below — a blocked attempt must leave the run's status untouched so
+  // the viewer can retry cleanly once the gate clears.
+  if (!run.project_id) return res.status(422).json({ error: 'missing_project_id' });
+  var projRes = await supabase.from('za3fran_projects')
+    .select('id, crr_status').eq('id', run.project_id).single();
+  if (projRes.error || !projRes.data) return res.status(404).json({ error: 'project_not_found' });
+  if (projRes.data.crr_status !== 'cleared') {
+    return res.status(409).json({
+      error: 'crr_not_cleared',
+      message: 'This project has unresolved Concept Readiness Review items. Complete the review before generating a Business Plan.'
+    });
+  }
 
   await supabase.from('business_plan_essentials_runs')
     .update({ output_json: Object.assign({}, meta, { status: 'generating' }) }).eq('id', bpRunId);
@@ -59,7 +85,16 @@ export default async function handler(req, res) {
   var subRes = await supabase.from('validator_submissions').select('*').eq('id', meta.submission_id).single();
   if (!vrRes.data || !vrRes.data.report_json) return res.status(422).json({ error: 'report_json not found' });
 
-  var ctx = buildCtx(vrRes.data.report_json, subRes.data, run.currency || 'EUR', run.language || 'fr');
+  // ── CRR decisions (§3.18, decision #11) ─────────────────────────────
+  // The prompt must consume the operator's OWN recorded decision per risk,
+  // not just the Validator's raw risk text — this is what buildCtx below
+  // merges in.
+  var decRes = await supabase.from('crr_decisions')
+    .select('risk_key, risk_category, risk_summary, mitigation_text')
+    .eq('project_id', run.project_id);
+  var decisions = (decRes && decRes.data) || [];
+
+  var ctx = buildCtx(vrRes.data.report_json, subRes.data, run.currency || 'EUR', run.language || 'fr', decisions);
 
   console.log('[bp] Streaming generation for ' + bpRunId);
 
@@ -116,7 +151,7 @@ export default async function handler(req, res) {
   return res.status(200).json({ ready: true });
 }
 
-function buildCtx(rj, sub, currency, language) {
+function buildCtx(rj, sub, currency, language, decisions) {
   var snap = (rj && rj.concept_snapshot) || {};
   var ov   = (rj && rj.overall) || {};
   var sec  = (rj && rj.sections) || {};
@@ -127,16 +162,41 @@ function buildCtx(rj, sub, currency, language) {
   var isFr = language === 'fr';
   var fmt  = function(n) { return n ? Number(n).toLocaleString(isFr ? 'fr-FR' : 'en-US') : 'N/A'; };
   var scl  = function(s) { return s ? s.covers_day + 'c/j \u2192 ' + sym + fmt(s.monthly_result) + '/mois' : 'N/A'; };
+
+  // Match each Validator risk/alert to the operator's own recorded CRR
+  // decision (same risk_key derivation as crr-status.js / crr-decide.js),
+  // so the prompt — and the generated report — reflects what the operator
+  // actually decided, not just the Validator's raw flagged text. Falls
+  // back to no note gracefully (e.g. a Strong/Viable verdict where notes
+  // were optional and the operator didn't add one).
+  var decByKey = {};
+  (decisions || []).forEach(function(d){ decByKey[d.risk_key] = d; });
+  var rawRisks  = (sec.s6_risks && sec.s6_risks.risks) || [];
+  var rawAlerts = fin.alerts || [];
+  var risksWithNotes = rawRisks.map(function(r){
+    var d = decByKey['risk_' + shortHash(r.title)];
+    return Object.assign({}, r, { operator_note: d ? d.mitigation_text : null });
+  });
+  var alertsWithNotes = rawAlerts.map(function(a){
+    var d = decByKey['alert_' + shortHash(a.title)];
+    return Object.assign({}, a, { operator_note: d ? d.mitigation_text : null });
+  });
+
   return {
     snap:snap, ov:ov, sec:sec, fin:fin, be:be, sc:sc,
     sym:sym, isFr:isFr, fmt:fmt, scl:scl, currency:currency,
     today: new Date().toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day:'numeric', month:'long', year:'numeric' }),
     audience: Array.isArray(snap.audience) ? snap.audience.join(', ') : (snap.audience||'N/A'),
-    risks:  ((sec.s6_risks&&sec.s6_risks.risks)||[]).map(function(r){return r.title;}).filter(Boolean).join(' | ')||'N/A',
+    risksData: risksWithNotes,
+    risks:  risksWithNotes.map(function(r){
+      return r.title + (r.operator_note ? ' [Operator note: ' + r.operator_note + ']' : '');
+    }).filter(Boolean).join(' | ')||'N/A',
     recs:   ((sec.s5_strategy&&sec.s5_strategy.recommendations)||[]).map(function(r){return r.title;}).filter(Boolean).join(' | ')||'N/A',
     market: ((sec.s2_market&&sec.s2_market.narrative)||'').substring(0,400)||'N/A',
     compet: ((sec.s3_competitive&&sec.s3_competitive.narrative)||'').substring(0,300)||'N/A',
-    alerts: (fin.alerts||[]).map(function(a){return a.title;}).filter(Boolean).join(' | ')||'N/A',
+    alerts: alertsWithNotes.map(function(a){
+      return a.title + (a.operator_note ? ' [Operator note: ' + a.operator_note + ']' : '');
+    }).filter(Boolean).join(' | ')||'N/A',
   };
 }
 
@@ -352,10 +412,11 @@ function buildPrompt(c) {
     +'(c) h3 "Indicative Channel Mix (Y1)" + <ul> of 4 bullets (1 line, <= 16 words each, include % budget per channel).\n'
     +'(d) h3 "Top 3 Marketing KPIs" + 3-row table (Method column <= 10 words).',
 
-    '12. RISK ANALYSIS [2 pages, synthesized format]: BEFORE h2, <div class="section-number">Section 12</div>. h2 "Risk Analysis". Italic sub-paragraph 25 words: "6 risks identified total. Detail of the 3 critical risks below. Score = Probability x Impact."\n'
-    +'(a) h3 "Risk Summary Table" + COMPACT 6-row table [Risk|Probability|Impact|Score /10] (NO mitigation column — detailed below). ALL 6 risks listed.\n'
-    +'(b) h3 "Detail of 3 Critical Risks" + 3 <div class="risk-block"> ONLY (the 3 highest-scored risks). Each VERY COMPACT block (the summary table + Risk 1 MUST fit TOGETHER on page 1): <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + short 25-30 word context paragraph MAX + h5 "Mitigation & Contingency" + <ol> of 3 numbered actions (12-15 words each MAX, 1 line) + final "Plan B:" line (12-15 words MAX).\n'
-    +'(c) h3 "Other Risks to Monitor" + 1 short paragraph (40-60 words) listing the 3 remaining (lowest-scored) risks with summarized key mitigation. Format: "Risk X: mitigation 8-12 words. Risk Y: ... Risk Z: ...".',
+    '12. RISK ANALYSIS [2 pages, synthesized format]: BEFORE h2, <div class="section-number">Section 12</div>. h2 "Risk Analysis". Italic sub-paragraph 25 words: "'+c.risksData.length+' risks identified total. Detail of the 3 critical risks below. Score = Probability x Impact."\n'
+    +'IMPORTANT — operator decisions take priority: where a risk in the RISQUES/RISKS data field above includes "[Operator note: ...]", that is the operator\'s OWN recorded decision on how they intend to address it (via the Concept Readiness Review). Use that note as the PRIMARY basis for that risk\'s Mitigation & Contingency actions below — do not invent independent mitigation language that contradicts or ignores it. Only fall back to your own judgment for a risk with no operator note.\n'
+    +'(a) h3 "Risk Summary Table" + COMPACT '+c.risksData.length+'-row table [Risk|Probability|Impact|Score /10] (NO mitigation column — detailed below). ALL '+c.risksData.length+' risks listed.\n'
+    +'(b) h3 "Detail of 3 Critical Risks" + 3 <div class="risk-block"> ONLY (the 3 highest-scored risks). Each VERY COMPACT block (the summary table + Risk 1 MUST fit TOGETHER on page 1): <h4>Risk N: Title</h4> + bold line "Probability: X | Impact: Y | Score: Z/10" + short 25-30 word context paragraph MAX + h5 "Mitigation & Contingency" + <ol> of 3 numbered actions (12-15 words each MAX, 1 line, grounded in the operator\'s own note where one exists) + final "Plan B:" line (12-15 words MAX).\n'
+    +'(c) h3 "Other Risks to Monitor" + 1 short paragraph (40-60 words) listing the remaining (lowest-scored) risks with summarized key mitigation, prioritizing any operator note over invented language. Format: "Risk X: mitigation 8-12 words. Risk Y: ... Risk Z: ...".',
 
     '13. RECOMMENDATIONS & NEXT STEPS [1 page]: BEFORE h2, <div class="section-number">Section 13</div>. h2 "Recommendations & Next Steps".\n'
     +'(a) Intro paragraph 30-40 words.\n'

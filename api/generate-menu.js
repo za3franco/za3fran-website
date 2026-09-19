@@ -769,6 +769,22 @@ export default async function handler(req, res) {
       throw new Error('Project lookup failed: ' + (projError?.message || 'not found'));
     }
 
+    // ── Concept Readiness Review gate (§3.18, decision #11) ──────────
+    // Generation is blocked (purchase itself is unaffected) until every
+    // currently-flagged Validator risk/alert has a recorded decision.
+    // Menu Engineer's prompt never consumed risk data directly (confirmed
+    // below — Passes 1-4 only use concept/architecture/items/costing), so
+    // no prompt change is needed here, only this gate. The run's status
+    // is deliberately left untouched (not marked 'error' or 'blocked') —
+    // this is a policy refusal, not a generation failure, so the viewer
+    // can retry once the gate clears without any stuck-state cleanup.
+    if (project.crr_status !== 'cleared') {
+      return res.status(409).json({
+        error: 'crr_not_cleared',
+        message: 'This project has unresolved Concept Readiness Review items. Complete the review before generating a Menu Strategy.'
+      });
+    }
+
     const { data: submission } = await supabase
       .from('validator_submissions')
       .select('*')
