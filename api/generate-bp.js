@@ -70,6 +70,8 @@ export default async function handler(req, res) {
     .select('id, crr_status').eq('id', run.project_id).single();
   if (projRes.error || !projRes.data) return res.status(404).json({ error: 'project_not_found' });
   if (projRes.data.crr_status !== 'cleared') {
+    await supabase.from('business_plan_essentials_runs')
+      .update({ output_json: Object.assign({}, meta, { status: 'blocked_crr' }) }).eq('id', bpRunId);
     return res.status(409).json({
       error: 'crr_not_cleared',
       message: 'This project has unresolved Concept Readiness Review items. Complete the review before generating a Business Plan.'

@@ -73,7 +73,7 @@ export default async function handler(req, res) {
       name: 'Business Plan Essentials',
       purchased: !!bp,
       status: bp
-        ? (bp.output_html ? 'complete' : (bp.output_json?.status === 'error' ? 'error' : 'generating'))
+        ? (bp.output_html ? 'complete' : (bp.output_json?.status === 'error' ? 'error' : (bp.output_json?.status === 'blocked_crr' ? 'blocked_crr' : 'generating')))
         : null,
       viewer_url: bp
         ? `/api/report-bp-viewer?id=${encodeURIComponent(bp.id)}&code=${encodeURIComponent(code)}`
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
       name: 'Menu Engineer',
       purchased: !!menu,
       status: menu
-        ? (menu.status === 'complete' ? 'complete' : (menu.status === 'error' ? 'error' : 'generating'))
+        ? (menu.status === 'complete' ? 'complete' : (menu.status === 'error' ? 'error' : (menu.status === 'blocked_crr' ? 'blocked_crr' : 'generating')))
         : null,
       viewer_url: menu
         ? `/api/report-menu-viewer?id=${encodeURIComponent(menu.id)}&access_code=${encodeURIComponent(code)}`

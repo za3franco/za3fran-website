@@ -779,6 +779,12 @@ export default async function handler(req, res) {
     // this is a policy refusal, not a generation failure, so the viewer
     // can retry once the gate clears without any stuck-state cleanup.
     if (project.crr_status !== 'cleared') {
+      await supabase.from('menu_engineer_runs')
+        .update({
+          status: 'blocked_crr',
+          output_json: { ...(run.output_json || {}), status: 'blocked_crr' },
+        })
+        .eq('id', runId);
       return res.status(409).json({
         error: 'crr_not_cleared',
         message: 'This project has unresolved Concept Readiness Review items. Complete the review before generating a Menu Strategy.'

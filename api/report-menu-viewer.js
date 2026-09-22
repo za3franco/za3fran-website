@@ -207,6 +207,10 @@ function renderGenerating(id, accessCode) {
         } else if (data.status === 'error') {
           elapsedEl.textContent = 'Something went wrong. Please contact hello@za3fran.io with your access code.';
           elapsedEl.style.color = '#e07070';
+        } else if (data.status === 'blocked_crr') {
+          // Reload so the server re-renders renderCrrBlocked() instead of
+          // duplicating that message/link here in JS.
+          document.getElementById('autoform').submit();
         } else {
           setTimeout(poll, 5000);
         }
@@ -216,6 +220,19 @@ function renderGenerating(id, accessCode) {
   setTimeout(poll, 4000);
 </script>`;
   return pageShell(body, 'Generating your report — Za3fran');
+}
+
+// ── Blocked by Concept Readiness Review ─────────────────────────
+function renderCrrBlocked(accessCode) {
+  const body = `
+<div class="card">
+  <p class="logo"><img src="${BASE_URL}/assets/logo.png" alt="Za3fran">Za3fran<span>.io</span></p>
+  <p class="label">Menu Engineer</p>
+  <h1>Readiness review needed</h1>
+  <p>This project has unresolved items in its Concept Readiness Review. Complete the review before generating this Menu Strategy.</p>
+  <a href="/readiness-review.html?code=${encodeURIComponent(accessCode)}" style="display:inline-block;margin-top:16px;color:#C9862A;font-weight:600;text-decoration:none;">Go to the review &rarr;</a>
+</div>`;
+  return pageShell(body, 'Readiness review needed — Za3fran');
 }
 
 // ── Not-ready-yet page (payment not processed / no access code) ──
@@ -341,6 +358,14 @@ export default async function handler(req, res) {
   if (run.output_html) {
     res.setHeader('Content-Type', 'text/html');
     return res.status(200).send(injectToolbar(run.output_html, run, id));
+  }
+
+  // ── Blocked by the Concept Readiness Review — static message, no
+  //    spinner, no polling. Checked before the trigger logic below so
+  //    a blocked run is never mistaken for one that just hasn't started.
+  if (run.status === 'blocked_crr') {
+    res.setHeader('Content-Type', 'text/html');
+    return res.status(200).send(renderCrrBlocked(run.access_code));
   }
 
   // ── Not generated yet — trigger generation if not already running ──

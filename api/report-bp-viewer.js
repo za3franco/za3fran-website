@@ -187,8 +187,9 @@ a{color:#E7A63E;}
 
 // ── GENERATION PAGE — fire & forget + poll (retinted, logic unchanged) ──
 function generatingPage(reportId, code, language, currentStatus) {
-  const isFr    = language === 'fr';
-  const isError = currentStatus === 'error';
+  const isFr      = language === 'fr';
+  const isError   = currentStatus === 'error';
+  const isBlocked = currentStatus === 'blocked_crr';
 
   return `<!DOCTYPE html>
 <html lang="${isFr ? 'fr' : 'en'}">
@@ -236,6 +237,13 @@ h1 em{font-style:italic;color:#C9862A;}
     <p>${isFr ? 'Une erreur est survenue lors de la génération.' : 'An error occurred during generation.'}</p>
     <button class="retry-btn" onclick="retryGeneration()">${isFr ? 'Réessayer →' : 'Retry →'}</button>
   </div>
+  ` : isBlocked ? `
+  <div class="error-box">
+    <p>${isFr
+      ? 'Ce projet a des points en attente dans la Revue de Préparation du Concept. Terminez la revue avant de générer ce Business Plan.'
+      : 'This project has unresolved items in its Concept Readiness Review. Complete the review before generating this Business Plan.'}</p>
+    <a class="retry-btn" href="/readiness-review.html?code=${encodeURIComponent(code)}">${isFr ? 'Aller à la revue →' : 'Go to the review →'}</a>
+  </div>
   ` : `
   <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   <h1>${isFr ? 'Génération de votre <em>Business Plan</em>' : 'Generating your <em>Business Plan</em>'}</h1>
@@ -254,8 +262,13 @@ const CODE       = '${code}';
 const IS_FR      = ${isFr};
 const RELOAD_URL = window.location.href;
 const IS_ERROR   = ${isError};
+const IS_BLOCKED = ${isBlocked};
 
-${isError ? `
+${isBlocked ? `
+// Blocked by the Concept Readiness Review — nothing to poll for. The page
+// above is a static message with a link to readiness-review.html; no
+// retry, no spinner, since retrying here would just be refused again.
+` : isError ? `
 function retryGeneration() {
   fetch('/api/generate-bp', {
     method: 'POST',
@@ -336,6 +349,14 @@ async function pollStatus() {
         ? 'Erreur — actualisez la page pour réessayer.'
         : 'Error — refresh the page to retry.';
       bar.style.background = '#e05a5a';
+      return;
+    }
+
+    if (data.status === 'blocked_crr') {
+      // Reload so the server re-renders the static blocked_crr branch of
+      // generatingPage() — avoids duplicating that message/link in JS here.
+      clearInterval(stepInterval);
+      window.location.href = RELOAD_URL;
       return;
     }
 
