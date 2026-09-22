@@ -48,6 +48,7 @@ import { Agent, setGlobalDispatcher } from 'undici';
 import { getModel } from '../lib/claude-config.js';
 import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 import { ensureTagged } from '../lib/crr-tagging.js';
+import { describeValue } from '../lib/crr-concept.js';
 
 // ── Raise Node's default fetch timeout ──────────────────────────
 // Node's built-in fetch (undici) times out waiting for a response after
@@ -118,7 +119,7 @@ Role / Experience: ${submission.role || 'Not provided'}
 
 CONCEPT DETAILS
 Concept Name:      ${submission.concept_name || 'Not provided'}
-Format / Type:     ${submission.concept_type || 'Not provided'}
+Format / Type:     ${describeValue('concept_type', submission.concept_type, { mode: 'prompt' })}
 Cuisine:           ${submission.cuisine || 'Not provided'}
 Description:       ${submission.description || 'Not provided'}
 Differentiation:   ${submission.differentiation || 'Not provided'}
@@ -129,15 +130,15 @@ Neighbourhood:     ${submission.neighbourhood || 'Not provided'}
 Target Audience:   ${audience}
 
 FINANCIALS
-Total Budget:      ${submission.budget || 'Not provided'} ${submission.currency || ''}
+Total Budget:      ${describeValue('budget', submission.budget, { mode: 'prompt', currency: submission.currency || '' })}
 Average Ticket:    ${submission.ticket || 'Not provided'} ${submission.currency || ''}
 Daily Covers:      ${submission.covers || 'Not provided'}
 Seats:             ${submission.seats || 'Not provided'}
 
 OPERATIONS
 Opening Hours:     ${submission.opening_hours || 'Not provided'}
-Stage:             ${submission.stage || 'Not provided'}
-Timeline:          ${submission.timeline || 'Not provided'}
+Stage:             ${describeValue('stage', submission.stage, { mode: 'prompt' })}
+Timeline:          ${describeValue('timeline', submission.timeline, { mode: 'prompt' })}
 
 MARKET CONTEXT
 Competitors:       ${submission.competitors || 'Not provided'}
