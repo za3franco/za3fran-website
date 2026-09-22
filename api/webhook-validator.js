@@ -47,6 +47,7 @@ import { waitUntil } from '@vercel/functions';
 import { Agent, setGlobalDispatcher } from 'undici';
 import { getModel } from '../lib/claude-config.js';
 import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
+import { ensureTagged } from '../lib/crr-tagging.js';
 
 // ── Raise Node's default fetch timeout ──────────────────────────
 // Node's built-in fetch (undici) times out waiting for a response after
@@ -408,11 +409,14 @@ async function processReport(customerEmail, sessionId, purchaseType) {
       throw new Error(`Anthropic API error: ${anthropicData.error?.message || JSON.stringify(anthropicData)}`);
     }
 
-    if (!anthropicData.content?.[0]?.text) {
+    // Find the text block by type — never assume content[0] (a thinking
+    // block can precede it). See project rules, Principle 3.
+    const reportTextBlock = (anthropicData.content || []).find(b => b.type === 'text');
+    if (!reportTextBlock || !reportTextBlock.text) {
       throw new Error('Anthropic API returned empty content');
     }
 
-    reportHtml = anthropicData.content[0].text.trim();
+    reportHtml = reportTextBlock.text.trim();
 
     if (!reportHtml.startsWith('<!DOCTYPE') && !reportHtml.startsWith('<html')) {
       throw new Error('Anthropic did not return valid HTML. Got: ' + reportHtml.substring(0, 200));
@@ -792,6 +796,18 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     console.error('Brevo email error:', err);
   }
 
+  // ── Step 10: CRR per-risk field tagging (§3.18) — non-fatal ──
+  // Runs after the delivery email so it never delays the customer.
+  // If it fails, the Concept Readiness Review tags on demand instead.
+  if (reportJson) {
+    try {
+      await ensureTagged(supabase, reportId);
+      console.log(`[CRR] Risk field tagging stored for ${reportId}`);
+    } catch (err) {
+      console.error('[CRR] Risk field tagging failed (non-fatal, will run on demand):', err.message);
+    }
+  }
+
   console.log(`[processReport] Complete. reportId: ${reportId}${hasBP ? `, bpReportId: ${bpReportId}` : ''}${hasMenu ? `, menuReportId: ${menuReportId}` : ''}`);
 }
 
@@ -893,11 +909,12 @@ ${reportHtml.substring(0, 60000)}`,
 
   const extractionData = await extractionResponse.json();
 
-  if (!extractionResponse.ok || !extractionData.content?.[0]?.text) {
+  const extractionTextBlock = (extractionData.content || []).find(b => b.type === 'text');
+  if (!extractionResponse.ok || !extractionTextBlock || !extractionTextBlock.text) {
     throw new Error('Extraction API error: ' + JSON.stringify(extractionData).substring(0, 200));
   }
 
-  const jsonText = extractionData.content[0].text.trim()
+  const jsonText = extractionTextBlock.text.trim()
     .replace(/^```json\s*/i, '')
     .replace(/^```\s*/i, '')
     .replace(/```\s*$/i, '');
