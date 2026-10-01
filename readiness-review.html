@@ -257,7 +257,7 @@ footer.foot-bottom a{color:var(--muted);margin:0 8px;}
     </section>
 
     <section id="historySec" class="hidden history">
-      <h2 class="sec"><span data-en>Resolved by your changes</span><span data-fr>Résolus par vos modifications</span></h2>
+      <h2 class="sec"><span data-en>No longer flagged</span><span data-fr>Plus signalés</span></h2>
       <div id="historyList"></div>
     </section>
 
@@ -452,9 +452,11 @@ function renderNotices(){
   }
   var stale = s.items.filter(function(i){ return i.decision && i.decision.stale; }).length;
   if (stale && s.reassessment.status !== 'running') {
-    h += '<div class="notice bad"><strong>' + t(stale + ' risk(s) still flagged after your changes', stale + ' risque(s) toujours signalé(s) après vos modifications') + '</strong>'
-      + t('The re-assessment still sees these risks. Decide again: change more, accept the remaining risk, or correct the facts.',
-          'La réévaluation voit toujours ces risques. Décidez à nouveau : modifier davantage, accepter le risque restant ou corriger les faits.') + '</div>';
+    h += '<div class="notice bad"><strong>' + (stale === 1
+        ? t('1 plan change did not fully remove its risk', '1 modification du plan n\'a pas entièrement levé son risque')
+        : t(stale + ' plan changes did not fully remove their risks', stale + ' modifications du plan n\'ont pas entièrement levé leurs risques')) + '</strong>'
+      + t('You changed your answers for these items, and the re-assessment still flags them (marked “Decide again”). Change more, accept what remains, or correct the facts. All your other decisions were kept.',
+          'Vous avez modifié vos réponses pour ces points, et la réévaluation les signale encore (marqués « À redécider »). Modifiez davantage, acceptez le risque restant ou corrigez les faits. Toutes vos autres décisions ont été conservées.') + '</div>';
   }
   $('topNotices').innerHTML = h;
 }
@@ -624,6 +626,7 @@ function decisionSummary(it){
     if (!fs.length && it.fields) fs = it.fields.filter(function(f){ return STATE.fields[f] && STATE.fields[f].amended; }).map(function(f){ return tl(STATE.fields[f].label) + ': ' + esc(STATE.fields[f].value_display); });
     if (fs.length) h += '<div class="row">' + fs.join('<br>') + '</div>';
   }
+  if (d.carried) h += '<div class="row hint" style="margin-top:0;">' + t('Decision kept from your previous review', 'Décision conservée de votre revue précédente') + '</div>';
   if (d.rationale) h += '<div class="row q">“' + esc(d.rationale) + '”</div>';
   if (d.pre_conditions && d.pre_conditions.length) h += '<div class="row">' + t(d.pre_conditions.length + ' commitment(s) before opening', d.pre_conditions.length + ' engagement(s) avant ouverture') + '</div>';
   return h;
@@ -763,8 +766,8 @@ function renderHistory(){
   $('historySec').classList.toggle('hidden', !hs.length);
   $('historyList').innerHTML = hs.map(function(x){
     return '<div class="card done"><div class="card-head"><div><div class="t">' + esc(x.title) + '</div><div class="meta">'
-      + t('No longer flagged after re-assessment', 'N\'est plus signalé après réévaluation') + '</div></div>'
-      + '<span class="state-pill done">' + t('Resolved', 'Résolu') + '</span></div></div>';
+      + t('The latest re-assessment no longer lists this item. Your decision stays on record.', 'La dernière réévaluation ne mentionne plus ce point. Votre décision reste enregistrée.') + '</div></div>'
+      + '<span class="state-pill done">' + t('Not flagged', 'Non signalé') + '</span></div></div>';
   }).join('');
 }
 
