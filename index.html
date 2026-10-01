@@ -167,14 +167,18 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 .bg-img img{width:100%;height:100%;object-fit:cover;}
 .hero .bg-img{background:var(--black);}
 .hero .bg-img img{object-fit:cover;object-position:75% center;}
-@media(max-width:760px){
-  .hero .bg-img img{object-fit:contain;object-position:center;}
-}
 .bg-overlay{position:absolute;inset:0;z-index:1;}
 .hero .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);}
 .hero .wrap{position:relative;z-index:2;}
 .hero .wash.w1{width:640px;height:640px;top:-10%;right:-15%;background:radial-gradient(circle,var(--copper) 0%,transparent 70%);z-index:1;}
 .hero .wash.w2{width:560px;height:560px;bottom:-15%;left:-10%;background:radial-gradient(circle,var(--navy-bright) 0%,transparent 70%);opacity:.35;z-index:1;}
+@media(max-width:760px){
+  /* Mobile: photo becomes a band at the top, cropped on the wine glasses; text starts below it */
+  .hero{align-items:flex-start;padding-top:calc(30px + 82vw);}
+  .hero .bg-img{bottom:auto;height:calc(70px + 82vw);}
+  .hero .bg-img img{object-fit:cover;object-position:84% 62%;}
+  .hero .bg-overlay{background:linear-gradient(180deg,rgba(10,14,24,.45) 0px,rgba(10,14,24,0) 90px,rgba(10,14,24,0) calc(70px + 52vw),rgba(10,14,24,.85) calc(70px + 72vw),#0a0e18 calc(70px + 82vw),#0a0e18 100%),linear-gradient(90deg,rgba(10,14,24,.55) 0%,rgba(10,14,24,0) 45%);}
+}
 .eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:26px;display:flex;gap:10px;align-items:center;}
 .eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
 .hero h1{font-size:clamp(46px,6.6vw,88px);line-height:1.03;letter-spacing:-.01em;max-width:820px;}
@@ -189,7 +193,7 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
 .hero-strip .num{font-family:'Cormorant Garamond';font-size:32px;color:var(--copper-bright);}
 .hero-strip .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;max-width:16ch;}
 @media(max-width:640px){
-  .hero{padding-top:110px;padding-bottom:20px;}
+  .hero{padding-bottom:20px;}
   .hero-ctas{flex-direction:column;align-items:stretch;gap:14px;}
   .hero-ctas .btn-primary{text-align:center;}
   .hero-strip{gap:28px 40px;margin-top:56px;padding-bottom:40px;}
@@ -418,8 +422,8 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
 
 <!-- HERO -->
 <section class="hero tint-a">
-  <div class="bg-img"><img src="assets/vision-to-table.jpg" alt="Za3fran — hands-on craft"></div>
-  <div class="bg-overlay" style="background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);"></div>
+  <div class="bg-img"><img src="assets/hero-new.jpg" alt="Two glasses of white wine on a wooden table in warm evening light" data-alt-en="Two glasses of white wine on a wooden table in warm evening light" data-alt-fr="Deux verres de vin blanc sur une table en bois, dans une lumière chaude de fin de journée"></div>
+  <div class="bg-overlay"></div>
   <div class="grain"></div>
   <div class="wash w1"></div>
   <div class="wash w2"></div>
@@ -724,12 +728,15 @@ document.getElementById('langtoggle').addEventListener('click', e=>{
   document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
   document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
   localStorage.setItem('za3fran_lang', b.dataset.l);
+  setImgAlts(b.dataset.l);
 });
+function setImgAlts(l){ document.querySelectorAll('img[data-alt-fr]').forEach(i=>{ i.alt = l === 'fr' ? i.dataset.altFr : i.dataset.altEn; }); }
 (function(){
   const saved = localStorage.getItem('za3fran_lang');
   if (saved === 'fr') {
     document.body.classList.add('lang-fr');
     document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === 'fr'));
+    setImgAlts('fr');
   }
 })();
 
