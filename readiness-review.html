@@ -440,8 +440,8 @@ function renderNotices(){
   }
   if (s.reassessment.status === 'running') {
     h += '<div class="notice info"><strong>' + t('Re-assessing your concept', 'Réévaluation de votre concept en cours') + '</strong>'
-      + t('The Validator is rewriting your report on the updated answers. This takes 3 to 6 minutes. You can leave this page; your results will be here when you come back.',
-          'Le Validator réécrit votre rapport à partir des réponses mises à jour. Cela prend 3 à 6 minutes. Vous pouvez quitter cette page : vos résultats seront là à votre retour.') + '</div>';
+      + t('The Validator is rewriting your report on the updated answers. This usually takes 8 to 10 minutes. You can leave this page; your results will be here when you come back.',
+          'Le Validator réécrit votre rapport à partir des réponses mises à jour. Cela prend généralement 8 à 10 minutes. Vous pouvez quitter cette page : vos résultats seront là à votre retour.') + '</div>';
   } else if (s.reassessment.status === 'error') {
     h += '<div class="notice bad"><strong>' + t('The re-assessment did not complete', 'La réévaluation n\'a pas abouti') + '</strong>'
       + t('Nothing was charged and your changes are kept. Start it again from the bar at the bottom.', 'Rien n\'a été décompté et vos modifications sont conservées. Relancez-la depuis la barre en bas de page.') + '</div>';
@@ -784,7 +784,7 @@ function renderBar(){
 
   var rem = s.regeneration.remaining, lim = s.regeneration.limit;
   if (s.reassessment.status === 'running') {
-    right = '<button class="btn" disabled><span class="spinner"></span>' + t('Re-assessing…', 'Réévaluation…') + '</button><div class="sub">' + t('Usually 3 to 6 minutes', 'En général 3 à 6 minutes') + '</div>';
+    right = '<button class="btn" disabled><span class="spinner"></span>' + t('Re-assessing…', 'Réévaluation…') + '</button><div class="sub">' + t('Usually 8 to 10 minutes', 'En général 8 à 10 minutes') + '</div>';
   } else if (s.reassessment.pending) {
     right = rem > 0
       ? '<button class="btn" id="reassessBtn">' + t('Re-assess my concept', 'Réévaluer mon concept') + '</button><div class="sub">'
