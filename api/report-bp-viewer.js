@@ -67,14 +67,43 @@ function injectToolbar(html, accessCode) {
 <div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
   This business plan was AI-generated using Za3fran's F&amp;B expertise frameworks — please review for accuracy before acting on it.
 </div>
-<div style="height:78px;"></div>
-<style>@media print { .za3fran-toolbar, .za3fran-toolbar + div { display: none !important; } }</style>`;
+<div class="za3fran-print-spacer" style="height:78px;"></div>
+<style>@media print { .za3fran-toolbar, .za3fran-toolbar + div, .za3fran-print-spacer { display: none !important; } }</style>`;
 
-  if (/<body[^>]*>/i.test(html)) {
-    return html.replace(/<body[^>]*>/i, (match) => match + toolbar);
-  }
-  return toolbar + html;
+  let out = /<body[^>]*>/i.test(html)
+    ? html.replace(/<body[^>]*>/i, (match) => match + toolbar)
+    : toolbar + html;
+  // Deterministic print fixes, appended last so they win over the
+  // model-generated print CSS. Applies to every BP, old and new.
+  out = /<\/body>/i.test(out) ? out.replace(/<\/body>/i, PRINT_FIX + '</body>') : out + PRINT_FIX;
+  return out;
 }
+
+// Print-layout fixes for generated Business Plans (A4, 1cm margins):
+//  1. Cover = exactly one printable page (277mm). The model sizes it at
+//     100vh, which is the full sheet, so 2cm spilled onto page 2 and left
+//     it blank apart from a dark strip.
+//  2. Section 7 differentiation block always starts on its own page (as the
+//     prompt's page budget intends). It is a CSS grid, and Chrome ignores
+//     break-inside/break-after:avoid on grid items, so its heading could
+//     end up alone at the bottom of the competitor-table page.
+const PRINT_FIX = `<style id="za3fran-print-fix">
+@media print {
+  @page { size: A4; margin: 1cm; }
+  .cover-section {
+    height: 277mm !important; min-height: 0 !important; max-height: 277mm !important;
+    overflow: hidden !important; box-sizing: border-box !important; margin: 0 !important;
+    break-after: page !important; page-break-after: always !important;
+  }
+  .diff-block { break-before: page !important; page-break-before: always !important; }
+  section h3:has(+ .diff-block), section h3:has(+ p + .diff-block) {
+    break-before: page !important; page-break-before: always !important;
+  }
+  section h3 + .diff-block, section h3 + p + .diff-block {
+    break-before: auto !important; page-break-before: auto !important;
+  }
+}
+</style>`;
 
 export default async function handler(req, res) {
   const reportId = req.query.id;
