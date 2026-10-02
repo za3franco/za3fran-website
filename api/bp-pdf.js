@@ -12,8 +12,6 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
-import chromium from '@sparticuz/chromium';
-import puppeteer from 'puppeteer-core';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -79,6 +77,10 @@ export default async function handler(req, res) {
   const started = Date.now();
   let browser;
   try {
+    // @sparticuz/chromium and puppeteer-core are ESM-only; this project's functions
+    // are CommonJS, so they must be loaded with dynamic import().
+    const { default: chromium } = await import('@sparticuz/chromium');
+    const { default: puppeteer } = await import('puppeteer-core');
     browser = await puppeteer.launch({
       args: await puppeteer.defaultArgs({ args: chromium.args, headless: 'shell' }),
       executablePath: await chromium.executablePath(),
