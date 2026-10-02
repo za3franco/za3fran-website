@@ -6,7 +6,8 @@
     "api/generate-bp.js":           { "maxDuration": 450 },
     "api/webhook-menu-engineer.js": { "maxDuration": 300 },
     "api/generate-menu.js":         { "maxDuration": 600 },
-    "api/crr-reassess.js":          { "maxDuration": 800 }
+    "api/crr-reassess.js":          { "maxDuration": 800 },
+    "api/bp-pdf.js":                { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" }
   },
   "rewrites": [
     { "source": "/api/currency",              "destination": "/api/currency.js" },
