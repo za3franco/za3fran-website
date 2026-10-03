@@ -165,7 +165,7 @@ alter table brain_parameter_values enable row level security;
 alter table brain_review_queue     enable row level security;
 alter table project_assumptions    enable row level security;
 
--- 6. Catalogue seed: 34 parameters
+-- 6. Catalogue seed: 39 parameters (30 local + 9 format benchmarks)
 insert into brain_parameters (key, scope, grp, level, label_en, label_fr, unit, value_type, qualifier_kind, fav, refresh_months, regulatory, engine_path) values
  ('tax.corporate_brackets',      'local','tax','country','Corporate tax brackets','Barème de l''impôt sur les sociétés','json','json',null,null,12,true,'tax.corporate_brackets'),
  ('tax.minimum_tax_pct',         'local','tax','country','Minimum tax (% of revenue)','Cotisation minimale (% du CA)','pct','number',null,'low',12,true,'tax.minimum_tax_pct_of_revenue'),
