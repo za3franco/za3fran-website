@@ -59,4 +59,4 @@ benchmark with no source. Roster and investment are founder-only until staffing 
 - `finance.guarantee_cap`: a loan above it raises `LOAN_ABOVE_GUARANTEE_CAP` (warning).
 
 ## Pending
-Depreciation lives by category (`DEPRECIATION_YEARS`) are proposals awaiting Arnaud's review.
+Nothing on the method. Depreciation lives by category (`DEPRECIATION_YEARS`) were approved by Arnaud on 8 Oct 2026, together with the first recommended list (15 Brain values now verified).
