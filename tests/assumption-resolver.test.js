@@ -143,3 +143,96 @@ test('rows for project_assumptions satisfy the table constraints and are unique 
 test('deterministic: same inputs, same resolution', () => {
   assert.deepEqual(run(), res);
 });
+
+/* --------------------------- ar-1.1.0 --------------------------- */
+
+test('ar-1.1.0 — Ramadan choice is required', () => {
+  const r = run({ intake: { ...T.intake, ramadan: undefined } });
+  assert.equal(r.status, 'blocked');
+  assert.ok(r.gaps.some((g) => g.path === 'calendar.ramadan' && g.severity === 'blocking'));
+});
+
+test('ar-1.1.0 — month shares come from the Ramadan windows (dates inclusive)', () => {
+  const sh = R.ramadanShares([{ start: '2028-01-28', end: '2028-02-26' }]);
+  assert.equal(Math.round(sh['2028-01'] * 31), 4);                 // 28-31 Jan
+  assert.equal(Math.round(sh['2028-02'] * 29), 26);                // 1-26 Feb (leap year)
+});
+
+test('ar-1.1.0 — closed: share of the month open; other dated events still multiply', () => {
+  const r = run({ intake: { ...T.intake, ramadan: 'closed' } });
+  const d = r.inputs.calendar.dated_factors;
+  assert.equal(d['2028-01'], Math.round((1 - 4 / 31) * 1e4) / 1e4);
+  assert.equal(d['2028-02'], Math.round((1 - 26 / 29) * 0.6 * 1e4) / 1e4); // Brain test event 0.6 in 2028-02
+  assert.equal(typeof d['2028-01'], 'number');                       // closure is a choice, not a range
+});
+
+test('ar-1.1.0 — reduced: trading-level range reaches the scenarios', () => {
+  const d = res.inputs.calendar.dated_factors['2029-02'];
+  assert.equal(d.fav, 'high');
+  assert.ok(d.low < d.base && d.base < d.high);
+  const sc = E.runScenarios(res.inputs);
+  const feb = (k) => sc[k].months.find((m) => m.month === '2029-02').revenue;
+  assert.ok(feb('conservative') < feb('optimistic'));
+});
+
+test('ar-1.1.0 — normal: no Ramadan factors at all', () => {
+  const r = run({ intake: { ...T.intake, ramadan: 'normal' } });
+  assert.deepEqual(r.inputs.calendar.dated_factors, { '2028-02': 0.6 });
+});
+
+test('ar-1.1.0 — seasonality stored as {base, low, high} becomes per-month ranges', () => {
+  const brain = { parameters: T.parameters, values: clone(T.values) };
+  brain.values.find((v) => v.parameter_key === 'calendar.seasonality').value_json = { base: Array(12).fill(1), low: Array(12).fill(0.9), high: Array(12).fill(1.1) };
+  const r = run({ brain });
+  assert.deepEqual(r.inputs.calendar.seasonality[7], { base: 1, low: 0.9, high: 1.1, fav: 'high' });
+  assert.ok(r.impact.some((x) => x.path_label === 'calendar.seasonality'));
+  const sc = E.runScenarios(r.inputs);
+  for (const k of ['base', 'conservative', 'optimistic']) assert.deepEqual(sc[k].checks, { ok: true, errors: [] }, k);
+});
+
+test('ar-1.1.0 — rent escalation from the Brain reaches the engine (ar-1.0.0 bug)', () => {
+  const brain = { parameters: T.parameters, values: [...clone(T.values),
+    { ...clone(T.values[0]), id: 'v-esc', parameter_key: 'property.rent_escalation', value_json: { escalation_pct: 0.1, escalation_every_years: 3 } }] };
+  const r = run({ brain });
+  assert.equal(r.inputs.rent.escalation_pct, 0.1);
+  assert.equal(r.inputs.rent.escalation_every_years, 3);
+});
+
+test('ar-1.1.0 — minimum-tax exemption applies to a new company only', () => {
+  assert.equal(res.inputs.tax.minimum_tax_exempt_months, 36);
+  const r = run({ intake: { ...T.intake, new_company: false } });
+  assert.equal(r.inputs.tax.minimum_tax_exempt_months, undefined);
+});
+
+test('ar-1.1.0 — maintenance capex reserve from the format benchmark, as a range', () => {
+  assert.deepEqual(res.inputs.maintenance_capex.pct_of_revenue, { base: 0.025, low: 0.015, high: 0.04, fav: 'low' });
+});
+
+test('ar-1.1.0 — estimate lines from the intake are labelled estimate, not founder', () => {
+  const intake = clone(T.intake);
+  intake.investment[0] = { ...intake.investment[0], source: 'estimate', source_name: 'Za3fran research', note: '170 m2 x 3,000/m2' };
+  intake.roster[0] = { ...intake.roster[0], source: 'estimate', count_low: 1, count_high: 1 };
+  intake.roster.push({ role: 'founder_floor', brain_role: 'manager', count: 1, source: 'estimate' });
+  const r = run({ intake });
+  const a = (p) => r.assumptions.find((x) => x.parameter_key === p);
+  assert.equal(a('investment.fitout').source_class, 'estimate');
+  assert.equal(a('investment.fitout').source_name, 'Za3fran research');
+  assert.equal(a('labour.roster.chef.count').source_class, 'estimate');
+  assert.equal(a('labour.roster.cook.count').source_class, 'founder');
+  assert.equal(r.inputs.labour.roster.find((x) => x.role === 'founder_floor').monthly_gross.base, 12000); // test Brain manager salary
+  for (const x of R.dbRows(r, { projectId: 'p', runId: 'r' })) assert.ok(['founder', 'estimate', 'published', 'za3fran_verified'].includes(x.source_class));
+});
+
+test('ar-1.1.0 — intake budget overrides the concept budget as envelope', () => {
+  const r = run({ intake: { ...T.intake, budget: 2400000 } });
+  assert.equal(r.inputs.funding.envelope, 2400000);
+});
+
+test('TTC convention: the ticket is priced to the guest; revenue is ticket / (1 + VAT)', () => {
+  const inp = E.pickScenario(res.inputs, 'base', 'inputs');
+  inp.services = [{ id: 'dinner', days: [3], turns: 1, occupancy: 0.5, ticket: 440, bev_share: 0 }];
+  inp.calendar = {}; inp.ramp = { months_to_cruise: 0, start_factor: 1 }; inp.growth = { cost_pct: 0, wage_pct: 0, price_pct: 0 };
+  const p = E.computePlan(inp);
+  const m = p.months[0];
+  assert.equal(m.revenue, Math.round(m.covers * 440 / 1.1));       // 10% VAT on food in the test Brain
+});

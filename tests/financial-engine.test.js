@@ -159,3 +159,60 @@ test('break-even: revenue at break-even gives EBIT ≈ 0', () => {
   assert.ok(Math.abs(ebitAtBe) < 5);
   assert.ok(be.operating.revenue_year < a.revenue);
 });
+
+/* ---- fe-1.1.0: minimum-tax exemption for a new company (Morocco: 36 months, CGI art. 144-I-D) ---- */
+
+test('fe-1.1.0 — no exemption given: minimum tax unchanged from fe-1.0.0', () => {
+  for (const a of base.annual) {
+    const ms = base.months.filter((m) => m.year === a.year);
+    assert.equal(a.minimum_tax, Math.round(Math.max(replay.tax.minimum_tax_pct_of_revenue * sum(ms, (m) => m.revenue),
+      sum(ms, (m) => m.revenue) > 0 ? (replay.tax.minimum_tax_amount || 0) : 0)));
+  }
+});
+
+test('fe-1.1.0 — 36-month exemption: no minimum tax in years 1 to 3; tax never rises', () => {
+  const inp = clone(replay); inp.tax.minimum_tax_exempt_months = 36; inp.tax.minimum_tax_amount = 3000;
+  const p = E.computePlan(inp);
+  assert.deepEqual(p.checks, { ok: true, errors: [] });
+  for (const a of p.annual) {
+    assert.equal(a.minimum_tax, 0, `year ${a.year}`);
+    assert.ok(a.corporate_tax <= base.annual[a.year - 1].corporate_tax, `year ${a.year} tax cannot rise`);
+  }
+});
+
+test('fe-1.1.0 — 18-month exemption: year 2 minimum is based on its last 6 months only', () => {
+  const inp = clone(replay); inp.tax.minimum_tax_exempt_months = 18;
+  const p = E.computePlan(inp);
+  const late = sum(p.months.filter((m) => m.index >= 18 && m.index < 24), (m) => m.revenue);
+  assert.equal(p.annual[1].minimum_tax, Math.round(inp.tax.minimum_tax_pct_of_revenue * late));
+  assert.equal(p.annual[0].minimum_tax, 0);
+  assert.equal(p.annual[2].minimum_tax, base.annual[2].minimum_tax);
+});
+
+test('fe-1.1.0 — method version bumped', () => assert.equal(E.METHOD_VERSION, 'fe-1.1.0'));
+
+/* ---- fe-1.1.0: maintenance capex reserve (cash only) ---- */
+test('fe-1.1.0 — capex reserve: P&L unchanged; cash, DSCR and payback lower', () => {
+  const inp = clone(replay); inp.maintenance_capex = { pct_of_revenue: 0.02 };
+  const p = E.computePlan(inp);
+  assert.deepEqual(p.checks, { ok: true, errors: [] });
+  p.annual.forEach((a, i) => {
+    const b = base.annual[i];
+    assert.equal(a.ebitda, b.ebitda); assert.equal(a.net_result, b.net_result);   // not a P&L line
+    assert.equal(a.maintenance_capex, Math.round(sum(p.months.filter((m) => m.year === a.year), (m) => m.maintenance_capex)));
+    assert.ok(a.maintenance_capex > 0);
+    if (b.dscr != null) assert.ok(a.dscr < b.dscr, `Y${a.year} DSCR must fall`);
+  });
+  const last = (o) => o.cash_plan[o.cash_plan.length - 1].balance;
+  assert.ok(last(p) < last(base));
+  assert.ok(p.breakeven[1].cash.revenue_year > base.breakeven[1].cash.revenue_year);
+  assert.equal(p.breakeven[1].operating.revenue_year, base.breakeven[1].operating.revenue_year);
+});
+
+test('fe-1.1.0 — capex reserve start_month: nothing set aside before it', () => {
+  const inp = clone(replay); inp.maintenance_capex = { pct_of_revenue: 0.02, start_month: 12 };
+  const p = E.computePlan(inp);
+  assert.equal(p.annual[0].maintenance_capex, 0);
+  assert.ok(p.annual[1].maintenance_capex > 0);
+  assert.deepEqual(p.checks, { ok: true, errors: [] });
+});

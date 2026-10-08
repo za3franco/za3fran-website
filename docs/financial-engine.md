@@ -1,4 +1,4 @@
-# Financial engine — method fe-1.0.0
+# Financial engine — method fe-1.1.0
 
 `lib/financial-engine.js` · tests: `node --test tests/*.test.js` · status: **built, not yet wired to any tool**
 
@@ -19,15 +19,21 @@ every total is the sum of the rounded lines shown; covers are whole guests and r
 - **Payroll** from one roster (count × gross × (1 + extra months/12) × (1 + employer charges)), so the staffing
   section and the P&L cannot disagree. `annual_total` exists only to replay old plans.
 - **Loans:** monthly annuity, optional interest-only grace; schedule closes exactly to zero.
-- **DSCR** = (EBITDA − corporate tax) / (interest + principal), per operating year.
+- **DSCR** = (EBITDA − corporate tax − maintenance capex reserve) / (interest + principal), per operating year.
+- **Maintenance capex reserve** (fe-1.1.0, `maintenance_capex.pct_of_revenue`, optional `start_month`): cash set
+  aside each month to renew equipment. Not a P&L expense (depreciation already charges wear); it reduces the cash
+  plan, the DSCR, cash break-even and payback.
+- **Minimum tax** (fe-1.1.0): `tax.minimum_tax_exempt_months` exempts the first N months of trading (Morocco: 36
+  for a new company); a year straddling the end is taxed on its post-exemption revenue only.
 - **Cash plan:** pre-opening month (funding in, investment out; cash reserve stays in the bank) + 24 months;
   tax paid after a lag; supplier credit days.
 - **Break-even:** operating (EBIT = 0) and cash (debt service covered), in revenue/month, covers/open day, occupancy.
-- **Payback** on cumulative after-tax EBITDA vs total investment.
+- **Payback** on cumulative after-tax EBITDA, net of the capex reserve, vs total investment.
 
 ## Simplifications (state them in every plan)
 Operating years run 12 months from opening; VAT cash timing not modelled; capex excl. recoverable VAT; one
-annual tax payment.
+annual tax payment. The conservative scenario takes the unfavourable end of EVERY range at once, which is harsher
+than any single plausible downside (see Canaille 8 Oct 2026 run).
 
 ## Red-flag rules (approved by Arnaud, 3 Oct 2026)
 cruise occupancy > 85% per service (critical ≥ 95%) · capacity cap hit · funding gap (base critical, high case
@@ -41,3 +47,10 @@ The plan's own stated assumptions, run through the engine. Arithmetic errors fou
 labour cost per cover from a meaningless ratio. Assumption errors the engine now flags: 94–100% seat occupancy
 at every service including weekday lunches; one 450 MAD ticket for lunch and dinner; 450 treated as excl. VAT;
 year-3 covers (87/day) physically impossible at one turn; payback under one year.
+
+## Canaille live run, 8 Oct 2026 (tests/fixtures/canaille-live-2026-10-08.js, fe-1.1.0 + ar-1.1.0)
+Live Brain snapshot + Arnaud's intake + Za3fran estimates (roster, investment). Opening 2027-10, closed in Ramadan,
+rent 30,000/month, 20% equity on total uses 1,910,000. All invariants hold in every scenario. Findings: with the
+founder's 100 covers/day (capped at 85%) the base case shows 37.5% EBITDA and a 1.3-year payback (flagged); with
+the Brain occupancy benchmark it shows 28.8% and 2.3 years, with cash below zero in Feb 2028 (Ramadan closure);
+the all-worst-ends conservative case loses money every year.

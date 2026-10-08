@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.0.0
+# Assumption resolver — ar-1.1.0
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -28,6 +28,20 @@ shifts total investment, or year-2 operating break-even in revenue or covers, by
 ## Blocking gaps (plan cannot be generated)
 Opening month, seats, services, roster, investment lines, rent (offer or surface), equity, and any required tax or
 benchmark with no source. Roster and investment are founder-only until staffing and pre-opening benchmarks exist.
+
+## ar-1.1.0 (8 Oct 2026)
+- **Ramadan is a per-project choice**, required in the intake: `closed` (level 0; rent, payroll and fixed costs
+  continue), `reduced` (Brain `calendar.ramadan_trading_level`, a range that reaches the scenarios) or `normal`.
+  Month factor = 1 − share of the month inside `calendar.ramadan_windows` × (1 − level). Other dated events from
+  the Brain still multiply. The per-city month maps are retired (superseded in Supabase).
+- **Seasonality** stored as `{base, low, high}` arrays becomes per-month ranges (one impact leaf for the whole curve).
+- **Rent escalation** reads `{escalation_pct, escalation_every_years}` (ar-1.0.0 silently dropped it).
+- **Minimum-tax exemption** (`tax.minimum_tax_exempt_months`) unless `intake.new_company === false`.
+- **Maintenance capex reserve** from `benchmark.maintenance_capex_pct` (or `intake.maintenance_capex_pct`).
+- **Estimate labelling:** intake roster and investment lines may carry `source: 'estimate'` (+ `source_name`,
+  `note`, ranges); the appendix then shows *Estimate*, never *Founder*. Roster lines may set `brain_role` for the
+  salary lookup (e.g. a founder working the floor priced as `manager`). Roster headcounts are now recorded.
+- **Funding envelope:** `intake.budget` overrides the concept budget.
 
 ## Pending
 Depreciation lives by category (`DEPRECIATION_YEARS`) are proposals awaiting Arnaud's review.

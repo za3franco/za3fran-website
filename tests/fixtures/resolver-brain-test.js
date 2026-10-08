@@ -35,6 +35,11 @@ const parameters = [
   P('benchmark.utilities_pct', 'format', 'benchmark', 'pct', 'low'),
   P('benchmark.other_opex_pct', 'format', 'benchmark', 'pct', 'low'),
   P('benchmark.marketing_pct', 'format', 'benchmark', 'pct', 'low'),
+  // ar-1.1.0
+  P('calendar.ramadan_windows', 'local', 'calendar', 'json', null),
+  P('calendar.ramadan_trading_level', 'local', 'calendar', 'factor', 'high'),
+  P('tax.minimum_tax_exempt_months', 'local', 'tax', 'months', 'high', true),
+  P('benchmark.maintenance_capex_pct', 'format', 'benchmark', 'pct', 'low'),
 ].map((p) => ({ ...p, level: p.scope === 'local' ? 'country' : null }));
 
 const MA = 'm-ma', CASA = 'm-casa', GAUTHIER = 'm-gauthier';
@@ -87,6 +92,11 @@ const values = [
   V('benchmark.utilities_pct', F, { cls: 'estimate', fields: num(0.035, 0.03, 0.045) }),
   V('benchmark.other_opex_pct', F, { cls: 'estimate', fields: num(0.05, 0.04, 0.07) }),
   V('benchmark.marketing_pct', F, { cls: 'estimate', fields: num(0.02, 0.015, 0.03) }),
+  // ar-1.1.0 (TEST DATA: window shapes only)
+  V('calendar.ramadan_windows', { market: MA }, { fields: { value_json: [{ start: '2028-01-28', end: '2028-02-26' }, { start: '2029-01-16', end: '2029-02-14' }] } }),
+  V('calendar.ramadan_trading_level', { market: MA }, { cls: 'estimate', fields: num(0.6, 0.5, 0.8) }),
+  V('tax.minimum_tax_exempt_months', { market: MA }, { fields: num(36) }),
+  V('benchmark.maintenance_capex_pct', F, { cls: 'estimate', fields: num(0.025, 0.015, 0.04) }),
 ];
 
 const market = { currency: 'MAD', chain: [{ id: GAUTHIER, level: 'district' }, { id: CASA, level: 'city' }, { id: MA, level: 'country' }] };
@@ -94,7 +104,7 @@ const market = { currency: 'MAD', chain: [{ id: GAUTHIER, level: 'district' }, {
 // Canaille-shaped founder data (effective concept values are strings, as loadEffectiveConcept returns them)
 const concept = { seats: '50', ticket: '450', covers: '100', budget: '1700000', city: 'Casablanca' };
 const intake = {
-  opening: '2027-09', surface_m2: 160, alcohol: true,
+  opening: '2027-09', surface_m2: 160, alcohol: true, ramadan: 'reduced',
   services: [{ id: 'lunch', days: [2, 3, 4, 5] }, { id: 'dinner', days: [3, 4, 5, 6] }],
   roster: [{ role: 'chef', count: 1 }, { role: 'cook', count: 3 }, { role: 'server', count: 4 }, { role: 'manager', count: 1, monthly_gross: 13000 }],
   investment: [
