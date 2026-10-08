@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.2.0
+# Assumption resolver — ar-1.3.0
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -51,6 +51,12 @@ benchmark with no source. Roster and investment are founder-only until staffing 
   `operating.fixed_annual` (accounting, music_rights, security, pest_control, telecom_bank) and one variable line per
   qualifier of `operating.revenue_pct` (laundry). Labels are bilingual (`LINE_LABELS`).
 - **`intake.covers_source: 'benchmark'`**: the Brain occupancy is the base instead of the concept covers/day.
+
+## ar-1.3.0 (8 Oct 2026)
+- `intake.shareholders [{label, amount, source?, note?}]` sets equity (sum) and reaches the engine's shareholders.
+- `intake.loan.programme` (e.g. `intelaka`): a programme-specific Brain rate or term wins over the standard value
+  whatever its source class; without one, the standard value is used.
+- `finance.guarantee_cap`: a loan above it raises `LOAN_ABOVE_GUARANTEE_CAP` (warning).
 
 ## Pending
 Depreciation lives by category (`DEPRECIATION_YEARS`) are proposals awaiting Arnaud's review.

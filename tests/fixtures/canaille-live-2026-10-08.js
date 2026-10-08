@@ -42,6 +42,7 @@ const parameters = [
   P('tax.drinks_outlet_pct', 'local', 'low', 'pct', true), P('tax.communal_services_pct', 'local', 'low', 'pct', true),
   P('labour.workplace_accident_pct', 'local', 'low', 'pct'), P('labour.staff_meal_cost', 'local', 'low', 'currency'),
   P('operating.fixed_annual', 'local', 'low', 'currency'), P('operating.revenue_pct', 'format', 'low', 'pct'),
+  P('finance.guarantee_cap', 'local', null, 'currency'),
 ];
 
 const V = (id, key, market, q, n, lo, hi, json, cls) => ({
@@ -108,6 +109,10 @@ const values = [
   V('094cdff4-2396-474e-88e3-171067bedfb1', 'operating.fixed_annual', MA, 'pest_control', 6000, 3600, 12000, null, 'estimate'),
   V('24f20458-bd8f-4da7-b200-d22f2215b0e8', 'operating.fixed_annual', MA, 'telecom_bank', 9600, 6000, 18000, null, 'estimate'),
   F('121ae799-ab81-4e9a-9dfe-df77553b1112', 'operating.revenue_pct', 'laundry', 0.005, 0.003, 0.01),
+  // added later on 8 Oct 2026 (ar-1.3.0 funding)
+  V('394235e0-13bc-41bf-b19f-203ab1d003df', 'finance.guarantee_cap', MA, '', 1200000, null, null, null, 'published'),
+  V('4e01ecd7-78af-4a9e-bd29-511d325b4cf8', 'finance.sme_lending_rate', MA, 'intelaka', 0.02, null, null, null, 'published'),
+  V('0213c44d-9855-4964-bd70-55b3152fcdb6', 'finance.loan_term_months', MA, 'intelaka', 84, 60, 144, null, 'estimate'),
 ];
 
 const market = { currency: 'MAD', chain: [{ id: GAUTHIER, level: 'district' }, { id: CASA, level: 'city' }, { id: MA, level: 'country' }] };
@@ -150,7 +155,10 @@ const intake = {
     est('initial_stock', 'Stock initial / Opening stock', 'initial_stock', 150000, 100000, 220000, 'Mainly about 900 bottles for 50-60 references; no Moroccan wholesale wine prices found'),
     est('contingency', 'Imprévus / Contingency', 'contingency', 120000, 60000, 180000, 'About 10% of works, equipment and furniture (a Moroccan works guide recommends 15%)'),
   ],
-  equity_share: 0.2,               // Arnaud: 20% equity; the run script sizes equity and loan from total uses
+  // Funding (Arnaud, 8 Oct 2026): the founder brings 20% of total uses; the bank loan is capped at the
+  // state-guarantee ceiling (1.2M); a partner takes shares for the rest. The run script sizes the amounts.
+  founder_share: 0.2,
+  loan_cap: 1200000,
 };
 
 module.exports = { parameters, values, market, concept, intake };

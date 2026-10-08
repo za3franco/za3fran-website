@@ -1,4 +1,4 @@
-# Financial engine — method fe-1.2.0
+# Financial engine — method fe-1.3.0
 
 `lib/financial-engine.js` · tests: `node --test tests/*.test.js` · status: **built, not yet wired to any tool**
 
@@ -21,6 +21,8 @@ every total is the sum of the rounded lines shown; covers are whole guests and r
   − interest = profit before tax; − corporate tax (brackets, minimum tax, loss carry-forward) = net result.
 - **Payroll** from one roster (count × gross × (1 + extra months/12) × (1 + employer charges)), so the staffing
   section and the P&L cannot disagree. `annual_total` exists only to replay old plans.
+- **Shareholders** (fe-1.3.0, `funding.shareholders [{label, amount}]`): equity = their sum; share of capital at
+  face value (amount / equity). No share premium, dividends or exit modelled.
 - **Loans:** monthly annuity, optional interest-only grace; schedule closes exactly to zero.
 - **DSCR** = (EBITDA − corporate tax − maintenance capex reserve) / (interest + principal), per operating year.
 - **Maintenance capex reserve** (fe-1.1.0, `maintenance_capex.pct_of_revenue`, optional `start_month`): cash set
@@ -57,3 +59,9 @@ rent 30,000/month, Brain occupancy (Arnaud chose it over the concept's 100 cover
 uses 2,400,000 (cash reserve 490,000), loan 1,920,000; base year 2: 41 covers/day, revenue 4.46M, EBITDA 21.5%,
 DSCR 2.08 (year 1: 1.13); conservative year 2: 32 covers/day, EBITDA 13.1%, DSCR 1.04. A 12-month principal grace
 cuts the reserve to 280,000 (uses 2,190,000) and lifts base year-1 DSCR to 3.03. All invariants hold in every scenario.
+
+**Funding update, 8 Oct 2026 evening (fe-1.3.0 + ar-1.3.0):** founder brings 20% of total uses, bank loan capped at
+the 1.2M state-guarantee ceiling, a partner takes shares at face value for the rest; cash reserve re-sized.
+Standard bank rate 7.5%: uses 2,230,000 (reserve 320,000), founder 446,000 (43.3%), partner 584,000 (56.7%);
+base DSCR 1.76 / 3.28 / 3.34; conservative year-2 DSCR 1.66. Intelaka 2% (rate unconfirmed for 2026): uses
+2,210,000, base DSCR 2.05 / 3.88 / 3.96.

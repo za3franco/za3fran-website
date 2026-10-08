@@ -289,3 +289,20 @@ test('ar-1.2.0 — covers_source benchmark ignores the concept covers/day', () =
   assert.ok(!r.flags.some((x) => x.code === 'FOUNDER_COVERS_ABOVE_CAP'));
   assert.ok(r.flags.some((x) => x.code === 'COVERS_FROM_BENCHMARK'));
 });
+
+/* --------------------------- ar-1.3.0 --------------------------- */
+test('ar-1.3.0 — shareholders set equity; loan programme rate; guarantee ceiling flag', () => {
+  const brain = { parameters: [...T.parameters, { key: 'finance.guarantee_cap', scope: 'local', grp: 'finance', unit: 'currency', fav: null, regulatory: false, level: 'country' }],
+    values: [...clone(T.values),
+      { ...clone(T.values[0]), id: 'g1', parameter_key: 'finance.guarantee_cap', value_json: null, value_num: 1200000 },
+      { ...clone(T.values[0]), id: 'i1', parameter_key: 'finance.sme_lending_rate', qualifier: 'intelaka', value_json: null, value_num: 0.02 }] };
+  const intake = { ...T.intake, shareholders: [{ label: 'Founder', amount: 300000 }, { label: 'Partner', amount: 500000, source: 'estimate' }], loan: { amount: 1300000, programme: 'intelaka' } };
+  const r = run({ brain, intake });
+  assert.equal(r.inputs.funding.equity, 800000);
+  assert.equal(r.inputs.funding.loans[0].annual_rate.base, 0.02);
+  assert.ok(r.flags.some((f) => f.code === 'LOAN_ABOVE_GUARANTEE_CAP'));
+  const sc = E.runScenarios(r.inputs);
+  assert.deepEqual(sc.base.sources_of_funds.shareholders.map((h) => h.share_of_capital), [0.375, 0.625]);
+  for (const k of ['base', 'conservative', 'optimistic', 'stress']) assert.deepEqual(sc[k].checks, { ok: true, errors: [] }, k);
+  assert.equal(run({ brain }).inputs.funding.loans[0].annual_rate.base, 0.065); // no programme: standard rate
+});

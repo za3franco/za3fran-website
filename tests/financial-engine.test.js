@@ -189,7 +189,7 @@ test('fe-1.1.0 — 18-month exemption: year 2 minimum is based on its last 6 mon
   assert.equal(p.annual[2].minimum_tax, base.annual[2].minimum_tax);
 });
 
-test('method version', () => assert.equal(E.METHOD_VERSION, 'fe-1.2.0'));
+test('method version', () => assert.equal(E.METHOD_VERSION, 'fe-1.3.0'));
 
 /* ---- fe-1.1.0: maintenance capex reserve (cash only) ---- */
 test('fe-1.1.0 — capex reserve: P&L unchanged; cash, DSCR and payback lower', () => {
@@ -244,4 +244,16 @@ test('fe-1.2.0 — opex on beverage revenue: charged on beverage revenue only, b
   assert.deepEqual(p.checks, { ok: true, errors: [] });
   for (const m of p.months) { assert.ok(m.revenue_beverage > 0); assert.equal(m.opex.drinks_tax, Math.round(0.1 * m.revenue_beverage)); }
   assert.ok(p.breakeven[1].operating.revenue_year > ref.breakeven[1].operating.revenue_year);
+});
+
+/* ---- fe-1.3.0: shareholders ---- */
+test('fe-1.3.0 — shareholders: equity is their sum, shares at face value', () => {
+  const inp = clone(replay); delete inp.funding.equity;
+  inp.funding.shareholders = [{ label: 'Founder', amount: 400000 }, { label: 'Partner', amount: 600000 }];
+  const p = E.computePlan(inp);
+  assert.deepEqual(p.checks, { ok: true, errors: [] });
+  assert.equal(p.sources_of_funds.equity, 1000000);
+  assert.deepEqual(p.sources_of_funds.shareholders.map((h) => h.share_of_capital), [0.4, 0.6]);
+  inp.funding.equity = 900000;
+  assert.throws(() => E.computePlan(inp), /sum of funding.shareholders/);
 });
