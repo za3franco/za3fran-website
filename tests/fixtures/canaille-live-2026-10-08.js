@@ -38,6 +38,10 @@ const parameters = [
   P('benchmark.beverage_share', 'format', 'high', 'pct'), P('benchmark.utilities_pct', 'format', 'low', 'pct'),
   P('benchmark.marketing_pct', 'format', 'low', 'pct'), P('benchmark.other_opex_pct', 'format', 'low', 'pct'),
   P('benchmark.maintenance_capex_pct', 'format', 'low', 'pct'),
+  // added later on 8 Oct 2026 (ar-1.2.0 cost lines)
+  P('tax.drinks_outlet_pct', 'local', 'low', 'pct', true), P('tax.communal_services_pct', 'local', 'low', 'pct', true),
+  P('labour.workplace_accident_pct', 'local', 'low', 'pct'), P('labour.staff_meal_cost', 'local', 'low', 'currency'),
+  P('operating.fixed_annual', 'local', 'low', 'currency'), P('operating.revenue_pct', 'format', 'low', 'pct'),
 ];
 
 const V = (id, key, market, q, n, lo, hi, json, cls) => ({
@@ -93,6 +97,17 @@ const values = [
   F('99e597f1-ceff-42f4-a727-ddc9b294fea7', 'benchmark.marketing_pct', '', 0.04, 0.02, 0.07),
   F('064646ea-da40-46e4-8a7f-1e4bc58cc90e', 'benchmark.other_opex_pct', '', 0.05, 0.03, 0.08),
   F('dd304343-23d0-4f84-8376-58090a955932', 'benchmark.maintenance_capex_pct', '', 0.025, 0.015, 0.04),
+  // added later on 8 Oct 2026 (ar-1.2.0 cost lines)
+  V('86d824cd-1540-4a6a-a095-ba7f52c6bdfb', 'tax.drinks_outlet_pct', CASA, '', 0.10, 0.08, 0.10, null, 'published'),
+  V('313d47b9-db13-41ec-94a9-01a6dfc168e8', 'tax.communal_services_pct', MA, '', 0.105, null, null, null, 'published'),
+  V('644577a4-d22f-45d8-919b-ce88d072f97d', 'labour.workplace_accident_pct', MA, '', 0.005, 0.002, 0.012, null, 'estimate'),
+  V('c3db07fc-7728-4ea8-a560-a8627b908a83', 'labour.staff_meal_cost', MA, '', 20, 15, 30, null, 'estimate'),
+  V('36475114-8b3f-479a-9793-83e8d0882e1c', 'operating.fixed_annual', MA, 'accounting', 50000, 30000, 85000, null, 'estimate'),
+  V('439faa32-d8aa-46a7-8cab-feb2ddb059fb', 'operating.fixed_annual', MA, 'music_rights', 6500, 3000, 10000, null, 'estimate'),
+  V('864d2b67-2f57-458a-a890-79a0e9d9b2f7', 'operating.fixed_annual', MA, 'security', 18000, 6000, 50000, null, 'estimate'),
+  V('094cdff4-2396-474e-88e3-171067bedfb1', 'operating.fixed_annual', MA, 'pest_control', 6000, 3600, 12000, null, 'estimate'),
+  V('24f20458-bd8f-4da7-b200-d22f2215b0e8', 'operating.fixed_annual', MA, 'telecom_bank', 9600, 6000, 18000, null, 'estimate'),
+  F('121ae799-ab81-4e9a-9dfe-df77553b1112', 'operating.revenue_pct', 'laundry', 0.005, 0.003, 0.01),
 ];
 
 const market = { currency: 'MAD', chain: [{ id: GAUTHIER, level: 'district' }, { id: CASA, level: 'city' }, { id: MA, level: 'country' }] };
@@ -107,6 +122,7 @@ const intake = {
   opening: '2027-10',              // Arnaud: 12 months from 8 Oct 2026
   alcohol: true,
   ramadan: 'closed',               // Arnaud: Canaille closes during Ramadan
+  covers_source: 'benchmark',      // Arnaud, 8 Oct 2026: be more conservative than the concept's 100 covers/day
   new_company: true,
   services: [{ id: 'lunch', days: [2, 3, 4, 5] }, { id: 'dinner', days: [3, 4, 5, 6] }],
   rent_monthly: 30000,             // Arnaud: working figure, no offer in hand

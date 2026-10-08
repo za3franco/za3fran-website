@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.1.0
+# Assumption resolver — ar-1.2.0
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -42,6 +42,15 @@ benchmark with no source. Roster and investment are founder-only until staffing 
   `note`, ranges); the appendix then shows *Estimate*, never *Founder*. Roster lines may set `brain_role` for the
   salary lookup (e.g. a founder working the floor priced as `manager`). Roster headcounts are now recorded.
 - **Funding envelope:** `intake.budget` overrides the concept budget.
+
+## ar-1.2.0 (8 Oct 2026)
+- **Moroccan cost lines** from the Brain, each skipped when the founder gives the same opex key: drinks-outlet tax
+  (`tax.drinks_outlet_pct`, on beverage revenue; base disputed, see the Brain note), communal services tax
+  (`tax.communal_services_pct` × rent), workplace-accident insurance (`labour.workplace_accident_pct`, added to
+  employer charges), staff meals (`labour.staff_meal_cost` × headcount × open days), one fixed line per qualifier of
+  `operating.fixed_annual` (accounting, music_rights, security, pest_control, telecom_bank) and one variable line per
+  qualifier of `operating.revenue_pct` (laundry). Labels are bilingual (`LINE_LABELS`).
+- **`intake.covers_source: 'benchmark'`**: the Brain occupancy is the base instead of the concept covers/day.
 
 ## Pending
 Depreciation lives by category (`DEPRECIATION_YEARS`) are proposals awaiting Arnaud's review.

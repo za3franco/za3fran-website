@@ -236,3 +236,56 @@ test('TTC convention: the ticket is priced to the guest; revenue is ticket / (1 
   const m = p.months[0];
   assert.equal(m.revenue, Math.round(m.covers * 440 / 1.1));       // 10% VAT on food in the test Brain
 });
+
+/* --------------------------- ar-1.2.0 --------------------------- */
+const withCostLines = () => {
+  const P = (key, scope, unit) => ({ key, scope, grp: 'operating', unit, fav: 'low', regulatory: key.startsWith('tax.'), level: scope === 'local' ? 'country' : null });
+  const base = clone(T.values[0]);
+  const V = (id, parameter_key, extra) => ({ ...base, id, parameter_key, qualifier: '', value_json: null, value_num: null, low: null, high: null, ...extra });
+  return {
+    parameters: [...T.parameters, P('tax.drinks_outlet_pct', 'local', 'pct'), P('tax.communal_services_pct', 'local', 'pct'),
+      P('labour.workplace_accident_pct', 'local', 'pct'), P('labour.staff_meal_cost', 'local', 'currency'),
+      P('operating.fixed_annual', 'local', 'currency'), P('operating.revenue_pct', 'format', 'pct')],
+    values: [...clone(T.values),
+      V('c1', 'tax.drinks_outlet_pct', { market_id: T.ids.CASA, value_num: 0.1, low: 0.08, high: 0.1 }),
+      V('c2', 'tax.communal_services_pct', { market_id: T.ids.MA, value_num: 0.105 }),
+      V('c3', 'labour.workplace_accident_pct', { market_id: T.ids.MA, value_num: 0.005, low: 0.002, high: 0.012, source_class: 'estimate', effective_source_class: 'estimate' }),
+      V('c4', 'labour.staff_meal_cost', { market_id: T.ids.MA, value_num: 20, low: 15, high: 30, source_class: 'estimate', effective_source_class: 'estimate' }),
+      V('c5', 'operating.fixed_annual', { market_id: T.ids.MA, qualifier: 'accounting', value_num: 48000, low: 30000, high: 84000, source_class: 'estimate', effective_source_class: 'estimate' }),
+      V('c6', 'operating.revenue_pct', { market_id: null, format_key: 'bistro_wine_bar', qualifier: 'laundry', value_num: 0.005, low: 0.003, high: 0.01, source_class: 'estimate', effective_source_class: 'estimate' }),
+    ],
+  };
+};
+
+test('ar-1.2.0 — Moroccan cost lines added from the Brain, labelled, and the plan still balances', () => {
+  const r = run({ brain: withCostLines() });
+  assert.equal(r.status, 'ready', JSON.stringify(r.gaps));
+  const line = (k) => r.inputs.opex.find((o) => o.key === k);
+  assert.deepEqual(line('accounting').fixed_monthly, { base: 4000, low: 2500, high: 7000, fav: 'low' });
+  assert.equal(line('accounting').label, 'Comptabilité et paie / Accounting and payroll');
+  assert.deepEqual(line('laundry').pct_of_revenue, { base: 0.005, low: 0.003, high: 0.01, fav: 'low' });
+  assert.equal(line('drinks_outlet_tax').pct_of_beverage_revenue.base, 0.1);
+  // TSC = 10.5% × Brain rent (200/m² × 160 m² in the test Brain)
+  assert.equal(line('communal_services_tax').fixed_monthly.base, Math.round(0.105 * 32000 * 100) / 100);
+  // staff meals = 20 × 9 staff × (5 open days × 52 / 12)
+  assert.equal(Math.round(line('staff_meals').fixed_monthly.base), Math.round(20 * 9 * 5 * 52 / 12));
+  // workplace accident insurance added to employer charges (test Brain 0.21 range 0.20–0.22)
+  assert.deepEqual(r.inputs.labour.employer_charges_pct, { base: 0.215, low: 0.202, high: 0.232, fav: 'low' });
+  assert.ok(r.review.some((x) => x.parameter_key === 'tax.drinks_outlet_pct' && x.reason === 'regulatory'));
+  const sc = E.runScenarios(r.inputs);
+  for (const k of ['base', 'conservative', 'optimistic', 'stress']) assert.deepEqual(sc[k].checks, { ok: true, errors: [] }, k);
+  assert.ok(sc.base.annual[1].opex.drinks_outlet_tax > 0);
+});
+
+test('ar-1.2.0 — a founder line with the same key replaces the Brain line', () => {
+  const r = run({ brain: withCostLines(), intake: { ...T.intake, opex: [{ key: 'accounting', label: 'Cabinet X', fixed_monthly: 3000 }] } });
+  const acc = r.inputs.opex.filter((o) => o.key === 'accounting');
+  assert.equal(acc.length, 1); assert.equal(acc[0].fixed_monthly, 3000);
+});
+
+test('ar-1.2.0 — covers_source benchmark ignores the concept covers/day', () => {
+  const r = run({ intake: { ...T.intake, covers_source: 'benchmark' } });
+  assert.deepEqual(r.inputs.services.map((s) => s.occupancy.base), [0.55, 0.7]);
+  assert.ok(!r.flags.some((x) => x.code === 'FOUNDER_COVERS_ABOVE_CAP'));
+  assert.ok(r.flags.some((x) => x.code === 'COVERS_FROM_BENCHMARK'));
+});

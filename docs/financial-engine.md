@@ -1,10 +1,13 @@
-# Financial engine — method fe-1.1.0
+# Financial engine — method fe-1.2.0
 
 `lib/financial-engine.js` · tests: `node --test tests/*.test.js` · status: **built, not yet wired to any tool**
 
 ## Contract
-`computePlan(inputs)` → one scenario, plain numbers. `runScenarios(inputs)` → base / conservative / optimistic
-(inputs may contain range nodes `{base, low, high, fav}`; conservative takes the unfavourable end of every range)
+`computePlan(inputs)` → one scenario, plain numbers. `runScenarios(inputs)` → base / conservative / optimistic /
+stress. Inputs may contain range nodes `{base, low, high, fav}`. **fe-1.2.0 (approved by Arnaud, 8 Oct 2026):**
+conservative and optimistic move each **revenue-side** range (services, ramp, calendar, price growth) **halfway**
+to its unfavourable / favourable end; cost-side ranges stay at base and are tested by the single-factor shocks.
+**Stress** takes every range at its unfavourable end at once (shown as a stress test, never as a forecast).
 plus a ticket × covers sensitivity grid and single-factor shocks. `checkClaimedCovers()` tests a founder's
 "covers per day" against seats and hours. No I/O, no model calls, deterministic. All money in whole units;
 every total is the sum of the rounded lines shown; covers are whole guests and revenue is computed from them.
@@ -32,8 +35,7 @@ every total is the sum of the rounded lines shown; covers are whole guests and r
 
 ## Simplifications (state them in every plan)
 Operating years run 12 months from opening; VAT cash timing not modelled; capex excl. recoverable VAT; one
-annual tax payment. The conservative scenario takes the unfavourable end of EVERY range at once, which is harsher
-than any single plausible downside (see Canaille 8 Oct 2026 run).
+annual tax payment. Opex lines may be charged on revenue, on beverage revenue (`pct_of_beverage_revenue`, fe-1.2.0) or as fixed amounts.
 
 ## Red-flag rules (approved by Arnaud, 3 Oct 2026)
 cruise occupancy > 85% per service (critical ≥ 95%) · capacity cap hit · funding gap (base critical, high case
@@ -48,9 +50,10 @@ labour cost per cover from a meaningless ratio. Assumption errors the engine now
 at every service including weekday lunches; one 450 MAD ticket for lunch and dinner; 450 treated as excl. VAT;
 year-3 covers (87/day) physically impossible at one turn; payback under one year.
 
-## Canaille live run, 8 Oct 2026 (tests/fixtures/canaille-live-2026-10-08.js, fe-1.1.0 + ar-1.1.0)
+## Canaille live run, 8 Oct 2026 (tests/fixtures/canaille-live-2026-10-08.js, fe-1.2.0 + ar-1.2.0)
 Live Brain snapshot + Arnaud's intake + Za3fran estimates (roster, investment). Opening 2027-10, closed in Ramadan,
-rent 30,000/month, 20% equity on total uses 1,910,000. All invariants hold in every scenario. Findings: with the
-founder's 100 covers/day (capped at 85%) the base case shows 37.5% EBITDA and a 1.3-year payback (flagged); with
-the Brain occupancy benchmark it shows 28.8% and 2.3 years, with cash below zero in Feb 2028 (Ramadan closure);
-the all-worst-ends conservative case loses money every year.
+rent 30,000/month, Brain occupancy (Arnaud chose it over the concept's 100 covers/day), Moroccan cost lines,
+20% equity on total uses, cash reserve sized to the conservative scenario's lowest cash point. No grace period:
+uses 2,400,000 (cash reserve 490,000), loan 1,920,000; base year 2: 41 covers/day, revenue 4.46M, EBITDA 21.5%,
+DSCR 2.08 (year 1: 1.13); conservative year 2: 32 covers/day, EBITDA 13.1%, DSCR 1.04. A 12-month principal grace
+cuts the reserve to 280,000 (uses 2,190,000) and lifts base year-1 DSCR to 3.03. All invariants hold in every scenario.

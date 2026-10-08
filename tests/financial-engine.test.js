@@ -189,7 +189,7 @@ test('fe-1.1.0 — 18-month exemption: year 2 minimum is based on its last 6 mon
   assert.equal(p.annual[2].minimum_tax, base.annual[2].minimum_tax);
 });
 
-test('fe-1.1.0 — method version bumped', () => assert.equal(E.METHOD_VERSION, 'fe-1.1.0'));
+test('method version', () => assert.equal(E.METHOD_VERSION, 'fe-1.2.0'));
 
 /* ---- fe-1.1.0: maintenance capex reserve (cash only) ---- */
 test('fe-1.1.0 — capex reserve: P&L unchanged; cash, DSCR and payback lower', () => {
@@ -215,4 +215,33 @@ test('fe-1.1.0 — capex reserve start_month: nothing set aside before it', () =
   assert.equal(p.annual[0].maintenance_capex, 0);
   assert.ok(p.annual[1].maintenance_capex > 0);
   assert.deepEqual(p.checks, { ok: true, errors: [] });
+});
+
+/* ---- fe-1.2.0: scenario method (revenue-side halfway) + stress; beverage-based opex ---- */
+test('fe-1.2.0 — conservative moves revenue ranges halfway, costs stay at base; stress takes every worst end', () => {
+  const inp = clone(replay);
+  inp.services.forEach((s) => { s.ticket = { base: 450, low: 350, high: 500, fav: 'high' }; });
+  inp.cogs.food_pct = { base: 0.30, low: 0.28, high: 0.34, fav: 'low' };
+  assert.equal(E.pickScenario(inp, 'conservative', 'inputs').services[0].ticket, 400);
+  assert.equal(E.pickScenario(inp, 'optimistic', 'inputs').services[0].ticket, 475);
+  assert.equal(E.pickScenario(inp, 'conservative', 'inputs').cogs.food_pct, 0.30);
+  assert.equal(E.pickScenario(inp, 'stress', 'inputs').cogs.food_pct, 0.34);
+  assert.equal(E.pickScenario(inp, 'stress', 'inputs').services[0].ticket, 350);
+  const sc = E.runScenarios(inp);
+  assert.ok(sc.summary.stress.ebitda < sc.summary.conservative.ebitda);
+  assert.deepEqual(sc.stress.checks, { ok: true, errors: [] });
+  for (const p of ['inputs.services[0].occupancy', 'inputs.ramp.start_factor', 'inputs.calendar.seasonality[3]', 'inputs.calendar.dated_factors.2028-02', 'inputs.growth.price_pct'])
+    assert.ok(E._internal.REVENUE_SIDE.test(p), p);
+  for (const p of ['inputs.cogs.food_pct', 'inputs.rent.monthly', 'inputs.growth.cost_pct', 'inputs.labour.roster[0].monthly_gross', 'inputs.servicesX'])
+    assert.ok(!E._internal.REVENUE_SIDE.test(p), p);
+});
+
+test('fe-1.2.0 — opex on beverage revenue: charged on beverage revenue only, break-even still consistent', () => {
+  const withBev = clone(replay); withBev.services.forEach((s) => { s.bev_share = 0.35; });
+  const ref = E.computePlan(withBev);
+  const inp = clone(withBev); inp.opex = [...(inp.opex || []), { key: 'drinks_tax', pct_of_beverage_revenue: 0.1 }];
+  const p = E.computePlan(inp);
+  assert.deepEqual(p.checks, { ok: true, errors: [] });
+  for (const m of p.months) { assert.ok(m.revenue_beverage > 0); assert.equal(m.opex.drinks_tax, Math.round(0.1 * m.revenue_beverage)); }
+  assert.ok(p.breakeven[1].operating.revenue_year > ref.breakeven[1].operating.revenue_year);
 });
