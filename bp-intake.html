@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Za3fran — Business Plan inputs</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --line:rgba(255,255,255,.10); --field:rgba(255,255,255,.06); --ok:#6fbf8e; --bad:#e07070;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.5;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px;}
+::selection{background:var(--copper);color:var(--black);}
+
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,14,24,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;max-width:1180px;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.navlinks{display:flex;gap:28px;font-size:14px;color:var(--muted);}
+.navlinks a:hover{color:var(--white);}
+
+header.top{padding:118px 0 26px;}
+.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+header.top h1{font-size:clamp(30px,5vw,44px);line-height:1.12;margin-bottom:12px;}
+header.top p{color:var(--muted);font-size:15px;max-width:640px;}
+
+.card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:26px 24px;margin-bottom:18px;}
+.card h2{font-size:24px;margin-bottom:4px;display:flex;gap:12px;align-items:baseline;}
+.card h2 .n{font-size:16px;color:var(--copper);font-family:'DM Sans';font-weight:700;letter-spacing:.06em;}
+.card .lead{color:var(--muted);font-size:13.5px;margin-bottom:18px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.field{margin-bottom:16px;}
+.field:last-child{margin-bottom:0;}
+label.lbl,.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
+.hint.warn{color:var(--copper-bright);}
+.hint.bad{color:var(--bad);}
+input[type=text],input[type=month],input[type=number],select{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--white);outline:none;-webkit-appearance:none;appearance:none;}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px;}
+select option{background:var(--charcoal);color:var(--white);}
+input:focus,select:focus{border-color:rgba(201,134,42,.6);}
+input::placeholder{color:rgba(139,147,168,.7);}
+input.err,select.err{border-color:var(--bad);}
+
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choices.row{flex-direction:row;flex-wrap:wrap;}
+.choice{display:flex;gap:12px;align-items:flex-start;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 15px;cursor:pointer;transition:border-color .2s;}
+.choice:hover{border-color:rgba(201,134,42,.4);}
+.choice input{margin-top:3px;accent-color:var(--copper);width:16px;height:16px;flex-shrink:0;}
+.choice.on{border-color:var(--copper);background:rgba(201,134,42,.08);}
+.choice b{display:block;font-weight:500;font-size:14.5px;}
+.choice small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;}
+
+.recap{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.recap div{background:var(--charcoal);padding:12px 14px;}
+.recap span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.recap strong{font-family:'Cormorant Garamond';font-size:22px;font-weight:500;}
+
+.svc{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-bottom:12px;}
+.svc-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;}
+.toggle{display:flex;gap:10px;align-items:center;font-weight:500;cursor:pointer;}
+.toggle input{accent-color:var(--copper);width:17px;height:17px;}
+.days{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.day{border:1px solid rgba(255,255,255,.14);border-radius:100px;padding:7px 12px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;background:none;font-family:inherit;}
+.day.on{background:var(--copper);border-color:var(--copper);color:var(--black);font-weight:700;}
+.svc.off .days,.svc.off .svc-body{opacity:.35;pointer-events:none;}
+
+table.rows{width:100%;border-collapse:collapse;font-size:14px;}
+table.rows th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:left;padding:0 6px 8px;}
+table.rows td{padding:4px 6px;vertical-align:top;}
+table.rows td input,table.rows td select{padding:9px 10px;font-size:14px;}
+.del{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:6px 8px;line-height:1;}
+.del:hover{color:var(--bad);}
+.add{background:none;border:1px dashed rgba(201,134,42,.5);color:var(--copper-bright);border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:8px;}
+.note{background:rgba(201,134,42,.07);border:1px solid rgba(201,134,42,.22);border-radius:12px;padding:13px 15px;font-size:13px;color:var(--white);margin:12px 0;}
+.note.info{background:rgba(43,99,184,.10);border-color:rgba(43,99,184,.3);}
+
+.bar{position:sticky;bottom:0;z-index:50;background:rgba(15,31,61,.94);backdrop-filter:blur(10px);border-top:1px solid rgba(43,99,184,.25);padding:12px 0;margin-top:10px;}
+.bar .wrap{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;}
+.bar .status{margin-right:auto;font-size:12.5px;color:var(--muted);}
+.btn{padding:12px 20px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:inherit;border:1px solid transparent;transition:all .2s;}
+.btn.primary{background:var(--copper);color:var(--black);}
+.btn.primary:hover:not(:disabled){background:var(--copper-bright);}
+.btn.ghost{background:none;border-color:rgba(255,255,255,.2);color:var(--white);}
+.btn.ghost:hover:not(:disabled){border-color:var(--copper);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+
+#preview{scroll-margin-top:90px;}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:6px 0 16px;}
+.kpis div{background:var(--charcoal);padding:14px 16px;}
+.kpis span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.kpis strong{font-family:'Cormorant Garamond';font-size:24px;font-weight:500;}
+table.fig{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;}
+table.fig th,table.fig td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;}
+table.fig th:first-child,table.fig td:first-child{text-align:left;color:var(--muted);}
+table.fig thead th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.list li{font-size:13.5px;padding-left:18px;position:relative;}
+.list li::before{content:'';position:absolute;left:2px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--muted);}
+.list.bad li::before{background:var(--bad);}
+.list.warn li::before{background:var(--copper-bright);}
+h3.sub{font-size:19px;margin:6px 0 10px;}
+.banner{border-radius:12px;padding:16px 18px;margin-bottom:18px;font-size:14px;}
+.banner.ok{background:rgba(111,191,142,.1);border:1px solid rgba(111,191,142,.35);}
+.banner.bad{background:rgba(224,112,112,.08);border:1px solid rgba(224,112,112,.35);}
+.banner.info{background:rgba(43,99,184,.1);border:1px solid rgba(43,99,184,.3);}
+
+#gate{max-width:420px;margin:0 auto;}
+.hidden{display:none !important;}
+body.has-bar #langtoggle,body.has-bar .wa-btn{bottom:calc(var(--barh, 70px) + 14px);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(10,14,24,.3);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-1px;margin-right:6px;}
+
+footer{border-top:1px solid rgba(255,255,255,.08);padding:40px 0 34px;background:var(--charcoal2);margin-top:40px;}
+footer .foot-bottom{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:16px;}
+footer .foot-bottom a{color:var(--muted);}
+footer .foot-bottom a:hover{color:var(--white);}
+
+@media(max-width:700px){
+  .grid,.grid3{grid-template-columns:1fr;}
+  .navlinks{display:none;}
+  .card{padding:22px 16px;}
+  table.rows thead{display:none;}
+  table.rows tr{display:grid;grid-template-columns:1fr 1fr;gap:6px;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px;margin-bottom:8px;}
+  table.rows td{padding:0;}
+  table.rows td.wide{grid-column:1 / -1;}
+  table.rows td.x{grid-column:2;text-align:right;}
+  .bar .status{width:100%;font-size:12px;}
+  .bar .btn{flex:1 1 0;padding:11px 6px;font-size:10.5px;letter-spacing:.03em;}
+  .bar .wrap{gap:8px;}
+  footer .foot-bottom{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%20have%20a%20question%20about%20my%20business%20plan%20inputs." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+</a>
+<div id="langtoggle"><button data-l="en" class="active">EN</button><button data-l="fr">FR</button></div>
+
+<nav><div class="wrap">
+  <a href="/" class="logo"><img src="/assets/logo.png" alt="Za3fran" onerror="this.style.display='none'" style="width:32px;height:32px;object-fit:contain;border-radius:6px;"><span>Za3fran<span style="color:var(--copper)">.io</span></span></a>
+  <div class="navlinks">
+    <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+    <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+    <a href="#" id="dashLink" class="hidden"><span data-en>My project</span><span data-fr>Mon projet</span></a>
+  </div>
+</div></nav>
+
+<main class="wrap">
+<header class="top">
+  <p class="eyebrow"><span data-en>Business Plan · Your inputs</span><span data-fr>Business plan · Vos données</span></p>
+  <h1><span data-en>The figures your <em>bank</em> will ask for</span><span data-fr>Les chiffres que votre <em>banque</em> vous demandera</span></h1>
+  <p><span data-en>Your plan is built from these answers and from Za3fran's sourced market data. Every figure in the plan shows where it comes from. Leave a field empty when you don't know: we never fill a gap with an invented number.</span><span data-fr>Votre plan est construit à partir de ces réponses et des données de marché sourcées de Za3fran. Chaque chiffre du plan indique son origine. Laissez un champ vide si vous ne savez pas : nous ne comblons jamais un manque avec un chiffre inventé.</span></p>
+</header>
+
+<!-- Access gate -->
+<section id="gate" class="card hidden">
+  <h2><span data-en>Enter your access code</span><span data-fr>Saisissez votre code d'accès</span></h2>
+  <p class="lead"><span data-en>The code you received by email with your Za3fran purchase.</span><span data-fr>Le code reçu par email avec votre achat Za3fran.</span></p>
+  <div class="field"><input type="text" id="codeIn" maxlength="12" autocomplete="off" data-en-placeholder="e.g. 45GJXD6W" data-fr-placeholder="ex. 45GJXD6W" style="text-transform:uppercase;letter-spacing:.1em"></div>
+  <button class="btn primary" id="codeGo"><span data-en>Open my inputs</span><span data-fr>Ouvrir mes données</span></button>
+  <p class="hint bad hidden" id="gateErr"></p>
+</section>
+
+<div id="form" class="hidden">
+  <div id="statusBanner"></div>
+
+  <!-- 1. Concept recap -->
+  <section class="card">
+    <h2><span class="n">01</span><span data-en>Your concept</span><span data-fr>Votre concept</span></h2>
+    <p class="lead"><span data-en>From your Concept Readiness Review. To change these, amend the concept there first.</span><span data-fr>Issu de votre revue de préparation du concept. Pour les modifier, amendez d'abord le concept.</span></p>
+    <div class="recap" id="recap"></div>
+    <div class="grid">
+      <div class="field">
+        <label class="lbl" for="district"><span data-en>District / neighbourhood</span><span data-fr>Quartier</span></label>
+        <input type="text" id="district" maxlength="80" data-en-placeholder="e.g. Gauthier" data-fr-placeholder="ex. Gauthier">
+        <p class="hint"><span data-en>Used for local rent data where Za3fran has it.</span><span data-fr>Utilisé pour les loyers locaux lorsque Za3fran dispose des données.</span></p>
+      </div>
+      <div class="field">
+        <label class="lbl" for="format"><span data-en>Benchmark family</span><span data-fr>Famille de référence</span></label>
+        <select id="format">
+          <option value="" data-en="Choose…" data-fr="Choisir…">Choose…</option>
+          <option value="bistro_wine_bar" data-en="Bistro / wine bar" data-fr="Bistro / bar à vin">Bistro / wine bar</option>
+          <option value="none" data-en="None of these (Za3fran builds benchmarks on request)" data-fr="Aucune (Za3fran construit les références sur demande)">None of these</option>
+        </select>
+        <p class="hint"><span data-en>Sets the food cost, turns and occupancy references used where you give no figure.</span><span data-fr>Détermine le coût matière, les rotations et le taux d'occupation de référence là où vous ne donnez pas de chiffre.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Opening & calendar -->
+  <section class="card">
+    <h2><span class="n">02</span><span data-en>Opening and calendar</span><span data-fr>Ouverture et calendrier</span></h2>
+    <div class="grid">
+      <div class="field">
+        <label class="lbl" for="opening"><span data-en>Planned opening month</span><span data-fr>Mois d'ouverture prévu</span></label>
+        <input type="month" id="opening">
+      </div>
+      <div class="field">
+        <span class="lbl"><span data-en>New company?</span><span data-fr>Nouvelle société ?</span></span>
+        <div class="choices row">
+          <label class="choice"><input type="radio" name="newco" value="yes"><b><span data-en>Yes</span><span data-fr>Oui</span></b></label>
+          <label class="choice"><input type="radio" name="newco" value="no"><b><span data-en>No, existing</span><span data-fr>Non, existante</span></b></label>
+        </div>
+        <p class="hint"><span data-en>A new company is exempt from the minimum tax for its first 36 months.</span><span data-fr>Une nouvelle société est exonérée de cotisation minimale pendant 36 mois.</span></p>
+      </div>
+    </div>
+    <div class="field">
+      <span class="lbl"><span data-en>During Ramadan</span><span data-fr>Pendant le Ramadan</span></span>
+      <div class="choices" id="ramadanChoices">
+        <label class="choice"><input type="radio" name="ramadan" value="closed"><span><b><span data-en>Closed</span><span data-fr>Fermé</span></b><small><span data-en>No revenue for the month; rent, payroll and fixed costs continue. Usual for venues serving alcohol.</span><span data-fr>Aucun chiffre d'affaires sur le mois ; loyer, salaires et frais fixes continuent. Courant pour les lieux servant de l'alcool.</span></small></span></label>
+        <label class="choice"><input type="radio" name="ramadan" value="reduced"><span><b><span data-en>Open with reduced trade</span><span data-fr>Ouvert avec activité réduite</span></b><small><span data-en>E.g. evenings only, or no alcohol. Za3fran applies a sourced range for the drop in trade.</span><span data-fr>Par ex. le soir seulement, ou sans alcool. Za3fran applique une fourchette pour la baisse d'activité.</span></small></span></label>
+        <label class="choice"><input type="radio" name="ramadan" value="normal"><span><b><span data-en>Trading normally</span><span data-fr>Activité normale</span></b><small><span data-en>No change during the month.</span><span data-fr>Aucun changement pendant le mois.</span></small></span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Services -->
+  <section class="card">
+    <h2><span class="n">03</span><span data-en>Services and prices</span><span data-fr>Services et prix</span></h2>
+    <p class="lead"><span data-en>Tick the days for each service. Average ticket = what a guest pays per person, VAT included.</span><span data-fr>Cochez les jours de chaque service. Ticket moyen = ce que paie un client par personne, TVA comprise.</span></p>
+    <div id="services"></div>
+    <div class="field">
+      <span class="lbl"><span data-en>Alcohol served?</span><span data-fr>Alcool servi ?</span></span>
+      <div class="choices row">
+        <label class="choice"><input type="radio" name="alcohol" value="yes"><b><span data-en>Yes</span><span data-fr>Oui</span></b></label>
+        <label class="choice"><input type="radio" name="alcohol" value="no"><b><span data-en>No</span><span data-fr>Non</span></b></label>
+      </div>
+      <p class="hint"><span data-en>Adds the drinks outlet tax. Add your licence cost in the investment list (there is no official fee; it is often a takeover or adviser cost).</span><span data-fr>Ajoute la taxe sur les débits de boissons. Indiquez le coût de la licence dans les investissements (pas de tarif officiel ; souvent une reprise ou un conseil).</span></p>
+    </div>
+  </section>
+
+  <!-- 4. Covers -->
+  <section class="card">
+    <h2><span class="n">04</span><span data-en>How busy</span><span data-fr>Fréquentation</span></h2>
+    <div class="choices" id="coversChoices">
+      <label class="choice"><input type="radio" name="covers" value="founder"><span><b><span data-en>My estimate</span><span data-fr>Mon estimation</span></b><small><span data-en>Average covers per open day, once the restaurant is up to speed.</span><span data-fr>Couverts moyens par jour d'ouverture, une fois le restaurant lancé.</span></small></span></label>
+      <label class="choice"><input type="radio" name="covers" value="benchmark"><span><b><span data-en>Za3fran's reference occupancy</span><span data-fr>Taux d'occupation de référence Za3fran</span></b><small><span data-en>More prudent for a bank. Lunch and dinner use their own sourced occupancy ranges.</span><span data-fr>Plus prudent pour une banque. Déjeuner et dîner ont chacun leur fourchette sourcée.</span></small></span></label>
+    </div>
+    <div class="field" id="coversField" style="margin-top:14px">
+      <label class="lbl" for="coversDay"><span data-en>Covers per open day</span><span data-fr>Couverts par jour d'ouverture</span></label>
+      <input type="text" inputmode="numeric" id="coversDay">
+      <p class="hint" id="capHint"></p>
+    </div>
+  </section>
+
+  <!-- 5. Premises -->
+  <section class="card">
+    <h2><span class="n">05</span><span data-en>Premises</span><span data-fr>Local</span></h2>
+    <div class="note info hidden" id="rentNeeded"><span data-en>Za3fran has no sourced rent data for this city yet, so a rent figure from the landlord or agent is needed.</span><span data-fr>Za3fran n'a pas encore de loyers sourcés pour cette ville : un loyer du bailleur ou de l'agent est nécessaire.</span></div>
+    <div class="grid3">
+      <div class="field">
+        <label class="lbl" for="rent"><span data-en>Monthly rent</span><span data-fr>Loyer mensuel</span> <span class="cur"></span></label>
+        <input type="text" inputmode="numeric" id="rent">
+      </div>
+      <div class="field">
+        <label class="lbl" for="surface"><span data-en>Surface (m²)</span><span data-fr>Surface (m²)</span></label>
+        <input type="text" inputmode="numeric" id="surface">
+      </div>
+      <div class="field">
+        <label class="lbl" for="rentFree"><span data-en>Rent-free months</span><span data-fr>Mois de franchise</span></label>
+        <input type="text" inputmode="numeric" id="rentFree" placeholder="0">
+      </div>
+    </div>
+    <p class="hint"><span data-en>Give the rent if you have an offer. Without one, Za3fran uses its sourced rent per m² for your area × your surface, and says so in the plan.</span><span data-fr>Indiquez le loyer si vous avez une offre. Sinon, Za3fran utilise son loyer sourcé au m² pour votre quartier × votre surface, et le précise dans le plan.</span></p>
+  </section>
+
+  <!-- 6. Team -->
+  <section class="card">
+    <h2><span class="n">06</span><span data-en>Team</span><span data-fr>Équipe</span></h2>
+    <div class="field">
+      <span class="lbl"><span data-en>Will you work in the restaurant and draw a salary?</span><span data-fr>Travaillerez-vous dans le restaurant avec un salaire ?</span></span>
+      <div class="choices row">
+        <label class="choice"><input type="radio" name="fworks" value="yes"><b><span data-en>Yes</span><span data-fr>Oui</span></b></label>
+        <label class="choice"><input type="radio" name="fworks" value="no"><b><span data-en>No</span><span data-fr>Non</span></b></label>
+      </div>
+    </div>
+    <div class="field hidden" id="fsalField">
+      <label class="lbl" for="fsal"><span data-en>Your gross monthly salary</span><span data-fr>Votre salaire brut mensuel</span> <span class="cur"></span></label>
+      <input type="text" inputmode="numeric" id="fsal" data-en-placeholder="Empty = market salary of a restaurant manager" data-fr-placeholder="Vide = salaire de marché d'un directeur de restaurant">
+    </div>
+    <div class="choices" style="margin-top:6px">
+      <label class="choice"><input type="radio" name="rmode" value="founder"><span><b><span data-en>I'll list the team</span><span data-fr>Je liste l'équipe</span></b><small><span data-en>Leave a salary empty to use Za3fran's sourced market salary for that role.</span><span data-fr>Laissez un salaire vide pour utiliser le salaire de marché sourcé par Za3fran.</span></small></span></label>
+      <label class="choice"><input type="radio" name="rmode" value="estimate"><span><b><span data-en>Za3fran prepares an estimate</span><span data-fr>Za3fran prépare une estimation</span></b><small><span data-en>We research a team for your concept, label it "Estimate" in the plan, and you review it before generation.</span><span data-fr>Nous établissons une équipe pour votre concept, signalée « Estimation » dans le plan, que vous validez avant la génération.</span></small></span></label>
+    </div>
+    <div id="rosterBox" style="margin-top:14px">
+      <table class="rows"><thead><tr>
+        <th><span data-en>Role</span><span data-fr>Poste</span></th>
+        <th><span data-en>Name if other</span><span data-fr>Intitulé si autre</span></th>
+        <th><span data-en>People</span><span data-fr>Effectif</span></th>
+        <th><span data-en>Gross / month</span><span data-fr>Brut / mois</span></th><th></th>
+      </tr></thead><tbody id="roster"></tbody></table>
+      <button class="add" id="addRole" type="button"><span data-en>+ Add a role</span><span data-fr>+ Ajouter un poste</span></button>
+    </div>
+  </section>
+
+  <!-- 7. Investment -->
+  <section class="card">
+    <h2><span class="n">07</span><span data-en>Investment before opening</span><span data-fr>Investissement avant ouverture</span></h2>
+    <p class="lead"><span data-en>Amounts excluding recoverable VAT. Add a low–high range when you only have estimates. Rent deposit and a cash reserve are added by Za3fran.</span><span data-fr>Montants hors TVA récupérable. Ajoutez une fourchette basse–haute si vous n'avez que des estimations. Le dépôt de garantie et la réserve de trésorerie sont ajoutés par Za3fran.</span></p>
+    <div class="choices">
+      <label class="choice"><input type="radio" name="imode" value="founder"><span><b><span data-en>I'll list the amounts</span><span data-fr>Je liste les montants</span></b><small><span data-en>Quotes or your own estimates.</span><span data-fr>Devis ou vos propres estimations.</span></small></span></label>
+      <label class="choice"><input type="radio" name="imode" value="estimate"><span><b><span data-en>Za3fran prepares an estimate</span><span data-fr>Za3fran prépare une estimation</span></b><small><span data-en>Researched ranges, labelled "Estimate" in the plan, reviewed with you before generation.</span><span data-fr>Fourchettes recherchées, signalées « Estimation » dans le plan, revues avec vous avant la génération.</span></small></span></label>
+    </div>
+    <div id="invBox" style="margin-top:14px">
+      <table class="rows"><thead><tr>
+        <th><span data-en>Item</span><span data-fr>Poste</span></th>
+        <th><span data-en>Type</span><span data-fr>Catégorie</span></th>
+        <th><span data-en>Amount</span><span data-fr>Montant</span></th>
+        <th><span data-en>Low</span><span data-fr>Bas</span></th>
+        <th><span data-en>High</span><span data-fr>Haut</span></th><th></th>
+      </tr></thead><tbody id="inv"></tbody></table>
+      <button class="add" id="addInv" type="button"><span data-en>+ Add an item</span><span data-fr>+ Ajouter un poste</span></button>
+    </div>
+  </section>
+
+  <!-- 8. Funding -->
+  <section class="card">
+    <h2><span class="n">08</span><span data-en>Funding</span><span data-fr>Financement</span></h2>
+    <div class="choices">
+      <label class="choice"><input type="radio" name="fmode" value="rule"><span><b><span data-en>Za3fran sizes it from my rule</span><span data-fr>Za3fran le calcule selon ma règle</span></b><small><span data-en>You bring a share of the total; the bank lends up to a ceiling; a partner covers the rest. Za3fran adds the cash reserve needed so the cash never runs out.</span><span data-fr>Vous apportez une part du total ; la banque prête jusqu'à un plafond ; un associé couvre le reste. Za3fran ajoute la réserve de trésorerie nécessaire pour que la trésorerie ne soit jamais négative.</span></small></span></label>
+      <label class="choice"><input type="radio" name="fmode" value="amounts"><span><b><span data-en>I have the amounts</span><span data-fr>J'ai les montants</span></b><small><span data-en>Shareholders and the loan already agreed.</span><span data-fr>Associés et prêt déjà convenus.</span></small></span></label>
+    </div>
+
+    <div id="ruleBox" style="margin-top:16px">
+      <div class="grid">
+        <div class="field">
+          <label class="lbl" for="fbasis"><span data-en>Your contribution</span><span data-fr>Votre apport</span></label>
+          <select id="fbasis">
+            <option value="share" data-en="Share of the total (%)" data-fr="Part du total (%)">Share of the total (%)</option>
+            <option value="amount" data-en="Fixed amount" data-fr="Montant fixe">Fixed amount</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="lbl" for="fval"><span data-en>Value</span><span data-fr>Valeur</span></label>
+          <input type="text" inputmode="decimal" id="fval" placeholder="20">
+          <p class="hint"><span data-en>Moroccan banks usually ask for at least 20–30% of the total from the founders.</span><span data-fr>Les banques marocaines demandent en général au moins 20–30 % du total en fonds propres.</span></p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl"><span data-en>Bank loan ceiling</span><span data-fr>Plafond du prêt bancaire</span></span>
+        <div class="choices row">
+          <label class="choice"><input type="radio" name="capmode" value="guarantee"><span><b><span data-en>State-guarantee ceiling</span><span data-fr>Plafond de la garantie de l'État</span></b><small id="capVal"></small></span></label>
+          <label class="choice"><input type="radio" name="capmode" value="custom"><span><b><span data-en>Another amount</span><span data-fr>Autre montant</span></b></span></label>
+        </div>
+        <input type="text" inputmode="numeric" id="capAmt" class="hidden" style="margin-top:10px">
+      </div>
+    </div>
+
+    <div id="amtBox" class="hidden" style="margin-top:16px">
+      <table class="rows"><thead><tr>
+        <th><span data-en>Shareholder</span><span data-fr>Associé</span></th>
+        <th><span data-en>Cash brought</span><span data-fr>Apport</span></th>
+        <th><span data-en>Issue price × face value</span><span data-fr>Prix d'émission × nominal</span></th><th></th>
+      </tr></thead><tbody id="holders"></tbody></table>
+      <button class="add" id="addHolder" type="button"><span data-en>+ Add a shareholder</span><span data-fr>+ Ajouter un associé</span></button>
+      <p class="hint"><span data-en>Leave the issue price at 1 (shares at face value) unless a premium has been agreed.</span><span data-fr>Laissez le prix d'émission à 1 (actions au nominal) sauf prime d'émission convenue.</span></p>
+      <div class="field" style="margin-top:14px">
+        <label class="lbl" for="loanAmt"><span data-en>Bank loan</span><span data-fr>Prêt bancaire</span> <span class="cur"></span></label>
+        <input type="text" inputmode="numeric" id="loanAmt">
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:6px">
+      <div class="field">
+        <label class="lbl" for="programme"><span data-en>Loan programme</span><span data-fr>Programme de prêt</span></label>
+        <select id="programme">
+          <option value="" data-en="Standard bank loan" data-fr="Prêt bancaire classique">Standard bank loan</option>
+          <option value="intelaka" data-en="Intelaka (subsidised rate)" data-fr="Intelaka (taux bonifié)">Intelaka (subsidised rate)</option>
+        </select>
+        <p class="hint"><span data-en>Intelaka's 2026 terms and eligibility are still to be confirmed with your bank.</span><span data-fr>Les conditions 2026 et l'éligibilité Intelaka restent à confirmer avec votre banque.</span></p>
+      </div>
+      <div class="field">
+        <label class="lbl" for="grace"><span data-en>Repayment deferral offered (months)</span><span data-fr>Différé de remboursement proposé (mois)</span></label>
+        <input type="text" inputmode="numeric" id="grace" placeholder="0">
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="supDays"><span data-en>Supplier payment terms (days)</span><span data-fr>Délai de paiement fournisseurs (jours)</span></label>
+      <input type="text" inputmode="numeric" id="supDays" placeholder="0" style="max-width:200px">
+    </div>
+  </section>
+
+  <!-- Preview -->
+  <section class="card hidden" id="preview"></section>
+</div>
+</main>
+
+<div class="bar hidden" id="bar"><div class="wrap">
+  <span class="status" id="saveStatus"></span>
+  <button class="btn ghost" id="btnSave"><span data-en>Save</span><span data-fr>Enregistrer</span></button>
+  <button class="btn ghost" id="btnCheck"><span data-en>Check my figures</span><span data-fr>Vérifier mes chiffres</span></button>
+  <button class="btn primary" id="btnSubmit"><span data-en>Submit</span><span data-fr>Envoyer</span></button>
+</div></div>
+
+<footer>
+  <div class="foot-bottom">
+    <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+      <a href="/privacy" data-en>Privacy</a><a href="/privacy" data-fr>Confidentialité</a>
+      <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+'use strict';
+/* ---------------- language ---------------- */
+let lang = 'en';
+function setLang(l){
+  lang = l === 'fr' ? 'fr' : 'en';
+  document.body.classList.toggle('lang-fr', lang === 'fr');
+  document.documentElement.lang = lang;
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === lang));
+  try { localStorage.setItem('za3fran_lang', lang); } catch(e){}
+  document.querySelectorAll('option[data-en]').forEach(o=>{ o.textContent = lang === 'fr' ? o.getAttribute('data-fr') : o.getAttribute('data-en'); });
+  document.querySelectorAll('[data-en-placeholder]').forEach(el=>{ el.placeholder = lang === 'fr' ? el.getAttribute('data-fr-placeholder') : el.getAttribute('data-en-placeholder'); });
+  if (state.preview) renderPreview(state.preview, state.lastStatus);
+  updateCapHint();
+}
+let savedLang = null;
+try { savedLang = localStorage.getItem('za3fran_lang'); } catch(e){}
+document.getElementById('langtoggle').addEventListener('click', e=>{ const b = e.target.closest('button'); if(!b) return; setLang(b.dataset.l); });
+window.addEventListener('scroll', ()=>{ document.body.classList.toggle('scrolled', window.scrollY > 120); }, { passive:true });
+
+/* ---------------- helpers ---------------- */
+const $ = (id)=>document.getElementById(id);
+const T = (en, fr)=> lang === 'fr' ? fr : en;
+const esc = (s)=> String(s == null ? '' : s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const bi = (en, fr)=> `<span data-en>${en}</span><span data-fr>${fr}</span>`;
+const state = { code:'', data:null, preview:null, lastStatus:null, dirty:false, busy:false };
+const DAYS = [[1,'Mon','Lun'],[2,'Tue','Mar'],[3,'Wed','Mer'],[4,'Thu','Jeu'],[5,'Fri','Ven'],[6,'Sat','Sam'],[0,'Sun','Dim']];
+const SERVICES = [['lunch','Lunch','Déjeuner'],['dinner','Dinner','Dîner']];
+const ROLES = [['chef','Head chef','Chef de cuisine'],['cook','Cook','Cuisinier'],['commis','Commis','Commis'],['kitchen_porter','Kitchen porter','Plongeur'],['server','Server','Serveur'],['bartender','Bartender','Barman'],['manager','Restaurant manager','Directeur de salle'],['other','Other','Autre']];
+const CATS = [['fitout','Works and fit-out','Travaux et aménagement'],['equipment','Equipment','Équipement'],['furniture','Furniture and decor','Mobilier et décoration'],['it','IT and payments','Informatique et encaissement'],['preopening','Pre-opening costs','Frais de pré-ouverture'],['licence','Licence','Licence'],['initial_stock','Opening stock','Stock initial'],['key_money','Key money','Pas-de-porte'],['contingency','Contingency','Imprévus'],['other','Other','Autre']];
+const cur = ()=> (state.data && state.data.project.currency) || 'MAD';
+function parseNum(v){ if (v == null) return null; const s = String(v).replace(/[\s  ]/g,'').replace(',', '.'); return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : null; }
+function fmt(n, d){ if (n == null || !isFinite(n)) return '—'; return Number(n).toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d || 0 }); }
+const money = (n)=> n == null ? '—' : `${fmt(n)} ${esc(cur())}`;
+const pct = (x, d=1)=> x == null ? '—' : `${fmt(x*100, d)} %`;
+function radio(name){ const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; }
+function setRadio(name, v){ document.querySelectorAll(`input[name="${name}"]`).forEach(i=>{ i.checked = i.value === v; }); syncChoices(); }
+function syncChoices(){ document.querySelectorAll('.choice').forEach(c=>{ const i = c.querySelector('input'); c.classList.toggle('on', !!(i && i.checked)); }); }
+function optionsHtml(list, sel){ return list.map(([v,en,fr])=>`<option value="${v}" data-en="${esc(en)}" data-fr="${esc(fr)}"${v===sel?' selected':''}>${esc(T(en,fr))}</option>`).join(''); }
+function markDirty(){ state.dirty = true; $('saveStatus').textContent = T('Unsaved changes', 'Modifications non enregistrées'); }
+
+/* ---------------- services ---------------- */
+function renderServices(saved){
+  const byId = {}; (saved || []).forEach(s=>{ byId[s.id] = s; });
+  $('services').innerHTML = SERVICES.map(([id,en,fr])=>{
+    const s = byId[id]; const on = !!s; const days = s ? s.days : [];
+    return `<div class="svc${on?'':' off'}" data-svc="${id}">
+      <div class="svc-head"><label class="toggle"><input type="checkbox" class="svcOn"${on?' checked':''}> ${bi(en,fr)}</label></div>
+      <div class="days">${DAYS.map(([d,de,df])=>`<button type="button" class="day${days.includes(d)?' on':''}" data-d="${d}">${bi(de,df)}</button>`).join('')}</div>
+      <div class="svc-body"><label class="lbl">${bi('Average ticket, VAT incl.','Ticket moyen TTC')} (${esc(cur())})</label>
+      <input type="text" inputmode="numeric" class="svcTicket" value="${s && s.ticket != null ? esc(s.ticket) : ''}" placeholder="${esc(state.data.concept.ticket || '')}">
+      <p class="hint">${bi('Empty = your concept ticket, used for every service (the plan says so).','Vide = le ticket de votre concept, appliqué à tous les services (le plan le précise).')}</p></div>
+    </div>`;
+  }).join('');
+}
+$('services').addEventListener('click', e=>{
+  const d = e.target.closest('.day'); if (!d) return;
+  d.classList.toggle('on'); markDirty(); updateCapHint();
+});
+$('services').addEventListener('change', e=>{
+  if (e.target.classList.contains('svcOn')) e.target.closest('.svc').classList.toggle('off', !e.target.checked);
+  markDirty(); updateCapHint();
+});
+function readServices(){
+  return [...document.querySelectorAll('.svc')].filter(s=>s.querySelector('.svcOn').checked).map(s=>({
+    id: s.dataset.svc,
+    days: [...s.querySelectorAll('.day.on')].map(b=>Number(b.dataset.d)),
+    ticket: s.querySelector('.svcTicket').value.trim(),
+  }));
+}
+
+/* indicative capacity check (the plan itself uses the engine) */
+function updateCapHint(){
+  const h = $('capHint'); if (!h || !state.data) return;
+  const seats = parseNum(state.data.concept.seats); const covers = parseNum($('coversDay').value);
+  const svc = readServices();
+  const open = new Set(svc.flatMap(s=>s.days)).size; const perWeek = svc.reduce((a,s)=>a+s.days.length, 0);
+  if (!seats || !covers || !perWeek) { h.textContent = ''; h.className = 'hint'; return; }
+  const perService = covers * open / perWeek; const occ = perService / seats;
+  const txt = T(`≈ ${fmt(perService)} covers per service on ${fmt(seats)} seats = ${fmt(occ*100)} % of seats at every service (one sitting).`,
+               `≈ ${fmt(perService)} couverts par service pour ${fmt(seats)} places = ${fmt(occ*100)} % des places à chaque service (une rotation).`);
+  const over = occ > 0.85;
+  h.textContent = txt + (over ? ' ' + T('Above 85 %: the plan caps it at 85 % in every scenario.', 'Au-dessus de 85 % : le plan le plafonne à 85 % dans tous les scénarios.') : '');
+  h.className = 'hint' + (over ? ' warn' : '');
+}
+
+/* ---------------- rows ---------------- */
+function rosterRow(r){
+  const role = r.role || 'chef';
+  return `<tr>
+    <td><select class="rRole">${optionsHtml(ROLES, role)}</select></td>
+    <td><input type="text" class="rLabel" maxlength="60" value="${esc(r.label||'')}" ${role==='other'?'':'disabled'}></td>
+    <td><input type="text" inputmode="numeric" class="rCount" value="${esc(r.count ?? '')}"></td>
+    <td><input type="text" inputmode="numeric" class="rSal" value="${esc(r.monthly_gross ?? '')}" placeholder="${esc(T('market','marché'))}"></td>
+    <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
+}
+function invRow(r){
+  return `<tr>
+    <td class="wide"><input type="text" class="iLabel" maxlength="120" value="${esc(r.label||'')}"></td>
+    <td><select class="iCat">${optionsHtml(CATS, r.category || 'fitout')}</select></td>
+    <td><input type="text" inputmode="numeric" class="iAmt" value="${esc(r.amount ?? '')}"></td>
+    <td><input type="text" inputmode="numeric" class="iLow" value="${esc(r.low ?? '')}"></td>
+    <td><input type="text" inputmode="numeric" class="iHigh" value="${esc(r.high ?? '')}"></td>
+    <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
+}
+function holderRow(r){
+  return `<tr>
+    <td class="wide"><input type="text" class="hLabel" maxlength="60" value="${esc(r.label||'')}"></td>
+    <td><input type="text" inputmode="numeric" class="hAmt" value="${esc(r.amount ?? '')}"></td>
+    <td><input type="text" inputmode="decimal" class="hPf" value="${esc(r.price_factor ?? 1)}"></td>
+    <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
+}
+function bindTable(tbodyId, addId, rowFn, blank){
+  $(addId).addEventListener('click', ()=>{ $(tbodyId).insertAdjacentHTML('beforeend', rowFn(blank())); markDirty(); });
+  $(tbodyId).addEventListener('click', e=>{ if (e.target.classList.contains('del')) { e.target.closest('tr').remove(); markDirty(); } });
+  $(tbodyId).addEventListener('change', e=>{
+    if (e.target.classList.contains('rRole')) { const l = e.target.closest('tr').querySelector('.rLabel'); l.disabled = e.target.value !== 'other'; if (l.disabled) l.value=''; }
+    markDirty();
+  });
+}
+bindTable('roster','addRole', rosterRow, ()=>({ role:'server', count:1 }));
+bindTable('inv','addInv', invRow, ()=>({ category:'equipment' }));
+bindTable('holders','addHolder', holderRow, ()=>({ price_factor:1 }));
+
+/* ---------------- modes ---------------- */
+function applyModes(){
+  $('coversField').classList.toggle('hidden', radio('covers') !== 'founder');
+  $('fsalField').classList.toggle('hidden', radio('fworks') !== 'yes');
+  $('rosterBox').classList.toggle('hidden', radio('rmode') !== 'founder');
+  $('invBox').classList.toggle('hidden', radio('imode') !== 'founder');
+  $('ruleBox').classList.toggle('hidden', radio('fmode') !== 'rule');
+  $('amtBox').classList.toggle('hidden', radio('fmode') !== 'amounts');
+  $('capAmt').classList.toggle('hidden', radio('capmode') !== 'custom');
+  syncChoices();
+}
+document.addEventListener('change', e=>{ if (e.target.matches('input[type=radio]')) { applyModes(); markDirty(); } });
+$('form').addEventListener('input', ()=>{ markDirty(); });
+$('coversDay').addEventListener('input', updateCapHint);
+
+/* ---------------- payload ---------------- */
+function collect(){
+  const p = {
+    opening: $('opening').value, ramadan: radio('ramadan'), new_company: radio('newco'), alcohol: radio('alcohol'),
+    district: $('district').value, format: $('format').value === 'none' ? '' : $('format').value,
+    services: readServices(),
+    covers_source: radio('covers') === 'benchmark' ? 'benchmark' : 'founder', covers_per_day: $('coversDay').value,
+    rent_monthly: $('rent').value, surface_m2: $('surface').value, rent_free_months: $('rentFree').value, supplier_days: $('supDays').value,
+    founder_works: radio('fworks'), founder_salary: $('fsal').value,
+    roster_mode: radio('rmode') || 'founder',
+    roster: [...document.querySelectorAll('#roster tr')].map(tr=>({ role: tr.querySelector('.rRole').value, label: tr.querySelector('.rLabel').value, count: tr.querySelector('.rCount').value, monthly_gross: tr.querySelector('.rSal').value }))
+      .filter(r=>r.count !== '' || r.monthly_gross !== '' || r.label !== ''),
+    investment_mode: radio('imode') || 'founder',
+    investment: [...document.querySelectorAll('#inv tr')].map(tr=>({ label: tr.querySelector('.iLabel').value, category: tr.querySelector('.iCat').value, amount: tr.querySelector('.iAmt').value, low: tr.querySelector('.iLow').value, high: tr.querySelector('.iHigh').value }))
+      .filter(r=>r.amount !== '' || r.label !== ''),
+    funding_mode: radio('fmode') || 'rule',
+    sizing: { founder_basis: $('fbasis').value, founder_share_pct: $('fbasis').value === 'share' ? $('fval').value : '', founder_amount: $('fbasis').value === 'amount' ? $('fval').value : '',
+      loan_cap: radio('capmode') === 'custom' ? $('capAmt').value : 'guarantee' },
+    shareholders: [...document.querySelectorAll('#holders tr')].map(tr=>({ label: tr.querySelector('.hLabel').value, amount: tr.querySelector('.hAmt').value, price_factor: tr.querySelector('.hPf').value }))
+      .filter(r=>r.amount !== '' || r.label !== ''),
+    loan: { amount: $('loanAmt').value, programme: $('programme').value, grace_months: $('grace').value },
+  };
+  if (p.covers_source === 'founder' && !p.covers_per_day) delete p.covers_source;
+  return p;
+}
+
+/* saved resolver intake -> form */
+function restore(intake){
+  const i = intake || {}; const ui = i.ui || {};
+  $('opening').value = i.opening || '';
+  setRadio('ramadan', i.ramadan || '');
+  setRadio('newco', i.new_company === false ? 'no' : i.new_company === true ? 'yes' : '');
+  setRadio('alcohol', i.alcohol === false ? 'no' : i.alcohol === true ? 'yes' : '');
+  $('district').value = i.district || '';
+  $('format').value = i.format || state.data.format_default || '';
+  renderServices(i.services || []);
+  setRadio('covers', i.covers_source === 'benchmark' ? 'benchmark' : i.covers_per_day != null ? 'founder' : '');
+  $('coversDay').value = i.covers_per_day != null ? i.covers_per_day : (state.data.concept.covers || '');
+  $('rent').value = i.rent_monthly ?? ''; $('surface').value = i.surface_m2 ?? ''; $('rentFree').value = i.rent_free_months ?? '';
+  $('supDays').value = i.supplier_days ?? '';
+  const roster = (i.roster || []);
+  const founderRow = roster.find(r=>r.role === 'founder');
+  setRadio('fworks', ui.founder_works === true || founderRow ? 'yes' : ui.founder_works === false ? 'no' : '');
+  $('fsal').value = ui.founder_salary ?? (founderRow && founderRow.monthly_gross) ?? '';
+  setRadio('rmode', ui.roster_mode || 'founder');
+  const known = ROLES.map(r=>r[0]);
+  $('roster').innerHTML = roster.filter(r=>r.role !== 'founder').map(r=>{
+    const base = r.brain_role || r.role;
+    return known.includes(base) && base !== 'other' ? rosterRow({ role: base, count: r.count, monthly_gross: r.monthly_gross })
+      : rosterRow({ role: 'other', label: r.note || r.role, count: r.count, monthly_gross: r.monthly_gross });
+  }).join('') || rosterRow({ role:'chef', count:1 });
+  setRadio('imode', ui.investment_mode || 'founder');
+  $('inv').innerHTML = (i.investment || []).map(x=>invRow({ label:x.label, category:x.category, amount:x.amount, low:x.low, high:x.high })).join('') || invRow({ category:'fitout' });
+  setRadio('fmode', ui.funding_mode || 'rule');
+  const s = i.sizing || {};
+  $('fbasis').value = s.founder_amount != null ? 'amount' : 'share';
+  $('fval').value = s.founder_amount != null ? s.founder_amount : s.founder_share != null ? Math.round(s.founder_share * 10000) / 100 : '';
+  const customCap = s.loan_cap != null && s.loan_cap !== 'guarantee';
+  setRadio('capmode', customCap ? 'custom' : 'guarantee'); $('capAmt').value = customCap ? s.loan_cap : '';
+  $('holders').innerHTML = (i.shareholders || []).map(holderRow).join('') || holderRow({ label: T('Founder','Fondateur'), price_factor:1 });
+  const loan = i.loan || {};
+  $('loanAmt').value = loan.amount ?? ''; $('programme').value = loan.programme || ''; $('grace').value = loan.grace_months ?? '';
+  applyModes(); updateCapHint();
+  state.dirty = false; $('saveStatus').textContent = '';
+}
+
+/* ---------------- messages ---------------- */
+const GAP = {
+  'opening': ['Opening month', 'Mois d\'ouverture'],
+  'calendar.ramadan': ['Your Ramadan choice', 'Votre choix pour le Ramadan'],
+  'services': ['At least one service with its days', 'Au moins un service avec ses jours'],
+  'seats': ['Seats (from your concept)', 'Places assises (de votre concept)'],
+  'rent.monthly': ['A monthly rent, or the surface where Za3fran has rent data', 'Un loyer mensuel, ou la surface là où Za3fran a des loyers'],
+  'labour.roster': ['The team', 'L\'équipe'],
+  'investment': ['The investment list', 'La liste des investissements'],
+  'funding.sizing': ['Funding: either a rule or amounts, not both', 'Financement : une règle ou des montants, pas les deux'],
+  'funding.sizing.founder': ['Your contribution (share or amount)', 'Votre apport (part ou montant)'],
+  'funding.sizing.founder_share': ['Your share must be between 0 and 100 %', 'Votre part doit être entre 0 et 100 %'],
+  'funding.equity': ['Shareholders and their amounts', 'Les associés et leurs apports'],
+  'funding.sizing.reserve': ['Operations never generate enough cash to stay positive: review revenue and costs', 'L\'activité ne génère jamais assez de trésorerie : revoyez recettes et charges'],
+  'market': ['Za3fran has no market profile for this country yet (built on request)', 'Za3fran n\'a pas encore de profil de marché pour ce pays (construit sur demande)'],
+  'format': ['Choose a benchmark family, or ask Za3fran to build one', 'Choisissez une famille de référence, ou demandez-en une à Za3fran'],
+};
+const ERR = {
+  bad_month: ['month not valid','mois non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
+  out_of_range: ['value out of range','valeur hors limites'], missing: ['missing','manquant'], unknown_role: ['unknown role','poste inconnu'],
+  salary_needed_for_other: ['salary needed for an "other" role','salaire requis pour un poste « autre »'], range_around_amount: ['low must be ≤ amount ≤ high','bas ≤ montant ≤ haut'],
+  unknown_category: ['unknown type','catégorie inconnue'], unknown_service: ['unknown service','service inconnu'], unknown_format: ['unknown benchmark family','famille inconnue'],
+};
+const gapText = (g)=> GAP[g.path] ? T(...GAP[g.path]) : esc(g.message || g.path);
+const FIELD = [
+  [/^opening$/, ['Opening month','Mois d\'ouverture']], [/^ramadan$/, ['Ramadan','Ramadan']], [/^format$/, ['Benchmark family','Famille de référence']],
+  [/^services\.lunch/, ['Lunch','Déjeuner']], [/^services\.dinner/, ['Dinner','Dîner']], [/^services$/, ['Services','Services']],
+  [/^covers_per_day$/, ['Covers per day','Couverts par jour']], [/^rent_monthly$/, ['Monthly rent','Loyer mensuel']], [/^surface_m2$/, ['Surface','Surface']],
+  [/^rent_free_months$/, ['Rent-free months','Mois de franchise']], [/^supplier_days$/, ['Supplier terms','Délai fournisseurs']],
+  [/^founder_salary$/, ['Your salary','Votre salaire']], [/^roster\.(\d+)/, ['Team, line','Équipe, ligne']], [/^investment\.(\d+)/, ['Investment, line','Investissement, ligne']],
+  [/^shareholders\.(\d+)/, ['Shareholder, line','Associé, ligne']], [/^sizing\./, ['Your contribution / loan ceiling','Votre apport / plafond du prêt']],
+  [/^loan\./, ['Bank loan','Prêt bancaire']],
+];
+function fieldName(path){
+  for (const [re, [en, fr]] of FIELD) { const m = re.exec(path); if (m) return T(en, fr) + (m[1] != null ? ' ' + (Number(m[1]) + 1) : ''); }
+  return esc(path);
+}
+const errText = (e)=> `${fieldName(e.path)} — ${ERR[e.code] ? T(...ERR[e.code]) : esc(e.code)}`;
+
+/* bilingual wording for engine / resolver flags (fallback: engine message) */
+function flagText(f){
+  const d = f.data || {}; const y = d.year;
+  const map = {
+    FUNDING_GAP_BASE: ()=> T(`Funding is ${money(-d.gap)} short of the total to finance.`, `Il manque ${money(-d.gap)} pour couvrir le total à financer.`),
+    FUNDING_GAP_HIGH: ()=> T(`If investment reaches the high end of its estimates, funding is ${money(-d.gap)} short.`, `Si l'investissement atteint le haut de ses estimations, il manque ${money(-d.gap)}.`),
+    CASH_NEGATIVE: ()=> T(`Cash goes negative (${money(d.balance)}) in ${esc(d.month)}.`, `La trésorerie devient négative (${money(d.balance)}) en ${esc(d.month)}.`),
+    PAYROLL_OUT_OF_BAND: ()=> T(`Year ${y}: payroll is ${pct(d.value)} of revenue, outside the usual 20–38 %.`, `Année ${y} : la masse salariale représente ${pct(d.value)} du CA, hors de la fourchette habituelle 20–38 %.`),
+    RENT_HIGH: ()=> T(`Year ${y}: rent is ${pct(d.value)} of revenue, above the usual 12 %.`, `Année ${y} : le loyer représente ${pct(d.value)} du CA, au-dessus des 12 % habituels.`),
+    PRIME_COST_HIGH: ()=> T(`Year ${y}: food, drink and payroll costs reach ${pct(d.value)} of revenue.`, `Année ${y} : matières et masse salariale atteignent ${pct(d.value)} du CA.`),
+    EBITDA_MARGIN_HIGH: ()=> T(`Year ${y}: EBITDA margin ${pct(d.value)} is unusually high; the bank will question it.`, `Année ${y} : marge d'EBE de ${pct(d.value)}, inhabituellement élevée ; la banque la questionnera.`),
+    EBITDA_MARGIN_LOW: ()=> T(`Year ${y}: EBITDA margin ${pct(d.value)} is thin.`, `Année ${y} : marge d'EBE de ${pct(d.value)}, faible.`),
+    DSCR_BELOW_1: ()=> T(`Year ${y}: operations do not cover the loan repayments (DSCR ${fmt(d.dscr,2)}).`, `Année ${y} : l'activité ne couvre pas les remboursements (DSCR ${fmt(d.dscr,2)}).`),
+    DSCR_LOW: ()=> T(`Year ${y}: debt cover ${fmt(d.dscr,2)}, below what banks usually accept.`, `Année ${y} : couverture de la dette ${fmt(d.dscr,2)}, sous le seuil habituel des banques.`),
+    DSCR_TIGHT: ()=> T(`Year ${y}: debt cover ${fmt(d.dscr,2)} is tight.`, `Année ${y} : couverture de la dette ${fmt(d.dscr,2)}, serrée.`),
+    SINGLE_TICKET: ()=> T(`One ${money(d.ticket)} ticket is used for lunch and dinner; give each service its own ticket if they differ.`, `Un seul ticket de ${money(d.ticket)} est utilisé au déjeuner et au dîner ; indiquez un ticket par service s'ils diffèrent.`),
+    FOUNDER_COVERS_ABOVE_CAP: ()=> T('Your covers per day exceed 85 % of seats at every service; the plan caps them.', 'Vos couverts par jour dépassent 85 % des places à chaque service ; le plan les plafonne.'),
+    LOAN_ABOVE_GUARANTEE_CAP: ()=> T(`The loan (${money(d.loan)}) is above the state-guarantee ceiling (${money(d.cap)}).`, `Le prêt (${money(d.loan)}) dépasse le plafond de la garantie de l'État (${money(d.cap)}).`),
+    CAPACITY_OCCUPANCY: ()=> T(`${esc(d.service)}: occupancy above 85 % of seats in year ${y}.`, `${esc(d.service)} : occupation au-dessus de 85 % des places en année ${y}.`),
+    CAPACITY_CLAMPED: ()=> T('Seasonal peaks exceed the room; covers are capped at seats × sittings.', 'Les pics saisonniers dépassent la salle ; les couverts sont plafonnés.'),
+    PAYBACK_IMPLAUSIBLE: ()=> T('Payback looks too fast; revenue or costs need checking.', 'Le retour sur investissement paraît trop rapide ; à vérifier.'),
+  };
+  return map[f.code] ? map[f.code]() : esc(f.message);
+}
+
+/* ---------------- preview ---------------- */
+function renderPreview(p, status){
+  state.preview = p; state.lastStatus = status;
+  const el = $('preview'); el.classList.remove('hidden');
+  let h = `<h2><span class="n">✓</span>${bi('What your plan will show','Ce que votre plan montrera')}</h2>`;
+  if (status === 'submitted') h += `<div class="banner ok">${bi('Received. Your plan will be prepared from these inputs. You can still edit and resubmit until it is generated.','Reçu. Votre plan sera préparé à partir de ces données. Vous pouvez encore modifier et renvoyer tant qu\'il n\'est pas généré.')}</div>`;
+  if (status === 'awaiting_estimates') h += `<div class="banner info">${bi('Received. Za3fran is preparing the estimates you asked for and will contact you to review them before your plan is generated.','Reçu. Za3fran prépare les estimations demandées et vous contactera pour les revoir avant la génération de votre plan.')}</div>`;
+  if (p.blocking && p.blocking.length) {
+    h += `<h3 class="sub">${bi('Still needed','Encore nécessaire')}</h3><ul class="list bad">${p.blocking.map(g=>`<li>${gapText(g)}</li>`).join('')}</ul>`;
+  }
+  if (p.uses) {
+    const s = p.sizing;
+    h += `<div class="kpis">
+      <div><span>${bi('Total to finance','Total à financer')}</span><strong>${money(p.uses.total)}</strong></div>
+      ${s && s.reserve != null ? `<div><span>${bi('incl. cash reserve','dont réserve de trésorerie')}</span><strong>${money(s.reserve)}</strong></div>` : ''}
+      <div><span>${bi('Bank loan','Prêt bancaire')}</span><strong>${money(p.sources.loans)}</strong></div>
+      <div><span>${bi('Equity','Fonds propres')}</span><strong>${money(p.sources.equity)}</strong></div>
+    </div>`;
+    if (p.sources.shareholders.length) {
+      h += `<table class="fig"><thead><tr><th>${bi('Shareholders','Associés')}</th><th>${bi('Cash','Apport')}</th><th>${bi('Share of capital','Part du capital')}</th></tr></thead><tbody>${
+        p.sources.shareholders.map(x=>`<tr><td>${esc(x.label)}${x.price_factor && x.price_factor !== 1 ? ` (× ${fmt(x.price_factor, 2)})` : ''}</td><td>${money(x.amount)}</td><td>${pct(x.share_of_capital)}</td></tr>`).join('')}</tbody></table>`;
+      if (s && s.partner && s.partner.amount > 0 && s.price_factor_for_target > 1) {
+        h += `<div class="note">${T(
+          `At face value the partner holds ${pct(s.partner.share_of_capital)}. To keep ${pct(s.target_share,0)} yourself, the partner would need to pay ${fmt(s.price_factor_for_target, 2)} × face value per share (a share premium). The plan states this; it does not assume it.`,
+          `Au nominal, l'associé détient ${pct(s.partner.share_of_capital)}. Pour conserver ${pct(s.target_share,0)}, l'associé devrait payer ${fmt(s.price_factor_for_target, 2)} × le nominal par action (prime d'émission). Le plan l'indique sans le supposer.`)}</div>`;
+      }
+    }
+    const yr = (n)=> T(`Year ${n}`, `Année ${n}`);
+    h += `<table class="fig"><thead><tr><th></th>${p.years.map(y=>`<th>${yr(y.year)}</th>`).join('')}</tr></thead><tbody>
+      <tr><td>${bi('Revenue excl. VAT','CA HT')}</td>${p.years.map(y=>`<td>${fmt(y.revenue)}</td>`).join('')}</tr>
+      <tr><td>${bi('EBITDA','EBE')}</td>${p.years.map(y=>`<td>${fmt(y.ebitda)}</td>`).join('')}</tr>
+      <tr><td>${bi('EBITDA margin','Marge d\'EBE')}</td>${p.years.map(y=>`<td>${pct(y.ebitda_margin)}</td>`).join('')}</tr>
+      <tr><td>${bi('Net result','Résultat net')}</td>${p.years.map(y=>`<td>${fmt(y.net_result)}</td>`).join('')}</tr>
+      <tr><td>${bi('Covers','Couverts')}</td>${p.years.map(y=>`<td>${fmt(y.covers)}</td>`).join('')}</tr>
+      <tr><td>${bi('Debt cover (DSCR)','Couverture de la dette (DSCR)')}</td>${p.years.map(y=>`<td>${y.dscr == null ? '—' : fmt(y.dscr, 2)}</td>`).join('')}</tr>
+      <tr><td>${bi('DSCR, prudent case','DSCR, cas prudent')}</td>${p.conservative.dscr.map(d=>`<td>${d == null ? '—' : fmt(d, 2)}</td>`).join('')}</tr>
+    </tbody></table>
+    ${p.conservative.dscr.some(d=>d != null && d < 1) ? `<div class="note">${T('In the prudent case, at least one year does not cover its loan repayments from operations; the cash reserve covers it. The plan explains this to the bank.','Dans le cas prudent, au moins une année ne couvre pas ses remboursements par l\'activité ; la réserve de trésorerie y pourvoit. Le plan l\'explique à la banque.')}</div>` : ''}
+    <p class="hint">${T(`Amounts in ${esc(cur())}. Banks usually look for a debt cover of at least 1.25–1.5. Lowest cash balance: ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}); prudent case ${money(p.conservative.min_cash.balance)}.`,
+      `Montants en ${esc(cur())}. Les banques attendent en général une couverture de la dette d'au moins 1,25–1,5. Trésorerie la plus basse : ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}) ; cas prudent ${money(p.conservative.min_cash.balance)}.`)}</p>`;
+  }
+  const warn = (p.engine_flags || []).filter(f=>f.severity !== 'info').concat((p.flags || []).filter(f=>f.severity !== 'info'));
+  if (warn.length) h += `<h3 class="sub">${bi('Points the plan will address','Points que le plan traitera')}</h3><ul class="list warn">${warn.map(f=>`<li>${flagText(f)}</li>`).join('')}</ul>`;
+  if (p.estimates && p.estimates.length) h += `<p class="hint">${T(`${p.estimates.length} figure(s) are Za3fran estimates and are labelled as such in the plan.`, `${p.estimates.length} chiffre(s) sont des estimations Za3fran, signalées comme telles dans le plan.`)}</p>`;
+  el.innerHTML = h;
+}
+
+function renderStatus(status){
+  const b = $('statusBanner');
+  if (status === 'submitted') b.innerHTML = `<div class="banner ok">${bi('Inputs submitted. You can still edit and resubmit until your plan is generated.','Données envoyées. Vous pouvez encore modifier et renvoyer tant que votre plan n\'est pas généré.')}</div>`;
+  else if (status === 'awaiting_estimates') b.innerHTML = `<div class="banner info">${bi('Za3fran is preparing the estimates you asked for.','Za3fran prépare les estimations demandées.')}</div>`;
+  else b.innerHTML = '';
+  if (state.data && state.data.project.crr_status !== 'cleared') b.innerHTML += `<div class="banner bad">${bi('Your Concept Readiness Review is not cleared yet. You can fill in your inputs now; the plan is generated once the review is cleared.','Votre revue de préparation du concept n\'est pas encore validée. Vous pouvez saisir vos données ; le plan sera généré une fois la revue validée.')}</div>`;
+}
+
+/* ---------------- API ---------------- */
+async function api(action){
+  if (state.busy) return; state.busy = true;
+  const btn = { save:'btnSave', preview:'btnCheck', submit:'btnSubmit' }[action];
+  const b = $(btn); const old = b.innerHTML; b.disabled = true; b.innerHTML = `<span class="spinner"></span>${b.innerHTML}`;
+  try {
+    const r = await fetch('/api/bp-intake', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ code: state.code, action: action === 'preview' ? 'preview' : action, intake: collect() }) });
+    const j = await r.json().catch(()=>({}));
+    if (r.status === 422 && j.error === 'invalid_input') {
+      $('saveStatus').textContent = T('Please check:', 'Merci de vérifier :') + ' ' + j.errors.map(errText).join(' · ');
+      sizeBar(); return;
+    }
+    if (r.status === 422 && j.error === 'incomplete') {
+      state.dirty = false; $('saveStatus').textContent = T('Saved. Some answers are still needed before submitting.', 'Enregistré. Quelques réponses manquent avant l\'envoi.');
+      renderPreview(j.preview, 'draft'); $('preview').scrollIntoView(); return;
+    }
+    if (!r.ok) { $('saveStatus').textContent = T('Something went wrong. Please try again, or message us on WhatsApp.', 'Une erreur est survenue. Réessayez, ou écrivez-nous sur WhatsApp.'); return; }
+    state.dirty = false;
+    $('saveStatus').textContent = T('Saved', 'Enregistré') + ' · ' + new Date().toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-GB', { hour:'2-digit', minute:'2-digit' });
+    renderStatus(j.status);
+    if (j.preview) { renderPreview(j.preview, j.status); $('preview').scrollIntoView(); }
+  } catch(e) {
+    $('saveStatus').textContent = T('Connection problem. Your answers are still on this page; try again.', 'Problème de connexion. Vos réponses sont toujours sur la page ; réessayez.');
+  } finally { b.disabled = false; b.innerHTML = old; state.busy = false; }
+}
+$('btnSave').addEventListener('click', ()=>api('save'));
+$('btnCheck').addEventListener('click', ()=>api('preview'));
+$('btnSubmit').addEventListener('click', ()=>api('submit'));
+window.addEventListener('beforeunload', e=>{ if (state.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+async function open(code){
+  $('gateErr').classList.add('hidden');
+  try {
+    const r = await fetch('/api/bp-intake?code=' + encodeURIComponent(code));
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok) {
+      const msg = { not_found: T('Code not recognised.', 'Code non reconnu.'), locked: T('Too many attempts. Try again in 30 minutes.', 'Trop de tentatives. Réessayez dans 30 minutes.'),
+        not_purchased: T('This project has no Business Plan purchase yet.', 'Ce projet n\'a pas encore d\'achat Business Plan.') }[j.error] || T('Something went wrong. Please try again.', 'Une erreur est survenue. Réessayez.');
+      $('gate').classList.remove('hidden'); $('gateErr').textContent = msg; $('gateErr').classList.remove('hidden'); return;
+    }
+    state.code = code; state.data = j;
+    if (!savedLang && j.project.language === 'fr') setLang('fr');
+    history.replaceState(null, '', '?code=' + encodeURIComponent(code));
+    $('gate').classList.add('hidden'); $('form').classList.remove('hidden'); $('bar').classList.remove('hidden');
+    document.body.classList.add('has-bar'); sizeBar();
+    $('dashLink').href = '/project?code=' + encodeURIComponent(code); $('dashLink').classList.remove('hidden');
+    document.querySelectorAll('.cur').forEach(x=>{ x.textContent = '(' + j.project.currency + ')'; });
+    const c = j.concept;
+    $('recap').innerHTML = [
+      [bi('Concept','Concept'), esc(j.project.concept_name || '—')],
+      [bi('City','Ville'), esc(c.city || '—')],
+      [bi('Seats','Places'), esc(c.seats || '—')],
+      [bi('Ticket','Ticket'), c.ticket ? `${esc(c.ticket)} ${esc(j.project.currency)}` : '—'],
+      [bi('Covers / day','Couverts / jour'), esc(c.covers || '—')],
+    ].map(([k,v])=>`<div><span>${k}</span><strong>${v}</strong></div>`).join('');
+    $('rentNeeded').classList.toggle('hidden', !!j.brain.rent_benchmark);
+    $('capVal').textContent = j.brain.guarantee_cap ? `${fmt(j.brain.guarantee_cap)} ${j.project.currency}` : T('Not available for this market', 'Non disponible pour ce marché');
+    if (!(j.brain.loan_programmes || []).includes('intelaka')) $('programme').querySelector('option[value="intelaka"]').disabled = true;
+    restore(j.saved ? j.saved.intake : {});
+    if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); $('fval').value = '20'; applyModes(); }
+    renderStatus(j.saved && j.saved.status);
+    if (j.saved && j.saved.preview) renderPreview(j.saved.preview, j.saved.status);
+    setLang(lang);
+  } catch(e) {
+    $('gate').classList.remove('hidden'); $('gateErr').textContent = T('Connection problem. Please try again.', 'Problème de connexion. Réessayez.'); $('gateErr').classList.remove('hidden');
+  }
+}
+$('codeGo').addEventListener('click', ()=>{ const c = $('codeIn').value.trim().toUpperCase(); if (c) open(c); });
+$('codeIn').addEventListener('keydown', e=>{ if (e.key === 'Enter') $('codeGo').click(); });
+
+function sizeBar(){ const b = $('bar'); if (b && !b.classList.contains('hidden')) document.body.style.setProperty('--barh', b.offsetHeight + 'px'); }
+window.addEventListener('resize', sizeBar);
+
+/* ---------------- start ---------------- */
+setLang(savedLang === 'fr' ? 'fr' : 'en');
+const qcode = (new URLSearchParams(location.search).get('code') || '').trim().toUpperCase();
+if (qcode) open(qcode); else $('gate').classList.remove('hidden');
+})();
+</script>
+</body>
+</html>
