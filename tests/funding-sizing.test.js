@@ -1,6 +1,6 @@
 /* Run: node --test tests/*.test.js
  * Funding sizing (resolver ar-1.4.0) and share premium (engine fe-1.4.0).
- * Canaille regression uses the dated live snapshot tests/fixtures/canaille-live-2026-10-08.js:
+ * Canaille regression uses the live snapshot tests/fixtures/canaille-live-2026-10-09.js:
  * the expected figures are the ones Arnaud approved on 8 Oct 2026 (Handoff Brief #8).
  */
 'use strict';
@@ -8,7 +8,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const E = require('../lib/financial-engine.js');
 const R = require('../lib/assumption-resolver.js');
-const C = require('./fixtures/canaille-live-2026-10-08.js');
+const C = require('./fixtures/canaille-live-2026-10-09.js');
 const clone = (x) => JSON.parse(JSON.stringify(x));
 
 const runCanaille = (intakeOver = {}) => R.resolveAssumptions({

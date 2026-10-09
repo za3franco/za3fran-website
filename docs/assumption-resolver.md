@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.4.0
+# Assumption resolver — ar-1.4.1
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -77,3 +77,10 @@ replaces the scratch script, so a plan is reproducible from the intake alone (`s
 - `intake.shareholders[].price_factor` passes through to fe-1.4.0 when funding is given as amounts.
 - Canaille (fixture of 8 Oct): reserve 320,000 · uses 2,230,000 · founder 446,000 (43.3%) · partner 584,000 ·
   loan 1,200,000 · DSCR 1.76 / 3.28 / 3.34 — identical to the approved scratch run (`tests/funding-sizing.test.js`).
+
+## ar-1.4.1 (9 Oct 2026)
+- A verified Brain value is not re-queued as `impact_over_5pct` (approval covers it); it still reaches the queue
+  for `founder_evidence` and `out_of_range`. Found on the Canaille re-snapshot: food cost, chef salary, marketing
+  and other opex would otherwise reopen on every run. Figures unchanged.
+- Canaille fixture re-snapshotted from the live Brain on 9 Oct (`tests/fixtures/canaille-live-2026-10-09.js`): the
+  15 verified values arrive as `za3fran_verified`; every number the resolver reads is unchanged from 8 Oct.
