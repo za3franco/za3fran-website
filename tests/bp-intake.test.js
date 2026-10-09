@@ -113,3 +113,26 @@ test('a second row of the same role gets its own key and keeps the market salary
   const { intake } = I.normalizeIntake({ roster_mode: 'founder', roster: [{ role: 'server', count: 2 }, { role: 'server', count: 1, label: 'Weekend' }] });
   assert.deepEqual(intake.roster.map((x) => [x.role, x.brain_role]), [['server', undefined], ['server_2', 'server']]);
 });
+
+test('bpi-1.1.0 — agreed shares: the issue price is derived, the founder keeps the agreed split', () => {
+  const { intake, errors } = I.normalizeIntake({ ...canailleForm, funding_mode: 'amounts',
+    shareholders: [{ label: 'Founder', amount: '400000', share_pct: '51' }, { label: 'Investor', amount: '600000', share_pct: '49' }],
+    loan: { amount: 1200000 } });
+  assert.deepEqual(errors, []);
+  assert.equal(intake.shareholders[0].price_factor, undefined);           // pays least per share: face value
+  assert.equal(intake.shareholders[1].price_factor, 1.5612);
+  const res = run(intake);
+  const out = E.computePlan(E.pickScenario(res.inputs, 'base', 'inputs'));
+  const [f, inv] = out.sources_of_funds.shareholders;
+  assert.ok(Math.abs(f.share_of_capital - 0.51) < 0.0005, String(f.share_of_capital));
+  assert.ok(Math.abs(inv.share_of_capital - 0.49) < 0.0005, String(inv.share_of_capital));
+  assert.equal(out.sources_of_funds.equity, 1000000);                     // cash unchanged
+});
+
+test('bpi-1.1.0 — agreed shares must be complete and add up to 100', () => {
+  const two = (a, b) => I.normalizeIntake({ funding_mode: 'amounts', shareholders: [{ label: 'A', amount: 1, share_pct: a }, { label: 'B', amount: 1, share_pct: b }] }).errors.map((e) => e.code);
+  assert.ok(two('51', '').includes('shares_incomplete'));
+  assert.ok(two('60', '30').includes('shares_sum'));
+  assert.deepEqual(two('', ''), []);                                      // no split given: shares follow cash
+  assert.ok(two('100', '0').includes('out_of_range'));
+});

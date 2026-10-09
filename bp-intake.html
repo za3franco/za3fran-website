@@ -16,6 +16,7 @@
   --line:rgba(255,255,255,.10); --field:rgba(255,255,255,.06); --ok:#6fbf8e; --bad:#e07070;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
+html{color-scheme:dark;}
 html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.5;}
 h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
@@ -59,8 +60,9 @@ label.lbl,.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transfor
 .hint.warn{color:var(--copper-bright);}
 .hint.bad{color:var(--bad);}
 input[type=text],input[type=month],input[type=number],select{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--white);outline:none;-webkit-appearance:none;appearance:none;}
-select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px;}
-select option{background:var(--charcoal);color:var(--white);}
+select{background-color:var(--charcoal2);background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px;}
+select option,select optgroup{background-color:var(--charcoal2);color:var(--white);}
+select option:disabled{color:var(--muted);}
 input:focus,select:focus{border-color:rgba(201,134,42,.6);}
 input::placeholder{color:rgba(139,147,168,.7);}
 input.err,select.err{border-color:var(--bad);}
@@ -229,7 +231,7 @@ footer .foot-bottom a:hover{color:var(--white);}
         <p class="hint"><span data-en>A new company is exempt from the minimum tax for its first 36 months.</span><span data-fr>Une nouvelle société est exonérée de cotisation minimale pendant 36 mois.</span></p>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="ramadanField">
       <span class="lbl"><span data-en>During Ramadan</span><span data-fr>Pendant le Ramadan</span></span>
       <div class="choices" id="ramadanChoices">
         <label class="choice"><input type="radio" name="ramadan" value="closed"><span><b><span data-en>Closed</span><span data-fr>Fermé</span></b><small><span data-en>No revenue for the month; rent, payroll and fixed costs continue. Usual for venues serving alcohol.</span><span data-fr>Aucun chiffre d'affaires sur le mois ; loyer, salaires et frais fixes continuent. Courant pour les lieux servant de l'alcool.</span></small></span></label>
@@ -375,10 +377,10 @@ footer .foot-bottom a:hover{color:var(--white);}
       <table class="rows"><thead><tr>
         <th><span data-en>Shareholder</span><span data-fr>Associé</span></th>
         <th><span data-en>Cash brought</span><span data-fr>Apport</span></th>
-        <th><span data-en>Issue price × face value</span><span data-fr>Prix d'émission × nominal</span></th><th></th>
+        <th><span data-en>Agreed share of the company (%)</span><span data-fr>Part du capital convenue (%)</span></th><th></th>
       </tr></thead><tbody id="holders"></tbody></table>
       <button class="add" id="addHolder" type="button"><span data-en>+ Add a shareholder</span><span data-fr>+ Ajouter un associé</span></button>
-      <p class="hint"><span data-en>Leave the issue price at 1 (shares at face value) unless a premium has been agreed.</span><span data-fr>Laissez le prix d'émission à 1 (actions au nominal) sauf prime d'émission convenue.</span></p>
+      <p class="hint"><span data-en>Leave the share column empty if each partner's share simply follows the cash they bring. If you agreed a different split (e.g. you keep 51% while bringing less cash), enter it for every shareholder; it must add up to 100%. Za3fran then works out the share premium the investor pays.</span><span data-fr>Laissez la colonne vide si la part de chacun suit simplement son apport. Si vous avez convenu d'une autre répartition (par ex. vous gardez 51 % en apportant moins), indiquez-la pour chaque associé ; le total doit faire 100 %. Za3fran calcule alors la prime d'émission payée par l'investisseur.</span></p>
       <div class="field" style="margin-top:14px">
         <label class="lbl" for="loanAmt"><span data-en>Bank loan</span><span data-fr>Prêt bancaire</span> <span class="cur"></span></label>
         <input type="text" inputmode="numeric" id="loanAmt">
@@ -539,7 +541,7 @@ function holderRow(r){
   return `<tr>
     <td class="wide"><input type="text" class="hLabel" maxlength="60" value="${esc(r.label||'')}"></td>
     <td><input type="text" inputmode="numeric" class="hAmt" value="${esc(r.amount ?? '')}"></td>
-    <td><input type="text" inputmode="decimal" class="hPf" value="${esc(r.price_factor ?? 1)}"></td>
+    <td><input type="text" inputmode="decimal" class="hShare" value="${esc(r.share_pct ?? '')}" placeholder="${esc(T('follows cash','selon apport'))}"></td>
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 function bindTable(tbodyId, addId, rowFn, blank){
@@ -552,7 +554,7 @@ function bindTable(tbodyId, addId, rowFn, blank){
 }
 bindTable('roster','addRole', rosterRow, ()=>({ role:'server', count:1 }));
 bindTable('inv','addInv', invRow, ()=>({ category:'equipment' }));
-bindTable('holders','addHolder', holderRow, ()=>({ price_factor:1 }));
+bindTable('holders','addHolder', holderRow, ()=>({}));
 
 /* ---------------- modes ---------------- */
 function applyModes(){
@@ -572,7 +574,7 @@ $('coversDay').addEventListener('input', updateCapHint);
 /* ---------------- payload ---------------- */
 function collect(){
   const p = {
-    opening: $('opening').value, ramadan: radio('ramadan'), new_company: radio('newco'), alcohol: radio('alcohol'),
+    opening: $('opening').value, ramadan: state.data && state.data.brain.ramadan === false ? 'normal' : radio('ramadan'), new_company: radio('newco'), alcohol: radio('alcohol'),
     district: $('district').value, format: $('format').value === 'none' ? '' : $('format').value,
     services: readServices(),
     covers_source: radio('covers') === 'benchmark' ? 'benchmark' : 'founder', covers_per_day: $('coversDay').value,
@@ -587,7 +589,7 @@ function collect(){
     funding_mode: radio('fmode') || 'rule',
     sizing: { founder_basis: $('fbasis').value, founder_share_pct: $('fbasis').value === 'share' ? $('fval').value : '', founder_amount: $('fbasis').value === 'amount' ? $('fval').value : '',
       loan_cap: radio('capmode') === 'custom' ? $('capAmt').value : 'guarantee' },
-    shareholders: [...document.querySelectorAll('#holders tr')].map(tr=>({ label: tr.querySelector('.hLabel').value, amount: tr.querySelector('.hAmt').value, price_factor: tr.querySelector('.hPf').value }))
+    shareholders: [...document.querySelectorAll('#holders tr')].map(tr=>({ label: tr.querySelector('.hLabel').value, amount: tr.querySelector('.hAmt').value, share_pct: tr.querySelector('.hShare').value }))
       .filter(r=>r.amount !== '' || r.label !== ''),
     loan: { amount: $('loanAmt').value, programme: $('programme').value, grace_months: $('grace').value },
   };
@@ -628,7 +630,7 @@ function restore(intake){
   $('fval').value = s.founder_amount != null ? s.founder_amount : s.founder_share != null ? Math.round(s.founder_share * 10000) / 100 : '';
   const customCap = s.loan_cap != null && s.loan_cap !== 'guarantee';
   setRadio('capmode', customCap ? 'custom' : 'guarantee'); $('capAmt').value = customCap ? s.loan_cap : '';
-  $('holders').innerHTML = (i.shareholders || []).map(holderRow).join('') || holderRow({ label: T('Founder','Fondateur'), price_factor:1 });
+  $('holders').innerHTML = (i.shareholders || []).map(holderRow).join('') || holderRow({ label: T('Founder','Fondateur') });
   const loan = i.loan || {};
   $('loanAmt').value = loan.amount ?? ''; $('programme').value = loan.programme || ''; $('grace').value = loan.grace_months ?? '';
   applyModes(); updateCapHint();
@@ -656,7 +658,10 @@ const ERR = {
   bad_month: ['month not valid','mois non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
   out_of_range: ['value out of range','valeur hors limites'], missing: ['missing','manquant'], unknown_role: ['unknown role','poste inconnu'],
   salary_needed_for_other: ['salary needed for an "other" role','salaire requis pour un poste « autre »'], range_around_amount: ['low must be ≤ amount ≤ high','bas ≤ montant ≤ haut'],
-  unknown_category: ['unknown type','catégorie inconnue'], unknown_service: ['unknown service','service inconnu'], unknown_format: ['unknown benchmark family','famille inconnue'],
+  unknown_category: ['unknown type','catégorie inconnue'],
+  shares_incomplete: ['give the agreed share for every shareholder, or for none','indiquez la part convenue pour chaque associé, ou pour aucun'],
+  shares_sum: ['agreed shares must add up to 100 %','les parts convenues doivent totaliser 100 %'],
+  shares_need_cash: ['each shareholder with a share must bring cash','chaque associé avec une part doit faire un apport'], unknown_service: ['unknown service','service inconnu'], unknown_format: ['unknown benchmark family','famille inconnue'],
 };
 const gapText = (g)=> GAP[g.path] ? T(...GAP[g.path]) : esc(g.message || g.path);
 const FIELD = [
@@ -665,7 +670,7 @@ const FIELD = [
   [/^covers_per_day$/, ['Covers per day','Couverts par jour']], [/^rent_monthly$/, ['Monthly rent','Loyer mensuel']], [/^surface_m2$/, ['Surface','Surface']],
   [/^rent_free_months$/, ['Rent-free months','Mois de franchise']], [/^supplier_days$/, ['Supplier terms','Délai fournisseurs']],
   [/^founder_salary$/, ['Your salary','Votre salaire']], [/^roster\.(\d+)/, ['Team, line','Équipe, ligne']], [/^investment\.(\d+)/, ['Investment, line','Investissement, ligne']],
-  [/^shareholders\.(\d+)/, ['Shareholder, line','Associé, ligne']], [/^sizing\./, ['Your contribution / loan ceiling','Votre apport / plafond du prêt']],
+  [/^shareholders\.(\d+)/, ['Shareholder, line','Associé, ligne']], [/^shareholders$/, ['Shareholders','Associés']], [/^sizing\./, ['Your contribution / loan ceiling','Votre apport / plafond du prêt']],
   [/^loan\./, ['Bank loan','Prêt bancaire']],
 ];
 function fieldName(path){
@@ -705,9 +710,16 @@ function renderPreview(p, status){
   const el = $('preview'); el.classList.remove('hidden');
   let h = `<h2><span class="n">✓</span>${bi('What your plan will show','Ce que votre plan montrera')}</h2>`;
   if (status === 'submitted') h += `<div class="banner ok">${bi('Received. Your plan will be prepared from these inputs. You can still edit and resubmit until it is generated.','Reçu. Votre plan sera préparé à partir de ces données. Vous pouvez encore modifier et renvoyer tant qu\'il n\'est pas généré.')}</div>`;
-  if (status === 'awaiting_estimates') h += `<div class="banner info">${bi('Received. Za3fran is preparing the estimates you asked for and will contact you to review them before your plan is generated.','Reçu. Za3fran prépare les estimations demandées et vous contactera pour les revoir avant la génération de votre plan.')}</div>`;
-  if (p.blocking && p.blocking.length) {
-    h += `<h3 class="sub">${bi('Still needed','Encore nécessaire')}</h3><ul class="list bad">${p.blocking.map(g=>`<li>${gapText(g)}</li>`).join('')}</ul>`;
+  if (status === 'awaiting_estimates') h += `<div class="banner ok">${bi('Received. Za3fran has been notified and is preparing the estimates you asked for. We will contact you to review them before your plan is generated.','Reçu. Za3fran a été prévenu et prépare les estimations demandées. Nous vous contacterons pour les revoir avant la génération de votre plan.')}</div>`;
+  const estR = radio('rmode') === 'estimate', estI = radio('imode') === 'estimate';
+  const byZa3fran = (g)=> (estR && g.path === 'labour.roster') || (estI && g.path === 'investment');
+  const still = (p.blocking || []).filter(g=>!byZa3fran(g));
+  if (estR || estI) {
+    const items = [estR ? T('your team','votre équipe') : null, estI ? T('your investment list','votre liste d\'investissements') : null].filter(Boolean).join(T(' and ',' et '));
+    h += `<div class="banner info">${T(`Za3fran prepares ${items}. Your full figures (total to finance, funding, debt cover) appear here once those estimates are in and you have reviewed them.`, `Za3fran prépare ${items}. Vos chiffres complets (total à financer, financement, couverture de la dette) apparaîtront ici une fois ces estimations prêtes et revues avec vous.`)}</div>`;
+  }
+  if (still.length) {
+    h += `<h3 class="sub">${bi('Still needed from you','Encore nécessaire de votre part')}</h3><ul class="list bad">${still.map(g=>`<li>${gapText(g)}</li>`).join('')}</ul>`;
   }
   if (p.uses) {
     const s = p.sizing;
@@ -719,7 +731,10 @@ function renderPreview(p, status){
     </div>`;
     if (p.sources.shareholders.length) {
       h += `<table class="fig"><thead><tr><th>${bi('Shareholders','Associés')}</th><th>${bi('Cash','Apport')}</th><th>${bi('Share of capital','Part du capital')}</th></tr></thead><tbody>${
-        p.sources.shareholders.map(x=>`<tr><td>${esc(x.label)}${x.price_factor && x.price_factor !== 1 ? ` (× ${fmt(x.price_factor, 2)})` : ''}</td><td>${money(x.amount)}</td><td>${pct(x.share_of_capital)}</td></tr>`).join('')}</tbody></table>`;
+        p.sources.shareholders.map(x=>`<tr><td>${esc(x.label)}</td><td>${money(x.amount)}</td><td>${pct(x.share_of_capital)}</td></tr>`).join('')}</tbody></table>`;
+      p.sources.shareholders.filter(x=>x.price_factor > 1).forEach(x=>{
+        h += `<div class="note">${T(`To reach the agreed split, ${esc(x.label)} pays ${fmt(x.price_factor, 2)} × face value per share; the difference is a share premium.`, `Pour atteindre la répartition convenue, ${esc(x.label)} paie ${fmt(x.price_factor, 2)} × le nominal par action ; la différence est une prime d'émission.`)}</div>`;
+      });
       if (s && s.partner && s.partner.amount > 0 && s.price_factor_for_target > 1) {
         h += `<div class="note">${T(
           `At face value the partner holds ${pct(s.partner.share_of_capital)}. To keep ${pct(s.target_share,0)} yourself, the partner would need to pay ${fmt(s.price_factor_for_target, 2)} × face value per share (a share premium). The plan states this; it does not assume it.`,
@@ -749,7 +764,7 @@ function renderPreview(p, status){
 function renderStatus(status){
   const b = $('statusBanner');
   if (status === 'submitted') b.innerHTML = `<div class="banner ok">${bi('Inputs submitted. You can still edit and resubmit until your plan is generated.','Données envoyées. Vous pouvez encore modifier et renvoyer tant que votre plan n\'est pas généré.')}</div>`;
-  else if (status === 'awaiting_estimates') b.innerHTML = `<div class="banner info">${bi('Za3fran is preparing the estimates you asked for.','Za3fran prépare les estimations demandées.')}</div>`;
+  else if (status === 'awaiting_estimates') b.innerHTML = `<div class="banner ok">${bi('Inputs received. Za3fran is preparing the estimates you asked for and will contact you to review them; your plan is generated after that. You can still edit your answers.','Données reçues. Za3fran prépare les estimations demandées et vous contactera pour les revoir ; votre plan sera généré ensuite. Vous pouvez encore modifier vos réponses.')}</div>`;
   else b.innerHTML = '';
   if (state.data && state.data.project.crr_status !== 'cleared') b.innerHTML += `<div class="banner bad">${bi('Your Concept Readiness Review is not cleared yet. You can fill in your inputs now; the plan is generated once the review is cleared.','Votre revue de préparation du concept n\'est pas encore validée. Vous pouvez saisir vos données ; le plan sera généré une fois la revue validée.')}</div>`;
 }
@@ -774,7 +789,9 @@ async function api(action){
     state.dirty = false;
     $('saveStatus').textContent = T('Saved', 'Enregistré') + ' · ' + new Date().toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-GB', { hour:'2-digit', minute:'2-digit' });
     renderStatus(j.status);
-    if (j.preview) { renderPreview(j.preview, j.status); $('preview').scrollIntoView(); }
+    if (j.preview) renderPreview(j.preview, j.status);
+    if (action === 'submit') window.scrollTo({ top: 0, behavior: 'smooth' });
+    else if (j.preview) $('preview').scrollIntoView();
   } catch(e) {
     $('saveStatus').textContent = T('Connection problem. Your answers are still on this page; try again.', 'Problème de connexion. Vos réponses sont toujours sur la page ; réessayez.');
   } finally { b.disabled = false; b.innerHTML = old; state.busy = false; }
@@ -810,6 +827,7 @@ async function open(code){
       [bi('Covers / day','Couverts / jour'), esc(c.covers || '—')],
     ].map(([k,v])=>`<div><span>${k}</span><strong>${v}</strong></div>`).join('');
     $('rentNeeded').classList.toggle('hidden', !!j.brain.rent_benchmark);
+    $('ramadanField').classList.toggle('hidden', j.brain.ramadan === false);
     $('capVal').textContent = j.brain.guarantee_cap ? `${fmt(j.brain.guarantee_cap)} ${j.project.currency}` : T('Not available for this market', 'Non disponible pour ce marché');
     if (!(j.brain.loan_programmes || []).includes('intelaka')) $('programme').querySelector('option[value="intelaka"]').disabled = true;
     restore(j.saved ? j.saved.intake : {});

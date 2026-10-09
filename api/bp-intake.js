@@ -64,10 +64,11 @@ async function findProject(req, res, code) {
 
 async function brainHints(market) {
   const ids = market.chain.map((m) => m.id);
-  const [rent, cap, rate] = await Promise.all([
+  const [rent, cap, rate, ram] = await Promise.all([
     ids.length ? supabase.from('brain_values_effective').select('market_id').eq('parameter_key', 'property.rent_m2_month').in('market_id', ids) : { data: [] },
     supabase.from('brain_values_effective').select('value_num').eq('parameter_key', 'finance.guarantee_cap').in('market_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']).limit(1),
     supabase.from('brain_values_effective').select('qualifier').eq('parameter_key', 'finance.sme_lending_rate').neq('qualifier', '').in('market_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']),
+    supabase.from('brain_values_effective').select('id').eq('parameter_key', 'calendar.ramadan_windows').in('market_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']).limit(1),
   ]);
   const cityIds = market.chain.filter((m) => m.level !== 'country').map((m) => m.id);
   return {
@@ -75,6 +76,7 @@ async function brainHints(market) {
     rent_benchmark: (rent.data || []).some((r) => cityIds.includes(r.market_id)),
     guarantee_cap: (cap.data || [])[0]?.value_num ?? null,
     loan_programmes: [...new Set((rate.data || []).map((r) => r.qualifier))],
+    ramadan: (ram.data || []).length > 0,   // the Ramadan question is asked only where the Brain has the dates
   };
 }
 
@@ -84,6 +86,29 @@ async function marketFor(project, concept, intake) {
   const m = await R.findMarketChain(supabase, { countryCode: country, city: concept.city, district: concept.district });
   if (!m.chain.length) return null;
   return { currency: m.currency || project.currency, chain: m.chain };
+}
+
+/** Tell Za3fran a founder submitted (and whether estimates are needed). Never blocks the answer. */
+async function notifyZa3fran(project, code, status, summary) {
+  if (!process.env.BREVO_API_KEY) return;
+  const esc = (x) => String(x == null ? '' : x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const link = `https://www.za3fran.io/bp-intake?code=${encodeURIComponent(code)}`;
+  const what = status === 'awaiting_estimates'
+    ? 'The founder asked Za3fran to prepare estimates (team and/or investment). Prepare them, then review with the founder before generation.'
+    : 'Inputs complete. Ready for generation once the rebuilt Business Plan is live.';
+  const fig = summary && summary.uses ? `<p>Total to finance: ${esc(summary.uses.total)} ${esc(summary.currency)} · loan ${esc(summary.sources.loans)} · DSCR ${esc(summary.years.map((y) => y.dscr).join(' / '))}</p>` : '';
+  try {
+    await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
+      body: JSON.stringify({
+        sender: { name: 'Za3fran', email: 'hello@za3fran.io' },
+        to: [{ email: 'hello@za3fran.io', name: 'Za3fran' }],
+        subject: `BP inputs submitted — ${project.concept_name || code} (${status === 'awaiting_estimates' ? 'estimates needed' : 'complete'})`,
+        htmlContent: `<div style="font-family:Arial,sans-serif;font-size:14px;color:#222"><p><b>${esc(project.concept_name || '')}</b> — access code ${esc(code)}</p><p>${what}</p>${fig}<p><a href="${link}">Open the inputs</a></p></div>`,
+      }),
+    });
+  } catch (e) { console.error('[bp-intake] notify failed', e.message); }
 }
 
 async function runPreview(project, eff, intake) {
@@ -118,7 +143,7 @@ export default async function handler(req, res) {
         project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status },
         concept: { seats: v.seats ?? null, ticket: v.ticket ?? null, covers: v.covers ?? null, city: v.city ?? null, neighbourhood: v.neighbourhood ?? null, concept_type: v.concept_type ?? null },
         format_default: I.formatFor(v.concept_type, {}),
-        brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [] },
+        brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false },
         saved: saved.data ? { intake: saved.data.intake, status: saved.data.status, preview: saved.data.preview, updated_at: saved.data.updated_at, submitted_at: saved.data.submitted_at } : null,
       });
     }
@@ -153,6 +178,7 @@ export default async function handler(req, res) {
     }
     const up = await withRetry(() => supabase.from('bp_intakes').upsert(row, { onConflict: 'project_id' }));
     if (up.error) { console.error('[bp-intake] save failed', up.error.message); return res.status(502).json({ error: 'save_failed' }); }
+    if (action === 'submit') await notifyZa3fran(project, String(body.code || '').toUpperCase().trim(), row.status, summary);
     return res.status(200).json({ ok: true, status: row.status, preview: summary });
   } catch (e) {
     console.error('[bp-intake] error', e && e.stack || e);
