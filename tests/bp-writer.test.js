@@ -148,3 +148,11 @@ test('template: every placeholder filled, engine figures shown, disclaimer prese
   assert.ok(/lang="fr"/.test(html));
   assert.ok(html.includes("@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap')"));
 });
+
+test('checks allow the brand name and the plan year labels, nothing else', () => {
+  const ctx = { lang: 'fr', keys: new Set(Object.keys(fr.F)), names: new Set(fr.names) };
+  const codes = (t) => CK.checkText(t, ctx).map((e) => e.code);
+  assert.deepEqual(codes('Une estimation Za3fran couvre ce poste en année 1, puis en années 2 et 3.'), []);
+  assert.ok(codes('Le chiffre atteint son maximum en année 4.').includes('digit'));
+  assert.ok(codes('Le délai est de 30 jours.').includes('digit'));
+});
