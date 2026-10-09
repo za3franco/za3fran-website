@@ -53,6 +53,8 @@ header.top p{color:var(--muted);font-size:15px;max-width:640px;}
 .card .lead{color:var(--muted);font-size:13.5px;margin-bottom:18px;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.place{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.place small{display:block;}
 .field{margin-bottom:16px;}
 .field:last-child{margin-bottom:0;}
 label.lbl,.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
@@ -342,7 +344,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   <!-- 7. Investment -->
   <section class="card">
     <h2><span class="n">07</span><span data-en>Investment before opening</span><span data-fr>Investissement avant ouverture</span></h2>
-    <p class="lead"><span data-en>Amounts excluding recoverable VAT. Add a low–high range when you only have estimates. Rent deposit and a cash reserve are added by Za3fran.</span><span data-fr>Montants hors TVA récupérable. Ajoutez une fourchette basse–haute si vous n'avez que des estimations. Le dépôt de garantie et la réserve de trésorerie sont ajoutés par Za3fran.</span></p>
+    <p class="lead"><span data-en>Amounts excluding recoverable VAT. Add a low–high range when you only have estimates. Rent deposit and a cash reserve are added by Za3fran (section 08).</span><span data-fr>Montants hors TVA récupérable. Ajoutez une fourchette basse–haute si vous n'avez que des estimations. Le dépôt de garantie et la réserve de trésorerie sont ajoutés par Za3fran (section 08).</span></p>
     <div class="choices">
       <label class="choice"><input type="radio" name="imode" value="founder"><span><b><span data-en>I'll list the amounts</span><span data-fr>Je liste les montants</span></b><small><span data-en>Quotes or your own estimates.</span><span data-fr>Devis ou vos propres estimations.</span></small></span></label>
       <label class="choice"><input type="radio" name="imode" value="estimate"><span><b><span data-en>Za3fran estimates the investment</span><span data-fr>Za3fran estime l'investissement</span></b><small><span data-en>Built at once from your surface, seats, team and rent, with a range for each line. Labelled "Estimate" in the plan; replace any line with a quote when you have one.</span><span data-fr>Établi immédiatement à partir de votre surface, vos places, votre équipe et votre loyer, avec une fourchette par ligne. Signalé « Estimation » dans le plan ; remplacez une ligne par un devis dès que vous l'avez.</span></small></span></label>
@@ -357,6 +359,15 @@ footer .foot-bottom a:hover{color:var(--white);}
         <th><span data-en>High</span><span data-fr>Haut</span></th><th></th>
       </tr></thead><tbody id="inv"></tbody></table>
       <button class="add" id="addInv" type="button"><span data-en>+ Add an item</span><span data-fr>+ Ajouter un poste</span></button>
+    </div>
+    <div class="field hidden" id="licField" style="margin-top:18px">
+      <span class="lbl"><span data-en>Alcohol licence (take-over, acquisition or fees)</span><span data-fr>Licence de débit de boissons (reprise, acquisition ou frais)</span> <span class="cur"></span></span>
+      <div class="grid3">
+        <input type="text" inputmode="numeric" id="licAmt" data-en-placeholder="Amount" data-fr-placeholder="Montant">
+        <input type="text" inputmode="numeric" id="licLow" data-en-placeholder="Low (optional)" data-fr-placeholder="Bas (facultatif)">
+        <input type="text" inputmode="numeric" id="licHigh" data-en-placeholder="High (optional)" data-fr-placeholder="Haut (facultatif)">
+      </div>
+      <p class="hint"><span data-en>Required when alcohol is served: there is no official fee, so the plan uses your figure (for example the ceiling you set for a take-over). It is included in the investment and financed.</span><span data-fr>Obligatoire si vous servez de l'alcool : il n'existe pas de tarif officiel, le plan retient donc votre chiffre (par exemple le plafond que vous vous fixez pour une reprise). Il est inclus dans l'investissement et financé.</span></p>
     </div>
   </section>
 
@@ -421,9 +432,53 @@ footer .foot-bottom a:hover{color:var(--white);}
         <input type="text" inputmode="numeric" id="grace" placeholder="0">
       </div>
     </div>
+    <div class="field" style="margin-top:10px">
+      <label class="lbl" for="resMonths"><span data-en>Cash reserve</span><span data-fr>Réserve de trésorerie</span></label>
+      <select id="resMonths" style="max-width:340px">
+        <option value="3" data-en="3 months of fixed costs (recommended)" data-fr="3 mois de charges fixes (recommandé)">3 months of fixed costs (recommended)</option>
+        <option value="4" data-en="4 months of fixed costs" data-fr="4 mois de charges fixes">4 months of fixed costs</option>
+        <option value="6" data-en="6 months of fixed costs" data-fr="6 mois de charges fixes">6 months of fixed costs</option>
+      </select>
+      <p class="hint"><span data-en>Za3fran includes a cash reserve in the funding: the larger of what keeps cash positive in the prudent case and this number of months of fixed costs (salaries, rent, fixed charges). It covers the ramp-up and quiet periods such as Ramadan.</span><span data-fr>Za3fran inclut une réserve de trésorerie dans le financement : le plus élevé entre ce qui garde la trésorerie positive dans le cas prudent et ce nombre de mois de charges fixes (salaires, loyer, charges fixes). Elle couvre la montée en charge et les périodes calmes comme le Ramadan.</span></p>
+    </div>
+    <div id="amtChoices" class="hidden">
+      <div class="field">
+        <span class="lbl"><span data-en>If your amounts do not cover the reserve</span><span data-fr>Si vos montants ne couvrent pas la réserve</span></span>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="reschoice" value="include"><span><b><span data-en>I'll raise the funding (recommended)</span><span data-fr>J'augmente le financement (recommandé)</span></b><small><span data-en>The check tells you how much is missing; add it to a shareholder or the loan.</span><span data-fr>La vérification vous indique ce qui manque ; ajoutez-le à un associé ou au prêt.</span></small></span></label>
+          <label class="choice"><input type="radio" name="reschoice" value="accept_risk"><span><b><span data-en>I accept a smaller reserve</span><span data-fr>J'accepte une réserve plus faible</span></b><small><span data-en>The plan uses what your funding leaves. Your private preparation report keeps the warning.</span><span data-fr>Le plan retient ce que votre financement laisse. Votre rapport de préparation privé garde l'alerte.</span></small></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl"><span data-en>Share of the company</span><span data-fr>Répartition du capital</span></span>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="capchoice" value="face"><span><b><span data-en>Shares follow the cash brought</span><span data-fr>Les parts suivent les apports</span></b></span></label>
+          <label class="choice"><input type="radio" name="capchoice" value="premium51"><span><b><span data-en>I keep 51%; my partners pay a share premium</span><span data-fr>Je garde 51 % ; mes associés paient une prime d'émission</span></b><small><span data-en>Only if agreed with them. The check shows the issue price this needs.</span><span data-fr>Uniquement si c'est convenu avec eux. La vérification affiche le prix d'émission nécessaire.</span></small></span></label>
+        </div>
+      </div>
+    </div>
     <div class="field">
       <label class="lbl" for="supDays"><span data-en>Supplier payment terms (days)</span><span data-fr>Délai de paiement fournisseurs (jours)</span></label>
       <input type="text" inputmode="numeric" id="supDays" placeholder="0" style="max-width:200px">
+    </div>
+  </section>
+
+  <!-- 9. Competitors -->
+  <section class="card">
+    <h2><span class="n">09</span><span data-en>Comparable venues</span><span data-fr>Établissements comparables</span></h2>
+    <p class="lead"><span data-en>Three to five venues your customers could choose instead, with the prices on their current menu. The plan presents them to show your positioning.</span><span data-fr>Trois à cinq établissements que vos clients pourraient choisir à la place, avec les prix de leur carte actuelle. Le plan les présente pour montrer votre positionnement.</span></p>
+    <table class="rows"><thead><tr>
+      <th><span data-en>Name</span><span data-fr>Nom</span></th>
+      <th><span data-en>Type</span><span data-fr>Type</span></th>
+      <th><span data-en>Lunch ticket</span><span data-fr>Ticket déjeuner</span></th>
+      <th><span data-en>Dinner ticket</span><span data-fr>Ticket dîner</span></th>
+      <th><span data-en>Prices seen (month)</span><span data-fr>Prix relevés (mois)</span></th><th></th>
+    </tr></thead><tbody id="comps"></tbody></table>
+    <button class="add" id="addComp" type="button"><span data-en>+ Add a venue</span><span data-fr>+ Ajouter un établissement</span></button>
+    <div id="placesBox" class="hidden" style="margin-top:16px">
+      <button class="btn-line" id="findPlaces" type="button"><span data-en>Suggest venues near my address</span><span data-fr>Suggérer des établissements proches de mon adresse</span></button>
+      <div id="placesList" style="margin-top:10px"></div>
+      <p class="hint"><span data-en>Suggestions from Google Maps, shown here only. Add the ones that compete with you, then enter the prices from their current menu.</span><span data-fr>Suggestions issues de Google Maps, affichées ici seulement. Ajoutez celles qui vous font concurrence, puis saisissez les prix de leur carte actuelle.</span></p>
     </div>
   </section>
 
@@ -581,6 +636,31 @@ function bindTable(tbodyId, addId, rowFn, blank){
 bindTable('roster','addRole', rosterRow, ()=>({ role:'server', count:1 }));
 bindTable('inv','addInv', invRow, ()=>({ category:'equipment' }));
 bindTable('holders','addHolder', holderRow, ()=>({}));
+function compRow(r){
+  return `<tr>
+    <td class="wide"${lab('Name','Nom')}><input type="text" class="cName" maxlength="80" value="${esc(r.name||'')}"></td>
+    <td${lab('Type','Type')}><input type="text" class="cKind" maxlength="80" value="${esc(r.kind||'')}" placeholder="${esc(T('e.g. wine bar','ex. bar à vin'))}"></td>
+    <td${lab('Lunch ticket','Ticket déjeuner')}><input type="text" inputmode="numeric" class="cLunch" value="${esc(r.lunch_ticket ?? '')}"></td>
+    <td${lab('Dinner ticket','Ticket dîner')}><input type="text" inputmode="numeric" class="cDinner" value="${esc(r.dinner_ticket ?? '')}"></td>
+    <td${lab('Prices seen','Prix relevés')}><input type="month" class="cSeen" value="${esc(r.seen_on ? String(r.seen_on).slice(0,7) : '')}"></td>
+    <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
+}
+bindTable('comps','addComp', compRow, ()=>({}));
+$('findPlaces').addEventListener('click', async ()=>{
+  const box = $('placesList'); box.innerHTML = '<span class="spinner"></span>';
+  try {
+    const r = await fetch('/api/bp-intake?nearby=1&code=' + encodeURIComponent(state.code) + '&district=' + encodeURIComponent($('district').value) + '&format=' + encodeURIComponent($('format').value));
+    const j = await r.json();
+    if (!r.ok || !j.places) { box.textContent = T('No suggestions available right now.', 'Pas de suggestion disponible pour le moment.'); return; }
+    if (!j.places.length) { box.textContent = T('No venue found near this address.', 'Aucun établissement trouvé près de cette adresse.'); return; }
+    box.innerHTML = j.places.map((p, i)=>`<div class="place"><div><b>${esc(p.name)}</b><small class="muted">${esc([p.kind, p.address].filter(Boolean).join(' · '))}${p.rating ? ` · ★ ${fmt(p.rating, 1)} (${fmt(p.ratings)})` : ''}</small></div><button type="button" class="btn-line" data-place="${i}">${bi('Add','Ajouter')}</button></div>`).join('');
+    box.onclick = (e)=>{ const b = e.target.closest('[data-place]'); if (!b) return; const p = j.places[Number(b.dataset.place)];
+      const empty = [...document.querySelectorAll('#comps tr')].find(tr=>!tr.querySelector('.cName').value.trim());
+      if (empty) { empty.querySelector('.cName').value = p.name; empty.querySelector('.cKind').value = p.kind || ''; }
+      else $('comps').insertAdjacentHTML('beforeend', compRow({ name: p.name, kind: p.kind || '' }));
+      b.disabled = true; markDirty(); };
+  } catch(e) { box.textContent = T('Connection problem.', 'Problème de connexion.'); }
+});
 
 function syncEstHints(){
   $('rosterBox').querySelector('.estHint').classList.toggle('hidden', !document.querySelector('#roster tr.est'));
@@ -617,6 +697,8 @@ function applyModes(){
   $('ruleBox').classList.toggle('hidden', radio('fmode') !== 'rule');
   $('amtBox').classList.toggle('hidden', radio('fmode') !== 'amounts');
   $('capAmt').classList.toggle('hidden', radio('capmode') !== 'custom');
+  $('licField').classList.toggle('hidden', radio('alcohol') !== 'yes');
+  $('amtChoices').classList.toggle('hidden', radio('fmode') !== 'amounts');
   syncChoices();
 }
 document.addEventListener('change', e=>{ if (e.target.matches('input[type=radio]')) { applyModes(); markDirty(); } });
@@ -647,7 +729,15 @@ function collect(){
     shareholders: [...document.querySelectorAll('#holders tr')].map(tr=>({ label: tr.querySelector('.hLabel').value, amount: tr.querySelector('.hAmt').value, share_pct: tr.querySelector('.hShare').value }))
       .filter(r=>r.amount !== '' || r.label !== ''),
     loan: { amount: $('loanAmt').value, programme: $('programme').value, grace_months: $('grace').value },
+    licence: radio('alcohol') === 'yes' && $('licAmt').value.trim() ? { amount: $('licAmt').value, low: $('licLow').value, high: $('licHigh').value } : null,
+    reserve_months: $('resMonths').value,
+    reserve_choice: radio('reschoice') || 'include',
+    capital_choice: radio('capchoice') || 'face',
+    competitors: [...document.querySelectorAll('#comps tr')].map(tr=>({ name: tr.querySelector('.cName').value, kind: tr.querySelector('.cKind').value,
+      lunch_ticket: tr.querySelector('.cLunch').value, dinner_ticket: tr.querySelector('.cDinner').value, seen_on: tr.querySelector('.cSeen').value })).filter(c=>c.name.trim()),
   };
+  if (p.licence && !p.licence.low) delete p.licence.low;
+  if (p.licence && !p.licence.high) delete p.licence.high;
   if (p.covers_source === 'founder' && !p.covers_per_day) delete p.covers_source;
   return p;
 }
@@ -690,6 +780,12 @@ function restore(intake){
   $('holders').innerHTML = (i.shareholders || []).map(holderRow).join('') || holderRow({ label: T('Founder','Fondateur') });
   const loan = i.loan || {};
   $('loanAmt').value = loan.amount ?? ''; $('programme').value = loan.programme || ''; $('grace').value = loan.grace_months ?? '';
+  const lic = i.licence || {};
+  $('licAmt').value = lic.amount ?? ''; $('licLow').value = lic.low ?? ''; $('licHigh').value = lic.high ?? '';
+  $('resMonths').value = String(i.reserve_months ?? 3);
+  setRadio('reschoice', i.reserve_choice || 'include');
+  setRadio('capchoice', i.capital_choice || 'face');
+  $('comps').innerHTML = (i.competitors || []).map(compRow).join('') || compRow({});
   applyModes(); updateCapHint(); syncEstHints();
   state.dirty = false; $('saveStatus').textContent = '';
 }
@@ -710,6 +806,7 @@ const GAP = {
   'funding.sizing.reserve': ['Operations never generate enough cash to stay positive: review revenue and costs', 'L\'activité ne génère jamais assez de trésorerie : revoyez recettes et charges'],
   'market': ['Za3fran has no market profile for this country yet (built on request)', 'Za3fran n\'a pas encore de profil de marché pour ce pays (construit sur demande)'],
   'format': ['Choose a benchmark family, or ask Za3fran to build one', 'Choisissez une famille de référence, ou demandez-en une à Za3fran'],
+  'investment.licence': ['The alcohol licence cost (section 07)', 'Le coût de la licence de débit de boissons (section 07)'],
 };
 const ERR = {
   bad_month: ['month not valid','mois non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
@@ -720,7 +817,21 @@ const ERR = {
   shares_sum: ['agreed shares must add up to 100 %','les parts convenues doivent totaliser 100 %'],
   shares_need_cash: ['each shareholder with a share must bring cash','chaque associé avec une part doit faire un apport'], unknown_service: ['unknown service','service inconnu'], unknown_format: ['unknown benchmark family','famille inconnue'],
 };
-const gapText = (g)=> GAP[g.path] ? T(...GAP[g.path]) : esc(g.message || g.path);
+function gapText(g){
+  if (g.path === 'funding.reserve') {
+    const r = state.preview && state.preview.reserve;
+    if (r) {
+      const add = r.shortfall;
+      return r.surplus < 0
+        ? T(`Your funding is ${money(-r.surplus)} below the investment, before any cash reserve. Add ${money(add)} (shareholders or loan) to cover the investment and a cash reserve of ${money(r.target)}.`,
+            `Votre financement est inférieur de ${money(-r.surplus)} à l'investissement, avant toute réserve. Ajoutez ${money(add)} (associés ou prêt) pour couvrir l'investissement et une réserve de trésorerie de ${money(r.target)}.`)
+        : T(`Your funding leaves ${money(r.line)} for the cash reserve; it should be ${money(r.target)} (${r.months} months of fixed costs: ${money(r.months_need)}; prudent case: ${money(r.prudent_need)}). Add ${money(add)}, or choose to accept a smaller reserve.`,
+            `Votre financement laisse ${money(r.line)} pour la réserve de trésorerie ; elle devrait être de ${money(r.target)} (${r.months} mois de charges fixes : ${money(r.months_need)} ; cas prudent : ${money(r.prudent_need)}). Ajoutez ${money(add)}, ou choisissez d'accepter une réserve plus faible.`);
+    }
+    return T('Funding must cover the investment and the cash reserve.', 'Le financement doit couvrir l\'investissement et la réserve de trésorerie.');
+  }
+  return GAP[g.path] ? T(...GAP[g.path]) : esc(g.message || g.path);
+}
 const FIELD = [
   [/^opening$/, ['Opening month','Mois d\'ouverture']], [/^ramadan$/, ['Ramadan','Ramadan']], [/^format$/, ['Benchmark family','Famille de référence']],
   [/^services\.lunch/, ['Lunch','Déjeuner']], [/^services\.dinner/, ['Dinner','Dîner']], [/^services$/, ['Services','Services']],
@@ -756,6 +867,7 @@ function flagText(f){
     LOAN_ABOVE_GUARANTEE_CAP: ()=> T(`The loan (${money(d.loan)}) is above the state-guarantee ceiling (${money(d.cap)}).`, `Le prêt (${money(d.loan)}) dépasse le plafond de la garantie de l'État (${money(d.cap)}).`),
     CAPACITY_OCCUPANCY: ()=> T(`${esc(d.service)}: occupancy above 85 % of seats in year ${y}.`, `${esc(d.service)} : occupation au-dessus de 85 % des places en année ${y}.`),
     CAPACITY_CLAMPED: ()=> T('Seasonal peaks exceed the room; covers are capped at seats × sittings.', 'Les pics saisonniers dépassent la salle ; les couverts sont plafonnés.'),
+    RESERVE_BELOW_TARGET: ()=> T(`You accepted a cash reserve of ${money(d.line)}, ${money(d.shortfall)} below the recommended ${money(d.target)}. Your preparation report keeps this warning.`, `Vous acceptez une réserve de ${money(d.line)}, inférieure de ${money(d.shortfall)} aux ${money(d.target)} recommandés. Votre rapport de préparation garde cette alerte.`),
     PAYBACK_IMPLAUSIBLE: ()=> T('Payback looks too fast; revenue or costs need checking.', 'Le retour sur investissement paraît trop rapide ; à vérifier.'),
   };
   return map[f.code] ? map[f.code]() : esc(f.message);
@@ -775,7 +887,7 @@ function renderPreview(p, status){
     const s = p.sizing;
     h += `<div class="kpis">
       <div><span>${bi('Total to finance','Total à financer')}</span><strong>${money(p.uses.total)}</strong></div>
-      ${s && s.reserve != null ? `<div><span>${bi('incl. cash reserve','dont réserve de trésorerie')}</span><strong>${money(s.reserve)}</strong></div>` : ''}
+      ${(s && s.reserve != null) || (p.reserve && p.reserve.line) ? `<div><span>${bi('incl. cash reserve','dont réserve de trésorerie')}</span><strong>${money(s && s.reserve != null ? s.reserve : p.reserve.line)}</strong></div>` : ''}
       <div><span>${bi('Bank loan','Prêt bancaire')}</span><strong>${money(p.sources.loans)}</strong></div>
       <div><span>${bi('Equity','Fonds propres')}</span><strong>${money(p.sources.equity)}</strong></div>
     </div>`;
@@ -787,6 +899,14 @@ function renderPreview(p, status){
         <tr class="sub"><td>${bi('Equity','Fonds propres')}</td><td>${fmt(p.sources.equity)}</td><td>${p.sources.shareholders.length ? '100 %' : ''}</td></tr>
         ${(p.loans || []).map(l=>`<tr><td>${bi('Bank loan','Prêt bancaire')} <small class="muted">${fmt(l.annual_rate * 100, 1)} % · ${fmt(l.term_months)} ${T('months','mois')}</small></td><td>${fmt(l.amount)}</td><td></td></tr>`).join('')}
         <tr class="total"><td>${bi('Total funding','Total des financements')}</td><td>${fmt(p.sources.total)}</td><td></td></tr></tbody></table>`;
+    }
+    if (p.reserve && p.reserve.fixed_monthly) {
+      h += `<div class="note">${T(`<b>Cash reserve:</b> ${money(p.reserve.line)}, i.e. ${fmt(p.reserve.line / p.reserve.fixed_monthly, 1)} months of fixed costs (${money(p.reserve.fixed_monthly)} a month). Recommended: ${money(p.reserve.target)}, the larger of ${p.reserve.months} months of fixed costs and the prudent-case need (${money(p.reserve.prudent_need)}).`,
+        `<b>Réserve de trésorerie :</b> ${money(p.reserve.line)}, soit ${fmt(p.reserve.line / p.reserve.fixed_monthly, 1)} mois de charges fixes (${money(p.reserve.fixed_monthly)} par mois). Recommandé : ${money(p.reserve.target)}, le plus élevé entre ${p.reserve.months} mois de charges fixes et le besoin du cas prudent (${money(p.reserve.prudent_need)}).`)}</div>`;
+    }
+    if (p.capital && p.capital.price_factor_51 > 1) {
+      h += `<div class="note">${T(`At face value you hold ${pct(p.capital.founder_share)} of the company. If your partners agree to pay ${fmt(p.capital.price_factor_51, 2)} × face value per share, you keep 51% for the same cash; choose this in section 08 only once it is agreed.`,
+        `Au nominal, vous détenez ${pct(p.capital.founder_share)} du capital. Si vos associés acceptent de payer ${fmt(p.capital.price_factor_51, 2)} × le nominal par action, vous gardez 51 % pour le même apport ; choisissez-le en section 08 seulement une fois convenu.`)}</div>`;
     }
     if (p.sources.shareholders.length) {
       p.sources.shareholders.filter(x=>x.price_factor > 1).forEach(x=>{
@@ -943,6 +1063,7 @@ async function open(code){
     $('ramadanField').classList.toggle('hidden', j.brain.ramadan === false);
     $('capVal').textContent = j.brain.guarantee_cap ? `${fmt(j.brain.guarantee_cap)} ${j.project.currency}` : T('Not available for this market', 'Non disponible pour ce marché');
     if (!(j.brain.loan_programmes || []).includes('intelaka')) $('programme').querySelector('option[value="intelaka"]').disabled = true;
+    $('placesBox').classList.toggle('hidden', !j.places);
     restore(j.saved ? j.saved.intake : {});
     if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); $('fval').value = '20'; applyModes(); }
     renderStatus(j.saved && j.saved.status);

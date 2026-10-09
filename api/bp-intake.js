@@ -25,6 +25,7 @@ import E from '../lib/financial-engine.js';
 import I from '../lib/bp-intake.js';
 import { loadEffectiveConcept } from '../lib/crr-concept.js';
 import M from '../lib/emails.js';
+import P from '../lib/places.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -145,6 +146,15 @@ export default async function handler(req, res) {
       const code = String(req.query.code || '').toUpperCase().trim();
       const project = await findProject(req, res, code);
       if (!project) return;
+      // Live suggestions of nearby venues (Google Places; never stored, see lib/places.js).
+      if (req.query.nearby) {
+        const eff0 = await loadEffectiveConcept(supabase, project);
+        const district = String(req.query.district || eff0.values.neighbourhood || '').slice(0, 80);
+        try {
+          const out = await P.nearby({ format: String(req.query.format || I.formatFor(eff0.values.concept_type, {}) || ''), district, city: eff0.values.city, lang: project.language === 'en' ? 'en' : 'fr' });
+          return res.status(200).json(out);
+        } catch (e) { console.error('[bp-intake] places failed', e.message); return res.status(502).json({ error: 'places_failed' }); }
+      }
       const eff = await loadEffectiveConcept(supabase, project);
       const saved = await withRetry(() => supabase.from('bp_intakes').select('intake, status, preview, updated_at, submitted_at').eq('project_id', project.id).maybeSingle());
       const v = eff.values || {};
@@ -155,6 +165,7 @@ export default async function handler(req, res) {
         concept: { seats: v.seats ?? null, ticket: v.ticket ?? null, covers: v.covers ?? null, city: v.city ?? null, neighbourhood: v.neighbourhood ?? null, concept_type: v.concept_type ?? null },
         format_default: I.formatFor(v.concept_type, {}),
         brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false },
+        places: !!process.env.GOOGLE_PLACES_API_KEY,
         saved: saved.data ? { intake: saved.data.intake, status: saved.data.status, preview: saved.data.preview, updated_at: saved.data.updated_at, submitted_at: saved.data.submitted_at } : null,
       });
     }
