@@ -1,6 +1,6 @@
 # Business Plan intake — requirements (recorded 8 Oct 2026)
 
-Status: **requirements only, form not built.** The contract is the intake object documented at the top of
+Status: **form built 9 Oct 2026** — `bp-intake.html` (`/bp-intake?code=…`), `api/bp-intake.js`, `lib/bp-intake.js` (bpi-1.0.0), table `bp_intakes`. Not linked from the dashboard until the rebuilt plan ships (website rule). The contract is the intake object documented at the top of
 `lib/assumption-resolver.js` (ar-1.3.0). Every question below is bilingual (EN/FR) in the form. Each answer is
 stored as a founder figure; anything Za3fran fills in instead is stored with `source: 'estimate'` and shown as
 *Estimate* in the plan's appendix, never as a founder figure.
@@ -33,3 +33,17 @@ share of capital, debt cover by year, and the list of figures that are estimates
 - Drinks-outlet tax base (drinks sales vs all revenue) — supposed drinks sales; confirm with an accountant.
 - Intelaka rate for 2026 (2% urban, from 2021 terms) and whether an alcohol-licensed restaurant qualifies.
 - Usual length of the Intelaka deferral (exists within the 12-year maximum; no source gives it).
+
+## As built (bpi-1.0.0, 9 Oct 2026)
+- One intake per project in `bp_intakes` (`draft` → `submitted`, or `awaiting_estimates` when the founder asks Za3fran
+  for the roster and/or investment). UI-only choices live in `intake.ui`; the resolver ignores them.
+- Asked in addition to the list above: district (for district rent data) and **benchmark family** (today only
+  bistro / wine bar; a concept type of bistro or wine bar maps to it automatically; anything else is a blocking gap
+  that Za3fran fills on demand).
+- Founder salary: "works in the business" adds a founder line priced at the founder's figure, or at the Brain manager
+  salary when left empty.
+- Funding defaults to the rule (founder 20%, loan to the guarantee ceiling, partner at face value); the amounts mode
+  accepts an issue price per shareholder.
+- "Check my figures" runs resolver + engine on the live Brain and stores what was shown (`bp_intakes.preview`).
+- Not done yet: email to Za3fran when estimates are requested (today: watch `status = 'awaiting_estimates'`); founder
+  quotes for single cost lines (insurance, accounting…); food/beverage cost overrides; rent escalation clause.
