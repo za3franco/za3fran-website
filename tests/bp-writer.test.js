@@ -91,7 +91,8 @@ test('checks: numbers outside placeholders, English, invented names, unfinished 
   assert.ok(codes('Le plan prévoit').includes('unfinished'));
   assert.ok(codes('Voir {inconnu} pour le détail.').includes('placeholder'));
   assert.ok(codes('Le score du projet est bon.').includes('banned'));
-  assert.ok(codes('La gestion de le stock est suivie.').includes('grammar'));
+  assert.ok(codes('Il est prévu que il recrute un chef.').includes('grammar'));
+  assert.deepEqual(codes('Le porteur de projet devra identifier les moyens de le couvrir.'), []);
   const enCtx = { lang: 'en', keys: new Set(Object.keys(en.F)), names: new Set(en.names) };
   assert.ok(CK.checkText('Revenue reaches {ca_a2} avec the ramp-up.', enCtx).some((e) => e.code === 'language'));
   assert.equal(CK.fill('CA {ca_a2}.', fr.F), `CA ${fr.F.ca_a2.v}.`);
