@@ -90,6 +90,7 @@ const intake = {
   surface_m2: 200, rent_monthly: 30000, rent_free_months: 3,
   roster: undefined, investment: undefined,
   estimate: { roster: true, investment: true },
+  licence: { amount: 350000, note: 'Founder cap for a licence take-over' },   // ar-1.6.0: founder figure, required with alcohol
   founder: { works: true, monthly_gross: 20000 },
 };
 const run = (ik, brain = fx) => R.resolveAssumptions({ concept: C.concept, intake: ik, market: C.market, format: 'bistro_wine_bar',

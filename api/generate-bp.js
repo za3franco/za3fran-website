@@ -16,7 +16,9 @@
 //  6. Facts (lib/bp-facts.js) -> Sonnet writing in parallel, French-native prompts, bank framing
 //     (lib/bp-writer.js) -> automated checks (lib/bp-checks.js) with up to two rewrites per group.
 //     A group that still fails sets 'qa_failed': the plan is not delivered (strategy §15).
-//  7. Fixed template (lib/bp-render.js) -> output_html. Audit trail in output_json.inputs.
+//  7. Fixed template (lib/bp-render.js) -> output_html (the BANK PLAN, in the founder's voice) and the
+//     founder's working report (lib/bp-report.js, code only) -> output_json.founder_report_html.
+//     Audit trail in output_json.inputs. (v14.1, Arnaud's review of 9 Oct 2026: two documents.)
 //
 // Triggers: POST { bpRunId } (viewer page), or GET ?id=…&code=… (same access code as the viewer;
 // lets Za3fran start a run from a link). A run stuck in 'generating' longer than the function's
@@ -37,8 +39,9 @@ import I from '../lib/bp-intake.js';
 import BF from '../lib/bp-facts.js';
 import W from '../lib/bp-writer.js';
 import RN from '../lib/bp-render.js';
+import RP from '../lib/bp-report.js';
 
-const GENERATOR_VERSION = 'bp-v14.0';
+const GENERATOR_VERSION = 'bp-v14.1';
 const MAX_DURATION_MS = 600_000;
 const WRITE_BUDGET_MS = 420_000;            // no rewrite starts after this point
 const COUNTRY_BY_CURRENCY = { MAD: 'MA' };  // markets built so far (strategy: others on demand)
@@ -222,7 +225,10 @@ export default async function handler(req, res) {
 
     // ── 7. Render and save ────────────────────────────────────────
     const html = RN.renderPlan({ facts, text: written.text });
-    const done = Object.assign({}, claimMeta, { status: 'complete', error: null, blocked_reason: null, qa: null, inputs: Object.assign(audit, { generated_at: new Date().toISOString(), render_version: RN.RENDER_VERSION }), text: written.text });
+    const reportHtml = RP.renderReport({ facts });
+    const done = Object.assign({}, claimMeta, { status: 'complete', error: null, blocked_reason: null, qa: null,
+      inputs: Object.assign(audit, { generated_at: new Date().toISOString(), render_version: RN.RENDER_VERSION, report_version: RP.REPORT_VERSION }),
+      text: written.text, founder_report_html: reportHtml });
     const saved = await withRetry(() => supabase.from('business_plan_essentials_runs').update({ output_html: html, output_json: done, model_used: MODEL }).eq('id', runId));
     if (saved.error) { console.error('[bp] save failed', saved.error.message || saved.error); return fail('error', { error: 'save_failed' }); }
     console.log('[bp] ' + runId + ' saved (' + html.length + ' chars) in ' + Math.round((Date.now() - t0) / 1000) + 's');

@@ -104,6 +104,7 @@ const market = { currency: 'MAD', chain: [{ id: GAUTHIER, level: 'district' }, {
 // Canaille-shaped founder data (effective concept values are strings, as loadEffectiveConcept returns them)
 const concept = { seats: '50', ticket: '450', covers: '100', budget: '1700000', city: 'Casablanca' };
 const intake = {
+  reserve_months: 0,               // ar-1.6.0: this dated record predates the 3-month reserve floor
   opening: '2027-09', surface_m2: 160, alcohol: true, ramadan: 'reduced',
   services: [{ id: 'lunch', days: [2, 3, 4, 5] }, { id: 'dinner', days: [3, 4, 5, 6] }],
   roster: [{ role: 'chef', count: 1 }, { role: 'cook', count: 3 }, { role: 'server', count: 4 }, { role: 'manager', count: 1, monthly_gross: 13000 }],

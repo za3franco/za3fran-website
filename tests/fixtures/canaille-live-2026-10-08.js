@@ -124,6 +124,7 @@ const EST = 'Za3fran estimate, 8 Oct 2026 (research; to be replaced by founder q
 const est = (key, label, category, amount, low, high, note) => ({ key, label, category, amount, low, high, source: 'estimate', source_name: EST, note });
 
 const intake = {
+  reserve_months: 0,               // ar-1.6.0: this dated record predates the 3-month reserve floor
   opening: '2027-10',              // Arnaud: 12 months from 8 Oct 2026
   alcohol: true,
   ramadan: 'closed',               // Arnaud: Canaille closes during Ramadan

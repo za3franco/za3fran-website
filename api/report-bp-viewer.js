@@ -50,8 +50,12 @@ function parseCookies(header) {
 }
 
 // ── Persistent toolbar — replaces the old one-line banner ───────
-function injectToolbar(html, accessCode) {
+function injectToolbar(html, accessCode, opts = {}) {
   const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
+  const fr = opts.lang !== 'en';
+  const other = opts.reportId && opts.hasReport
+    ? `<a href="${BASE_URL}/api/report-bp-viewer?id=${encodeURIComponent(opts.reportId)}${opts.doc === 'founder' ? '' : '&doc=founder'}" style="color:#E7A63E;text-decoration:none;">${opts.doc === 'founder' ? (fr ? 'Voir le business plan →' : 'See the business plan →') : (fr ? 'Rapport de préparation (privé) →' : 'Preparation report (private) →')}</a>`
+    : '';
   const toolbar = `
 <div class="za3fran-toolbar" style="position:fixed;top:0;left:0;right:0;z-index:999;background:#0F1F3D;color:#FAFAF7;padding:12px 24px;display:flex;gap:20px;align-items:center;font-family:'DM Sans',sans-serif;font-size:13px;flex-wrap:wrap;box-sizing:border-box;width:100%;">
   <a href="${dashboardUrl}" style="color:#C9862A;text-decoration:none;font-weight:600;">&larr; Dashboard</a>
@@ -61,11 +65,12 @@ function injectToolbar(html, accessCode) {
     Za3fran<span style="color:#C9862A;">.io</span>
   </span>
   <span style="width:1px;height:16px;background:rgba(255,255,255,.15);"></span>
-  <span style="color:#C9862A;">Business Plan Essentials</span>
-  <span style="margin-left:auto;color:#8b93a8;font-size:11px;">Use your browser's Print function to save as PDF</span>
+  <span style="color:#C9862A;">${opts.doc === 'founder' ? (fr ? 'Rapport de préparation' : 'Preparation report') : 'Business Plan Essentials'}</span>
+  ${other}
+  <span style="margin-left:auto;color:#8b93a8;font-size:11px;">${fr ? 'Imprimer ou enregistrer en PDF : fonction Imprimer du navigateur' : 'Use your browser&#39;s Print function to save as PDF'}</span>
 </div>
 <div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
-  This business plan was AI-generated using Za3fran's F&amp;B expertise frameworks — please review for accuracy before acting on it.
+  ${fr ? 'Document généré par IA à partir des cadres d&#39;expertise F&amp;B de Za3fran — à relire avant toute décision. Ce bandeau n&#39;apparaît pas à l&#39;impression.' : 'AI-generated using Za3fran&#39;s F&amp;B expertise frameworks — please review before acting on it. This bar does not print.'}
 </div>
 <div class="za3fran-print-spacer" style="height:78px;"></div>
 <style>@media print { .za3fran-toolbar, .za3fran-toolbar + div, .za3fran-print-spacer { display: none !important; } }</style>`;
@@ -170,9 +175,11 @@ export default async function handler(req, res) {
   res.setHeader('Set-Cookie', `${cookieKey}=${encodeURIComponent(report.access_code)}; Path=/; HttpOnly; Max-Age=7200; SameSite=Lax`);
 
   if (report.output_html) {
+    const founderHtml = report.output_json && report.output_json.founder_report_html;
+    const doc = req.query.doc === 'founder' && founderHtml ? 'founder' : 'plan';
     return res.status(200)
       .setHeader('Content-Type', 'text/html; charset=utf-8')
-      .send(injectToolbar(report.output_html, report.access_code));
+      .send(injectToolbar(doc === 'founder' ? founderHtml : report.output_html, report.access_code, { lang: report.language, reportId, doc, hasReport: !!founderHtml }));
   }
 
   // Correct code — pending, generating or waiting for the founder's figures (v14)

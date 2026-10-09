@@ -11,6 +11,7 @@ const C = require('./fixtures/canaille-live-2026-10-09.js');
 
 // Canaille as the founder would enter it in the form (same answers as the fixture intake).
 const canailleForm = {
+  reserve_months: 0,   // ar-1.6.0: the approved fixture predates the 3-month reserve floor
   opening: '2027-10', ramadan: 'closed', new_company: 'yes', alcohol: 'yes', district: 'Gauthier', format: 'bistro_wine_bar',
   services: [{ id: 'lunch', days: [2, 3, 4, 5] }, { id: 'dinner', days: ['3', '4', '5', '6'] }],
   covers_source: 'benchmark', rent_monthly: '30 000',
@@ -70,7 +71,7 @@ test('estimates requested, Brain without methods: the resolver blocks, nothing i
 test('estimates requested, live Brain methods: figures at once, lines returned for take-over (bpi-1.2.0)', () => {
   const M = require('./fixtures/estimate-models-2026-10-09.js');
   const fx = M.withEstimateMethods(C);
-  const { intake } = I.normalizeIntake({ ...canailleForm, lang: 'fr', surface_m2: '200', founder_salary: '20000', roster_mode: 'estimate', investment_mode: 'estimate' });
+  const { intake } = I.normalizeIntake({ ...canailleForm, lang: 'fr', surface_m2: '200', founder_salary: '20000', roster_mode: 'estimate', investment_mode: 'estimate', licence: { amount: '350 000' } });
   assert.equal(intake.ui.lang, 'fr');
   assert.deepEqual(intake.founder, { works: true, monthly_gross: 20000 });
   const res = R.resolveAssumptions({
@@ -149,7 +150,7 @@ test('a second row of the same role gets its own key and keeps the market salary
 test('bpi-1.1.0 — agreed shares: the issue price is derived, the founder keeps the agreed split', () => {
   const { intake, errors } = I.normalizeIntake({ ...canailleForm, funding_mode: 'amounts',
     shareholders: [{ label: 'Founder', amount: '400000', share_pct: '51' }, { label: 'Investor', amount: '600000', share_pct: '49' }],
-    loan: { amount: 1200000 } });
+    loan: { amount: 1200000 }, reserve_choice: 'accept_risk' });
   assert.deepEqual(errors, []);
   assert.equal(intake.shareholders[0].price_factor, undefined);           // pays least per share: face value
   assert.equal(intake.shareholders[1].price_factor, 1.5612);
