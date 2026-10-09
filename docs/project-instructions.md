@@ -188,7 +188,7 @@ Each phase has its own chat, to prevent context bloat and stale context.
 **CURRENT PRIORITY — Phase A: Business Plan rebuild + Validator rebuild + Brain foundation.** Why: the first plan built on a cleared, amended concept (Canaille) still scored 3/10 for financial reliability, 4/10 for writing and 3/10 for presentability in an expert review. Root causes: the model computes the numbers; English prompts + Haiku + word caps produce franglais; facts come from model memory and Validator text (invented suppliers, wrong winemaker, named law firms); diagnostic framing in a financing document; bank inputs never collected. The fix is structural (see master strategy v1.6, Sections 10–17). Phase A order of work:
 1. **Server-side PDF proof** on za3fran.io with a real plan (headless Chrome on Vercel; hosted renderer is the fallback)
 2. **Financial engine** (universal model in code) and **market-profile schema** — **built**: `lib/financial-engine.js`
-3. Assumption resolver, Morocco market profile, format benchmarks, BP intake — **resolver built** (`lib/assumption-resolver.js`), Morocco/Casablanca profile researched (first 15 values verified 8 Oct 2026), **intake requirements recorded** (`docs/bp-intake-requirements.md`), **intake form not built**
+3. Assumption resolver, Morocco market profile, format benchmarks, BP intake — **resolver built** (`lib/assumption-resolver.js`, funding and cash-reserve sizing in code since ar-1.4.0), Morocco/Casablanca profile researched (first 15 values verified 8 Oct 2026), **intake form built and live** (`/bp-intake?code=…`, `api/bp-intake.js`, `lib/bp-intake.js`, table `bp_intakes`; tested by Arnaud 9 Oct 2026; not linked from the dashboard until the rebuilt plan ships)
 4. Sonnet writing (French-native prompts, bank framing), number-matching and language checks
 5. Templates: plan PDF, 10-slide deck, teaser, Excel workbook (Arnaud signs off the design once)
 6. Validator rebuild; shared concept-record schema
@@ -239,7 +239,8 @@ The Brain is curated, sourced knowledge handed to Claude at the right moment —
 - **Ramadan:** every plan states the project's Ramadan choice (closed / open with reduced trade / normal); there is no silent default.
 - **Tickets are menu prices including VAT;** revenue is computed excluding VAT.
 - **Maintenance capex** is a cash reserve, not a P&L expense (depreciation charges wear).
-- **Shareholdings** are computed at face value unless a premium or valuation is supplied.
+- **Shareholdings** are computed at face value unless a premium or an agreed split is supplied. With an agreed split (founder states each shareholder's %), the issue price is derived in code: the holder paying least per share is at face value, the others pay a share premium. When a partner holds the majority at face value, the plan states the issue price that would keep the founder at 51% (`price_factor_for_target`) — stated, never assumed.
+- **Cash reserve and funding split** are sized in code from the founder's rule (`intake.sizing`): reserve = smallest 10,000 step keeping cash ≥ 0 in base and conservative; founder share or amount; loan up to the cap (default the Brain guarantee ceiling); partner covers the rest.
 
 ---
 
@@ -253,6 +254,7 @@ The Brain is curated, sourced knowledge handed to Claude at the right moment —
 - **Claude reads the repo by `git clone`** in the sandbox to check what is actually deployed before editing; when Arnaud deploys by upload, edited files are returned in full.
 - **New Supabase tables are created with RLS enabled and no policies** (service key only), so they never add to the RLS backlog.
 - **Repo files that must not be public** (tests, docs, migrations) go in folders listed in `.vercelignore` (`tests/`, `supabase/`, `docs/`).
+- **Live checks from the chat:** the sandbox cannot reach za3fran.io directly. Live GET checks go through the Vercel tool on the deployment URL; POST paths (save, submit, webhooks) are verified from the Supabase rows and Vercel logs after Arnaud's test.
 - **Uploading into a new folder (fallback method):** Arnaud uses GitHub's "Add file → Create new file" and types the path with `/` (e.g. `tests/my-file.js`), since "Upload files" cannot create folders. Hidden files such as `.vercelignore` are created the same way, never downloaded.
 
 ---
@@ -294,13 +296,13 @@ For typography, colors and full visual branding spec, see **CANONICAL BRANDING S
 - Env vars are `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` (not `SERVICE_ROLE_KEY`).
 - Stripe webhook URLs must use the `www` form (`www.za3fran.io`) — a non-www → www redirect silently breaks Stripe webhook delivery.
 - Brevo's "new IP" security check must stay disabled — serverless functions have no stable outbound IP; it previously caused silent email failures.
-- **Supabase RLS is disabled on the older tables** (everything before October 2026) — flagged, not yet fixed. The Brain tables (`brain_markets`, `brain_parameters`, `brain_parameter_values`, `brain_review_queue`, `project_assumptions`; view `brain_values_effective`) have RLS enabled with no policies. Not a live risk while every function uses the service key, but the anon key must never be used client-side until policies are written and tested per table.
+- **Supabase RLS is disabled on the older tables** (everything before October 2026) — flagged, not yet fixed. The Brain tables (`brain_markets`, `brain_parameters`, `brain_parameter_values`, `brain_review_queue`, `project_assumptions`; view `brain_values_effective`) and `bp_intakes` have RLS enabled with no policies. Not a live risk while every function uses the service key, but the anon key must never be used client-side until policies are written and tested per table.
 - `brain_values_effective` shows a verified value as *published* once its refresh date has passed.
 - Each `*_runs` table and `validator_reports` reuse the project's single unified `access_code`; never mint per tool.
 - `validator_submissions.status`: `pending_payment` → `processing` (claimed by a webhook run) → `paid` or `report_error`. A submission stuck at `report_error` is never retried automatically (manual reset to `pending_payment`; no recovery path yet).
 - `menu_engineer_runs.output_json.generation_started_at` is set by `generate-menu.js` and used by `report-menu-viewer.js` to decide whether a `generating` run is stuck.
 - Business plan viewer URL format: `/api/report-bp-viewer?id=…&code=…` (the `/bp-report/:id` rewrite in `vercel.json` 404s — cleanup item).
-- Open cleanup (not blocking): Menu Engineer still reads `concept_snapshot` (switch to the effective concept; pass ticket/covers/seats as plain numbers — it appends the currency itself); `api/crr-status.js` and `api/crr-decide.js` are unused and safe to delete; completion email for re-assessment; `validator_submissions.report_id` mismatch on Canaille; viewer screen consistency (BP vs Menu generating/blocked pages); RLS on older tables; Zoco (`ZA3FTEST`) holds non-canonical fixture values — fix or retire; weekly Vercel cron for `brain_enqueue_refresh_due()` and `brain_enqueue_random_audit()`.
+- Open cleanup (not blocking): Menu Engineer still reads `concept_snapshot` (switch to the effective concept; pass ticket/covers/seats as plain numbers — it appends the currency itself); `api/crr-status.js` and `api/crr-decide.js` are unused and safe to delete; completion email for re-assessment; `validator_submissions.report_id` mismatch on Canaille; viewer screen consistency (BP vs Menu generating/blocked pages); RLS on older tables; Zoco (`ZA3FTEST`) holds non-canonical fixture values — fix or retire; weekly Vercel cron for `brain_enqueue_refresh_due()` and `brain_enqueue_random_audit()`; professional design for the intake notification email to hello@za3fran.io (plain today).
 
 ---
 
