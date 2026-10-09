@@ -156,3 +156,12 @@ test('checks allow the brand name and the plan year labels, nothing else', () =>
   assert.ok(codes('Le chiffre atteint son maximum en année 4.').includes('digit'));
   assert.ok(codes('Le délai est de 30 jours.').includes('digit'));
 });
+
+test('checks catch a figure used for something else (unit after it, text glued to it)', () => {
+  const ctx = { lang: 'fr', keys: new Set(Object.keys(fr.F)), names: new Set(fr.names) };
+  const codes = (t) => CK.checkText(t, ctx).map((e) => e.code);
+  assert.ok(codes('Une baisse de fréquentation de {sens_covers_20_dscr} points pèserait sur le DSCR.').includes('misuse'));
+  assert.ok(codes('La trésorerie à la fin du {tresorerie_m24}e mois est positive.').includes('misuse'));
+  assert.deepEqual(codes('Une baisse de fréquentation de {choc_frequentation} ramènerait le DSCR à {sens_covers_20_dscr}.'), []);
+  assert.deepEqual(codes('La salle compte {places} places et sert {couverts_jour_a2} couverts par jour.'), []);
+});
