@@ -94,6 +94,14 @@ table.rows{width:100%;border-collapse:collapse;font-size:14px;}
 table.rows th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:left;padding:0 6px 8px;}
 table.rows td{padding:4px 6px;vertical-align:top;}
 table.rows td input,table.rows td select{padding:9px 10px;font-size:14px;}
+table.rows select.rRole{min-width:170px;}
+table.rows select.iCat{min-width:210px;}
+table.rows td.off input{visibility:hidden;}
+table.fig tr.sub td{border-top:1px solid rgba(201,134,42,.45);font-weight:700;color:var(--white);}
+table.fig tr.sub td:first-child{color:var(--white);}
+table.fig tr.total td{border-top:2px solid var(--copper);font-weight:700;color:var(--copper-bright);font-size:15px;}
+table.fig tr.total td:first-child{color:var(--copper-bright);}
+table.fig td.ind{padding-left:18px;}
 .del{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:6px 8px;line-height:1;}
 .del:hover{color:var(--bad);}
 .add{background:none;border:1px dashed rgba(201,134,42,.5);color:var(--copper-bright);border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:8px;}
@@ -157,6 +165,9 @@ footer .foot-bottom a:hover{color:var(--white);}
   table.rows tr.est{border-color:rgba(201,134,42,.55);}
   table.rows tr.est td:first-child{box-shadow:none;}
   table.rows td.x{grid-column:2;text-align:right;}
+  table.rows td[data-l-en]::before{content:attr(data-l-en);display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 4px 2px;}
+  body.lang-fr table.rows td[data-l-fr]::before{content:attr(data-l-fr);}
+  table.rows td.off{display:none;}
   .bar .status{width:100%;font-size:12px;}
   .bar .btn{flex:1 1 0;padding:11px 6px;font-size:10.5px;letter-spacing:.03em;}
   .bar .wrap{gap:8px;}
@@ -528,30 +539,31 @@ function updateCapHint(){
 }
 
 /* ---------------- rows ---------------- */
+const lab = (en, fr)=> ` data-l-en="${esc(en)}" data-l-fr="${esc(fr)}"`;
 const estAttrs = (r, extra)=> r.est ? ` class="est" data-est="1" data-note="${esc(r.note||'')}"${extra}` : '';
 function rosterRow(r){
   const role = r.role || 'chef';
   return `<tr${estAttrs(r, ` data-low="${esc(r.count_low ?? '')}" data-high="${esc(r.count_high ?? '')}"`)}>
-    <td><select class="rRole">${optionsHtml(ROLES, role)}</select></td>
-    <td><input type="text" class="rLabel" maxlength="60" value="${esc(r.label||'')}" ${role==='other'?'':'disabled'}></td>
-    <td><input type="text" inputmode="numeric" class="rCount" value="${esc(r.count ?? '')}"></td>
-    <td><input type="text" inputmode="numeric" class="rSal" value="${esc(r.monthly_gross ?? '')}" placeholder="${esc(T('market','marché'))}"></td>
+    <td${lab('Role','Poste')}><select class="rRole">${optionsHtml(ROLES, role)}</select></td>
+    <td class="rOther${role==='other'?'':' off'}"${lab('Name of the role','Intitulé du poste')}><input type="text" class="rLabel" maxlength="60" value="${esc(r.label||'')}" ${role==='other'?'':'disabled'}></td>
+    <td${lab('People','Effectif')}><input type="text" inputmode="numeric" class="rCount" value="${esc(r.count ?? '')}"></td>
+    <td${lab('Gross / month','Brut / mois')}><input type="text" inputmode="numeric" class="rSal" value="${esc(r.monthly_gross ?? '')}" placeholder="${esc(r.market != null ? `${fmt(r.market)} · ${T('market','marché')}` : T('market salary','salaire du marché'))}"></td>
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 function invRow(r){
   return `<tr${estAttrs(r, ` data-src="${esc(r.source_name||'')}"`)}>
-    <td class="wide"><input type="text" class="iLabel" maxlength="120" value="${esc(r.label||'')}"></td>
-    <td><select class="iCat">${optionsHtml(CATS, r.category || 'fitout')}</select></td>
-    <td><input type="text" inputmode="numeric" class="iAmt" value="${esc(r.amount ?? '')}"></td>
-    <td><input type="text" inputmode="numeric" class="iLow" value="${esc(r.low ?? '')}"></td>
-    <td><input type="text" inputmode="numeric" class="iHigh" value="${esc(r.high ?? '')}"></td>
+    <td class="wide"${lab('Item','Poste')}><input type="text" class="iLabel" maxlength="120" value="${esc(r.label||'')}"></td>
+    <td class="wide"${lab('Type','Catégorie')}><select class="iCat">${optionsHtml(CATS, r.category || 'fitout')}</select></td>
+    <td class="wide"${lab('Amount','Montant')}><input type="text" inputmode="numeric" class="iAmt" value="${esc(r.amount ?? '')}"></td>
+    <td${lab('Low','Bas')}><input type="text" inputmode="numeric" class="iLow" value="${esc(r.low ?? '')}"></td>
+    <td${lab('High','Haut')}><input type="text" inputmode="numeric" class="iHigh" value="${esc(r.high ?? '')}"></td>
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 function holderRow(r){
   return `<tr>
-    <td class="wide"><input type="text" class="hLabel" maxlength="60" value="${esc(r.label||'')}"></td>
-    <td><input type="text" inputmode="numeric" class="hAmt" value="${esc(r.amount ?? '')}"></td>
-    <td><input type="text" inputmode="decimal" class="hShare" value="${esc(r.share_pct ?? '')}" placeholder="${esc(T('follows cash','selon apport'))}"></td>
+    <td class="wide"${lab('Shareholder','Associé')}><input type="text" class="hLabel" maxlength="60" value="${esc(r.label||'')}"></td>
+    <td${lab('Cash brought','Apport')}><input type="text" inputmode="numeric" class="hAmt" value="${esc(r.amount ?? '')}"></td>
+    <td${lab('Agreed share (%)','Part convenue (%)')}><input type="text" inputmode="decimal" class="hShare" value="${esc(r.share_pct ?? '')}" placeholder="${esc(T('follows cash','selon apport'))}"></td>
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 function bindTable(tbodyId, addId, rowFn, blank){
@@ -562,7 +574,7 @@ function bindTable(tbodyId, addId, rowFn, blank){
   $(tbodyId).addEventListener('input', unEst);
   $(tbodyId).addEventListener('change', unEst);
   $(tbodyId).addEventListener('change', e=>{
-    if (e.target.classList.contains('rRole')) { const l = e.target.closest('tr').querySelector('.rLabel'); l.disabled = e.target.value !== 'other'; if (l.disabled) l.value=''; }
+    if (e.target.classList.contains('rRole')) { const tr = e.target.closest('tr'); const l = tr.querySelector('.rLabel'); l.disabled = e.target.value !== 'other'; if (l.disabled) l.value=''; tr.querySelector('.rOther').classList.toggle('off', l.disabled); }
     markDirty();
   });
 }
@@ -582,7 +594,7 @@ function takeOver(kind){
   if (kind === 'roster' && e.roster) {
     $('roster').innerHTML = e.roster.filter(l=>l.role !== 'founder').map(l=>{
       const base = known.includes(l.role) ? l.role : 'other';
-      return rosterRow({ role: base, label: base === 'other' ? l.role : '', count: l.count, est: true, count_low: l.count_low, count_high: l.count_high, note: l.note });
+      return rosterRow({ role: base, label: base === 'other' ? l.role : '', count: l.count, est: true, count_low: l.count_low, count_high: l.count_high, note: l.note, market: l.monthly_gross });
     }).join('');
     setRadio('rmode', 'founder');
   }
@@ -767,9 +779,16 @@ function renderPreview(p, status){
       <div><span>${bi('Bank loan','Prêt bancaire')}</span><strong>${money(p.sources.loans)}</strong></div>
       <div><span>${bi('Equity','Fonds propres')}</span><strong>${money(p.sources.equity)}</strong></div>
     </div>`;
+    h += usesHtml(p);
+    if (p.sources.shareholders.length || p.sources.loans) {
+      h += `<h3 class="sub">${bi('How it is financed','Comment il est financé')}</h3>
+      <table class="fig"><thead><tr><th></th><th>${bi('Amount','Montant')}</th><th>${bi('Share of capital','Part du capital')}</th></tr></thead><tbody>${
+        p.sources.shareholders.map(x=>`<tr><td class="ind">${esc(x.label)}</td><td>${fmt(x.amount)}</td><td>${pct(x.share_of_capital)}</td></tr>`).join('')}
+        <tr class="sub"><td>${bi('Equity','Fonds propres')}</td><td>${fmt(p.sources.equity)}</td><td>${p.sources.shareholders.length ? '100 %' : ''}</td></tr>
+        ${(p.loans || []).map(l=>`<tr><td>${bi('Bank loan','Prêt bancaire')} <small class="muted">${fmt(l.annual_rate * 100, 1)} % · ${fmt(l.term_months)} ${T('months','mois')}</small></td><td>${fmt(l.amount)}</td><td></td></tr>`).join('')}
+        <tr class="total"><td>${bi('Total funding','Total des financements')}</td><td>${fmt(p.sources.total)}</td><td></td></tr></tbody></table>`;
+    }
     if (p.sources.shareholders.length) {
-      h += `<table class="fig"><thead><tr><th>${bi('Shareholders','Associés')}</th><th>${bi('Cash','Apport')}</th><th>${bi('Share of capital','Part du capital')}</th></tr></thead><tbody>${
-        p.sources.shareholders.map(x=>`<tr><td>${esc(x.label)}</td><td>${money(x.amount)}</td><td>${pct(x.share_of_capital)}</td></tr>`).join('')}</tbody></table>`;
       p.sources.shareholders.filter(x=>x.price_factor > 1).forEach(x=>{
         h += `<div class="note">${T(`To reach the agreed split, ${esc(x.label)} pays ${fmt(x.price_factor, 2)} × face value per share; the difference is a share premium.`, `Pour atteindre la répartition convenue, ${esc(x.label)} paie ${fmt(x.price_factor, 2)} × le nominal par action ; la différence est une prime d'émission.`)}</div>`;
       });
@@ -780,7 +799,7 @@ function renderPreview(p, status){
       }
     }
     const yr = (n)=> T(`Year ${n}`, `Année ${n}`);
-    h += `<table class="fig"><thead><tr><th></th>${p.years.map(y=>`<th>${yr(y.year)}</th>`).join('')}</tr></thead><tbody>
+    h += `<h3 class="sub">${bi('The first three years','Les trois premières années')}</h3><table class="fig"><thead><tr><th></th>${p.years.map(y=>`<th>${yr(y.year)}</th>`).join('')}</tr></thead><tbody>
       <tr><td>${bi('Revenue excl. VAT','CA HT')}</td>${p.years.map(y=>`<td>${fmt(y.revenue)}</td>`).join('')}</tr>
       <tr><td>${bi('EBITDA','EBE')}</td>${p.years.map(y=>`<td>${fmt(y.ebitda)}</td>`).join('')}</tr>
       <tr><td>${bi('EBITDA margin','Marge d\'EBE')}</td>${p.years.map(y=>`<td>${pct(y.ebitda_margin)}</td>`).join('')}</tr>
@@ -790,8 +809,9 @@ function renderPreview(p, status){
       <tr><td>${bi('DSCR, prudent case','DSCR, cas prudent')}</td>${p.conservative.dscr.map(d=>`<td>${d == null ? '—' : fmt(d, 2)}</td>`).join('')}</tr>
     </tbody></table>
     ${p.conservative.dscr.some(d=>d != null && d < 1) ? `<div class="note">${T('In the prudent case, at least one year does not cover its loan repayments from operations; the cash reserve covers it. The plan explains this to the bank.','Dans le cas prudent, au moins une année ne couvre pas ses remboursements par l\'activité ; la réserve de trésorerie y pourvoit. Le plan l\'explique à la banque.')}</div>` : ''}
-    <p class="hint">${T(`Amounts in ${esc(cur())}. Banks usually look for a debt cover of at least 1.25–1.5. Lowest cash balance: ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}); prudent case ${money(p.conservative.min_cash.balance)}.`,
-      `Montants en ${esc(cur())}. Les banques attendent en général une couverture de la dette d'au moins 1,25–1,5. Trésorerie la plus basse : ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}) ; cas prudent ${money(p.conservative.min_cash.balance)}.`)}</p>`;
+    <p class="hint">${T(`Amounts in ${esc(cur())}, excluding VAT. Debt cover (DSCR) = cash generated by the business in the year ÷ loan repayments due that year; banks usually want at least 1.25 to 1.5. The prudent case assumes fewer covers and lower tickets.`,
+      `Montants en ${esc(cur())}, hors TVA. Couverture de la dette (DSCR) = trésorerie dégagée par l'activité dans l'année ÷ remboursements du prêt dus cette année-là ; les banques attendent en général au moins 1,25 à 1,5. Le cas prudent retient moins de couverts et des tickets plus bas.`)}</p>
+    ${cashHtml(p)}`;
   }
   h += estimatedHtml(p.estimated);
   const warn = (p.engine_flags || []).filter(f=>f.severity !== 'info').concat((p.flags || []).filter(f=>f.severity !== 'info'));
@@ -809,18 +829,49 @@ function estimatedHtml(e){
   if (e.roster) {
     h += `<h3 class="sub">${bi('Team estimated by Za3fran','Équipe estimée par Za3fran')}<span class="est-tag">${bi('Estimate','Estimation')}</span></h3>
       <table class="fig"><thead><tr><th>${bi('Role','Poste')}</th><th>${bi('People','Effectif')}</th><th>${bi('Gross / month','Brut / mois')}</th></tr></thead><tbody>${
-      e.roster.map(l=>`<tr><td>${roleName(l.role)}</td><td>${fmt(l.count)} ${range(l.count_low, l.count_high, l.count, fmt)}</td><td>${l.monthly_gross == null ? '—' : fmt(l.monthly_gross)}</td></tr>`).join('')}</tbody></table>
+      e.roster.map(l=>`<tr><td>${roleName(l.role)}</td><td>${fmt(l.count)} ${range(l.count_low, l.count_high, l.count, fmt)}</td><td>${l.monthly_gross == null ? '—' : fmt(l.monthly_gross)}</td></tr>`).join('')}${
+      e.roster_total ? `<tr class="sub"><td>${bi('Total team','Total équipe')}</td><td>${fmt(e.roster_total.people)} ${range(e.roster_total.people_low, e.roster_total.people_high, e.roster_total.people, fmt)}</td><td>${fmt(e.roster_total.gross_monthly)}</td></tr>` : ''}</tbody></table>
+      <p class="hint">${T('Gross salaries per person and per month, before employer charges (added in the plan).','Salaires bruts par personne et par mois, hors charges patronales (ajoutées dans le plan).')}</p>
       <p><button type="button" class="btn-line" data-takeover="roster">${bi('Adjust the team','Ajuster l\'équipe')}</button></p>`;
   }
   if (e.investment) {
     h += `<h3 class="sub">${bi('Investment estimated by Za3fran','Investissement estimé par Za3fran')}<span class="est-tag">${bi('Estimate','Estimation')}</span></h3>
       <table class="fig"><thead><tr><th>${bi('Item','Poste')}</th><th>${bi('Amount','Montant')}</th><th>${bi('Range','Fourchette')}</th></tr></thead><tbody>${
-      e.investment.map(l=>`<tr><td>${splitLabel(l.label)}</td><td>${fmt(l.amount)}</td><td>${fmt(l.low)}–${fmt(l.high)}</td></tr>`).join('')}</tbody></table>
+      e.investment.map(l=>`<tr><td>${splitLabel(l.label)}</td><td>${fmt(l.amount)}</td><td>${fmt(l.low)}–${fmt(l.high)}</td></tr>`).join('')}${
+      e.investment_total ? `<tr class="sub"><td>${bi('Estimated investment','Investissement estimé')}</td><td>${fmt(e.investment_total.amount)}</td><td>${fmt(e.investment_total.low)}–${fmt(e.investment_total.high)}</td></tr>` : ''}</tbody></table>
       <p class="hint">${T('Rent deposit and cash reserve come on top (see the total above).','Le dépôt de garantie et la réserve de trésorerie s\'ajoutent (voir le total ci-dessus).')}</p>
       <p><button type="button" class="btn-line" data-takeover="investment">${bi('Adjust the investment','Ajuster l\'investissement')}</button></p>`;
   }
   return h;
 }
+/* Total to finance, by category, with the investment subtotal and the total (engine lines). */
+function usesHtml(p){
+  const g = p.uses && p.uses.groups; if (!g || !g.length) return '';
+  const NAMES = Object.fromEntries(CATS.map(c=>[c[0], [c[1], c[2]]]));
+  Object.assign(NAMES, { deposit: ['Rent deposit','Dépôt de garantie'], key_money: ['Key money','Pas-de-porte'], cash_reserve: ['Cash reserve','Réserve de trésorerie'] });
+  const name = (c)=> NAMES[c] ? bi(...NAMES[c]) : esc(c);
+  const inv = g.filter(x=>!['deposit','key_money','cash_reserve'].includes(x.category));
+  const rest = g.filter(x=>['deposit','key_money','cash_reserve'].includes(x.category));
+  return `<h3 class="sub">${bi('What needs financing','Ce qu\'il faut financer')}</h3>
+    <table class="fig"><thead><tr><th></th><th>${bi('Amount','Montant')}</th></tr></thead><tbody>
+    ${inv.map(x=>`<tr><td class="ind">${name(x.category)}</td><td>${fmt(x.amount)}</td></tr>`).join('')}
+    <tr class="sub"><td>${bi('Investment before opening','Investissement avant ouverture')}</td><td>${fmt(p.uses.investment_subtotal)}</td></tr>
+    ${rest.map(x=>`<tr><td>${name(x.category)}</td><td>${fmt(x.amount)}</td></tr>`).join('')}
+    <tr class="total"><td>${bi('Total to finance','Total à financer')}</td><td>${fmt(p.uses.total)}</td></tr></tbody></table>`;
+}
+
+/* Lowest cash point, in words. */
+function monthName(ym){ if (!/^\d{4}-\d{2}$/.test(ym || '')) return esc(ym || ''); const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { month: 'long', year: 'numeric' }); }
+function cashHtml(p){
+  const b = p.min_cash, c = p.conservative && p.conservative.min_cash; if (!b) return '';
+  const before = p.opening && b.month < p.opening;
+  const why = before ? T(' — just before opening, once the investment is paid and before the first sales.', ' — juste avant l\'ouverture, une fois l\'investissement payé et avant les premières ventes.') : '.';
+  const neg = b.balance < 0 || (c && c.balance < 0);
+  return `<div class="note">${T(
+    `<b>Lowest cash point:</b> ${money(b.balance)} in ${monthName(b.month)}${why}${c ? ` In the prudent case it falls to ${money(c.balance)}${c.month ? ` (${monthName(c.month)})` : ''}.` : ''} ${neg ? 'Cash goes below zero: more funding or a larger cash reserve is needed.' : 'Cash never goes below zero.'}`,
+    `<b>Point bas de trésorerie :</b> ${money(b.balance)} en ${monthName(b.month)}${why}${c ? ` Dans le cas prudent, elle descend à ${money(c.balance)}${c.month ? ` (${monthName(c.month)})` : ''}.` : ''} ${neg ? 'La trésorerie devient négative : il faut plus de financement ou une réserve plus importante.' : 'La trésorerie ne devient jamais négative.'}`)}</div>`;
+}
+
 /* Brain labels are "Français / English": show the half in the page language. */
 function splitLabel(label){ const parts = String(label || '').split(' / '); return parts.length === 2 ? bi(esc(parts[1]), esc(parts[0])) : esc(label); }
 
