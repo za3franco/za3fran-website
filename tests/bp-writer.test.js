@@ -165,3 +165,10 @@ test('checks catch a figure used for something else (unit after it, text glued t
   assert.deepEqual(codes('Une baisse de fréquentation de {choc_frequentation} ramènerait le DSCR à {sens_covers_20_dscr}.'), []);
   assert.deepEqual(codes('La salle compte {places} places et sert {couverts_jour_a2} couverts par jour.'), []);
 });
+
+test('checks: "un point bas" is French, "trois points" is an invented threshold', () => {
+  const ctx = { lang: 'fr', keys: new Set(Object.keys(fr.F)), names: new Set(fr.names) };
+  const codes = (t) => CK.checkText(t, ctx).map((e) => e.code);
+  assert.deepEqual(codes('La trésorerie atteint un point bas en {tresorerie_min_mois}, un point d’attention pour la banque.'), []);
+  assert.ok(codes('Un écart de plus de trois points déclenche une revue.').includes('spelled'));
+});
