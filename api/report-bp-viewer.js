@@ -175,8 +175,15 @@ export default async function handler(req, res) {
       .send(injectToolbar(report.output_html, report.access_code));
   }
 
-  // Correct code — pending or generating
-  const status = report.output_json?.status || 'pending';
+  // Correct code — pending, generating or waiting for the founder's figures (v14)
+  let status = report.output_json?.status || 'pending';
+  if (status === 'awaiting_intake' || status === 'blocked_intake') {
+    // The founder may have submitted (or corrected) the intake since: start again.
+    const { data: proj } = await supabase.from('business_plan_essentials_runs').select('project_id').eq('id', reportId).maybeSingle();
+    const { data: intake } = proj ? await supabase.from('bp_intakes').select('status, submitted_at').eq('project_id', proj.project_id).maybeSingle() : { data: null };
+    const blockedAt = Date.parse(report.output_json?.generation_started_at || 0) || 0;
+    if (intake && intake.status === 'submitted' && (status === 'awaiting_intake' || Date.parse(intake.submitted_at) > blockedAt)) status = 'pending';
+  }
   return res.status(200)
     .setHeader('Content-Type', 'text/html; charset=utf-8')
     .send(generatingPage(reportId, submittedCode, report.language, status));
@@ -217,8 +224,11 @@ a{color:#E7A63E;}
 // ── GENERATION PAGE — fire & forget + poll (retinted, logic unchanged) ──
 function generatingPage(reportId, code, language, currentStatus) {
   const isFr      = language === 'fr';
-  const isError   = currentStatus === 'error';
+  const isError   = currentStatus === 'error' || currentStatus === 'qa_failed';
+  const isQa      = currentStatus === 'qa_failed';
   const isBlocked = currentStatus === 'blocked_crr';
+  const isIntake  = currentStatus === 'awaiting_intake' || currentStatus === 'blocked_intake';
+  const intakeUrl = '/bp-intake?code=' + encodeURIComponent(code);
 
   return `<!DOCTYPE html>
 <html lang="${isFr ? 'fr' : 'en'}">
@@ -261,9 +271,17 @@ h1 em{font-style:italic;color:#C9862A;}
 <div class="wrap">
   <div class="logo">Za3fran<span>.io</span></div>
 
-  ${isError ? `
+  ${isIntake ? `
+  <h1>${isFr ? 'Vos <em>chiffres</em> d\'abord' : 'Your <em>figures</em> first'}</h1>
+  <p class="sub">${currentStatus === 'blocked_intake'
+    ? (isFr ? 'Il manque encore des informations pour établir votre plan. Complétez le formulaire puis revenez sur cette page : la génération démarrera.' : 'Some information is still missing to build your plan. Complete the form, then come back to this page: generation will start.')
+    : (isFr ? 'Votre business plan est établi sur vos propres chiffres : ouverture, services, équipe, investissement et financement. Remplissez le formulaire (environ 15 minutes), puis revenez sur cette page : la génération démarrera.' : 'Your business plan is built on your own figures: opening, services, team, investment and funding. Fill in the form (about 15 minutes), then come back to this page: generation will start.')}</p>
+  <a class="retry-btn" href="${intakeUrl}">${isFr ? 'Renseigner mes chiffres →' : 'Enter my figures →'}</a>
+  ` : isError ? `
   <div class="error-box">
-    <p>${isFr ? 'Une erreur est survenue lors de la génération.' : 'An error occurred during generation.'}</p>
+    <p>${isQa
+      ? (isFr ? 'Votre plan n\'a pas passé nos contrôles de qualité automatiques et n\'a pas été livré. Relancez la rédaction ; si le problème persiste, Za3fran a été prévenu.' : 'Your plan did not pass our automated quality checks and was not delivered. Run the writing again; if the problem persists, Za3fran has been notified.')
+      : (isFr ? 'Une erreur est survenue lors de la génération.' : 'An error occurred during generation.')}</p>
     <button class="retry-btn" onclick="retryGeneration()">${isFr ? 'Réessayer →' : 'Retry →'}</button>
   </div>
   ` : isBlocked ? `
@@ -277,8 +295,8 @@ h1 em{font-style:italic;color:#C9862A;}
   <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   <h1>${isFr ? 'Génération de votre <em>Business Plan</em>' : 'Generating your <em>Business Plan</em>'}</h1>
   <p class="sub">${isFr
-    ? 'Claude analyse votre concept et rédige votre business plan complet. Cela prend 3 à 5 minutes. Vous pouvez fermer cette page — votre rapport sera accessible via le lien reçu par email.'
-    : 'Claude is analysing your concept and writing your complete business plan. This takes 3–5 minutes. You can close this page — your report will be accessible via the link in your email.'}</p>
+    ? 'Vos chiffres passent par notre modèle financier, puis le plan est rédigé et contrôlé. Cela prend 3 à 6 minutes. Vous pouvez fermer cette page — votre plan sera accessible via le lien reçu par email.'
+    : 'Your figures go through our financial model, then the plan is written and checked. This takes 3–6 minutes. You can close this page — your plan will be accessible via the link in your email.'}</p>
   <div class="progress"><div class="progress-bar" id="bar"></div></div>
   <div class="status-text" id="status">${isFr ? 'Démarrage...' : 'Starting...'}</div>
   <div class="timer" id="timer"></div>
@@ -291,9 +309,9 @@ const CODE       = '${code}';
 const IS_FR      = ${isFr};
 const RELOAD_URL = window.location.href;
 const IS_ERROR   = ${isError};
-const IS_BLOCKED = ${isBlocked};
+const IS_BLOCKED = ${isBlocked || isIntake};
 
-${isBlocked ? `
+${isBlocked || isIntake ? `
 // Blocked by the Concept Readiness Review — nothing to poll for. The page
 // above is a static message with a link to readiness-review.html; no
 // retry, no spinner, since retrying here would just be refused again.
@@ -308,8 +326,8 @@ function retryGeneration() {
 }
 ` : `
 const steps = IS_FR
-  ? ['Chargement des données Validator...', 'Analyse du marché et du concept...', 'Modélisation financière...', 'Rédaction du plan...', 'Finalisation du document...']
-  : ['Loading Validator data...', 'Analysing market and concept...', 'Financial modelling...', 'Writing the plan...', 'Finalising document...'];
+  ? ['Lecture de vos chiffres...', 'Calcul du modèle financier...', 'Rédaction du plan...', 'Contrôles de qualité...', 'Mise en page...']
+  : ['Reading your figures...', 'Running the financial model...', 'Writing the plan...', 'Quality checks...', 'Laying out the document...'];
 
 const bar    = document.getElementById('bar');
 const status = document.getElementById('status');
@@ -372,18 +390,8 @@ async function pollStatus() {
       return;
     }
 
-    if (data.status === 'error') {
-      clearInterval(stepInterval);
-      status.textContent = IS_FR
-        ? 'Erreur — actualisez la page pour réessayer.'
-        : 'Error — refresh the page to retry.';
-      bar.style.background = '#e05a5a';
-      return;
-    }
-
-    if (data.status === 'blocked_crr') {
-      // Reload so the server re-renders the static blocked_crr branch of
-      // generatingPage() — avoids duplicating that message/link in JS here.
+    if (['error', 'qa_failed', 'blocked_crr', 'awaiting_intake', 'blocked_intake'].includes(data.status)) {
+      // Reload so the server renders the matching static page (error with retry, intake link, review link).
       clearInterval(stepInterval);
       window.location.href = RELOAD_URL;
       return;
