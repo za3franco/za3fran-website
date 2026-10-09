@@ -175,3 +175,19 @@ test('checks: "un point bas" is French, "trois points" is an invented threshold'
   assert.deepEqual(codes('La trésorerie atteint un point bas en {tresorerie_min_mois}, un point d’attention pour la banque.'), []);
   assert.ok(codes('Un écart de plus de trois points déclenche une revue.').includes('spelled'));
 });
+
+test('timing facts: the conservative low is placed in trading time and tied to Ramadan', () => {
+  assert.equal(fr.F.ramadan.v, 'fermé');
+  assert.match(fr.F.rang_tresorerie_min_prudent.v, /mois 5 d.exploitation \(année 1\)/);
+  assert.ok(fr.F.ramadan_a1.v.includes('2028'));
+  assert.equal(fr.context.low_is_ramadan, true);
+  const pts = W.mandatoryPoints(fr);
+  assert.ok(pts.tresorerie.some((p) => p.cite.includes('ramadan_a1')));
+  assert.ok(pts.synthese.some((p) => p.cite.includes('rang_tresorerie_min_prudent')));
+});
+
+test('a phrase repeated once the figures are filled in is caught', () => {
+  const F = { ...fr.F, x: { v: 'fermeture pendant le Ramadan' } };
+  assert.ok(W.checkFilled('Le projet prévoit une fermeture pendant {x}.', F).length === 1);
+  assert.equal(W.checkFilled('L’établissement sera {ramadan} pendant le Ramadan.', fr.F).length, 0);
+});
