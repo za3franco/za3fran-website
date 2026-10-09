@@ -189,7 +189,7 @@ test('fe-1.1.0 — 18-month exemption: year 2 minimum is based on its last 6 mon
   assert.equal(p.annual[2].minimum_tax, base.annual[2].minimum_tax);
 });
 
-test('method version', () => assert.equal(E.METHOD_VERSION, 'fe-1.3.0'));
+test('method version', () => assert.equal(E.METHOD_VERSION, 'fe-1.4.0'));
 
 /* ---- fe-1.1.0: maintenance capex reserve (cash only) ---- */
 test('fe-1.1.0 — capex reserve: P&L unchanged; cash, DSCR and payback lower', () => {

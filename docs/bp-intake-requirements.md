@@ -14,7 +14,7 @@ stored as a founder figure; anything Za3fran fills in instead is stored with `so
 | Rent offer **or** surface | `rent_monthly` / `surface_m2` | **A rent offer is mandatory in any city without a Brain rent benchmark** (today: everywhere except Casablanca); the form says why. |
 | Staff roster | `roster[{role, count, monthly_gross?}]` | Founder may accept a Za3fran estimated roster instead (labelled estimate). Ask whether the founder works in the business and draws a salary. |
 | Investment lines | `investment[...]` | Founder may accept Za3fran estimates (labelled estimate) until the installation & equipment tool exists. Ask the alcohol licence cost (no official fee exists; often a takeover or adviser cost). |
-| Funding | `shareholders[{label, amount}]`, `loan{amount, programme?, grace_months?}` | Show the state-guarantee ceiling (1.2M MAD, Intelaka/Damane) and flag a larger loan. Shares are at face value; a premium is a negotiation the plan does not model. |
+| Funding | Either a **rule** `sizing{founder_share or founder_amount, loan_cap}` (default: the founder states their share; loan to the guarantee ceiling; a partner at face value for the rest; the cash reserve is sized by code) **or amounts** `shareholders[{label, amount, price_factor?}]`, `loan{amount}`. Always: `loan{programme?, grace_months?}` | Show the state-guarantee ceiling (1.2M MAD, Intelaka/Damane) and flag a larger loan. Shares are at face value unless an issue price is entered; when a partner is needed, show the founder's share of capital and the issue price that would keep 51%. |
 
 ## Asked, not blocking
 - **Ticket per service, menu price including VAT.** Ask lunch and dinner separately (one ticket for both raises `SINGLE_TICKET`). The founder's figure wins; a Brain ticket, when one exists, is shown only as a cross-check (`founder_evidence`).
@@ -26,7 +26,7 @@ stored as a founder figure; anything Za3fran fills in instead is stored with `so
 - **Quotes the founder already holds** (insurance, accounting, security, music rights, laundry): each replaces the Brain line with the same key.
 
 ## Shown back to the founder before generation
-Total uses including the cash reserve (sized by the engine on the conservative scenario), funding split and
+Total uses including the cash reserve (sized in code so cash stays positive in the base and conservative scenarios), funding split and
 share of capital, debt cover by year, and the list of figures that are estimates.
 
 ## Open points for Arnaud

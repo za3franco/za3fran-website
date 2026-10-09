@@ -8,8 +8,8 @@
  * 3. intake: Arnaud's answers of 8 Oct 2026 (opening, rent offer, Ramadan, 20% equity) plus
  *    Za3fran ESTIMATES for the roster and the investment lines, labelled source: 'estimate'.
  *    Arnaud asked for these to be researched; they are replaced by founder figures or by the
- *    future installation & equipment tool. Funding (equity/loan/budget) is sized by the run
- *    script from the engine's total uses, so it is not fixed here.
+ *    future installation & equipment tool. Funding is a rule (intake.sizing), sized by the
+ *    resolver from the engine's total uses (ar-1.4.0).
  */
 'use strict';
 
@@ -156,9 +156,9 @@ const intake = {
     est('contingency', 'Imprévus / Contingency', 'contingency', 120000, 60000, 180000, 'About 10% of works, equipment and furniture (a Moroccan works guide recommends 15%)'),
   ],
   // Funding (Arnaud, 8 Oct 2026): the founder brings 20% of total uses; the bank loan is capped at the
-  // state-guarantee ceiling (1.2M); a partner takes shares for the rest. The run script sizes the amounts.
-  founder_share: 0.2,
-  loan_cap: 1200000,
+  // state-guarantee ceiling (1.2M); a partner takes shares for the rest. Sized in code by the
+  // resolver (ar-1.4.0, intake.sizing) since 9 Oct 2026.
+  sizing: { founder_share: 0.2, loan_cap: 1200000 },
 };
 
 module.exports = { parameters, values, market, concept, intake };

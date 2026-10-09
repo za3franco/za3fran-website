@@ -1,4 +1,4 @@
-# Financial engine — method fe-1.3.0
+# Financial engine — method fe-1.4.0
 
 `lib/financial-engine.js` · tests: `node --test tests/*.test.js` · status: **built, not yet wired to any tool**
 
@@ -22,7 +22,12 @@ every total is the sum of the rounded lines shown; covers are whole guests and r
 - **Payroll** from one roster (count × gross × (1 + extra months/12) × (1 + employer charges)), so the staffing
   section and the P&L cannot disagree. `annual_total` exists only to replay old plans.
 - **Shareholders** (fe-1.3.0, `funding.shareholders [{label, amount}]`): equity = their sum; share of capital at
-  face value (amount / equity). No share premium, dividends or exit modelled.
+  face value (amount / equity). No dividends or exit modelled.
+- **Share premium** (fe-1.4.0, optional `shareholders[].price_factor`, issue price as a multiple of face value,
+  default 1): cash brought = amount; nominal capital = amount / price_factor; share premium = the difference;
+  share of capital = nominal / total nominal. Invariant: equity = nominal capital + share premium.
+  `priceFactorForControl({holder, others, target})` gives the issue price the other shareholders would need to
+  pay for one holder to keep `target` (e.g. 51%). Canaille: 1.3629. Stated in the plan, never applied by default.
 - **Loans:** monthly annuity, optional interest-only grace; schedule closes exactly to zero.
 - **DSCR** = (EBITDA − corporate tax − maintenance capex reserve) / (interest + principal), per operating year.
 - **Maintenance capex reserve** (fe-1.1.0, `maintenance_capex.pct_of_revenue`, optional `start_month`): cash set

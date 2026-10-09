@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.3.0
+# Assumption resolver — ar-1.4.0
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -60,3 +60,20 @@ benchmark with no source. Roster and investment are founder-only until staffing 
 
 ## Pending
 Nothing on the method. Depreciation lives by category (`DEPRECIATION_YEARS`) were approved by Arnaud on 8 Oct 2026, together with the first recommended list (15 Brain values now verified).
+
+## ar-1.4.0 (9 Oct 2026) — funding sizing in code
+`intake.sizing = { founder_share | founder_amount, loan_cap?, reserve_step?, founder_label?, partner_label?, founder_target_share? }`
+replaces the scratch script, so a plan is reproducible from the intake alone (`sizeFunding`, pure):
+- **Cash reserve:** smallest multiple of `reserve_step` (default 10,000) that keeps the engine's cash plan at or
+  above zero in the **base and conservative** scenarios. The search repeats because a larger reserve means a larger
+  loan and more interest. A founder `cash_reserve` investment line is kept as given (`reserve_from_founder`).
+- **Founder** = `founder_amount`, or `founder_share` × total uses rounded to 1,000.
+- **Loan** = the rest up to `loan_cap` (a number; default or `'guarantee'` = Brain `finance.guarantee_cap`).
+  Rate and term still come from `intake.loan` or the Brain (programme first).
+- **Partner** = what is left, at face value. `result.sizing.price_factor_for_target` is the issue price that
+  would keep the founder at `founder_target_share` (default 51%).
+- Blocking gaps: a rule *and* amounts (shareholders, equity or loan amount) together; a rule without founder
+  share or amount; a reserve search that does not converge.
+- `intake.shareholders[].price_factor` passes through to fe-1.4.0 when funding is given as amounts.
+- Canaille (fixture of 8 Oct): reserve 320,000 · uses 2,230,000 · founder 446,000 (43.3%) · partner 584,000 ·
+  loan 1,200,000 · DSCR 1.76 / 3.28 / 3.34 — identical to the approved scratch run (`tests/funding-sizing.test.js`).
