@@ -47,3 +47,15 @@ share of capital, debt cover by year, and the list of figures that are estimates
 - "Check my figures" runs resolver + engine on the live Brain and stores what was shown (`bp_intakes.preview`).
 - Not done yet: email to Za3fran when estimates are requested (today: watch `status = 'awaiting_estimates'`); founder
   quotes for single cost lines (insurance, accounting…); food/beverage cost overrides; rent escalation clause.
+
+## As built (bpi-1.2.0, 9 Oct 2026) — no manual step
+- "Za3fran estimates the team / the investment" builds the lines at once from the Brain (resolver ar-1.5.0).
+  The founder sees them under "Check my figures" with ranges, and "Adjust the team / the investment" copies
+  them into the editable tables. Copied lines stay labelled `estimate` (copper border) until edited; an edited
+  line becomes a founder figure.
+- Status `awaiting_estimates` is retired (the check constraint still allows it for old rows): submit gives
+  `submitted` when nothing blocks.
+- Emails on submit: confirmation to the founder (email from `za3fran_users` via `za3fran_projects.user_id`)
+  in the language used on the form (`intake.ui.lang`, else the project language), with headline figures from
+  the preview; information copy to hello@za3fran.io marked "No action needed". `lib/emails.js`. A second
+  submit sends "Figures updated".

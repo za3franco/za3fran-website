@@ -1,4 +1,4 @@
-# Assumption resolver — ar-1.4.1
+# Assumption resolver — ar-1.5.0
 
 `lib/assumption-resolver.js` · tests: `tests/assumption-resolver.test.js` (Brain data in `tests/fixtures/resolver-brain-test.js` is TEST DATA) · status: **built, not yet wired to any tool**
 
@@ -28,6 +28,26 @@ shifts total investment, or year-2 operating break-even in revenue or covers, by
 ## Blocking gaps (plan cannot be generated)
 Opening month, seats, services, roster, investment lines, rent (offer or surface), equity, and any required tax or
 benchmark with no source. Roster and investment are founder-only until staffing and pre-opening benchmarks exist.
+
+## ar-1.5.0 (9 Oct 2026) — automatic estimates, no manual step
+Decision (Arnaud, 9 Oct 2026): nobody at Za3fran prepares estimates by hand; the founder never waits.
+- `intake.estimate = { roster?, investment? }` (set by the form when the founder picks "Za3fran estimates…")
+  and `intake.founder = { works, monthly_gross? }`.
+- No roster lines + `estimate.roster` → `lib/estimates.js estimateRoster()` with the Brain method
+  `benchmark.staffing_model` (format) and `labour.legal_hours_week`: fixed roles per venue (chef, manager or
+  the founder), on-duty positions per service (servers and cooks per seats, one commis from 40 seats, one
+  porter, one bartender when alcohol is served); people = ceil(weekly hours ÷ legal week − 0.2), less the hours
+  of fixed roles that cover a station. Lines carry `source: 'estimate'`, `count_low/high` and a note.
+- No investment lines + `estimate.investment` → `estimateInvestment()` with `benchmark.capex_model`
+  (market, qualifier = format, currency checked): fit-out per m² (surface from seats × m² per seat when not
+  given), equipment / furniture / tableware / opening stock per seat, lump sums, architect and contingency
+  as a % of base amounts (ranges never compound), pre-opening = payroll months × payroll incl. charges +
+  extra chef month + works months × rent + launch marketing. Amounts rounded to 1,000.
+- `result.estimated` returns the lines (form preview and take-over). Appendix rows `labour.roster.method`
+  and `investment.method` point at the Brain method rows. Founder lines always win.
+- Missing method → blocking gap ("No Za3fran staffing / investment method …"), never a guess.
+- Methods stored 9 Oct 2026 as estimates (judgment, low confidence), one `method_change` review item each;
+  nothing waits for that review. Canaille founder-given figures unchanged.
 
 ## ar-1.1.0 (8 Oct 2026)
 - **Ramadan is a per-project choice**, required in the intake: `closed` (level 0; rent, payroll and fixed costs

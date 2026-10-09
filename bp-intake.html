@@ -132,6 +132,11 @@ h3.sub{font-size:19px;margin:6px 0 10px;}
 
 #gate{max-width:420px;margin:0 auto;}
 .hidden{display:none !important;}
+table.rows tr.est td:first-child{box-shadow:inset 3px 0 0 var(--copper);}
+small.muted{color:var(--muted);margin-left:6px;font-size:12px;}
+.est-tag{display:inline-block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper-bright);border:1px solid rgba(201,134,42,.45);border-radius:100px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+.btn-line{background:none;border:1px solid var(--copper);color:var(--copper-bright);border-radius:100px;padding:10px 18px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+.btn-line:hover{background:rgba(201,134,42,.12);}
 body.has-bar #langtoggle,body.has-bar .wa-btn{bottom:calc(var(--barh, 70px) + 14px);}
 @keyframes spin{to{transform:rotate(360deg);}}
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(10,14,24,.3);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-1px;margin-right:6px;}
@@ -149,6 +154,8 @@ footer .foot-bottom a:hover{color:var(--white);}
   table.rows tr{display:grid;grid-template-columns:1fr 1fr;gap:6px;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px;margin-bottom:8px;}
   table.rows td{padding:0;}
   table.rows td.wide{grid-column:1 / -1;}
+  table.rows tr.est{border-color:rgba(201,134,42,.55);}
+  table.rows tr.est td:first-child{box-shadow:none;}
   table.rows td.x{grid-column:2;text-align:right;}
   .bar .status{width:100%;font-size:12px;}
   .bar .btn{flex:1 1 0;padding:11px 6px;font-size:10.5px;letter-spacing:.03em;}
@@ -307,9 +314,10 @@ footer .foot-bottom a:hover{color:var(--white);}
     </div>
     <div class="choices" style="margin-top:6px">
       <label class="choice"><input type="radio" name="rmode" value="founder"><span><b><span data-en>I'll list the team</span><span data-fr>Je liste l'équipe</span></b><small><span data-en>Leave a salary empty to use Za3fran's sourced market salary for that role.</span><span data-fr>Laissez un salaire vide pour utiliser le salaire de marché sourcé par Za3fran.</span></small></span></label>
-      <label class="choice"><input type="radio" name="rmode" value="estimate"><span><b><span data-en>Za3fran prepares an estimate</span><span data-fr>Za3fran prépare une estimation</span></b><small><span data-en>We research a team for your concept, label it "Estimate" in the plan, and you review it before generation.</span><span data-fr>Nous établissons une équipe pour votre concept, signalée « Estimation » dans le plan, que vous validez avant la génération.</span></small></span></label>
+      <label class="choice"><input type="radio" name="rmode" value="estimate"><span><b><span data-en>Za3fran estimates the team</span><span data-fr>Za3fran estime l'équipe</span></b><small><span data-en>Built at once from your seats, opening days and the legal working week, at market salaries. Labelled "Estimate" in the plan; you see it under "Check my figures" and can adjust it.</span><span data-fr>Établie immédiatement à partir de vos places, jours d'ouverture et de la durée légale du travail, aux salaires du marché. Signalée « Estimation » dans le plan ; vous la voyez dans « Vérifier mes chiffres » et pouvez l'ajuster.</span></small></span></label>
     </div>
     <div id="rosterBox" style="margin-top:14px">
+      <p class="hint estHint hidden"><span data-en>Lines marked in copper are Za3fran estimates. Change a line and it becomes your figure.</span><span data-fr>Les lignes marquées en cuivre sont des estimations Za3fran. Modifiez une ligne et elle devient votre chiffre.</span></p>
       <table class="rows"><thead><tr>
         <th><span data-en>Role</span><span data-fr>Poste</span></th>
         <th><span data-en>Name if other</span><span data-fr>Intitulé si autre</span></th>
@@ -326,9 +334,10 @@ footer .foot-bottom a:hover{color:var(--white);}
     <p class="lead"><span data-en>Amounts excluding recoverable VAT. Add a low–high range when you only have estimates. Rent deposit and a cash reserve are added by Za3fran.</span><span data-fr>Montants hors TVA récupérable. Ajoutez une fourchette basse–haute si vous n'avez que des estimations. Le dépôt de garantie et la réserve de trésorerie sont ajoutés par Za3fran.</span></p>
     <div class="choices">
       <label class="choice"><input type="radio" name="imode" value="founder"><span><b><span data-en>I'll list the amounts</span><span data-fr>Je liste les montants</span></b><small><span data-en>Quotes or your own estimates.</span><span data-fr>Devis ou vos propres estimations.</span></small></span></label>
-      <label class="choice"><input type="radio" name="imode" value="estimate"><span><b><span data-en>Za3fran prepares an estimate</span><span data-fr>Za3fran prépare une estimation</span></b><small><span data-en>Researched ranges, labelled "Estimate" in the plan, reviewed with you before generation.</span><span data-fr>Fourchettes recherchées, signalées « Estimation » dans le plan, revues avec vous avant la génération.</span></small></span></label>
+      <label class="choice"><input type="radio" name="imode" value="estimate"><span><b><span data-en>Za3fran estimates the investment</span><span data-fr>Za3fran estime l'investissement</span></b><small><span data-en>Built at once from your surface, seats, team and rent, with a range for each line. Labelled "Estimate" in the plan; replace any line with a quote when you have one.</span><span data-fr>Établi immédiatement à partir de votre surface, vos places, votre équipe et votre loyer, avec une fourchette par ligne. Signalé « Estimation » dans le plan ; remplacez une ligne par un devis dès que vous l'avez.</span></small></span></label>
     </div>
     <div id="invBox" style="margin-top:14px">
+      <p class="hint estHint hidden"><span data-en>Lines marked in copper are Za3fran estimates. Change a line and it becomes your figure.</span><span data-fr>Les lignes marquées en cuivre sont des estimations Za3fran. Modifiez une ligne et elle devient votre chiffre.</span></p>
       <table class="rows"><thead><tr>
         <th><span data-en>Item</span><span data-fr>Poste</span></th>
         <th><span data-en>Type</span><span data-fr>Catégorie</span></th>
@@ -519,9 +528,10 @@ function updateCapHint(){
 }
 
 /* ---------------- rows ---------------- */
+const estAttrs = (r, extra)=> r.est ? ` class="est" data-est="1" data-note="${esc(r.note||'')}"${extra}` : '';
 function rosterRow(r){
   const role = r.role || 'chef';
-  return `<tr>
+  return `<tr${estAttrs(r, ` data-low="${esc(r.count_low ?? '')}" data-high="${esc(r.count_high ?? '')}"`)}>
     <td><select class="rRole">${optionsHtml(ROLES, role)}</select></td>
     <td><input type="text" class="rLabel" maxlength="60" value="${esc(r.label||'')}" ${role==='other'?'':'disabled'}></td>
     <td><input type="text" inputmode="numeric" class="rCount" value="${esc(r.count ?? '')}"></td>
@@ -529,7 +539,7 @@ function rosterRow(r){
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 function invRow(r){
-  return `<tr>
+  return `<tr${estAttrs(r, ` data-src="${esc(r.source_name||'')}"`)}>
     <td class="wide"><input type="text" class="iLabel" maxlength="120" value="${esc(r.label||'')}"></td>
     <td><select class="iCat">${optionsHtml(CATS, r.category || 'fitout')}</select></td>
     <td><input type="text" inputmode="numeric" class="iAmt" value="${esc(r.amount ?? '')}"></td>
@@ -547,6 +557,10 @@ function holderRow(r){
 function bindTable(tbodyId, addId, rowFn, blank){
   $(addId).addEventListener('click', ()=>{ $(tbodyId).insertAdjacentHTML('beforeend', rowFn(blank())); markDirty(); });
   $(tbodyId).addEventListener('click', e=>{ if (e.target.classList.contains('del')) { e.target.closest('tr').remove(); markDirty(); } });
+  // Editing a line taken from the Za3fran estimate makes it the founder's figure.
+  const unEst = (e)=>{ const tr = e.target.closest('tr.est'); if (tr) { tr.classList.remove('est'); delete tr.dataset.est; } };
+  $(tbodyId).addEventListener('input', unEst);
+  $(tbodyId).addEventListener('change', unEst);
   $(tbodyId).addEventListener('change', e=>{
     if (e.target.classList.contains('rRole')) { const l = e.target.closest('tr').querySelector('.rLabel'); l.disabled = e.target.value !== 'other'; if (l.disabled) l.value=''; }
     markDirty();
@@ -555,6 +569,32 @@ function bindTable(tbodyId, addId, rowFn, blank){
 bindTable('roster','addRole', rosterRow, ()=>({ role:'server', count:1 }));
 bindTable('inv','addInv', invRow, ()=>({ category:'equipment' }));
 bindTable('holders','addHolder', holderRow, ()=>({}));
+
+function syncEstHints(){
+  $('rosterBox').querySelector('.estHint').classList.toggle('hidden', !document.querySelector('#roster tr.est'));
+  $('invBox').querySelector('.estHint').classList.toggle('hidden', !document.querySelector('#inv tr.est'));
+}
+
+/* Take over the Za3fran estimate: copy its lines into the editable tables (still labelled estimates). */
+function takeOver(kind){
+  const e = state.preview && state.preview.estimated; if (!e) return;
+  const known = ROLES.map(r=>r[0]);
+  if (kind === 'roster' && e.roster) {
+    $('roster').innerHTML = e.roster.filter(l=>l.role !== 'founder').map(l=>{
+      const base = known.includes(l.role) ? l.role : 'other';
+      return rosterRow({ role: base, label: base === 'other' ? l.role : '', count: l.count, est: true, count_low: l.count_low, count_high: l.count_high, note: l.note });
+    }).join('');
+    setRadio('rmode', 'founder');
+  }
+  if (kind === 'investment' && e.investment) {
+    $('inv').innerHTML = e.investment.map(l=>invRow({ label: l.label, category: l.category, amount: l.amount, low: l.low, high: l.high, est: true, source_name: l.source_name, note: l.note })).join('');
+    setRadio('imode', 'founder');
+  }
+  setLang(lang); applyModes(); syncEstHints(); markDirty();
+  (kind === 'roster' ? $('rosterBox') : $('invBox')).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+document.addEventListener('click', e=>{ const b = e.target.closest('[data-takeover]'); if (b) takeOver(b.dataset.takeover); });
+document.addEventListener('input', e=>{ if (e.target.closest('#roster, #inv')) syncEstHints(); });
 
 /* ---------------- modes ---------------- */
 function applyModes(){
@@ -574,6 +614,7 @@ $('coversDay').addEventListener('input', updateCapHint);
 /* ---------------- payload ---------------- */
 function collect(){
   const p = {
+    lang,
     opening: $('opening').value, ramadan: state.data && state.data.brain.ramadan === false ? 'normal' : radio('ramadan'), new_company: radio('newco'), alcohol: radio('alcohol'),
     district: $('district').value, format: $('format').value === 'none' ? '' : $('format').value,
     services: readServices(),
@@ -581,10 +622,12 @@ function collect(){
     rent_monthly: $('rent').value, surface_m2: $('surface').value, rent_free_months: $('rentFree').value, supplier_days: $('supDays').value,
     founder_works: radio('fworks'), founder_salary: $('fsal').value,
     roster_mode: radio('rmode') || 'founder',
-    roster: [...document.querySelectorAll('#roster tr')].map(tr=>({ role: tr.querySelector('.rRole').value, label: tr.querySelector('.rLabel').value, count: tr.querySelector('.rCount').value, monthly_gross: tr.querySelector('.rSal').value }))
+    roster: [...document.querySelectorAll('#roster tr')].map(tr=>Object.assign({ role: tr.querySelector('.rRole').value, label: tr.querySelector('.rLabel').value, count: tr.querySelector('.rCount').value, monthly_gross: tr.querySelector('.rSal').value },
+        tr.dataset.est ? { est: true, count_low: tr.dataset.low, count_high: tr.dataset.high, note: tr.dataset.note } : {}))
       .filter(r=>r.count !== '' || r.monthly_gross !== '' || r.label !== ''),
     investment_mode: radio('imode') || 'founder',
-    investment: [...document.querySelectorAll('#inv tr')].map(tr=>({ label: tr.querySelector('.iLabel').value, category: tr.querySelector('.iCat').value, amount: tr.querySelector('.iAmt').value, low: tr.querySelector('.iLow').value, high: tr.querySelector('.iHigh').value }))
+    investment: [...document.querySelectorAll('#inv tr')].map(tr=>Object.assign({ label: tr.querySelector('.iLabel').value, category: tr.querySelector('.iCat').value, amount: tr.querySelector('.iAmt').value, low: tr.querySelector('.iLow').value, high: tr.querySelector('.iHigh').value },
+        tr.dataset.est ? { est: true, source_name: tr.dataset.src, note: tr.dataset.note } : {}))
       .filter(r=>r.amount !== '' || r.label !== ''),
     funding_mode: radio('fmode') || 'rule',
     sizing: { founder_basis: $('fbasis').value, founder_share_pct: $('fbasis').value === 'share' ? $('fval').value : '', founder_amount: $('fbasis').value === 'amount' ? $('fval').value : '',
@@ -619,11 +662,13 @@ function restore(intake){
   const known = ROLES.map(r=>r[0]);
   $('roster').innerHTML = roster.filter(r=>r.role !== 'founder').map(r=>{
     const base = r.brain_role || r.role;
-    return known.includes(base) && base !== 'other' ? rosterRow({ role: base, count: r.count, monthly_gross: r.monthly_gross })
-      : rosterRow({ role: 'other', label: r.note || r.role, count: r.count, monthly_gross: r.monthly_gross });
+    const est = r.source === 'estimate' ? { est: true, count_low: r.count_low, count_high: r.count_high, note: r.note } : {};
+    return known.includes(base) && base !== 'other' ? rosterRow({ role: base, count: r.count, monthly_gross: r.monthly_gross, ...est })
+      : rosterRow({ role: 'other', label: r.note || r.role, count: r.count, monthly_gross: r.monthly_gross, ...est });
   }).join('') || rosterRow({ role:'chef', count:1 });
   setRadio('imode', ui.investment_mode || 'founder');
-  $('inv').innerHTML = (i.investment || []).map(x=>invRow({ label:x.label, category:x.category, amount:x.amount, low:x.low, high:x.high })).join('') || invRow({ category:'fitout' });
+  $('inv').innerHTML = (i.investment || []).map(x=>invRow({ label:x.label, category:x.category, amount:x.amount, low:x.low, high:x.high,
+    ...(x.source === 'estimate' ? { est: true, source_name: x.source_name, note: x.note } : {}) })).join('') || invRow({ category:'fitout' });
   setRadio('fmode', ui.funding_mode || 'rule');
   const s = i.sizing || {};
   $('fbasis').value = s.founder_amount != null ? 'amount' : 'share';
@@ -633,7 +678,7 @@ function restore(intake){
   $('holders').innerHTML = (i.shareholders || []).map(holderRow).join('') || holderRow({ label: T('Founder','Fondateur') });
   const loan = i.loan || {};
   $('loanAmt').value = loan.amount ?? ''; $('programme').value = loan.programme || ''; $('grace').value = loan.grace_months ?? '';
-  applyModes(); updateCapHint();
+  applyModes(); updateCapHint(); syncEstHints();
   state.dirty = false; $('saveStatus').textContent = '';
 }
 
@@ -710,14 +755,7 @@ function renderPreview(p, status){
   const el = $('preview'); el.classList.remove('hidden');
   let h = `<h2><span class="n">✓</span>${bi('What your plan will show','Ce que votre plan montrera')}</h2>`;
   if (status === 'submitted') h += `<div class="banner ok">${bi('Received. Your plan will be prepared from these inputs. You can still edit and resubmit until it is generated.','Reçu. Votre plan sera préparé à partir de ces données. Vous pouvez encore modifier et renvoyer tant qu\'il n\'est pas généré.')}</div>`;
-  if (status === 'awaiting_estimates') h += `<div class="banner ok">${bi('Received. Za3fran has been notified and is preparing the estimates you asked for. We will contact you to review them before your plan is generated.','Reçu. Za3fran a été prévenu et prépare les estimations demandées. Nous vous contacterons pour les revoir avant la génération de votre plan.')}</div>`;
-  const estR = radio('rmode') === 'estimate', estI = radio('imode') === 'estimate';
-  const byZa3fran = (g)=> (estR && g.path === 'labour.roster') || (estI && g.path === 'investment');
-  const still = (p.blocking || []).filter(g=>!byZa3fran(g));
-  if (estR || estI) {
-    const items = [estR ? T('your team','votre équipe') : null, estI ? T('your investment list','votre liste d\'investissements') : null].filter(Boolean).join(T(' and ',' et '));
-    h += `<div class="banner info">${T(`Za3fran prepares ${items}. Your full figures (total to finance, funding, debt cover) appear here once those estimates are in and you have reviewed them.`, `Za3fran prépare ${items}. Vos chiffres complets (total à financer, financement, couverture de la dette) apparaîtront ici une fois ces estimations prêtes et revues avec vous.`)}</div>`;
-  }
+  const still = p.blocking || [];
   if (still.length) {
     h += `<h3 class="sub">${bi('Still needed from you','Encore nécessaire de votre part')}</h3><ul class="list bad">${still.map(g=>`<li>${gapText(g)}</li>`).join('')}</ul>`;
   }
@@ -755,16 +793,40 @@ function renderPreview(p, status){
     <p class="hint">${T(`Amounts in ${esc(cur())}. Banks usually look for a debt cover of at least 1.25–1.5. Lowest cash balance: ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}); prudent case ${money(p.conservative.min_cash.balance)}.`,
       `Montants en ${esc(cur())}. Les banques attendent en général une couverture de la dette d'au moins 1,25–1,5. Trésorerie la plus basse : ${money(p.min_cash.balance)} (${esc(p.min_cash.month)}) ; cas prudent ${money(p.conservative.min_cash.balance)}.`)}</p>`;
   }
+  h += estimatedHtml(p.estimated);
   const warn = (p.engine_flags || []).filter(f=>f.severity !== 'info').concat((p.flags || []).filter(f=>f.severity !== 'info'));
   if (warn.length) h += `<h3 class="sub">${bi('Points the plan will address','Points que le plan traitera')}</h3><ul class="list warn">${warn.map(f=>`<li>${flagText(f)}</li>`).join('')}</ul>`;
   if (p.estimates && p.estimates.length) h += `<p class="hint">${T(`${p.estimates.length} figure(s) are Za3fran estimates and are labelled as such in the plan.`, `${p.estimates.length} chiffre(s) sont des estimations Za3fran, signalées comme telles dans le plan.`)}</p>`;
   el.innerHTML = h;
 }
 
+/* The team and investment Za3fran estimated, with a button to take them over and adjust them. */
+function estimatedHtml(e){
+  if (!e) return '';
+  const roleName = (r)=>{ if (r === 'founder') return bi('You (founder)','Vous (fondateur)'); const x = ROLES.find(y=>y[0] === r); return x ? bi(esc(x[1]), esc(x[2])) : esc(r.replace(/_/g,' ')); };
+  const range = (lo, hi, v, f)=> lo != null && hi != null && (lo !== v || hi !== v) ? `<small class="muted">${f(lo)}–${f(hi)}</small>` : '';
+  let h = '';
+  if (e.roster) {
+    h += `<h3 class="sub">${bi('Team estimated by Za3fran','Équipe estimée par Za3fran')}<span class="est-tag">${bi('Estimate','Estimation')}</span></h3>
+      <table class="fig"><thead><tr><th>${bi('Role','Poste')}</th><th>${bi('People','Effectif')}</th><th>${bi('Gross / month','Brut / mois')}</th></tr></thead><tbody>${
+      e.roster.map(l=>`<tr><td>${roleName(l.role)}</td><td>${fmt(l.count)} ${range(l.count_low, l.count_high, l.count, fmt)}</td><td>${l.monthly_gross == null ? '—' : fmt(l.monthly_gross)}</td></tr>`).join('')}</tbody></table>
+      <p><button type="button" class="btn-line" data-takeover="roster">${bi('Adjust the team','Ajuster l\'équipe')}</button></p>`;
+  }
+  if (e.investment) {
+    h += `<h3 class="sub">${bi('Investment estimated by Za3fran','Investissement estimé par Za3fran')}<span class="est-tag">${bi('Estimate','Estimation')}</span></h3>
+      <table class="fig"><thead><tr><th>${bi('Item','Poste')}</th><th>${bi('Amount','Montant')}</th><th>${bi('Range','Fourchette')}</th></tr></thead><tbody>${
+      e.investment.map(l=>`<tr><td>${splitLabel(l.label)}</td><td>${fmt(l.amount)}</td><td>${fmt(l.low)}–${fmt(l.high)}</td></tr>`).join('')}</tbody></table>
+      <p class="hint">${T('Rent deposit and cash reserve come on top (see the total above).','Le dépôt de garantie et la réserve de trésorerie s\'ajoutent (voir le total ci-dessus).')}</p>
+      <p><button type="button" class="btn-line" data-takeover="investment">${bi('Adjust the investment','Ajuster l\'investissement')}</button></p>`;
+  }
+  return h;
+}
+/* Brain labels are "Français / English": show the half in the page language. */
+function splitLabel(label){ const parts = String(label || '').split(' / '); return parts.length === 2 ? bi(esc(parts[1]), esc(parts[0])) : esc(label); }
+
 function renderStatus(status){
   const b = $('statusBanner');
   if (status === 'submitted') b.innerHTML = `<div class="banner ok">${bi('Inputs submitted. You can still edit and resubmit until your plan is generated.','Données envoyées. Vous pouvez encore modifier et renvoyer tant que votre plan n\'est pas généré.')}</div>`;
-  else if (status === 'awaiting_estimates') b.innerHTML = `<div class="banner ok">${bi('Inputs received. Za3fran is preparing the estimates you asked for and will contact you to review them; your plan is generated after that. You can still edit your answers.','Données reçues. Za3fran prépare les estimations demandées et vous contactera pour les revoir ; votre plan sera généré ensuite. Vous pouvez encore modifier vos réponses.')}</div>`;
   else b.innerHTML = '';
   if (state.data && state.data.project.crr_status !== 'cleared') b.innerHTML += `<div class="banner bad">${bi('Your Concept Readiness Review is not cleared yet. You can fill in your inputs now; the plan is generated once the review is cleared.','Votre revue de préparation du concept n\'est pas encore validée. Vous pouvez saisir vos données ; le plan sera généré une fois la revue validée.')}</div>`;
 }

@@ -7,8 +7,11 @@
 //      save    : validates and stores a draft
 //      preview : stores the draft, runs the assumption resolver + financial engine on the live
 //                Brain and returns what the plan will show (lib/bp-intake.js previewSummary)
-//      submit  : as preview; status 'submitted' when nothing blocks, 'awaiting_estimates' when the
-//                founder asked Za3fran for roster / investment estimates, 422 otherwise
+//      submit  : as preview; status 'submitted' when nothing blocks, 422 otherwise. Team and
+//                investment estimates requested by the founder are built at once by the Brain
+//                (resolver ar-1.5.0): no manual step, no waiting status (Arnaud, 9 Oct 2026).
+//                Emails: confirmation to the founder in the form's language; information copy to
+//                hello@za3fran.io (no action needed). Neither blocks the answer.
 //
 // Numbers shown to the founder come from lib/financial-engine.js only (Brain rule 1).
 // Access: the project's unified access code. Brute-force lockout 5 attempts / 30 min per IP
@@ -21,6 +24,7 @@ import R from '../lib/assumption-resolver.js';
 import E from '../lib/financial-engine.js';
 import I from '../lib/bp-intake.js';
 import { loadEffectiveConcept } from '../lib/crr-concept.js';
+import M from '../lib/emails.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -49,7 +53,7 @@ async function findProject(req, res, code) {
   if (t.lockedAt && Date.now() - t.lockedAt < LOCKOUT_MS) { res.status(429).json({ error: 'locked' }); return null; }
   if (!/^[A-Z0-9]{6,12}$/.test(code)) { res.status(400).json({ error: 'missing_code' }); return null; }
   const p = await withRetry(() => supabase.from('za3fran_projects')
-    .select('id, concept_name, currency, language, crr_status, validator_submission_id').eq('access_code', code).maybeSingle());
+    .select('id, user_id, concept_name, currency, language, crr_status, validator_submission_id').eq('access_code', code).maybeSingle());
   if (p.error) { res.status(502).json({ error: 'lookup_failed' }); return null; }
   if (!p.data) {
     t.n += 1; if (t.n >= MAX_ATTEMPTS) t.lockedAt = Date.now(); attempts[ip] = t;
@@ -88,27 +92,34 @@ async function marketFor(project, concept, intake) {
   return { currency: m.currency || project.currency, chain: m.chain };
 }
 
-/** Tell Za3fran a founder submitted (and whether estimates are needed). Never blocks the answer. */
-async function notifyZa3fran(project, code, status, summary) {
+async function sendEmail(to, { subject, html }) {
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
+    body: JSON.stringify({ sender: { name: 'Za3fran', email: 'hello@za3fran.io' }, to: [to], subject, htmlContent: html }),
+  });
+  if (!r.ok) throw new Error(`brevo ${r.status}: ${(await r.text()).slice(0, 200)}`);
+}
+
+/** Founder confirmation (form language) + information copy to Za3fran. Never blocks the answer. */
+async function sendSubmitEmails(project, code, intake, summary, resubmitted) {
   if (!process.env.BREVO_API_KEY) return;
-  const esc = (x) => String(x == null ? '' : x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const link = `https://www.za3fran.io/bp-intake?code=${encodeURIComponent(code)}`;
-  const what = status === 'awaiting_estimates'
-    ? 'The founder asked Za3fran to prepare estimates (team and/or investment). Prepare them, then review with the founder before generation.'
-    : 'Inputs complete. Ready for generation once the rebuilt Business Plan is live.';
-  const fig = summary && summary.uses ? `<p>Total to finance: ${esc(summary.uses.total)} ${esc(summary.currency)} · loan ${esc(summary.sources.loans)} · DSCR ${esc(summary.years.map((y) => y.dscr).join(' / '))}</p>` : '';
-  try {
-    await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
-      body: JSON.stringify({
-        sender: { name: 'Za3fran', email: 'hello@za3fran.io' },
-        to: [{ email: 'hello@za3fran.io', name: 'Za3fran' }],
-        subject: `BP inputs submitted — ${project.concept_name || code} (${status === 'awaiting_estimates' ? 'estimates needed' : 'complete'})`,
-        htmlContent: `<div style="font-family:Arial,sans-serif;font-size:14px;color:#222"><p><b>${esc(project.concept_name || '')}</b> — access code ${esc(code)}</p><p>${what}</p>${fig}<p><a href="${link}">Open the inputs</a></p></div>`,
-      }),
-    });
-  } catch (e) { console.error('[bp-intake] notify failed', e.message); }
+  const lang = (intake.ui && intake.ui.lang) || (project.language === 'fr' ? 'fr' : 'en');
+  let user = null;
+  if (project.user_id) {
+    const u = await withRetry(() => supabase.from('za3fran_users').select('email, name').eq('id', project.user_id).maybeSingle());
+    user = u.data || null;
+  }
+  const jobs = [];
+  if (user && user.email) {
+    const firstName = user.name ? String(user.name).trim().split(/\s+/)[0] : '';
+    jobs.push(sendEmail({ email: user.email, name: user.name || user.email },
+      M.intakeConfirmation({ lang, firstName, conceptName: project.concept_name, code, summary, resubmitted })));
+  } else console.warn('[bp-intake] no founder email for project', project.id);
+  jobs.push(sendEmail({ email: 'hello@za3fran.io', name: 'Za3fran' },
+    M.intakeNotice({ conceptName: project.concept_name, code, summary, lang, resubmitted })));
+  const out = await Promise.allSettled(jobs);
+  out.filter((r) => r.status === 'rejected').forEach((r) => console.error('[bp-intake] email failed', r.reason && r.reason.message));
 }
 
 async function runPreview(project, eff, intake) {
@@ -165,20 +176,23 @@ export default async function handler(req, res) {
       ({ summary, resolverVersion } = await runPreview(project, eff, intake));
       row.preview = summary; row.resolver_version = resolverVersion;
     }
+    let resubmitted = false;
     if (action === 'submit') {
-      const est = I.estimatesRequested(intake);
-      const otherBlocking = (summary.blocking || []).filter((g) =>
-        !(est.roster && g.path === 'labour.roster') && !(est.investment && g.path === 'investment'));
-      if (otherBlocking.length) {
+      if ((summary.blocking || []).length) {
         await withRetry(() => supabase.from('bp_intakes').upsert(row, { onConflict: 'project_id' }));
         return res.status(422).json({ error: 'incomplete', preview: summary });
       }
-      row.status = est.roster || est.investment ? 'awaiting_estimates' : 'submitted';
+      const prev = await withRetry(() => supabase.from('bp_intakes').select('submitted_at').eq('project_id', project.id).maybeSingle());
+      resubmitted = !!(prev.data && prev.data.submitted_at);
+      row.status = 'submitted';
       row.submitted_at = new Date().toISOString();
     }
     const up = await withRetry(() => supabase.from('bp_intakes').upsert(row, { onConflict: 'project_id' }));
     if (up.error) { console.error('[bp-intake] save failed', up.error.message); return res.status(502).json({ error: 'save_failed' }); }
-    if (action === 'submit') await notifyZa3fran(project, String(body.code || '').toUpperCase().trim(), row.status, summary);
+    if (action === 'submit') {
+      try { await sendSubmitEmails(project, String(body.code || '').toUpperCase().trim(), intake, summary, resubmitted); }
+      catch (e) { console.error('[bp-intake] emails failed', e.message); }
+    }
     return res.status(200).json({ ok: true, status: row.status, preview: summary });
   } catch (e) {
     console.error('[bp-intake] error', e && e.stack || e);

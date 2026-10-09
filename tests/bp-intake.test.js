@@ -1,5 +1,5 @@
 /* Run: node --test tests/*.test.js
- * BP intake (lib/bp-intake.js bpi-1.0.0): form payload -> resolver contract -> preview.
+ * BP intake (lib/bp-intake.js bpi-1.2.0): form payload -> resolver contract -> preview.
  */
 'use strict';
 const test = require('node:test');
@@ -51,10 +51,12 @@ test('Canaille form -> same plan as the approved fixture', () => {
   assert.deepEqual(p.blocking, []);
 });
 
-test('estimates requested: roster and investment left empty, the resolver blocks, nothing invented', () => {
+test('estimates requested, Brain without methods: the resolver blocks, nothing invented', () => {
   const { intake } = I.normalizeIntake({ ...canailleForm, roster_mode: 'estimate', investment_mode: 'estimate' });
   assert.equal(intake.roster, undefined);
   assert.equal(intake.investment, undefined);
+  assert.deepEqual(intake.estimate, { roster: true, investment: true });
+  assert.deepEqual(intake.founder, { works: true });
   assert.deepEqual(I.estimatesRequested(intake), { roster: true, investment: true });
   const res = run(intake);
   assert.equal(res.status, 'blocked');
@@ -62,6 +64,36 @@ test('estimates requested: roster and investment left empty, the resolver blocks
   assert.ok(p.blocking.some((g) => g.path === 'labour.roster'));
   assert.ok(p.blocking.some((g) => g.path === 'investment'));
   assert.equal(p.uses, undefined);
+  assert.equal(p.estimated, null);
+});
+
+test('estimates requested, live Brain methods: figures at once, lines returned for take-over (bpi-1.2.0)', () => {
+  const M = require('./fixtures/estimate-models-2026-10-09.js');
+  const fx = M.withEstimateMethods(C);
+  const { intake } = I.normalizeIntake({ ...canailleForm, lang: 'fr', surface_m2: '200', founder_salary: '20000', roster_mode: 'estimate', investment_mode: 'estimate' });
+  assert.equal(intake.ui.lang, 'fr');
+  assert.deepEqual(intake.founder, { works: true, monthly_gross: 20000 });
+  const res = R.resolveAssumptions({
+    concept: I.resolverConcept({ seats: '50', ticket: '450', covers: '100', city: 'Casablanca' }, intake),
+    intake, market: C.market, format: 'bistro_wine_bar', brain: { parameters: fx.parameters, values: fx.values }, options: { analyseImpact: false },
+  });
+  assert.equal(res.status, 'ready', JSON.stringify(res.gaps));
+  const p = I.previewSummary(res, E.runScenarios(res.inputs));
+  assert.deepEqual(p.blocking, []);
+  assert.ok(p.uses.total > 0);
+  assert.equal(p.estimated.roster.find((l) => l.role === 'chef').monthly_gross, 12000);
+  assert.equal(p.estimated.roster.find((l) => l.role === 'founder').monthly_gross, 20000);
+  assert.equal(p.estimated.investment.length, 11);
+  assert.equal(p.estimated.surface_m2, 200);
+  // Taking the estimate over unedited keeps it labelled 'estimate'
+  const taken = I.normalizeIntake({ ...canailleForm, roster_mode: 'founder', investment_mode: 'founder',
+    roster: p.estimated.roster.filter((l) => l.role !== 'founder').map((l) => ({ role: l.role, count: l.count, count_low: l.count_low, count_high: l.count_high, note: l.note, est: true })),
+    investment: p.estimated.investment.map((l) => ({ ...l, est: true })) }).intake;
+  assert.ok(taken.roster.filter((l) => l.role !== 'founder').every((l) => l.source === 'estimate' && l.note));
+  assert.ok(taken.investment.every((l) => l.source === 'estimate' && /Za3fran estimate/.test(l.source_name)));
+  // An edited line (no est flag) is a founder figure
+  const edited = I.normalizeIntake({ ...canailleForm, investment: [{ label: 'Works', category: 'fitout', amount: 500000 }] }).intake;
+  assert.equal(edited.investment[0].source, undefined);
 });
 
 test('missing answers stay missing (Ramadan, opening, services)', () => {
