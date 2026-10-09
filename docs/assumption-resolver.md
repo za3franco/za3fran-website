@@ -46,6 +46,14 @@ Decision (Arnaud, 9 Oct 2026): nobody at Za3fran prepares estimates by hand; the
 - `result.estimated` returns the lines (form preview and take-over). Appendix rows `labour.roster.method`
   and `investment.method` point at the Brain method rows. Founder lines always win.
 - Missing method → blocking gap ("No Za3fran staffing / investment method …"), never a guess.
+- **sm-2 / est-1.1.0 (9 Oct 2026, same day):** Arnaud's rule — a Brain estimate must land inside the normal
+  bands, never push the founder outside them. Added: sommelier (dinner, when alcohol is served), cleaner
+  (4 h per open day), kitchen prep hours per open day (cooks 3 h, commis 2 h, porter 1 h), absence factor 1.12
+  (18 days paid leave + 10-11 public holidays + sickness, Moroccan Labour Code), one server per 18 seats.
+  Salaries added: sommelier 6,500 (5,000-9,000, aggregator + judgment), cleaner 3,500 (minimum wage anchor).
+  Canaille: 16 people, payroll 25% and EBITDA 16.5% of year-2 revenue. Test guard in tests/estimates.test.js.
+  Employer charges (21.09% + 0.5% accident insurance) were already in payroll; employee contributions and
+  income tax are inside the gross salary.
 - Methods stored 9 Oct 2026 as estimates (judgment, low confidence), one `method_change` review item each;
   nothing waits for that review. Canaille founder-given figures unchanged.
 

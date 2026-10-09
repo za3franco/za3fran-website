@@ -17,12 +17,15 @@ const services = [{ id: 'lunch', days: [1, 2, 3, 4, 5] }, { id: 'dinner', days: 
 const byRole = (lines) => Object.fromEntries(lines.map((l) => [l.role, l]));
 const byKey = (lines) => Object.fromEntries(lines.map((l) => [l.key, l]));
 
-test('team: Canaille answers give the 8 Oct team', () => {
+test('team: Canaille answers give a full team inside the normal payroll band (sm-2)', () => {
   const r = X.estimateRoster({ seats: 50, services, alcohol: true, founder: { works: true, monthly_gross: 20000 }, model: M.STAFFING, legalHours: 44 });
   const t = byRole(r.lines);
   assert.deepEqual(Object.fromEntries(r.lines.map((l) => [l.role, l.count])),
-    { chef: 1, founder: 1, server: 3, cook: 2, commis: 1, kitchen_porter: 1, bartender: 1 });
+    { chef: 1, founder: 1, server: 3, cook: 3, commis: 2, kitchen_porter: 2, bartender: 2, sommelier: 1, cleaner: 1 });
   assert.equal(r.open_hours_week.base, 51);
+  assert.match(t.sommelier.note, /dinner only/);
+  assert.match(t.cleaner.note, /4 h per open day × 6 days/);
+  assert.match(t.cook.note, /paid leave, public holidays/);
   assert.equal(t.founder.source, 'founder');               // the founder gave the salary
   assert.equal(t.founder.monthly_gross, 20000);
   assert.equal(t.founder.brain_role, 'manager');
@@ -39,6 +42,8 @@ test('team: no founder on the floor -> a manager; no alcohol -> no bartender; sm
   assert.ok(roles.includes('manager'));
   assert.ok(!roles.includes('founder'));
   assert.ok(!roles.includes('bartender'));
+  assert.ok(!roles.includes('sommelier'));
+  assert.ok(roles.includes('cleaner'));
   assert.ok(!roles.includes('commis'));
   assert.equal(X.estimateRoster({ seats: 30, services: [], model: M.STAFFING, legalHours: 44 }), null);
   assert.equal(X.estimateRoster({ seats: 30, services, model: null, legalHours: 44 }), null);
@@ -93,7 +98,7 @@ const run = (ik, brain = fx) => R.resolveAssumptions({ concept: C.concept, intak
 test('resolver: estimates fill the team and the investment, labelled as estimates', () => {
   const res = run(intake);
   assert.equal(res.status, 'ready', JSON.stringify(res.gaps.filter((g) => g.severity === 'blocking')));
-  assert.equal(res.estimated.roster.lines.length, 7);
+  assert.equal(res.estimated.roster.lines.length, 9);
   assert.equal(res.estimated.investment.lines.length, 11);
   const inv = res.inputs.investment;
   for (const l of res.estimated.investment.lines) {
@@ -117,6 +122,11 @@ test('resolver: estimates fill the team and the investment, labelled as estimate
   const sc = E.runScenarios(res.inputs);
   for (const k of ['base', 'conservative', 'optimistic', 'stress']) assert.ok(sc[k].checks.ok, k);
   assert.ok(sc.base.min_cash.balance >= 0);
+  // Arnaud, 9 Oct 2026: a Za3fran estimate must not push the plan out of the normal bands.
+  const y2 = sc.base.annual[1].ratios;
+  assert.ok(y2.payroll >= 0.2 && y2.payroll <= 0.38, `payroll ${y2.payroll}`);
+  assert.ok(y2.ebitda >= 0.08 && y2.ebitda <= 0.22, `ebitda ${y2.ebitda}`);
+  assert.ok(!sc.base.flags.some((f) => ['PAYROLL_OUT_OF_BAND', 'EBITDA_MARGIN_HIGH'].includes(f.code) && f.data.year > 1));
 });
 
 test('resolver: founder lines win over the estimate request', () => {

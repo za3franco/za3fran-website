@@ -1,12 +1,18 @@
-/* Brain estimate methods, 9 Oct 2026 (resolver ar-1.5.0). Same JSON as
- * supabase/migrations/20261009_brain_estimate_models.sql (live ids below), plus labour.legal_hours_week.
+/* Brain estimate methods, 9 Oct 2026 (resolver ar-1.5.0, estimates est-1.1.0). Same JSON as the live rows:
+ * capex cm-1 (20261009_brain_estimate_models.sql), staffing sm-2 (20261009b_staffing_model_sm2.sql, which
+ * supersedes sm-1), plus labour.legal_hours_week and the sommelier / cleaner salaries added with sm-2.
  * withEstimateMethods(fixture) returns a copy of a Canaille fixture with these rows added.
  */
 'use strict';
 const MA = '6e6218db-0e40-4fc9-9528-30465935d145';
 const STAFFING = {
-  "version": "sm-1",
-  "overtime_tolerance": 0.2,
+  "version": "sm-2",
+  "overtime_tolerance": 0.1,
+  "absence_factor": {
+    "base": 1.12,
+    "low": 1.1,
+    "high": 1.15
+  },
   "service_hours": {
     "lunch": {
       "base": 5,
@@ -58,21 +64,52 @@ const STAFFING = {
         "base": 25,
         "low": 20,
         "high": 30
+      },
+      "prep_hours_per_day": {
+        "base": 3,
+        "low": 2,
+        "high": 4
       }
     },
     {
       "role": "commis",
       "count": 1,
-      "min_seats": 40
+      "min_seats": 40,
+      "prep_hours_per_day": {
+        "base": 2,
+        "low": 1.5,
+        "high": 3
+      }
     },
     {
       "role": "kitchen_porter",
-      "count": 1
+      "count": 1,
+      "prep_hours_per_day": {
+        "base": 1,
+        "low": 0.5,
+        "high": 1.5
+      }
     },
     {
       "role": "bartender",
       "count": 1,
       "alcohol_only": true
+    },
+    {
+      "role": "sommelier",
+      "count": 1,
+      "alcohol_only": true,
+      "services": [
+        "dinner"
+      ]
+    },
+    {
+      "role": "cleaner",
+      "hours_per_open_day": {
+        "base": 4,
+        "low": 3,
+        "high": 6
+      }
     }
   ]
 };
@@ -240,6 +277,8 @@ const parameters = [
 const values = [
   row('60ac8eca-a20e-4a14-bf56-4a92a134d21d', 'benchmark.staffing_model', null, 'bistro_wine_bar', '', STAFFING),
   row('bd89e1e9-fd43-4642-9f56-29f1cbf8ee71', 'benchmark.capex_model', MA, null, 'bistro_wine_bar', CAPEX, { currency: 'MAD' }),
+  { ...row('sal-sommelier', 'labour.salary_monthly', MA, null, 'sommelier', null), value_num: 6500, low: 5000, high: 9000 },
+  { ...row('sal-cleaner', 'labour.salary_monthly', MA, null, 'cleaner', null), value_num: 3500, low: 3423, high: 4000 },
   { ...row('61a696af-58f1-40a8-8092-834664c90c6f', 'labour.legal_hours_week', MA, null, '', null), value_num: '44', source_class: 'published', effective_source_class: 'published' },
 ];
 function withEstimateMethods(fx) {
