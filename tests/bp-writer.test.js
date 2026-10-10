@@ -222,3 +222,12 @@ test('founder report: decisions, points of attention with levels, stress test an
   assert.ok(/lvl-(high|medium)/.test(h));
   assert.ok(h.includes('intelligence artificielle'));
 });
+
+test('a paragraph with too many figures is split at sentence boundaries, words unchanged', () => {
+  const p = 'A {a} et {b}. B {c} et {d}. C {e} et {f}. D {g} et {h}.';
+  const parts = W.reflowParagraph(p);
+  assert.ok(parts.length >= 2);
+  assert.equal(parts.join(' '), p);
+  parts.forEach((x) => assert.ok((x.match(/\{[a-z]+\}/g) || []).length <= 6));
+  assert.deepEqual(W.reflowParagraph('Une phrase {a} {b}.'), ['Une phrase {a} {b}.']);
+});
