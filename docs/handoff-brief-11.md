@@ -59,8 +59,18 @@ generator bp-v14.1 · writer bpw-2.x · checks bpc · render bpr-2.x · founder 
 4. Bistro/wine-bar occupancy and ramp values above, verified by Arnaud (migration 20261009d).
 5. v14.1 bank plan approved by Arnaud (27 Oct); figures-first flow released to customers the same day.
 6. New figures after a plan → new plan run, max 5 per project.
+7. **Arnaud answered YES (27 Oct, evening) to all three open questions:** (a) enable Google Places suggestions in the intake,
+   (b) delete the Canaille test runs, (c) add year-3 staffing growth to the estimate method. Not yet executed — see tasks 0a–0c.
 
 ## Tasks for the next chat, in order
+0a. **Google Places:** Arnaud creates the key (Google Cloud → Places API (New), restrict it to that API, set a low daily
+   quota/budget cap) and sends it; Claude sets `GOOGLE_PLACES_API_KEY` in Vercel (env tool), redeploys, tests the intake
+   suggestions. Cost: a few cents per plan.
+0b. **Delete test runs** `bp_crrtest_canaille_v13` and `bp_v14_canaille_1…4` (SQL; keep `_5`, `_6` and the original BP;
+   delete their frozen `project_assumptions` rows too). Approved by Arnaud.
+0c. **Year-3 staffing growth** in `lib/estimates.js` (method `benchmark.staffing_model`, bump est-1.2.0): the roster grows
+   with covers in year 3; result must stay inside payroll 20–38% and EBITDA 8–22% of year-2 revenue
+   (`tests/estimates.test.js`); re-run Canaille and compare before release; the two year-3 flags should disappear.
 0. Start-up checks: add_repo (push), clone, live commit = HEAD, tests (expect 118). Ask whether pushes are free.
 1. **Templates (step 5)**: designed A4 plan PDF rendered server-side (`api/bp-pdf.js` proof exists), 10-slide deck
    (PowerPoint + PDF, free library), one-page teaser, Excel workbook (ExcelJS, live formulas, assumptions tab). All read the
@@ -75,11 +85,7 @@ generator bp-v14.1 · writer bpw-2.x · checks bpc · render bpr-2.x · founder 
 - **A point that weakens a bank document is settled before generation** (intake decision) rather than disclosed in it.
 
 ## Open cleanup (not blocking)
-- Canaille preparation report flags "EBITDA margin above format references" and "payroll outside usual ratios" in year 3
-  (team does not grow with covers): consider staffing growth in year 3 in the estimate method.
 - Founder quotes in the preparation report are shown as typed (some in English) — fine, but could be translated.
-- `GOOGLE_PLACES_API_KEY`: Arnaud to confirm cost before enabling suggestions.
-- Delete the test runs `bp_crrtest_canaille_v13` and `bp_v14_canaille_1…4` (the gate is now passed) — ask Arnaud first.
 - Menu Engineer on Canaille still shows "generating" (`pending_generation` known issue); Menu Engineer still reads
   `concept_snapshot`.
 - Carried from Brief #10: intake lockout in-memory; resolver gap messages partly technical; `/bp-report/:id` rewrite 404s;
