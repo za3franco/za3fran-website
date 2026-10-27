@@ -70,3 +70,8 @@ the 1.2M state-guarantee ceiling, a partner takes shares at face value for the r
 Standard bank rate 7.5%: uses 2,230,000 (reserve 320,000), founder 446,000 (43.3%), partner 584,000 (56.7%);
 base DSCR 1.76 / 3.28 / 3.34; conservative year-2 DSCR 1.66. Intelaka 2% (rate unconfirmed for 2026): uses
 2,210,000, base DSCR 2.05 / 3.88 / 3.96.
+
+## fe-1.5.0 (27 Oct 2026) — roster lines from a later year
+`labour.roster[].from_year` (operating year, default 1). Payroll for a month counts only the lines active in its
+operating year. `payroll.headcount` and `payroll.monthly_year1` stay the opening team; `payroll.headcount_by_year`
+gives every year. Rosters without `from_year` give identical figures. Used for the year-3 hires (resolver ar-1.7.0).

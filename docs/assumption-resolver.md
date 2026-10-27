@@ -112,3 +112,18 @@ replaces the scratch script, so a plan is reproducible from the intake alone (`s
   and other opex would otherwise reopen on every run. Figures unchanged.
 - Canaille fixture re-snapshotted from the live Brain on 9 Oct (`tests/fixtures/canaille-live-2026-10-09.js`): the
   15 verified values arrive as `za3fran_verified`; every number the resolver reads is unchanged from 8 Oct.
+
+## ar-1.7.0 (27 Oct 2026) — the team grows with covers in year 3 (Arnaud, Brief #11 decision 7c)
+When occupancy rises in year 3 (`benchmark.occupancy_growth_y3`) and the Brain staffing method carries a growth rule
+(sm-3, migration `20261027_staffing_model_sm3.sql`), `lib/estimates.js` (est-1.2.0, `estimateGrowthHires`) adds
+year-3 hires for the covers-driven roles (server, cook, commis, kitchen porter, bartender): opening count ×
+(covers y3 / covers y2 ^ elasticity − 1), elasticity 1 (range 0.7–1), total rounded to half-time posts and shared by
+largest remainder. Lines carry `from_year: 3`, source `estimate`, and are recorded as `labour.hires_y3.<role>.count`
+plus `labour.hires_y3.method`. They apply on top of the opening team whoever gave it; a founder roster with its own
+`from_year` lines wins, and a founder covers figure (no year-3 rise) gives no hires. Opening payroll, pre-opening
+payroll, the reserve target and staff meals are unchanged.
+
+Canaille (decided intake, 9 Oct snapshot + occupancy decision): +0.5 server, +0.5 cook from year 3; year-3 payroll
+18.9% → 19.9% and EBITDA 24.4% → 23.3% of revenue; years 1–2, uses of funds and minimum cash unchanged. The two
+year-3 warnings remain (narrower): the remaining gap is operating leverage (rent and fixed costs diluted as covers
+rise), not staffing. The preparation-report advice for a high margin now says so.
