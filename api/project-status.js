@@ -6,6 +6,9 @@
 // a single dashboard.
 //
 // GET /api/project-status?code=XXXXXXXX
+//
+// v2 (Phase A): latest run per tool (several runs no longer break the lookup); Business Plan
+// status includes the BP intake (awaiting_intake / ready_to_generate) and the founder report link.
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -34,27 +37,48 @@ export default async function handler(req, res) {
   }
 
   // 2. Pull each tool's run row in parallel (a project may not have all three)
-  const [validatorRes, bpRes, menuRes] = await Promise.all([
+  const [validatorRes, bpRes, menuRes, intakeRes] = await Promise.all([
     supabase
       .from('validator_reports')
       .select('id, created_at, report_html')
       .eq('submission_id', project.validator_submission_id)
       .maybeSingle(),
+    // A project may hold several runs (re-generations, test runs): the latest one is shown.
     supabase
       .from('business_plan_essentials_runs')
       .select('id, created_at, output_html, output_json')
       .eq('project_id', project.id)
-      .maybeSingle(),
+      .order('created_at', { ascending: false })
+      .limit(1),
     supabase
       .from('menu_engineer_runs')
       .select('id, created_at, output_html, status')
+      .eq('project_id', project.id)
+      .order('created_at', { ascending: false })
+      .limit(1),
+    supabase
+      .from('bp_intakes')
+      .select('status, submitted_at')
       .eq('project_id', project.id)
       .maybeSingle(),
   ]);
 
   const validator = validatorRes.data;
-  const bp = bpRes.data;
-  const menu = menuRes.data;
+  const bp = (bpRes.data || [])[0] || null;
+  const menu = (menuRes.data || [])[0] || null;
+  const intake = intakeRes.data || null;
+
+  // Business plan status (v14): figures first, then generation.
+  let bpStatus = null;
+  if (bp) {
+    const s = bp.output_json?.status;
+    if (bp.output_html) bpStatus = 'complete';
+    else if (s === 'blocked_crr') bpStatus = 'blocked_crr';
+    else if (!intake || intake.status !== 'submitted' || s === 'awaiting_intake' || s === 'blocked_intake') bpStatus = intake && intake.status === 'submitted' ? 'ready_to_generate' : 'awaiting_intake';
+    else if (s === 'error' || s === 'qa_failed') bpStatus = 'error';
+    else if (s === 'generating') bpStatus = 'generating';
+    else bpStatus = 'ready_to_generate';
+  }
 
   // 3. Normalize each into a common shape the dashboard can render generically
   const tools = [
@@ -72,11 +96,14 @@ export default async function handler(req, res) {
       key: 'business_plan',
       name: 'Business Plan Essentials',
       purchased: !!bp,
-      status: bp
-        ? (bp.output_html ? 'complete' : (bp.output_json?.status === 'error' ? 'error' : (bp.output_json?.status === 'blocked_crr' ? 'blocked_crr' : 'generating')))
-        : null,
+      status: bpStatus,
       viewer_url: bp
         ? `/api/report-bp-viewer?id=${encodeURIComponent(bp.id)}&code=${encodeURIComponent(code)}`
+        : null,
+      intake_url: bp ? `/bp-intake?code=${encodeURIComponent(code)}` : null,
+      intake_status: intake ? intake.status : null,
+      founder_report_url: bp && bp.output_html && bp.output_json?.founder_report_html
+        ? `/api/report-bp-viewer?id=${encodeURIComponent(bp.id)}&code=${encodeURIComponent(code)}&doc=founder`
         : null,
       created_at: bp?.created_at || null,
     },

@@ -61,10 +61,35 @@ async function findProject(req, res, code) {
     res.status(404).json({ error: 'not_found' }); return null;
   }
   attempts[ip] = { n: 0, lockedAt: null };
-  const bp = await withRetry(() => supabase.from('business_plan_essentials_runs').select('id').eq('project_id', p.data.id).limit(1));
+  const bp = await withRetry(() => supabase.from('business_plan_essentials_runs')
+    .select('id, access_code, currency, language, output_html, output_json').eq('project_id', p.data.id).order('created_at', { ascending: false }).limit(1));
   if (bp.error) { res.status(502).json({ error: 'lookup_failed' }); return null; }
   if (!(bp.data || []).length) { res.status(403).json({ error: 'not_purchased' }); return null; }
-  return p.data;
+  const run = bp.data[0];
+  return Object.assign({}, p.data, { bp: { id: run.id, access_code: run.access_code, currency: run.currency, language: run.language, done: !!run.output_html } });
+}
+
+const MAX_REGENERATIONS = 5;   // new plans after updated figures, per project (each costs ~€0.45 of writing)
+const planUrl = (runId, code) => `/api/report-bp-viewer?id=${encodeURIComponent(runId)}&code=${encodeURIComponent(code)}`;
+
+/**
+ * Figures resubmitted after a plan was generated: open a new run so the plan follows the figures
+ * (the previous plan stays readable by its link). Capped per project.
+ */
+async function newRunAfterResubmit(project, code) {
+  const prev = project.bp;
+  if (!prev || !prev.done) return { runId: prev && prev.id, created: false };
+  const n = await withRetry(() => supabase.from('business_plan_essentials_runs').select('id', { count: 'exact', head: true })
+    .eq('project_id', project.id).not('output_json->>regenerated_from', 'is', null));
+  if ((n.count || 0) >= MAX_REGENERATIONS) return { runId: prev.id, created: false, capped: true };
+  const id = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const ins = await withRetry(() => supabase.from('business_plan_essentials_runs').insert({
+    id, project_id: project.id, access_code: prev.access_code || code, currency: prev.currency || project.currency, language: prev.language || project.language,
+    output_json: { status: 'pending', regenerated_from: prev.id, reason: 'intake_resubmitted' },
+  }));
+  if (ins.error) { console.error('[bp-intake] new run failed', ins.error.message); return { runId: prev.id, created: false }; }
+  console.log('[bp-intake] new plan run', id, 'after resubmission (previous', prev.id + ')');
+  return { runId: id, created: true };
 }
 
 async function brainHints(market) {
@@ -166,6 +191,7 @@ export default async function handler(req, res) {
         format_default: I.formatFor(v.concept_type, {}),
         brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false },
         places: !!process.env.GOOGLE_PLACES_API_KEY,
+        plan: { url: planUrl(project.bp.id, code), done: project.bp.done },
         saved: saved.data ? { intake: saved.data.intake, status: saved.data.status, preview: saved.data.preview, updated_at: saved.data.updated_at, submitted_at: saved.data.submitted_at } : null,
       });
     }
@@ -200,11 +226,17 @@ export default async function handler(req, res) {
     }
     const up = await withRetry(() => supabase.from('bp_intakes').upsert(row, { onConflict: 'project_id' }));
     if (up.error) { console.error('[bp-intake] save failed', up.error.message); return res.status(502).json({ error: 'save_failed' }); }
+    let plan = null;
+    if (action === 'submit') {
+      const code = String(body.code || '').toUpperCase().trim();
+      const r = await newRunAfterResubmit(project, code);
+      plan = { url: planUrl(r.runId, code), new_run: r.created, capped: !!r.capped };
+    }
     if (action === 'submit') {
       try { await sendSubmitEmails(project, String(body.code || '').toUpperCase().trim(), intake, summary, resubmitted); }
       catch (e) { console.error('[bp-intake] emails failed', e.message); }
     }
-    return res.status(200).json({ ok: true, status: row.status, preview: summary });
+    return res.status(200).json({ ok: true, status: row.status, preview: summary, plan });
   } catch (e) {
     console.error('[bp-intake] error', e && e.stack || e);
     return res.status(500).json({ error: 'server_error' });

@@ -150,6 +150,7 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="dash-box" id="dashBox">
       <p class="db-label"><span data-en>Your project access code</span><span data-fr>Votre code d'accès projet</span></p>
       <p class="db-code" id="dashCode">—</p>
+      <a href="#" class="btn-dash" id="intakeLink" style="display:none;margin-bottom:10px;"><span data-en>Enter my figures →</span><span data-fr>Renseigner mes chiffres →</span></a>
       <a href="#" class="btn-dash" id="dashLink"><span data-en>Go to my project dashboard →</span><span data-fr>Accéder à mon tableau de bord →</span></a>
     </div>
 
@@ -230,20 +231,20 @@ const TOOL_COPY = {
     fr: "Votre rapport Concept Validator est en cours de préparation — une analyse stratégique de 20 pages, en route vers votre boîte mail."
   },
   bundle: {
-    en: "Your Concept Validator report and Business Plan Essentials are both being prepared — everything arrives under one project.",
-    fr: "Votre rapport Concept Validator et votre Business Plan Essentials sont tous deux en cours de préparation — tout arrive sous un seul projet."
+    en: "Your Concept Validator report is being prepared. Your Business Plan Essentials is then built on your own figures, entered in a short form — everything sits under one project.",
+    fr: "Votre rapport Concept Validator est en cours de préparation. Votre Business Plan Essentials est ensuite établi sur vos propres chiffres, saisis dans un court formulaire — tout est réuni sous un seul projet."
   },
   bundle_menu: {
     en: "Your Concept Validator report and Menu Engineer deliverables are both being prepared — everything arrives under one project.",
     fr: "Votre rapport Concept Validator et vos livrables Menu Engineer sont tous deux en cours de préparation — tout arrive sous un seul projet."
   },
   bundle_full: {
-    en: "Your Concept Validator report, Business Plan Essentials, and Menu Engineer deliverables are all being prepared — everything arrives under one project.",
-    fr: "Votre rapport Concept Validator, votre Business Plan Essentials et vos livrables Menu Engineer sont tous en cours de préparation — tout arrive sous un seul projet."
+    en: "Your Concept Validator report and Menu Engineer deliverables are being prepared. Your Business Plan Essentials is built on your own figures, entered in a short form — everything sits under one project.",
+    fr: "Votre rapport Concept Validator et vos livrables Menu Engineer sont en cours de préparation. Votre Business Plan Essentials est établi sur vos propres chiffres, saisis dans un court formulaire — tout est réuni sous un seul projet."
   },
   business_plan_essentials: {
-    en: "Your Business Plan Essentials is being prepared — a complete, structured business plan, on its way to your inbox.",
-    fr: "Votre Business Plan Essentials est en cours de préparation — un business plan complet et structuré, en route vers votre boîte mail."
+    en: "Your Business Plan Essentials is built on your own figures. Next step: enter them in a short form (about 15 minutes) — your business plan and your preparation report follow within minutes.",
+    fr: "Votre Business Plan Essentials est établi sur vos propres chiffres. Prochaine étape : renseignez-les dans un court formulaire (environ 15 minutes) — votre business plan et votre rapport de préparation suivent en quelques minutes."
   },
   menu_engineer: {
     en: "Your Menu Engineer deliverables — a Strategy Report and Costing Workbook — are being prepared.",
@@ -287,6 +288,12 @@ function renderConfirmed(data) {
 function revealDashboard(data) {
   document.getElementById('dashCode').textContent = data.access_code;
   document.getElementById('dashLink').href = data.dashboard_url;
+  // Business Plan purchases (alone or in a bundle): the first step is the figures form.
+  if (['business_plan_essentials', 'bundle', 'bundle_full'].includes(data.purchase_type)) {
+    const il = document.getElementById('intakeLink');
+    il.href = '/bp-intake?code=' + encodeURIComponent(data.access_code);
+    il.style.display = 'inline-block';
+  }
   document.getElementById('dashBox').classList.add('show');
 }
 

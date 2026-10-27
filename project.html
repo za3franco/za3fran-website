@@ -3,9 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Za3fran — Your Project</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Za3fran — Project</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+body:not(.lang-fr) [data-fr]{display:none;}
+body.lang-fr [data-en]{display:none;}
+#langtoggle{position:fixed;bottom:20px;right:20px;z-index:50;display:flex;background:rgba(15,31,61,.92);border:.5px solid rgba(201,134,42,.35);border-radius:100px;padding:3px;}
+#langtoggle button{background:none;border:none;color:#8b93a8;font-family:'DM Sans',sans-serif;font-size:.7rem;letter-spacing:.12em;padding:.45rem .8rem;border-radius:100px;cursor:pointer;}
+#langtoggle button.active{background:#C9862A;color:#0a0e18;}
+.tool-links{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end;}
+@media (max-width:640px){.tool-links{justify-content:flex-start;}.tool-action{white-space:normal;}}
+.tool-btn.primary{background:#C9862A;color:#0a0e18;}
+.tool-btn.primary:hover{background:#E7A63E;}
+.tool-note{font-size:.78rem;color:#8b93a8;margin-top:.5rem;line-height:1.5;max-width:340px;}
+.status-awaiting_intake .dot,.status-ready_to_generate .dot,.status-blocked_crr .dot{background:#E7A63E;}
+.status-awaiting_intake,.status-ready_to_generate,.status-blocked_crr{color:#E7A63E;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:#0a0e18;color:#FAFAF7;
   min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
@@ -81,31 +93,32 @@ input:focus{border-color:#C9862A;}
 
   <!-- GATE -->
   <div class="gate" id="gate">
-    <span class="eyebrow">Your Project</span>
-    <h1>Access your <em>project</em></h1>
-    <p class="sub">Enter your access code — you'll find it in any of your Za3fran delivery emails.</p>
+    <span class="eyebrow"><span data-en>Your project</span><span data-fr>Votre projet</span></span>
+    <h1><span data-en>Access your <em>project</em></span><span data-fr>Accédez à votre <em>projet</em></span></h1>
+    <p class="sub"><span data-en>Enter your access code — you'll find it in any of your Za3fran delivery emails.</span><span data-fr>Entrez votre code d'accès — vous le trouverez dans chacun de vos emails de livraison Za3fran.</span></p>
     <form id="gateForm">
-      <input type="text" id="codeInput" placeholder="Access code" maxlength="8"
+      <input type="text" id="codeInput" data-en-placeholder="Access code" data-fr-placeholder="Code d'accès" placeholder="Access code" maxlength="8"
         autocapitalize="characters" autocomplete="off" spellcheck="false">
-      <div class="err" id="gateErr">Code not found. Check your email and try again.</div>
-      <button type="submit" class="btn">Access →</button>
+      <div class="err" id="gateErr"><span data-en>Code not found. Check your email and try again.</span><span data-fr>Code introuvable. Vérifiez votre email et réessayez.</span></div>
+      <button type="submit" class="btn"><span data-en>Access →</span><span data-fr>Accéder →</span></button>
     </form>
-    <p class="hint">No code received? Check spam or write to <a href="mailto:hello@za3fran.io">hello@za3fran.io</a></p>
+    <p class="hint"><span data-en>No code received? Check spam or write to</span><span data-fr>Code non reçu ? Vérifiez vos spams ou écrivez à</span> <a href="mailto:hello@za3fran.io">hello@za3fran.io</a></p>
   </div>
 
   <!-- LOADING -->
-  <div class="loading" id="loading" style="display:none;">Loading your project…</div>
+  <div class="loading" id="loading" style="display:none;"><span data-en>Loading your project…</span><span data-fr>Chargement de votre projet…</span></div>
 
   <!-- DASHBOARD -->
   <div class="dash" id="dash">
     <div class="dash-header">
       <div class="concept-name" id="conceptName"></div>
-      <div class="dash-sub">Your Za3fran project — every tool in one place</div>
+      <div class="dash-sub"><span data-en>Your Za3fran project — every tool in one place</span><span data-fr>Votre projet Za3fran — tous vos outils au même endroit</span></div>
     </div>
     <div id="toolList"></div>
     <div class="upsell" id="upsell"></div>
   </div>
 </div>
+<div id="langtoggle"><button data-l="en" class="active">EN</button><button data-l="fr">FR</button></div>
 
 <script>
 const TOOL_META = {
@@ -114,12 +127,36 @@ const TOOL_META = {
   menu_engineer:  { label: 'Menu Engineer',             pricingAnchor: 'menu-engineer' }
 };
 
+// Bilingual strings: [en, fr]
 const STATUS_LABEL = {
-  complete: 'Ready',
-  generating: 'Generating…',
-  error: 'Error — refresh or contact us',
-  none: 'Not purchased'
+  complete: ['Ready', 'Prêt'],
+  generating: ['Generating…', 'Génération en cours…'],
+  error: ['Not delivered — open to retry', 'Non livré — ouvrez pour relancer'],
+  awaiting_intake: ['Your figures needed', 'Vos chiffres d\'abord'],
+  ready_to_generate: ['Ready to generate', 'Prêt à générer'],
+  blocked_crr: ['Concept review to complete', 'Revue du concept à terminer'],
+  none: ['Not purchased', 'Non acheté']
 };
+const bi = (pair) => `<span data-en>${pair[0]}</span><span data-fr>${pair[1]}</span>`;
+
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.documentElement.lang = l;
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === l));
+  document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+    el.placeholder = l === 'fr' ? el.getAttribute('data-fr-placeholder') : el.getAttribute('data-en-placeholder');
+  });
+  try { localStorage.setItem('za3fran_lang', l); } catch (e) {}
+}
+(function(){
+  let saved = null;
+  try { saved = localStorage.getItem('za3fran_lang'); } catch (e) {}
+  if (saved === 'fr') setLang('fr');
+})();
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  setLang(b.dataset.l);
+});
 
 function qs(name) {
   return new URLSearchParams(window.location.search).get(name);
@@ -152,10 +189,32 @@ async function loadProject(code) {
   }
 }
 
+function toolNote(tool, statusKey) {
+  if (tool.key !== 'business_plan') return '';
+  if (statusKey === 'awaiting_intake') return `<div class="tool-note">${bi(['Your plan is built on your own figures: opening, services, team, investment and funding. About 15 minutes.', 'Votre plan est établi sur vos propres chiffres : ouverture, services, équipe, investissement et financement. Environ 15 minutes.'])}</div>`;
+  if (statusKey === 'complete') return `<div class="tool-note">${bi(['The business plan is for your bank and investors; the preparation report is for you only.', 'Le business plan est destiné à votre banque et à vos investisseurs ; le rapport de préparation est pour vous seul.'])}</div>`;
+  return '';
+}
+
+function toolLinks(tool, statusKey, meta) {
+  if (!tool.purchased || !tool.viewer_url) return `<a class="tool-btn" href="/pricing.html#${meta.pricingAnchor}">${bi(['Add this tool →', 'Ajouter cet outil →'])}</a>`;
+  if (tool.key === 'business_plan') {
+    if (statusKey === 'awaiting_intake') return `<a class="tool-btn primary" href="${tool.intake_url}">${bi(['Enter my figures →', 'Renseigner mes chiffres →'])}</a>`;
+    if (statusKey === 'complete') return `<a class="tool-btn primary" href="${tool.viewer_url}">${bi(['Business plan →', 'Business plan →'])}</a>`
+      + (tool.founder_report_url ? `<a class="tool-btn" href="${tool.founder_report_url}">${bi(['Preparation report →', 'Rapport de préparation →'])}</a>` : '')
+      + `<a class="tool-btn" href="${tool.intake_url}">${bi(['My figures', 'Mes chiffres'])}</a>`;
+    return `<a class="tool-btn primary" href="${tool.viewer_url}">${bi(statusKey === 'ready_to_generate' ? ['Generate my plan →', 'Générer mon plan →'] : ['Open →', 'Ouvrir →'])}</a>`
+      + `<a class="tool-btn" href="${tool.intake_url}">${bi(['My figures', 'Mes chiffres'])}</a>`;
+  }
+  return `<a class="tool-btn" href="${tool.viewer_url}">${bi(statusKey === 'complete' ? ['View →', 'Voir →'] : ['Open →', 'Ouvrir →'])}</a>`;
+}
+
 function renderDashboard(data, code) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('dash').style.display = 'block';
-  document.getElementById('conceptName').textContent = data.project.concept_name || 'Your Concept';
+  document.getElementById('conceptName').textContent = data.project.concept_name || 'Za3fran';
+  let saved = null; try { saved = localStorage.getItem('za3fran_lang'); } catch (e) {}
+  if (!saved && data.project.language === 'fr') setLang('fr');
 
   const listEl = document.getElementById('toolList');
   listEl.innerHTML = '';
@@ -174,20 +233,17 @@ function renderDashboard(data, code) {
     card.innerHTML = `
       <div class="tool-info">
         <div class="tool-name">${meta.label}</div>
-        <div class="tool-status status-${statusKey}"><span class="dot"></span>${STATUS_LABEL[statusKey]}</div>
+        <div class="tool-status status-${statusKey}"><span class="dot"></span>${bi(STATUS_LABEL[statusKey] || STATUS_LABEL.generating)}</div>
+        ${toolNote(tool, statusKey)}
       </div>
-      <div class="tool-action">
-        ${tool.purchased && tool.viewer_url
-          ? `<a class="tool-btn" href="${tool.viewer_url}">${statusKey === 'complete' ? 'View →' : 'Open →'}</a>`
-          : `<a class="tool-btn" href="/pricing.html#${meta.pricingAnchor}">Add this tool →</a>`}
-      </div>
+      <div class="tool-action"><div class="tool-links">${toolLinks(tool, statusKey, meta)}</div></div>
     `;
     listEl.appendChild(card);
   });
 
   const upsellEl = document.getElementById('upsell');
   if (missingTools.length > 0) {
-    upsellEl.innerHTML = `Want more from this project? <a href="/pricing.html">See all tools and bundles →</a>`;
+    upsellEl.innerHTML = `${bi(['Want more from this project?', 'Envie d\'aller plus loin avec ce projet ?'])} <a href="/pricing.html">${bi(['See all tools and bundles →', 'Voir tous les outils et formules →'])}</a>`;
   } else {
     upsellEl.innerHTML = '';
   }

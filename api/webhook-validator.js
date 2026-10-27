@@ -470,22 +470,23 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   <p style="color:#888880;font-size:13px;text-align:center;margin:0 0 32px;">Votre tableau de bord regroupe tous vos outils Za3fran pour ce projet — mettez-le en favori.</p>`;
 
   // ── BP section (bundle / bundle_full) ──────────────────────────
-  const bpUrl = bpReportId ? `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}&code=${encodeURIComponent(accessCode)}` : null;
+  // v14: the plan is built on the founder's own figures — the first step is the intake form.
+  const bpUrl = bpReportId ? `${BASE_URL}/bp-intake?code=${encodeURIComponent(accessCode)}` : null;
 
   const bpSection_en = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Your Business Plan Essentials</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your Business Plan Essentials is ready to generate. Click below to start (generation takes 3–5 minutes) — same access code as above.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your business plan is built on your own figures. Read your Validator report first, then enter your figures (about 15 minutes; Za3fran can estimate the team and the investment for you). Your plan — a business plan for your bank and a preparation report for you — is then generated in a few minutes. Same access code as above.</p>
   <div style="text-align:center;margin:0 0 24px;">
-    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Access my Business Plan →</a>
+    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Enter my figures →</a>
   </div>` : '';
 
   const bpSection_fr = hasBP ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="font-family:Georgia,serif;font-size:18px;color:#0F1F3D;margin:0 0 12px;">Votre Business Plan Essentials</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre Business Plan Essentials est prêt à générer. Cliquez ci-dessous pour démarrer (génération : 3–5 minutes) — même code d'accès que ci-dessus.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre business plan est établi sur vos propres chiffres. Lisez d'abord votre rapport Validator, puis renseignez vos chiffres (environ 15 minutes ; Za3fran peut estimer l'équipe et l'investissement pour vous). Votre plan — un business plan pour votre banque et un rapport de préparation pour vous — est ensuite généré en quelques minutes. Même code d'accès que ci-dessus.</p>
   <div style="text-align:center;margin:0 0 24px;">
-    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Business Plan →</a>
+    <a href="${bpUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Renseigner mes chiffres →</a>
   </div>` : '';
 
   // ── Menu Engineer section (bundle_menu / bundle_full) ───────────

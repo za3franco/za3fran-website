@@ -878,7 +878,7 @@ function renderPreview(p, status){
   state.preview = p; state.lastStatus = status;
   const el = $('preview'); el.classList.remove('hidden');
   let h = `<h2><span class="n">✓</span>${bi('What your plan will show','Ce que votre plan montrera')}</h2>`;
-  if (status === 'submitted') h += `<div class="banner ok">${bi('Received. Your plan will be prepared from these inputs. You can still edit and resubmit until it is generated.','Reçu. Votre plan sera préparé à partir de ces données. Vous pouvez encore modifier et renvoyer tant qu\'il n\'est pas généré.')}</div>`;
+  if (status === 'submitted') h += `<div class="banner ok">${bi('Received. Your plan is built from these inputs.','Reçu. Votre plan est établi à partir de ces données.')}${planLink()}</div>`;
   const still = p.blocking || [];
   if (still.length) {
     h += `<h3 class="sub">${bi('Still needed from you','Encore nécessaire de votre part')}</h3><ul class="list bad">${still.map(g=>`<li>${gapText(g)}</li>`).join('')}</ul>`;
@@ -995,9 +995,26 @@ function cashHtml(p){
 /* Brain labels are "Français / English": show the half in the page language. */
 function splitLabel(label){ const parts = String(label || '').split(' / '); return parts.length === 2 ? bi(esc(parts[1]), esc(parts[0])) : esc(label); }
 
+/* Link to the plan (v14): generate it once the figures are submitted; a resubmission after a plan
+   was generated opens a new plan from the new figures (server side, capped per project). */
+function planLink(){
+  const p = state.plan; if (!p || !p.url) return '';
+  const label = p.done && !p.new_run ? bi('See my plan →','Voir mon plan →') : bi('Generate my plan →','Générer mon plan →');
+  return ` <a class="btn primary" style="display:inline-block;margin-top:10px;text-decoration:none;" href="${esc(p.url)}">${label}</a>`;
+}
 function renderStatus(status){
   const b = $('statusBanner');
-  if (status === 'submitted') b.innerHTML = `<div class="banner ok">${bi('Inputs submitted. You can still edit and resubmit until your plan is generated.','Données envoyées. Vous pouvez encore modifier et renvoyer tant que votre plan n\'est pas généré.')}</div>`;
+  if (status === 'submitted') {
+    const p = state.plan || {};
+    const msg = p.new_run
+      ? bi('Inputs submitted. A new plan will be built from these figures; your previous plan stays available from its link.','Données envoyées. Un nouveau plan sera établi avec ces chiffres ; votre plan précédent reste accessible par son lien.')
+      : p.capped
+        ? bi('Inputs submitted. You have reached the number of new plans included; write to hello@za3fran.io to generate another.','Données envoyées. Vous avez atteint le nombre de nouveaux plans inclus ; écrivez à hello@za3fran.io pour en générer un autre.')
+        : p.done
+          ? bi('Inputs saved. Submit again after a change to build a new plan from your updated figures.','Données enregistrées. Renvoyez-les après une modification pour établir un nouveau plan avec vos chiffres à jour.')
+          : bi('Inputs submitted. Your plan can now be generated (a few minutes).','Données envoyées. Votre plan peut maintenant être généré (quelques minutes).');
+    b.innerHTML = `<div class="banner ok">${msg}${p.capped ? '' : planLink()}</div>`;
+  }
   else b.innerHTML = '';
   if (state.data && state.data.project.crr_status !== 'cleared') b.innerHTML += `<div class="banner bad">${bi('Your Concept Readiness Review is not cleared yet. You can fill in your inputs now; the plan is generated once the review is cleared.','Votre revue de préparation du concept n\'est pas encore validée. Vous pouvez saisir vos données ; le plan sera généré une fois la revue validée.')}</div>`;
 }
@@ -1020,6 +1037,7 @@ async function api(action){
     }
     if (!r.ok) { $('saveStatus').textContent = T('Something went wrong. Please try again, or message us on WhatsApp.', 'Une erreur est survenue. Réessayez, ou écrivez-nous sur WhatsApp.'); return; }
     state.dirty = false;
+    if (j.plan) state.plan = Object.assign({}, state.plan || {}, j.plan, { done: j.plan.new_run ? false : (state.plan || {}).done });
     $('saveStatus').textContent = T('Saved', 'Enregistré') + ' · ' + new Date().toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-GB', { hour:'2-digit', minute:'2-digit' });
     renderStatus(j.status);
     if (j.preview) renderPreview(j.preview, j.status);
@@ -1044,7 +1062,7 @@ async function open(code){
         not_purchased: T('This project has no Business Plan purchase yet.', 'Ce projet n\'a pas encore d\'achat Business Plan.') }[j.error] || T('Something went wrong. Please try again.', 'Une erreur est survenue. Réessayez.');
       $('gate').classList.remove('hidden'); $('gateErr').textContent = msg; $('gateErr').classList.remove('hidden'); return;
     }
-    state.code = code; state.data = j;
+    state.code = code; state.data = j; state.plan = j.plan || null;
     if (!savedLang && j.project.language === 'fr') setLang('fr');
     history.replaceState(null, '', '?code=' + encodeURIComponent(code));
     $('gate').classList.add('hidden'); $('form').classList.remove('hidden'); $('bar').classList.remove('hidden');

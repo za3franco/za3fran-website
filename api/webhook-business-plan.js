@@ -131,6 +131,8 @@ export default async function handler(req, res) {
     const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
     const reportUrl   = `${BASE_URL}/api/report-bp-viewer?id=${bpReportId}&code=${encodeURIComponent(bpAccessCode)}`;
     const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(bpAccessCode)}`;
+    // v14: the plan is built on the founder's own figures, so the first step is the intake form.
+    const intakeUrl   = `${BASE_URL}/bp-intake?code=${encodeURIComponent(bpAccessCode)}`;
     const firstName   = name ? name.split(' ')[0] : 'there';
     const isFr        = language === 'fr';
     const conceptName = meta.conceptName || 'your concept';
@@ -148,10 +150,10 @@ export default async function handler(req, res) {
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre paiement pour <strong>${conceptName}</strong> est confirmé. Votre Business Plan Essentials est en cours de génération.</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Cliquez sur le bouton ci-dessous pour accéder à votre rapport. La première ouverture déclenchera la génération (3–5 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre paiement pour <strong>${conceptName}</strong> est confirmé.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Votre business plan est établi sur vos propres chiffres. <strong>Étape 1</strong> : renseignez-les (ouverture, services, équipe, investissement, financement — environ 15 minutes ; Za3fran peut estimer l'équipe et l'investissement pour vous). <strong>Étape 2</strong> : votre plan est généré en quelques minutes — un business plan à présenter à votre banque, et un rapport de préparation pour vous seul.</p>
   <div style="text-align:center;margin:0 0 32px;">
-    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Accéder à mon Business Plan →</a>
+    <a href="${intakeUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Renseigner mes chiffres →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
     <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Votre code d'accès Za3fran</p>
@@ -160,7 +162,7 @@ export default async function handler(req, res) {
   <div style="text-align:center;margin:0 0 32px;">
     <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Accéder à mon tableau de bord →</a>
   </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Votre plan, une fois vos chiffres envoyés : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0;">Questions ? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
 </div>
 <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
@@ -175,10 +177,10 @@ export default async function handler(req, res) {
 </div>
 <div style="padding:48px 40px;">
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your payment for <strong>${conceptName}</strong> is confirmed. Your Business Plan Essentials is being prepared.</p>
-  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Click below to access your report. The first time you open it, generation will start automatically (3–5 minutes).</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your payment for <strong>${conceptName}</strong> is confirmed.</p>
+  <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Your business plan is built on your own figures. <strong>Step 1</strong>: enter them (opening, services, team, investment, funding — about 15 minutes; Za3fran can estimate the team and the investment for you). <strong>Step 2</strong>: your plan is generated in a few minutes — a business plan to present to your bank, and a preparation report for you only.</p>
   <div style="text-align:center;margin:0 0 32px;">
-    <a href="${reportUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Access my Business Plan →</a>
+    <a href="${intakeUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Enter my figures →</a>
   </div>
   <div style="background:#f0f0ee;border-radius:4px;padding:24px;text-align:center;margin:0 0 32px;">
     <p style="font-size:11px;color:#888880;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">Your Za3fran access code</p>
@@ -187,7 +189,7 @@ export default async function handler(req, res) {
   <div style="text-align:center;margin:0 0 32px;">
     <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Go to my project dashboard →</a>
   </div>
-  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
+  <p style="color:#888880;font-size:13px;margin:0 0 8px;">Your plan, once your figures are in: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
   <p style="color:#888880;font-size:13px;margin:0;">Questions? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
 </div>
 <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
