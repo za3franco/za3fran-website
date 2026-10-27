@@ -233,11 +233,11 @@ test('a paragraph with too many figures is split at sentence boundaries, words u
 });
 
 test('founder report speaks to the founder: French titles from the writer, no "porteur de projet", no raw keys', () => {
-  const text = { risks: Object.fromEntries(fr.risks.map((r) => [r.id, { titre: `Titre ${r.id}` }])) };
+  const text = { risks: Object.fromEntries((fr.bankRisks || []).map((r) => [r.id, { titre: `Titre ${r.title_src}` }])) };
   const h = RP.renderReport({ facts: fr, text });
   assert.ok(!/porteur de projet/i.test(h));
   assert.ok(!/services\.occupancy_growth_y3|labour\.roster\.|opex\./.test(h.replace(/<style>[\s\S]*?<\/style>/, '')));
   const concept = fr.risks.find((r) => r.kind === 'concept');
-  if (concept) assert.ok(h.includes(`Titre ${concept.id}`));
+  if (concept) assert.ok(h.includes(`Titre ${concept.title_src}`));
   assert.equal((h.match(/Concurrence :/g) || []).length <= 1, true);
 });
