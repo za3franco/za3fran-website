@@ -225,7 +225,7 @@ export default async function handler(req, res) {
 
     // ── 7. Render and save ────────────────────────────────────────
     const html = RN.renderPlan({ facts, text: written.text });
-    const reportHtml = RP.renderReport({ facts });
+    const reportHtml = RP.renderReport({ facts, text: written.text });
     const done = Object.assign({}, claimMeta, { status: 'complete', error: null, blocked_reason: null, qa: null,
       inputs: Object.assign(audit, { generated_at: new Date().toISOString(), render_version: RN.RENDER_VERSION, report_version: RP.REPORT_VERSION }),
       text: written.text, founder_report_html: reportHtml });
