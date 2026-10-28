@@ -196,3 +196,21 @@ test('writer vw-1.0.2: a failing action line is dropped after the rewrites, neve
   const bad = clone(out); bad.s5.paragraphes = ['Votre apport couvre dix mois.'];
   assert.equal(W.pruneActions(g3, bad, W.checkGroup(g3, bad, A, ctx), A, ctx), null);
 });
+
+test('writer vw-1.0.3: a paragraph with too many figures is split at a sentence boundary, text unchanged', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const ctx = { record: REC, names, allowedExtra: [] };
+  const g3 = W.GROUPS.find((g) => g.id === 'g3');
+  const keys = W.required(A).s4.concat(['emprunt']).filter((k) => A.F[k]);
+  assert.ok(keys.length >= 7, keys.join(','));
+  const para = keys.map((k) => `Le projet affiche la valeur {${k}} sur ce poste.`).join(' ');
+  const out = { s4: { paragraphes: [para], cette_semaine: ['Appeler la banque.'] }, s5: { paragraphes: ['Votre apport est solide.'], cette_semaine: ['Lister les concurrents.'] } };
+  const errs = W.checkGroup(g3, out, A, ctx);
+  assert.deepEqual(errs.map((e) => e.code), ['too_many_figures']);
+  const pr = W.pruneActions(g3, out, errs, A, ctx);
+  assert.ok(pr); assert.equal(pr.out.s4.paragraphes.length, 2);
+  assert.equal(pr.out.s4.paragraphes.join(' '), para);
+  assert.equal(pr.pruned[0].action, 'split');
+});

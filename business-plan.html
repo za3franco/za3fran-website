@@ -174,12 +174,12 @@ footer .foot-bottom a:hover{color:var(--white);}
   <div class="hero-left">
     <p class="eyebrow"><span data-en>Business Plan Essentials</span><span data-fr>Business Plan Essentials</span></p>
     <h1><span data-en>Your concept,<br><em>formalized.</em></span><span data-fr>Votre concept,<br><em>formalisé.</em></span></h1>
-    <p class="sub"><span data-en>A complete, structured business plan generated directly from your Validator data — no additional forms, no extra inputs.</span><span data-fr>Un business plan complet et structuré, généré directement depuis vos données Validator — sans formulaire ni saisie supplémentaire.</span></p>
+    <p class="sub"><span data-en>A business plan for your bank, built on your Validator concept and your own figures. Your concept is already filled in; you add your figures in a short form.</span><span data-fr>Un business plan pour votre banque, établi sur votre concept Validator et vos propres chiffres. Votre concept est déjà renseigné ; vous ajoutez vos chiffres dans un court formulaire.</span></p>
 
     <div class="hero-deliverables">
-      <div class="hero-del-item"><span class="hero-del-num">01</span><span><span data-en>Executive summary, market analysis, positioning and risk analysis — sourced directly from your Validator data</span><span data-fr>Résumé exécutif, analyse de marché, positionnement et analyse des risques — depuis vos données Validator</span></span></div>
-      <div class="hero-del-item"><span class="hero-del-num">02</span><span><span data-en>Year 1–3 financial projections in your currency — startup costs, revenue, break-even, ROI (benchmark-estimated, clearly labeled)</span><span data-fr>Projections financières A1–A3 dans votre devise — coûts de lancement, revenus, seuil de rentabilité, ROI (estimations benchmark, clairement étiquetées)</span></span></div>
-      <div class="hero-del-item"><span class="hero-del-num">03</span><span><span data-en>Menu strategy, operational model, marketing approach and a 6-month pre-opening timeline — directional, benchmark-based</span><span data-fr>Stratégie menu, modèle opérationnel, approche marketing et calendrier pré-ouverture 6 mois — directionnel, basé sur benchmarks</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">01</span><span><span data-en>Financing plan, 3-year forecast, 24-month cash plan and scenarios — every figure calculated from your inputs</span><span data-fr>Plan de financement, prévisions sur 3 ans, trésorerie sur 24 mois et scénarios — chaque chiffre calculé à partir de vos données</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">02</span><span><span data-en>Concept, market, comparable venues, operations and risks — written in your project's voice, plus a private preparation report with our advice</span><span data-fr>Concept, marché, établissements comparables, exploitation et risques — rédigés au nom de votre projet, avec un rapport de préparation privé et nos conseils</span></span></div>
+      <div class="hero-del-item"><span class="hero-del-num">03</span><span><span data-en>Ready to send: plan PDF, one-page summary, presentation (PDF and PowerPoint) and Excel workbook</span><span data-fr>Prêt à envoyer : plan en PDF, synthèse d'une page, présentation (PDF et PowerPoint) et classeur Excel</span></span></div>
     </div>
 
     <div class="new-user-callout">
@@ -246,7 +246,7 @@ footer .foot-bottom a:hover{color:var(--white);}
         <p class="del-num">03</p>
         <h3><span data-en>3-year forecast and cash plan</span><span data-fr>Prévisions sur 3 ans et trésorerie</span></h3>
         <p><span data-en>Income statement over three years, 24-month cash plan, break-even and debt service coverage — every figure from one financial model.</span><span data-fr>Compte de résultat sur trois ans, plan de trésorerie sur 24 mois, point mort et couverture de la dette — chaque chiffre issu d'un même modèle financier.</span></p>
-        <span class="del-tag"><span data-en>Lunch and dinner modelled separately</span><span data-fr>Déjeuner et dîner modélisés séparément</span></span>
+        <span class="del-tag"><span data-en>Each service modelled separately</span><span data-fr>Chaque service modélisé séparément</span></span>
       </div>
       <div class="del-block">
         <p class="del-num">04</p>
@@ -334,10 +334,18 @@ window.addEventListener('scroll', () => {
   document.body.classList.toggle('scrolled', window.scrollY > 120);
 });
 
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === l));
+  try { localStorage.setItem('za3fran_lang', l); } catch(e) {}
+}
+(function(){
+  let saved = null; try { saved = localStorage.getItem('za3fran_lang'); } catch(e) {}
+  if (saved === 'fr') setLang('fr');
+})();
 document.getElementById('langtoggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
-  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
-  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  setLang(b.dataset.l);
 });
 
 // ── CURRENCY ──
