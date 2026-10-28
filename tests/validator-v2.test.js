@@ -214,3 +214,30 @@ test('writer vw-1.0.3: a paragraph with too many figures is split at a sentence 
   assert.equal(pr.out.s4.paragraphes.join(' '), para);
   assert.equal(pr.pruned[0].action, 'split');
 });
+
+test('writer vw-1.0.4: a count placeholder used in another sense is rejected ({places} références)', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const ctx = { record: REC, names, allowedExtra: [] };
+  const g3 = W.GROUPS.find((g) => g.id === 'g3');
+  const paras = W.required(A).s4.map((k) => `Le projet présente la valeur {${k}} pour ce poste.`);
+  const base = { s4: { paragraphes: [paras.slice(0, 3).join(' '), paras.slice(3).join(' ')], cette_semaine: ['Appeler la banque.'] }, s5: { paragraphes: ['Votre salle compte {places} places.'], cette_semaine: ['Lister les concurrents.'] } };
+  const ok = W.checkGroup(g3, base, A, ctx).filter((e) => e.code === 'misuse');
+  assert.equal(ok.length, 0, JSON.stringify(ok));
+  const bad = clone(base); bad.s5.paragraphes = ['Le système Coravin sur {places} références au verre est exigeant.'];
+  assert.ok(W.checkGroup(g3, bad, A, ctx).some((e) => e.code === 'misuse' && e.where === 's5.paragraphes[0]'));
+  assert.equal(CR.inputsGiven(REC).list.covers_per_service, REC.covers != null || (REC.services || []).every((s) => s.covers != null));
+});
+
+test('writer vw-1.0.4: no article right before an amount or a rate in French', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const ctx = { record: REC, names, allowedExtra: [] };
+  const g3 = W.GROUPS.find((g) => g.id === 'g3');
+  const paras = W.required(A).s4.map((k) => `Le projet présente la valeur {${k}} pour ce poste.`);
+  const out = { s4: { paragraphes: [paras.slice(0, 3).join(' '), paras.slice(3).join(' ')], cette_semaine: ['Appeler la banque.'] }, s5: { paragraphes: ['Le {ca_a2} qui en résulte est solide, et les {places} places suffisent.'], cette_semaine: ['Lister les concurrents.'] } };
+  const g = W.checkGroup(g3, out, A, ctx).filter((e) => e.code === 'grammar');
+  assert.equal(g.length, 1); assert.match(g[0].detail, /ca_a2/);
+});
