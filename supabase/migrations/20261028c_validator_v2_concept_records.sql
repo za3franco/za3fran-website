@@ -25,3 +25,7 @@ alter table validator_submissions add column if not exists concept_v2 jsonb;
 alter table validator_reports add column if not exists generation_claim text;
 
 commit;
+
+-- Applied separately the same day (validator_reports_html_nullable): a v2 report row may exist before its HTML
+-- (api/generate-validator.js previews and recovery runs); the viewer shows a "being prepared" page meanwhile.
+alter table validator_reports alter column report_html drop not null;
