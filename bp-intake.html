@@ -651,6 +651,7 @@ $('findPlaces').addEventListener('click', async ()=>{
   try {
     const r = await fetch('/api/bp-intake?nearby=1&code=' + encodeURIComponent(state.code) + '&district=' + encodeURIComponent($('district').value) + '&format=' + encodeURIComponent($('format').value));
     const j = await r.json();
+    if (r.status === 429) { box.textContent = T('Daily suggestion limit reached. Try again tomorrow, or add venues by hand.', 'Limite quotidienne de suggestions atteinte. Réessayez demain ou ajoutez les établissements à la main.'); return; }
     if (!r.ok || !j.places) { box.textContent = T('No suggestions available right now.', 'Pas de suggestion disponible pour le moment.'); return; }
     if (!j.places.length) { box.textContent = T('No venue found near this address.', 'Aucun établissement trouvé près de cette adresse.'); return; }
     box.innerHTML = j.places.map((p, i)=>`<div class="place"><div><b>${esc(p.name)}</b><small class="muted">${esc([p.kind, p.address].filter(Boolean).join(' · '))}${p.rating ? ` · ★ ${fmt(p.rating, 1)} (${fmt(p.ratings)})` : ''}</small></div><button type="button" class="btn-line" data-place="${i}">${bi('Add','Ajouter')}</button></div>`).join('');
