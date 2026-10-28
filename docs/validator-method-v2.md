@@ -17,7 +17,7 @@ The v1 Validator let the model write every number. On Canaille it stated about 7
 form (`validator.html`) → `submit-validator.js` saves the submission and the **concept record** → Stripe (€199, bundles unchanged) → `webhook-validator.js` claims the submission → `lib/validator-v2.js`:
 1. Concept record → resolver (`resolveAssumptions`, Za3fran estimates for team and investment, never blocking for the Validator) → `runScenarios` (base / conservative / optimistic).
 2. Financial score, alerts and capacity check computed in code.
-3. Sonnet writes the sections in parallel (French-native prompts, JSON out, numbers as placeholders filled in code), then `lib/bp-checks.js` style checks (numbers, language); one rewrite on failure.
+3. Sonnet writes the sections in parallel (French-native prompts, JSON out, numbers as placeholders filled in code), then `lib/bp-checks.js` style checks (numbers, language); up to two rewrites on failure. Last resort (writer vw-1.0.2): if only action lines still fail, those lines are dropped (each list keeps at least one action; analysis, scores and risks are never pruned), recorded in `meta.audit.pruned`. Otherwise the report is not delivered (`qa_failed`, notice to hello@za3fran.io).
 4. Rubric scores from the model (0–4 per criterion) are added up in code; verdict in code.
 5. Fixed HTML template (site colours, Cormorant Garamond / DM Sans) → `validator_reports.report_html`; `report_json` built in code (same shape as v1 so the Concept Readiness Review keeps working); PDF from the same HTML through headless Chrome.
 

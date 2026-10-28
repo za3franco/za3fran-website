@@ -176,3 +176,23 @@ test('BP intake pre-fill from the concept record (bpi-1.5.0 shape)', () => {
   const I = require('../lib/bp-intake.js');
   assert.deepEqual(I.SERVICE_IDS, ['breakfast', 'lunch', 'dinner']);
 });
+
+test('writer vw-1.0.2: a failing action line is dropped after the rewrites, never the analysis, never the last action', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const ctx = { record: REC, names, allowedExtra: [] };
+  const g3 = W.GROUPS.find((g) => g.id === 'g3');
+  const paras = W.required(A).s4.map((k) => `Le projet présente la valeur {${k}} pour ce poste.`);
+  const out = { s4: { paragraphes: [paras.join(' ')], cette_semaine: ['Appeler la banque.', 'Visiter dix concurrents du quartier.'] }, s5: { paragraphes: ['Votre apport est solide.'], cette_semaine: ['Lister les concurrents.'] } };
+  const errs = W.checkGroup(g3, out, A, ctx);
+  assert.deepEqual(errs.map((e) => e.where), ['s4.cette_semaine[1]'], JSON.stringify(errs));
+  const pr = W.pruneActions(g3, out, errs, A, ctx);
+  assert.ok(pr); assert.deepEqual(pr.out.s4.cette_semaine, ['Appeler la banque.']);
+  assert.equal(pr.pruned[0].where, 's4.cette_semaine[1]');
+  // the only action of a list is never dropped; an error in the analysis is never pruned
+  const solo = clone(out); solo.s4.cette_semaine = ['Visiter dix concurrents du quartier.'];
+  assert.equal(W.pruneActions(g3, solo, W.checkGroup(g3, solo, A, ctx), A, ctx), null);
+  const bad = clone(out); bad.s5.paragraphes = ['Votre apport couvre dix mois.'];
+  assert.equal(W.pruneActions(g3, bad, W.checkGroup(g3, bad, A, ctx), A, ctx), null);
+});
