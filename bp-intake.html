@@ -218,6 +218,19 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="recap" id="recap"></div>
     <div class="grid">
       <div class="field">
+        <label class="lbl" for="cName"><span data-en>Contact name</span><span data-fr>Nom du contact</span></label>
+        <input type="text" id="cName" maxlength="80" autocomplete="name">
+        <p class="hint"><span data-en>Printed on the one-page summary and the last slide of the presentation. Optional.</span><span data-fr>Imprimé sur la fiche d'une page et sur la dernière diapositive de la présentation. Facultatif.</span></p>
+      </div>
+      <div class="field">
+        <label class="lbl" for="cEmail"><span data-en>Contact email</span><span data-fr>E-mail du contact</span></label>
+        <input type="email" id="cEmail" maxlength="120" autocomplete="email">
+      </div>
+      <div class="field">
+        <label class="lbl" for="cPhone"><span data-en>Contact phone</span><span data-fr>Téléphone du contact</span></label>
+        <input type="tel" id="cPhone" maxlength="40" autocomplete="tel" data-en-placeholder="+212 6 00 00 00 00" data-fr-placeholder="+212 6 00 00 00 00">
+      </div>
+      <div class="field">
         <label class="lbl" for="district"><span data-en>District / neighbourhood</span><span data-fr>Quartier</span></label>
         <input type="text" id="district" maxlength="80" data-en-placeholder="e.g. Gauthier" data-fr-placeholder="ex. Gauthier">
         <p class="hint"><span data-en>Used for local rent data where Za3fran has it.</span><span data-fr>Utilisé pour les loyers locaux lorsque Za3fran dispose des données.</span></p>
@@ -723,6 +736,7 @@ function collect(){
   const p = {
     lang,
     opening: $('opening').value, ramadan: state.data && state.data.brain.ramadan === false ? 'normal' : radio('ramadan'), new_company: radio('newco'), alcohol: radio('alcohol'),
+    contact: { name: $('cName').value, email: $('cEmail').value, phone: $('cPhone').value },
     district: $('district').value, format: $('format').value === 'none' ? '' : $('format').value,
     services: readServices(),
     covers_source: radio('covers') === 'benchmark' ? 'benchmark' : 'founder', covers_per_day: $('coversDay').value,
@@ -798,6 +812,7 @@ function restore(intake){
   $('resMonths').value = String(i.reserve_months ?? 3);
   setRadio('reschoice', i.reserve_choice || 'include');
   setRadio('capchoice', i.capital_choice || 'face');
+  const ct = i.contact || {}; $('cName').value = ct.name || ''; $('cEmail').value = ct.email || ''; $('cPhone').value = ct.phone || '';
   $('comps').innerHTML = (i.competitors || []).map(compRow).join('') || compRow({});
   applyModes(); updateCapHint(); syncEstHints();
   state.dirty = false; $('saveStatus').textContent = '';
@@ -822,7 +837,7 @@ const GAP = {
   'investment.licence': ['The alcohol licence cost (section 07)', 'Le coût de la licence de débit de boissons (section 07)'],
 };
 const ERR = {
-  bad_month: ['month not valid','mois non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
+  bad_month: ['month not valid','mois non valide'], bad_email: ['email not valid','e-mail non valide'], bad_phone: ['phone not valid','téléphone non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
   out_of_range: ['value out of range','valeur hors limites'], missing: ['missing','manquant'], unknown_role: ['unknown role','poste inconnu'],
   salary_needed_for_other: ['salary needed for an "other" role','salaire requis pour un poste « autre »'], range_around_amount: ['low must be ≤ amount ≤ high','bas ≤ montant ≤ haut'],
   unknown_category: ['unknown type','catégorie inconnue'],

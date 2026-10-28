@@ -41,7 +41,7 @@ import W from '../lib/bp-writer.js';
 import RN from '../lib/bp-render.js';
 import RP from '../lib/bp-report.js';
 
-const GENERATOR_VERSION = 'bp-v14.1';
+const GENERATOR_VERSION = 'bp-v14.2';
 const MAX_DURATION_MS = 600_000;
 const WRITE_BUDGET_MS = 420_000;            // no rewrite starts after this point
 const COUNTRY_BY_CURRENCY = { MAD: 'MA' };  // markets built so far (strategy: others on demand)
@@ -229,6 +229,17 @@ export default async function handler(req, res) {
     const done = Object.assign({}, claimMeta, { status: 'complete', error: null, blocked_reason: null, qa: null,
       inputs: Object.assign(audit, { generated_at: new Date().toISOString(), render_version: RN.RENDER_VERSION, report_version: RP.REPORT_VERSION }),
       text: written.text, founder_report_html: reportHtml });
+    // Frozen figures for the designed deliverables (plan PDF, teaser, deck, workbook). Not fatal: the plan itself is saved below.
+    try {
+      const ct = (intake && intake.contact) || {};
+      const contact = { name: String(ct.name || '').slice(0, 80), email: String(ct.email || '').slice(0, 120), phone: String(ct.phone || '').slice(0, 40) };
+      const snap = await withRetry(() => supabase.from('bp_run_snapshots').upsert({
+        run_id: runId, project_id: project.id, facts, contact,
+        engine: { inputs: result.inputs, base: sc.base, conservative: sc.conservative, optimistic: sc.optimistic },
+        versions: { generator: GENERATOR_VERSION, method: result.method_version, facts: facts.version, writer: written.version, render: RN.RENDER_VERSION },
+      }, { onConflict: 'run_id' }));
+      if (snap.error) console.error('[bp] snapshot save failed', runId, snap.error.message || snap.error);
+    } catch (e) { console.error('[bp] snapshot error', runId, e && e.message); }
     const saved = await withRetry(() => supabase.from('business_plan_essentials_runs').update({ output_html: html, output_json: done, model_used: MODEL }).eq('id', runId));
     if (saved.error) { console.error('[bp] save failed', saved.error.message || saved.error); return fail('error', { error: 'save_failed' }); }
     console.log('[bp] ' + runId + ' saved (' + html.length + ' chars) in ' + Math.round((Date.now() - t0) / 1000) + 's');

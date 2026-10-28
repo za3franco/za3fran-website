@@ -202,6 +202,7 @@ function toolLinks(tool, statusKey, meta) {
     if (statusKey === 'awaiting_intake') return `<a class="tool-btn primary" href="${tool.intake_url}">${bi(['Enter my figures →', 'Renseigner mes chiffres →'])}</a>`;
     if (statusKey === 'complete') return `<a class="tool-btn primary" href="${tool.viewer_url}">${bi(['Business plan →', 'Business plan →'])}</a>`
       + (tool.founder_report_url ? `<a class="tool-btn" href="${tool.founder_report_url}">${bi(['Preparation report →', 'Rapport de préparation →'])}</a>` : '')
+      + (tool.files ? `<a class="tool-btn" href="${tool.files.plan}" target="_blank" rel="noopener">${bi(['Plan PDF', 'Plan PDF'])}</a><a class="tool-btn" href="${tool.files.summary}" target="_blank" rel="noopener">${bi(['One-page summary', 'Fiche 1 page'])}</a><a class="tool-btn" href="${tool.files.deck}" target="_blank" rel="noopener">${bi(['Presentation', 'Présentation'])}</a><a class="tool-btn" href="${tool.files.workbook}" download>${bi(['Excel workbook', 'Classeur Excel'])}</a>` : '')
       + `<a class="tool-btn" href="${tool.intake_url}">${bi(['My figures', 'Mes chiffres'])}</a>`;
     return `<a class="tool-btn primary" href="${tool.viewer_url}">${bi(statusKey === 'ready_to_generate' ? ['Generate my plan →', 'Générer mon plan →'] : ['Open →', 'Ouvrir →'])}</a>`
       + `<a class="tool-btn" href="${tool.intake_url}">${bi(['My figures', 'Mes chiffres'])}</a>`;
