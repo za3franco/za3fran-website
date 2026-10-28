@@ -1,7 +1,7 @@
 -- 20261028_places_lookup_cap.sql — our own cap on Google Places lookups (lib/places.js pl-1.1.0).
--- Google's free trial does not allow lowering the Places quota (7,500/day), so the cap lives here:
--- at most 20 lookups per project per day and 300 in total per day. Only counters are stored, never
--- any Google content.
+-- Usage counter for Google Places lookups (only counters, never any Google content).
+-- 28 Oct 2026 (Arnaud): the founder is never limited. api/bp-intake.js (pl-1.2.0) calls the claim with
+-- very high limits and never blocks on it; the table is for monitoring usage and cost only.
 create table if not exists places_lookups (
   day date not null default (now() at time zone 'utc')::date,
   project_id uuid not null,

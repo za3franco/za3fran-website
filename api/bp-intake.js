@@ -176,11 +176,13 @@ export default async function handler(req, res) {
         const eff0 = await loadEffectiveConcept(supabase, project);
         const district = String(req.query.district || eff0.values.neighbourhood || '').slice(0, 80);
         try {
-          // pl-1.1.0: our own cap (Google's trial quota cannot be lowered): 20 per project and 300 in total per day.
-          const claim = await supabase.rpc('places_lookup_claim', { p_project: project.id, p_per_project: 20, p_per_day: 300 });
-          if (claim.error) { console.error('[bp-intake] places cap check failed', claim.error.message); return res.status(503).json({ error: 'places_unavailable' }); }
-          if (claim.data !== true) return res.status(429).json({ error: 'places_limit' });
+          // pl-1.2.0 (Arnaud, 28 Oct 2026): never limit the founder. Usage is only counted (monitoring, never blocking);
+          // the cost is framed in code instead: one call per click, results reused in the page (bp-intake.html).
+          // Counted in parallel with the Google call (a serverless function may stop once it has answered).
+          const counted = supabase.rpc('places_lookup_claim', { p_project: project.id, p_per_project: 1000000, p_per_day: 1000000 })
+            .then((c) => { if (c.error) console.warn('[bp-intake] places usage count failed', c.error.message); }, () => {});
           const out = await P.nearby({ format: String(req.query.format || I.formatFor(eff0.values.concept_type, {}) || ''), district, city: eff0.values.city, lang: project.language === 'en' ? 'en' : 'fr' });
+          await counted;
           return res.status(200).json(out);
         } catch (e) { console.error('[bp-intake] places failed', e.message); return res.status(502).json({ error: 'places_failed' }); }
       }
