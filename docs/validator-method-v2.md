@@ -1,6 +1,6 @@
 # Concept Validator v2 — method (approved by Arnaud, 28 Oct 2026)
 
-Phase A, step 6. Master strategy v1.6, sections 3.2 and 16. Generator version `val-2.0.2`, writer `vw-1.0.5`.
+Phase A, step 6. Master strategy v1.6, sections 3.2 and 16. Generator version `val-2.0.2`, writer `vw-1.0.6`.
 
 ## Why
 The v1 Validator let the model write every number. On Canaille it stated about 742,500 MAD of monthly revenue and 175,000 MAD of monthly result; the engine, on the cleared plan (run `bp_v14_canaille_8`), gives about 484,000 MAD of monthly revenue and about 55,000 MAD of monthly net result in year 2. Revenue was overstated by about half and the result about threefold.
@@ -17,7 +17,7 @@ The v1 Validator let the model write every number. On Canaille it stated about 7
 form (`validator.html`) → `submit-validator.js` saves the submission and the **concept record** → Stripe (€199, bundles unchanged) → `webhook-validator.js` claims the submission → `lib/validator-v2.js`:
 1. Concept record → resolver (`resolveAssumptions`, Za3fran estimates for team and investment, never blocking for the Validator) → `runScenarios` (base / conservative / optimistic).
 2. Financial score, alerts and capacity check computed in code.
-3. Sonnet writes the sections in parallel (French-native prompts, JSON out, numbers as placeholders filled in code), then `lib/bp-checks.js` style checks (numbers, language); up to three rewrites on failure. Last resort (writer vw-1.0.3+), adding nothing to the report: an action line still failing is dropped (each list keeps at least one action), and a paragraph with too many figures is split at a sentence boundary; analysis wording, scores and risks are never repaired. Repairs are recorded in `meta.audit.pruned`. Checks added after the Canaille runs (vw-1.0.4/1.0.5): a count placeholder keeps its own noun ({places} places, never « {places} références »); no article right before an amount or rate in French; no count of services or turns (each service is described by its days). Otherwise the report is not delivered (`qa_failed`, notice to hello@za3fran.io).
+3. Sonnet writes the sections in parallel (French-native prompts, JSON out, numbers as placeholders filled in code), then `lib/bp-checks.js` style checks (numbers, language); up to three rewrites on failure. Last resort (writer vw-1.0.3+), adding nothing to the report: an action line still failing is dropped (each list keeps at least one action), and a paragraph with too many figures is split at a sentence boundary; analysis wording, scores and risks are never repaired. Repairs are recorded in `meta.audit.pruned`. Checks added after the Canaille runs (vw-1.0.4 to 1.0.6): a count placeholder keeps its own noun ({places} places, never « {places} références »); no article right before an amount or rate in French; no count of services or turns (each service is described by its days); no approximate number in words (« une cinquantaine »). Otherwise the report is not delivered (`qa_failed`, notice to hello@za3fran.io).
 4. Rubric scores from the model (0–4 per criterion) are added up in code; verdict in code.
 5. Fixed HTML template (site colours, Cormorant Garamond / DM Sans) → `validator_reports.report_html`; `report_json` built in code (same shape as v1 so the Concept Readiness Review keeps working); PDF from the same HTML through headless Chrome.
 
