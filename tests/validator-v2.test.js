@@ -241,3 +241,13 @@ test('writer vw-1.0.4: no article right before an amount or a rate in French', (
   const g = W.checkGroup(g3, out, A, ctx).filter((e) => e.code === 'grammar');
   assert.equal(g.length, 1); assert.match(g[0].detail, /ca_a2/);
 });
+
+test('writer vw-1.0.5: a count of services or turns is rejected', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const g3 = W.GROUPS.find((g) => g.id === 'g3');
+  const paras = W.required(A).s4.map((k) => `Le projet présente la valeur {${k}} pour ce poste.`);
+  const out = { s4: { paragraphes: [paras.slice(0, 3).join(' '), paras.slice(3).join(' ')], cette_semaine: ['Appeler la banque.'] }, s5: { paragraphes: ['Le format prévoit deux services en déjeuner du lundi au vendredi.'], cette_semaine: ['Lister les concurrents.'] } };
+  assert.ok(W.checkGroup(g3, out, A, { record: REC, names, allowedExtra: [] }).some((e) => e.code === 'invented'));
+});
