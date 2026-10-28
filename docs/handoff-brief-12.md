@@ -75,7 +75,7 @@ figures-first flow are as described in Brief #11 and unchanged.
 2. Validator rebuild on the engine and the Brain (step 6); shared concept-record schema.
 3. Brain Inbox (step 7).
 
-## Permanent rules to add to the Project instructions
+## Permanent rules added (merged into the full instructions text: `claude/project-instructions-2026-10-28.md`)
 - **Bank-facing deliverables are the founder's own documents** (project voice, no doubt, estimate, quote, Za3fran or
   "porteur de projet"); caveats, levels, sources and advice go to the private preparation report. *(from #11)*
 - **A point that weakens a bank document is settled before generation** (intake decision). *(from #11)*
@@ -83,6 +83,7 @@ figures-first flow are as described in Brief #11 and unchanged.
   rules): frame the cost in code (call only on explicit action, reuse results, no background calls) and monitor usage;
   no founder-facing quota message. *(28 Oct)*
 - **Never commit `node_modules` or a sandbox-generated `package-lock.json`;** check `git status` before every commit.
+- **Every handoff ends with the complete Project instructions text**, ready to paste over the whole existing text (Arnaud, 28 Oct).
 
 ## Open cleanup (not blocking)
 - Purge the `node_modules` blob from git history (optional; repo size only).
