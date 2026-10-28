@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran — Concept Validator</title>
-<meta name="description" content="Submit your F&B concept for a 20-page strategic analysis. Real market data, competitor intelligence, financial modelling. Delivered in under 3 minutes.">
+<meta name="description" content="An independent assessment of your F&B concept: a score out of 100, financial viability computed from your own figures, risks and a 30-day action plan. Delivered in minutes.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -139,6 +139,15 @@ nav.nav-pushed{top:2.5rem;}
 .v-pill:checked+.v-pill-label{border-color:var(--copper);color:var(--white);
   background:rgba(201,134,42,0.08);}
 .v-pill-label:hover{border-color:rgba(201,134,42,0.5);color:rgba(250,250,247,0.8);}
+.v-svcs{display:grid;gap:0.75rem;margin-top:0.75rem;}
+.v-svc{border:0.5px solid rgba(201,134,42,0.18);padding:0.9rem 1rem;}
+.v-svc-name{display:inline-block;font-weight:500;}
+.v-svc-body{display:none;margin-top:0.9rem;}
+.v-svc.on .v-svc-body{display:block;}
+.v-days{margin-bottom:0.9rem;}
+.v-days .v-pill-label{padding:0.4rem 0.7rem;font-size:0.72rem;}
+.v-svc.error{border-color:#c0392b;}
+.cur-tag{color:var(--copper);font-size:0.62rem;}
 
 .v-submit-wrap{border-top:0.5px solid rgba(201,134,42,0.2);padding-top:3rem;margin-top:3rem;}
 .v-submit-summary{background:var(--charcoal);border:0.5px solid rgba(201,134,42,0.2);
@@ -310,15 +319,15 @@ footer .foot-bottom a:hover{color:var(--white);}
   <div class="v-hero-content">
     <div class="v-eyebrow fade-up"><span data-en>Za3fran Digital · Concept Validator</span><span data-fr>Za3fran Digital · Validateur de Concept</span></div>
     <h1 class="v-h1 fade-up d1" id="hero-h1"><span data-en id="hero-h1-en">Your concept.<br><em>Validated.</em></span><span data-fr id="hero-h1-fr">Votre concept.<br><em>Validé.</em></span></h1>
-    <p class="v-sub fade-up d2"><span data-en>A 20-page strategic analysis built on real data — delivered to your inbox.</span><span data-fr>Une analyse stratégique de 20 pages sur données réelles — dans votre boîte mail.</span></p>
+    <p class="v-sub fade-up d2"><span data-en>An independent assessment of your concept, with figures computed from your own answers — delivered to your inbox.</span><span data-fr>Une évaluation indépendante de votre concept, chiffrée à partir de vos propres réponses — dans votre boîte mail.</span></p>
     <div class="v-what fade-up d2">
       <div class="v-what-item">
-        <span class="v-what-num">20</span>
-        <span class="v-what-label"><span data-en>Page report</span><span data-fr>Pages de rapport</span></span>
+        <span class="v-what-num">3</span>
+        <span class="v-what-label"><span data-en>Financial scenarios</span><span data-fr>Scénarios financiers</span></span>
       </div>
       <div class="v-what-item">
-        <span class="v-what-num">&lt;3</span>
-        <span class="v-what-label"><span data-en>Minutes delivery</span><span data-fr>Minutes de livraison</span></span>
+        <span class="v-what-num">100</span>
+        <span class="v-what-label"><span data-en>Point score</span><span data-fr>Points de score</span></span>
       </div>
       <div class="v-what-item">
         <span class="v-what-num">6</span>
@@ -479,17 +488,17 @@ footer .foot-bottom a:hover{color:var(--white);}
           <label class="v-label"><span data-en>Primary target audience</span><span data-fr>Clientèle cible principale</span> <span class="req">*</span></label>
           <div class="v-pills" id="f-audience">
             <input type="checkbox" class="v-pill" id="aud-locals" name="audience" value="locals">
-            <label class="v-pill-label" for="aud-locals" data-en="Local residents" data-fr="Résidents locaux">Local residents</label>
+            <label class="v-pill-label" for="aud-locals"><span data-en>Local residents</span><span data-fr>Résidents locaux</span></label>
             <input type="checkbox" class="v-pill" id="aud-tourists" name="audience" value="tourists">
-            <label class="v-pill-label" for="aud-tourists" data-en="Tourists" data-fr="Touristes">Tourists</label>
+            <label class="v-pill-label" for="aud-tourists"><span data-en>Tourists</span><span data-fr>Touristes</span></label>
             <input type="checkbox" class="v-pill" id="aud-expats" name="audience" value="expats">
-            <label class="v-pill-label" for="aud-expats" data-en="Expats" data-fr="Expatriés">Expats</label>
+            <label class="v-pill-label" for="aud-expats"><span data-en>Expats</span><span data-fr>Expatriés</span></label>
             <input type="checkbox" class="v-pill" id="aud-corporate" name="audience" value="corporate">
-            <label class="v-pill-label" for="aud-corporate" data-en="Corporate / Business" data-fr="Corporate / Affaires">Corporate / Business</label>
+            <label class="v-pill-label" for="aud-corporate"><span data-en>Corporate / Business</span><span data-fr>Corporate / Affaires</span></label>
             <input type="checkbox" class="v-pill" id="aud-affluent" name="audience" value="affluent_locals">
-            <label class="v-pill-label" for="aud-affluent" data-en="Affluent locals" data-fr="Clientèle locale aisée">Affluent locals</label>
+            <label class="v-pill-label" for="aud-affluent"><span data-en>Affluent locals</span><span data-fr>Clientèle locale aisée</span></label>
             <input type="checkbox" class="v-pill" id="aud-families" name="audience" value="families">
-            <label class="v-pill-label" for="aud-families" data-en="Families" data-fr="Familles">Families</label>
+            <label class="v-pill-label" for="aud-families"><span data-en>Families</span><span data-fr>Familles</span></label>
           </div>
           <span class="v-err" id="err-audience"></span>
         </div>
@@ -499,39 +508,136 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="v-section">
       <div class="v-section-header">
         <span class="v-section-num">04</span>
-        <h2 class="v-section-title"><span data-en>Financial <em>parameters</em></span><span data-fr>Paramètres <em>financiers</em></span></h2>
+        <h2 class="v-section-title"><span data-en>Your <em>figures</em></span><span data-fr>Vos <em>chiffres</em></span></h2>
       </div>
-      <div class="v-row">
+      <p class="v-hint" style="margin:-0.5rem 0 1.5rem;"><span data-en>These answers feed Za3fran's financial model: capacity, revenue, costs, funding need and debt service are computed from them. Give your best current figures — the report shows how much each one matters.</span><span data-fr>Ces réponses alimentent le modèle financier de Za3fran : capacité, chiffre d'affaires, coûts, besoin de financement et remboursement en sont calculés. Donnez vos meilleurs chiffres actuels — le rapport montre le poids de chacun.</span></p>
+      <div class="v-row two">
         <div class="v-field">
-          <label class="v-label" for="f-budget"><span data-en>Estimated investment budget</span><span data-fr>Budget d'investissement estimé</span> <span class="req">*</span></label>
-          <select class="v-select" id="f-budget" required>
-            <option value="" disabled selected data-en="Select a range..." data-fr="Sélectionnez une fourchette..."></option>
-            <option value="under_50k" data-en="Under $50,000 / under 500k MAD" data-fr="Moins de 50 000$ / moins de 500k MAD">Under $50,000 / under 500k MAD</option>
-            <option value="50_150k" data-en="$50,000–$150,000 / 500k–1.5M MAD" data-fr="50 000$–150 000$ / 500k–1,5M MAD">$50,000–$150,000 / 500k–1.5M MAD</option>
-            <option value="150_500k" data-en="$150,000–$500,000 / 1.5M–5M MAD" data-fr="150 000$–500 000$ / 1,5M–5M MAD">$150,000–$500,000 / 1.5M–5M MAD</option>
-            <option value="500k_1m" data-en="$500,000–$1M / 5M–10M MAD" data-fr="500 000$–1M$ / 5M–10M MAD">$500,000–$1M / 5M–10M MAD</option>
-            <option value="over_1m" data-en="Over $1M / over 10M MAD" data-fr="Plus de 1M$ / plus de 10M MAD">Over $1M / over 10M MAD</option>
+          <label class="v-label" for="f-seats"><span data-en>Seats (inside and terrace)</span><span data-fr>Places assises (salle et terrasse)</span> <span class="req">*</span></label>
+          <input class="v-input" type="text" inputmode="numeric" id="f-seats" data-en-placeholder="e.g. 60" data-fr-placeholder="ex. 60" placeholder="e.g. 60">
+        </div>
+        <div class="v-field" id="wrap-family" style="display:none;">
+          <label class="v-label" for="f-family"><span data-en>Closest format</span><span data-fr>Format le plus proche</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-family">
+            <option value="" disabled selected data-en="Select..." data-fr="Sélectionnez..."></option>
+            <option value="restaurant" data-en="Restaurant" data-fr="Restaurant">Restaurant</option>
+            <option value="bistro_wine_bar" data-en="Bistro / wine bar" data-fr="Bistro / bar à vin">Bistro / wine bar</option>
+            <option value="cafe_brunch" data-en="Café / brunch" data-fr="Café / brunch">Café / brunch</option>
+            <option value="fast_casual" data-en="Fast casual / quick service" data-fr="Fast casual / restauration rapide">Fast casual / quick service</option>
+            <option value="bar_lounge" data-en="Bar / lounge" data-fr="Bar / lounge">Bar / lounge</option>
           </select>
         </div>
       </div>
-      <div class="v-row two">
+      <div class="v-row">
         <div class="v-field">
-          <label class="v-label" for="f-ticket"><span data-en>Target average ticket per person</span><span data-fr>Ticket moyen cible par personne</span> <span class="req">*</span></label>
-          <input class="v-input" type="text" id="f-ticket" data-en-placeholder="e.g. 250 MAD, €35, $40..." data-fr-placeholder="ex. 250 MAD, 35€, 40$..." placeholder="e.g. 250 MAD, €35, $40...">
+          <label class="v-label"><span data-en>Services and opening days</span><span data-fr>Services et jours d'ouverture</span> <span class="req">*</span></label>
+          <span class="v-hint"><span data-en>Tick each service you will run, its days, its ticket and the covers you expect once the venue is established.</span><span data-fr>Cochez chaque service prévu, ses jours, son ticket et les couverts attendus une fois l'établissement lancé.</span></span>
+          <div class="v-svcs">
+      <div class="v-svc" id="svc-breakfast">
+        <input type="checkbox" class="v-pill" id="svc-on-breakfast" data-svc-toggle="breakfast"><label class="v-pill-label v-svc-name" for="svc-on-breakfast"><span data-en>Morning</span><span data-fr>Matin</span></label>
+        <div class="v-svc-body">
+          <div class="v-pills v-days"><input type="checkbox" class="v-pill" id="d-breakfast-1" data-svc="breakfast" value="1"><label class="v-pill-label v-day" for="d-breakfast-1"><span data-en>Mon</span><span data-fr>Lun</span></label><input type="checkbox" class="v-pill" id="d-breakfast-2" data-svc="breakfast" value="2"><label class="v-pill-label v-day" for="d-breakfast-2"><span data-en>Tue</span><span data-fr>Mar</span></label><input type="checkbox" class="v-pill" id="d-breakfast-3" data-svc="breakfast" value="3"><label class="v-pill-label v-day" for="d-breakfast-3"><span data-en>Wed</span><span data-fr>Mer</span></label><input type="checkbox" class="v-pill" id="d-breakfast-4" data-svc="breakfast" value="4"><label class="v-pill-label v-day" for="d-breakfast-4"><span data-en>Thu</span><span data-fr>Jeu</span></label><input type="checkbox" class="v-pill" id="d-breakfast-5" data-svc="breakfast" value="5"><label class="v-pill-label v-day" for="d-breakfast-5"><span data-en>Fri</span><span data-fr>Ven</span></label><input type="checkbox" class="v-pill" id="d-breakfast-6" data-svc="breakfast" value="6"><label class="v-pill-label v-day" for="d-breakfast-6"><span data-en>Sat</span><span data-fr>Sam</span></label><input type="checkbox" class="v-pill" id="d-breakfast-0" data-svc="breakfast" value="0"><label class="v-pill-label v-day" for="d-breakfast-0"><span data-en>Sun</span><span data-fr>Dim</span></label></div>
+          <div class="v-row two">
+            <div class="v-field"><label class="v-label" for="t-breakfast"><span data-en>Average ticket per guest, incl. VAT</span><span data-fr>Ticket moyen par client, TTC</span> <span class="cur-tag"></span></label>
+              <input class="v-input" type="text" inputmode="decimal" id="t-breakfast" data-en-placeholder="e.g. 60" data-fr-placeholder="ex. 60" placeholder="e.g. 60"></div>
+            <div class="v-field"><label class="v-label" for="c-breakfast"><span data-en>Covers per service, once established</span><span data-fr>Couverts par service, en rythme de croisière</span></label>
+              <input class="v-input" type="text" inputmode="numeric" id="c-breakfast" data-en-placeholder="e.g. 40" data-fr-placeholder="ex. 40" placeholder="e.g. 40"></div>
+          </div>
         </div>
-        <div class="v-field">
-          <label class="v-label" for="f-covers"><span data-en>Target covers per day</span><span data-fr>Couverts cibles par jour</span> <span class="req">*</span></label>
-          <input class="v-input" type="text" id="f-covers" data-en-placeholder="e.g. 80, 120–150..." data-fr-placeholder="ex. 80, 120–150..." placeholder="e.g. 80, 120–150...">
+      </div>
+      <div class="v-svc" id="svc-lunch">
+        <input type="checkbox" class="v-pill" id="svc-on-lunch" data-svc-toggle="lunch"><label class="v-pill-label v-svc-name" for="svc-on-lunch"><span data-en>Lunch</span><span data-fr>Déjeuner</span></label>
+        <div class="v-svc-body">
+          <div class="v-pills v-days"><input type="checkbox" class="v-pill" id="d-lunch-1" data-svc="lunch" value="1"><label class="v-pill-label v-day" for="d-lunch-1"><span data-en>Mon</span><span data-fr>Lun</span></label><input type="checkbox" class="v-pill" id="d-lunch-2" data-svc="lunch" value="2"><label class="v-pill-label v-day" for="d-lunch-2"><span data-en>Tue</span><span data-fr>Mar</span></label><input type="checkbox" class="v-pill" id="d-lunch-3" data-svc="lunch" value="3"><label class="v-pill-label v-day" for="d-lunch-3"><span data-en>Wed</span><span data-fr>Mer</span></label><input type="checkbox" class="v-pill" id="d-lunch-4" data-svc="lunch" value="4"><label class="v-pill-label v-day" for="d-lunch-4"><span data-en>Thu</span><span data-fr>Jeu</span></label><input type="checkbox" class="v-pill" id="d-lunch-5" data-svc="lunch" value="5"><label class="v-pill-label v-day" for="d-lunch-5"><span data-en>Fri</span><span data-fr>Ven</span></label><input type="checkbox" class="v-pill" id="d-lunch-6" data-svc="lunch" value="6"><label class="v-pill-label v-day" for="d-lunch-6"><span data-en>Sat</span><span data-fr>Sam</span></label><input type="checkbox" class="v-pill" id="d-lunch-0" data-svc="lunch" value="0"><label class="v-pill-label v-day" for="d-lunch-0"><span data-en>Sun</span><span data-fr>Dim</span></label></div>
+          <div class="v-row two">
+            <div class="v-field"><label class="v-label" for="t-lunch"><span data-en>Average ticket per guest, incl. VAT</span><span data-fr>Ticket moyen par client, TTC</span> <span class="cur-tag"></span></label>
+              <input class="v-input" type="text" inputmode="decimal" id="t-lunch" data-en-placeholder="e.g. 250" data-fr-placeholder="ex. 250" placeholder="e.g. 250"></div>
+            <div class="v-field"><label class="v-label" for="c-lunch"><span data-en>Covers per service, once established</span><span data-fr>Couverts par service, en rythme de croisière</span></label>
+              <input class="v-input" type="text" inputmode="numeric" id="c-lunch" data-en-placeholder="e.g. 35" data-fr-placeholder="ex. 35" placeholder="e.g. 35"></div>
+          </div>
+        </div>
+      </div>
+      <div class="v-svc" id="svc-dinner">
+        <input type="checkbox" class="v-pill" id="svc-on-dinner" data-svc-toggle="dinner"><label class="v-pill-label v-svc-name" for="svc-on-dinner"><span data-en>Evening</span><span data-fr>Soir</span></label>
+        <div class="v-svc-body">
+          <div class="v-pills v-days"><input type="checkbox" class="v-pill" id="d-dinner-1" data-svc="dinner" value="1"><label class="v-pill-label v-day" for="d-dinner-1"><span data-en>Mon</span><span data-fr>Lun</span></label><input type="checkbox" class="v-pill" id="d-dinner-2" data-svc="dinner" value="2"><label class="v-pill-label v-day" for="d-dinner-2"><span data-en>Tue</span><span data-fr>Mar</span></label><input type="checkbox" class="v-pill" id="d-dinner-3" data-svc="dinner" value="3"><label class="v-pill-label v-day" for="d-dinner-3"><span data-en>Wed</span><span data-fr>Mer</span></label><input type="checkbox" class="v-pill" id="d-dinner-4" data-svc="dinner" value="4"><label class="v-pill-label v-day" for="d-dinner-4"><span data-en>Thu</span><span data-fr>Jeu</span></label><input type="checkbox" class="v-pill" id="d-dinner-5" data-svc="dinner" value="5"><label class="v-pill-label v-day" for="d-dinner-5"><span data-en>Fri</span><span data-fr>Ven</span></label><input type="checkbox" class="v-pill" id="d-dinner-6" data-svc="dinner" value="6"><label class="v-pill-label v-day" for="d-dinner-6"><span data-en>Sat</span><span data-fr>Sam</span></label><input type="checkbox" class="v-pill" id="d-dinner-0" data-svc="dinner" value="0"><label class="v-pill-label v-day" for="d-dinner-0"><span data-en>Sun</span><span data-fr>Dim</span></label></div>
+          <div class="v-row two">
+            <div class="v-field"><label class="v-label" for="t-dinner"><span data-en>Average ticket per guest, incl. VAT</span><span data-fr>Ticket moyen par client, TTC</span> <span class="cur-tag"></span></label>
+              <input class="v-input" type="text" inputmode="decimal" id="t-dinner" data-en-placeholder="e.g. 450" data-fr-placeholder="ex. 450" placeholder="e.g. 450"></div>
+            <div class="v-field"><label class="v-label" for="c-dinner"><span data-en>Covers per service, once established</span><span data-fr>Couverts par service, en rythme de croisière</span></label>
+              <input class="v-input" type="text" inputmode="numeric" id="c-dinner" data-en-placeholder="e.g. 45" data-fr-placeholder="ex. 45" placeholder="e.g. 45"></div>
+          </div>
+        </div>
+      </div>
+          </div>
+          <span class="v-err" id="err-services"></span>
         </div>
       </div>
       <div class="v-row two">
         <div class="v-field">
-          <label class="v-label" for="f-seats"><span data-en>Seating capacity</span><span data-fr>Capacité d'accueil</span> <span class="opt"><span data-en>approximate</span><span data-fr>approximatif</span></span></label>
-          <input class="v-input" type="text" id="f-seats" data-en-placeholder="e.g. 60 inside + 40 terrace..." data-fr-placeholder="ex. 60 à l'intérieur + 40 en terrasse..." placeholder="e.g. 60 inside + 40 terrace...">
+          <label class="v-label" for="f-surface"><span data-en>Surface (m²)</span><span data-fr>Surface (m²)</span> <span class="opt"><span data-en>or the rent below</span><span data-fr>ou le loyer ci-dessous</span></span></label>
+          <input class="v-input" type="text" inputmode="numeric" id="f-surface" data-en-placeholder="e.g. 180" data-fr-placeholder="ex. 180" placeholder="e.g. 180">
         </div>
         <div class="v-field">
-          <label class="v-label" for="f-opening"><span data-en>Target opening hours / days</span><span data-fr>Horaires / jours d'ouverture cibles</span></label>
-          <input class="v-input" type="text" id="f-opening" data-en-placeholder="e.g. Lunch & dinner, 7 days..." data-fr-placeholder="ex. Déjeuner & dîner, 7j/7..." placeholder="e.g. Lunch & dinner, 7 days...">
+          <label class="v-label" for="f-rent"><span data-en>Monthly rent offered, excl. VAT</span><span data-fr>Loyer mensuel proposé, HT</span> <span class="cur-tag"></span> <span class="opt"><span data-en>if known</span><span data-fr>si connu</span></span></label>
+          <input class="v-input" type="text" inputmode="decimal" id="f-rent" data-en-placeholder="e.g. 30 000" data-fr-placeholder="ex. 30 000" placeholder="e.g. 30 000">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label" for="f-alcohol"><span data-en>Alcohol served</span><span data-fr>Alcool servi</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-alcohol">
+            <option value="" disabled selected data-en="Select..." data-fr="Sélectionnez..."></option>
+            <option value="yes" data-en="Yes" data-fr="Oui">Yes</option>
+            <option value="no" data-en="No" data-fr="Non">No</option>
+          </select>
+        </div>
+        <div class="v-field" id="wrap-licence" style="display:none;">
+          <label class="v-label" for="f-licence"><span data-en>Alcohol licence cost (takeover or fees)</span><span data-fr>Coût de la licence alcool (reprise ou frais)</span> <span class="cur-tag"></span> <span class="opt"><span data-en>if known</span><span data-fr>si connu</span></span></label>
+          <input class="v-input" type="text" inputmode="decimal" id="f-licence" data-en-placeholder="e.g. 300 000" data-fr-placeholder="ex. 300 000" placeholder="e.g. 300 000">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label" for="f-ramadan"><span data-en>During Ramadan</span><span data-fr>Pendant le Ramadan</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-ramadan">
+            <option value="" disabled selected data-en="Select..." data-fr="Sélectionnez..."></option>
+            <option value="closed" data-en="Closed" data-fr="Fermé">Closed</option>
+            <option value="reduced" data-en="Open, reduced trade" data-fr="Ouvert, activité réduite">Open, reduced trade</option>
+            <option value="normal" data-en="Normal trade" data-fr="Activité normale">Normal trade</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label" for="f-opening-month"><span data-en>Target opening month</span><span data-fr>Mois d'ouverture visé</span> <span class="req">*</span></label>
+          <input class="v-input" type="month" id="f-opening-month">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label" for="f-budget-amount"><span data-en>Total budget for the project</span><span data-fr>Budget total du projet</span> <span class="cur-tag"></span> <span class="req">*</span></label>
+          <input class="v-input" type="text" inputmode="decimal" id="f-budget-amount" data-en-placeholder="e.g. 2 500 000" data-fr-placeholder="ex. 2 500 000" placeholder="e.g. 2 500 000">
+          <span class="v-hint"><span data-en>Everything you can raise: own funds, partners and loans.</span><span data-fr>Tout ce que vous pouvez réunir : apports, associés et emprunts.</span></span>
+        </div>
+        <div class="v-field">
+          <label class="v-label" for="f-own-funds"><span data-en>Of which own funds (you and partners)</span><span data-fr>Dont apports en fonds propres (vous et vos associés)</span> <span class="cur-tag"></span> <span class="req">*</span></label>
+          <input class="v-input" type="text" inputmode="decimal" id="f-own-funds" data-en-placeholder="e.g. 800 000" data-fr-placeholder="ex. 800 000" placeholder="e.g. 800 000">
+        </div>
+      </div>
+      <div class="v-row two">
+        <div class="v-field">
+          <label class="v-label" for="f-founder-works"><span data-en>Will you work in the venue day to day?</span><span data-fr>Travaillerez-vous au quotidien dans l'établissement ?</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-founder-works">
+            <option value="" disabled selected data-en="Select..." data-fr="Sélectionnez..."></option>
+            <option value="yes" data-en="Yes" data-fr="Oui">Yes</option>
+            <option value="no" data-en="No" data-fr="Non">No</option>
+          </select>
+        </div>
+        <div class="v-field">
+          <label class="v-label" for="f-report-lang"><span data-en>Report language</span><span data-fr>Langue du rapport</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-report-lang">
+            <option value="fr" data-en="French" data-fr="Français">French</option>
+            <option value="en" data-en="English" data-fr="Anglais">English</option>
+          </select>
         </div>
       </div>
     </div>
@@ -543,11 +649,16 @@ footer .foot-bottom a:hover{color:var(--white);}
       </div>
       <div class="v-row">
         <div class="v-field">
-          <label class="v-label" for="f-competitors"><span data-en>Who are your main competitors?</span><span data-fr>Qui sont vos principaux concurrents ?</span> <span class="opt"><span data-en>name 2–3 if you can</span><span data-fr>nommez 2–3 si possible</span></span></label>
+          <label class="v-label"><span data-en>Your three closest competitors</span><span data-fr>Vos trois concurrents les plus proches</span> <span class="opt"><span data-en>venues near you, by name</span><span data-fr>établissements proches, par leur nom</span></span></label>
+          <div class="v-row three" style="margin-bottom:0.5rem;">
+            <input class="v-input" type="text" id="f-comp-1" data-en-placeholder="Competitor 1" data-fr-placeholder="Concurrent 1" placeholder="Competitor 1">
+            <input class="v-input" type="text" id="f-comp-2" data-en-placeholder="Competitor 2" data-fr-placeholder="Concurrent 2" placeholder="Competitor 2">
+            <input class="v-input" type="text" id="f-comp-3" data-en-placeholder="Competitor 3" data-fr-placeholder="Concurrent 3" placeholder="Competitor 3">
+          </div>
           <textarea class="v-textarea" id="f-competitors" rows="3"
-            data-en-placeholder="e.g. Le Cabestan, Bo&Zin, Bagatelle — or describe the type of venues you're competing with if you don't have specific names yet."
-            data-fr-placeholder="ex. Le Cabestan, Bo&Zin, Bagatelle — ou décrivez le type d'établissements avec lesquels vous êtes en concurrence si vous n'avez pas encore de noms précis."
-            placeholder="e.g. Le Cabestan, Bo&Zin, Bagatelle — or describe the type of venues you're competing with if you don't have specific names yet."></textarea>
+            data-en-placeholder="What do they offer, at what prices, and how is your concept different? Or describe the type of venues you compete with."
+            data-fr-placeholder="Que proposent-ils, à quels prix, et en quoi votre concept est-il différent ? Ou décrivez le type d'établissements avec lesquels vous êtes en concurrence."
+            placeholder="What do they offer, at what prices, and how is your concept different? Or describe the type of venues you compete with."></textarea>
         </div>
       </div>
       <div class="v-row">
@@ -607,10 +718,10 @@ footer .foot-bottom a:hover{color:var(--white);}
       <div class="v-submit-summary">
         <div class="v-summary-title"><span data-en>What you'll receive</span><span data-fr>Ce que vous recevrez</span></div>
         <div class="v-summary-items">
-          <div class="v-summary-item"><span data-en>Market fit analysis — real competitor data for your specific city and format</span><span data-fr>Analyse d'adéquation marché — données concurrentielles réelles pour votre ville et format</span></div>
-          <div class="v-summary-item"><span data-en>Financial viability assessment — ticket benchmarking, revenue modelling, break-even analysis</span><span data-fr>Évaluation de viabilité financière — benchmark ticket, modélisation revenus, seuil de rentabilité</span></div>
+          <div class="v-summary-item"><span data-en>Concept, market and competition — assessed against fixed criteria, from your concept, your district and the competitors you name</span><span data-fr>Concept, marché et concurrence — évalués sur des critères fixes, à partir de votre concept, de votre quartier et des concurrents que vous citez</span></div>
+          <div class="v-summary-item"><span data-en>Financial viability — capacity check, three scenarios, break-even and funding need, computed by Za3fran's financial model</span><span data-fr>Viabilité financière — contrôle de capacité, trois scénarios, point mort et besoin de financement, calculés par le modèle financier de Za3fran</span></div>
           <div class="v-summary-item"><span data-en>Strategic recommendations — 5 specific actions to strengthen your concept before launch</span><span data-fr>Recommandations stratégiques — 5 actions concrètes pour renforcer votre concept avant ouverture</span></div>
-          <div class="v-summary-item"><span data-en>Risk register — the 3 biggest threats to your concept, with mitigation strategies</span><span data-fr>Registre des risques — les 3 principales menaces avec stratégies de mitigation</span></div>
+          <div class="v-summary-item"><span data-en>Risk register and a 30-day action plan — with a downloadable PDF of the report</span><span data-fr>Registre des risques et plan d'action à 30 jours — avec le rapport en PDF à télécharger</span></div>
         </div>
         <div class="v-total" id="form-total-validator">
           <span class="v-total-label"><span data-en>Total · One-time payment</span><span data-fr>Total · Paiement unique</span></span>
@@ -631,8 +742,8 @@ footer .foot-bottom a:hover{color:var(--white);}
         <span class="btn-label"><span data-en>Review my submission →</span><span data-fr>Vérifier ma soumission →</span></span>
       </button>
       <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.5);margin-top:1rem;line-height:1.6;">
-        <span data-en>Secure payment via Stripe · Your data is used solely to generate your report · Delivered within 3 minutes of payment</span>
-        <span data-fr>Paiement sécurisé via Stripe · Vos données servent uniquement à générer votre rapport · Livré dans les 3 minutes suivant la confirmation</span>
+        <span data-en>Secure payment via Stripe · Your data is used solely to generate your report · Delivered within a few minutes of payment</span>
+        <span data-fr>Paiement sécurisé via Stripe · Vos données servent uniquement à générer votre rapport · Livré quelques minutes après la confirmation</span>
       </p>
     </div>
 
@@ -741,7 +852,7 @@ footer .foot-bottom a:hover{color:var(--white);}
           <div class="v-bundle-radio"></div>
           <div class="v-bundle-content">
             <div class="v-bundle-label"><span data-en>Concept Validator only</span><span data-fr>Concept Validator seul</span></div>
-            <div class="v-bundle-desc"><span data-en>20-page strategic report · Market fit · Financial viability · Risk register</span><span data-fr>Rapport stratégique 20 pages · Adéquation marché · Viabilité financière · Registre des risques</span></div>
+            <div class="v-bundle-desc"><span data-en>Score out of 100 · Market fit · Financial viability · Risk register · PDF</span><span data-fr>Score sur 100 · Adéquation marché · Viabilité financière · Registre des risques · PDF</span></div>
           </div>
           <div class="v-bundle-price" id="price-validator-opt">€199</div>
         </div>
@@ -752,7 +863,7 @@ footer .foot-bottom a:hover{color:var(--white);}
               <span data-en>Validator + Business Plan Essentials</span><span data-fr>Validator + Business Plan Essentials</span>
               <span class="v-bundle-save"><span data-en>Save €99</span><span data-fr>Économisez 99€</span></span>
             </div>
-            <div class="v-bundle-desc"><span data-en>Everything above + full business plan with benchmark financial projections, market strategy, operations model — a structured document to share</span><span data-fr>Tout ci-dessus + business plan complet avec projections financières benchmark, stratégie marché, modèle opérationnel — un document structuré à partager</span></div>
+            <div class="v-bundle-desc"><span data-en>Everything above + your business plan built on your own figures: plan PDF, one-page summary, presentation (PDF and PowerPoint) and Excel workbook</span><span data-fr>Tout ci-dessus + votre business plan établi sur vos chiffres : plan en PDF, résumé d'une page, présentation (PDF et PowerPoint) et fichier Excel</span></div>
             <div class="v-bundle-list"><span data-en>✦ Validator report &nbsp;✦ Business Plan Essentials &nbsp;✦ One unified access code</span><span data-fr>✦ Rapport Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ Un code d'accès unifié</span></div>
           </div>
           <div>
@@ -790,8 +901,8 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="v-review-total">
       <div class="v-review-total-left">
         <span class="v-review-total-label"><span data-en>Total · One-time payment</span><span data-fr>Total · Paiement unique</span></span>
-        <span class="v-review-total-desc" id="review-total-desc-en" data-en style="display:block;">20-page strategic report · Delivered in under 3 minutes</span>
-        <span class="v-review-total-desc" id="review-total-desc-fr" data-fr style="display:none;">Rapport stratégique 20 pages · Livré en moins de 3 minutes</span>
+        <span class="v-review-total-desc" id="review-total-desc-en" data-en style="display:block;">Validation report with PDF · Delivered in a few minutes</span>
+        <span class="v-review-total-desc" id="review-total-desc-fr" data-fr style="display:none;">Rapport de validation avec PDF · Livré en quelques minutes</span>
       </div>
       <span class="v-review-total-price" id="review-price">€199</span>
     </div>
@@ -804,8 +915,8 @@ footer .foot-bottom a:hover{color:var(--white);}
       <span data-en>← Edit my submission</span><span data-fr>← Modifier ma soumission</span>
     </button>
     <p style="text-align:center;font-size:0.72rem;color:rgba(136,136,128,0.4);margin-top:1rem;line-height:1.6;">
-      <span data-en>Secure payment via Stripe · Report generated once from your exact inputs · Delivered within 3 minutes</span>
-      <span data-fr>Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré dans les 3 minutes</span>
+      <span data-en>Secure payment via Stripe · Report generated once from your exact inputs · Delivered within a few minutes</span>
+      <span data-fr>Paiement sécurisé via Stripe · Rapport généré une seule fois · Livré en quelques minutes</span>
     </p>
   </div>
 </div>
@@ -814,7 +925,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   <div class="v-success-icon">✦</div>
   <h2 class="v-success-h"><span data-en>Your report is<br><em>on its way.</em></span><span data-fr>Votre rapport<br><em>est en route.</em></span></h2>
   <div class="v-div" style="margin:1.5rem auto;"></div>
-  <p class="v-success-p"><span data-en>Check your inbox — your 20-page strategic analysis will arrive within 3 minutes, along with your project access code. Check your spam folder if you don't see it.</span><span data-fr>Consultez votre boîte mail — votre analyse stratégique de 20 pages arrivera dans 3 minutes, avec votre code d'accès projet. Vérifiez vos spams si vous ne la voyez pas.</span></p>
+  <p class="v-success-p"><span data-en>Check your inbox — your report will arrive within a few minutes, along with your project access code. Check your spam folder if you don't see it.</span><span data-fr>Consultez votre boîte mail — votre rapport arrivera dans quelques minutes, avec votre code d'accès projet. Vérifiez vos spams si vous ne le voyez pas.</span></p>
   <a href="/platform" style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--copper-bright);">
     <span data-en>← Return to the Platform</span><span data-fr>← Retour à la Plateforme</span>
   </a>
@@ -843,8 +954,8 @@ var BUNDLE_CONFIG = {
     heroTitle_fr: 'Votre concept.<br><em>Validé — et planifié.</em>',
     listLine_en: '✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ One unified access code',
     listLine_fr: '✦ Concept Validator &nbsp;✦ Business Plan Essentials &nbsp;✦ Un code d\'accès unifié',
-    desc_en: 'Validator report + full business plan with benchmark financial projections — a structured document to share.',
-    desc_fr: 'Rapport Validator + business plan complet avec projections financières benchmark — un document structuré à partager.',
+    desc_en: 'Validator report + your business plan built on your own figures: plan PDF, one-page summary, presentation (PDF and PowerPoint) and Excel workbook.',
+    desc_fr: 'Rapport Validator + votre business plan établi sur vos chiffres : plan en PDF, résumé d\'une page, présentation (PDF et PowerPoint) et fichier Excel.',
     prices: { EUR:'€599', MAD:'MAD 5,990', USD:'$649' },
     listPrices: { EUR:'€698', MAD:'MAD 6,980', USD:'$768' },
     save: { EUR:'Save €99', MAD:'Save MAD 990', USD:'Save $99' },
@@ -930,11 +1041,10 @@ function applyPlaceholders(lang) {
 function setLang(l) {
   document.getElementById('body').classList.toggle('lang-fr', l === 'fr');
   document.querySelectorAll('#langtoggle button').forEach(b => b.classList.toggle('active', b.dataset.l === l));
-  document.querySelectorAll('.v-pill-label[data-en]').forEach(el => {
-    el.textContent = l === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
-  });
   applyOptionLabels(l);
   applyPlaceholders(l);
+  const rl = document.getElementById('f-report-lang');
+  if (rl && !rl.dataset.touched) rl.value = l === 'fr' ? 'fr' : 'en';
   updateBundleBannerText();
   localStorage.setItem('za3fran_lang', l);
 }
@@ -965,6 +1075,7 @@ fetch('/api/currency')
   .then(r => r.json())
   .then(data => {
     CURRENCY = data.currency || 'EUR';
+    if (typeof setCurrencyTags === 'function') setCurrencyTags();
     updatePriceDisplays();
     if (BUNDLE_TYPE !== 'validator') {
       updateBundleHeroUI();
@@ -1084,18 +1195,53 @@ function updateReviewTotal() {
     if (descEn) descEn.textContent = 'Validator + Business Plan Essentials · One project, one unified access code';
     if (descFr) descFr.textContent = 'Validator + Business Plan Essentials · Un projet, un code d\'accès unifié';
   } else {
-    if (descEn) descEn.textContent = '20-page strategic report · Delivered in under 3 minutes';
-    if (descFr) descFr.textContent = 'Rapport stratégique 20 pages · Livré en moins de 3 minutes';
+    if (descEn) descEn.textContent = 'Validation report with PDF · Delivered in a few minutes';
+    if (descFr) descFr.textContent = 'Rapport de validation avec PDF · Livré en quelques minutes';
   }
   if (descEn) descEn.style.display = isFr() ? 'none' : 'block';
   if (descFr) descFr.style.display = isFr() ? 'block' : 'none';
 }
 
+// ── v2 (Validator v2): structured figures for the financial model ──
+const SERVICE_IDS = ['breakfast', 'lunch', 'dinner'];
+function numVal(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const v = String(el.value || '').replace(/[\s\u202f\u00a0]/g, '').replace(',', '.');
+  return /^\d+(\.\d+)?$/.test(v) ? Number(v) : null;
+}
+function servicesData() {
+  return SERVICE_IDS.filter(id => document.getElementById('svc-on-' + id).checked).map(id => ({
+    id,
+    days: Array.from(document.querySelectorAll('input[data-svc="' + id + '"]:checked')).map(e => Number(e.value)),
+    ticket: numVal('t-' + id),
+    covers: numVal('c-' + id),
+  }));
+}
+function setCurrencyTags() {
+  document.querySelectorAll('.cur-tag').forEach(el => { el.textContent = '(' + (CURRENCY || 'EUR') + ')'; });
+}
+document.querySelectorAll('[data-svc-toggle]').forEach(el => el.addEventListener('change', () => {
+  document.getElementById('svc-' + el.dataset.svcToggle).classList.toggle('on', el.checked);
+}));
+document.getElementById('f-alcohol').addEventListener('change', e => {
+  document.getElementById('wrap-licence').style.display = e.target.value === 'yes' ? '' : 'none';
+});
+document.getElementById('f-type').addEventListener('change', e => {
+  document.getElementById('wrap-family').style.display = e.target.value === 'other' ? '' : 'none';
+});
+(function() {
+  const rl = document.getElementById('f-report-lang');
+  if (rl) { rl.value = isFr() ? 'fr' : 'en'; rl.addEventListener('change', () => { rl.dataset.touched = '1'; }); }
+  setCurrencyTags();
+})();
+
 function validateForm() {
   let valid = true;
   const required = ['f-name','f-email','f-country','f-role','f-concept-name',
     'f-type','f-cuisine','f-description','f-differentiation','f-city',
-    'f-budget','f-ticket','f-covers','f-gap','f-stage','f-timeline'];
+    'f-seats','f-alcohol','f-ramadan','f-opening-month','f-budget-amount','f-own-funds','f-founder-works',
+    'f-gap','f-stage','f-timeline'];
 
   required.forEach(id => {
     const el = document.getElementById(id);
@@ -1103,6 +1249,29 @@ function validateForm() {
     if (!el.value.trim()) { el.classList.add('error'); valid = false; }
     else { el.classList.remove('error'); }
   });
+  ['f-seats','f-budget-amount','f-own-funds'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.value.trim() && numVal(id) == null) { el.classList.add('error'); valid = false; }
+  });
+  if (numVal('f-budget-amount') != null && numVal('f-own-funds') != null && numVal('f-own-funds') > numVal('f-budget-amount')) {
+    document.getElementById('f-own-funds').classList.add('error'); valid = false;
+  }
+  if (document.getElementById('f-type').value === 'other' && !document.getElementById('f-family').value) {
+    document.getElementById('f-family').classList.add('error'); valid = false;
+  }
+
+  // services: at least one, each with days, a ticket and covers
+  const errSvc = document.getElementById('err-services');
+  const svc = servicesData();
+  let svcOk = svc.length > 0;
+  SERVICE_IDS.forEach(id => document.getElementById('svc-' + id).classList.remove('error'));
+  svc.forEach(x => {
+    if (!x.days.length || x.ticket == null || x.covers == null) { svcOk = false; document.getElementById('svc-' + x.id).classList.add('error'); }
+  });
+  if (!svcOk) {
+    errSvc.textContent = isFr() ? 'Cochez au moins un service et donnez, pour chacun, ses jours, son ticket et ses couverts.' : 'Tick at least one service and give, for each, its days, ticket and covers.';
+    errSvc.classList.add('show'); valid = false;
+  } else errSvc.classList.remove('show');
 
   const email = document.getElementById('f-email');
   if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
@@ -1138,19 +1307,29 @@ function collectData() {
     city:            document.getElementById('f-city').value.trim(),
     neighbourhood:   document.getElementById('f-neighbourhood').value.trim(),
     audience,
-    budget:          document.getElementById('f-budget').value,
-    ticket:          document.getElementById('f-ticket').value.trim(),
-    covers:          document.getElementById('f-covers').value.trim(),
     seats:           document.getElementById('f-seats').value.trim(),
-    opening_hours:   document.getElementById('f-opening').value.trim(),
     competitors:     document.getElementById('f-competitors').value.trim(),
     market_gap:      document.getElementById('f-gap').value.trim(),
     stage:           document.getElementById('f-stage').value,
     timeline:        document.getElementById('f-timeline').value,
     additional:      document.getElementById('f-context').value.trim(),
     currency:        CURRENCY,
-    language:        isFr() ? 'fr' : 'en',
+    language:        document.getElementById('f-report-lang').value === 'en' ? 'en' : 'fr',
     purchase_type:   PURCHASE_TYPE,
+    concept_v2: {
+      format_family:    document.getElementById('f-type').value === 'other' ? (document.getElementById('f-family').value || undefined) : undefined,
+      services:         servicesData(),
+      surface_m2:       numVal('f-surface'),
+      rent_monthly:     numVal('f-rent'),
+      alcohol:          document.getElementById('f-alcohol').value,
+      licence_cost:     document.getElementById('f-alcohol').value === 'yes' ? numVal('f-licence') : null,
+      ramadan:          document.getElementById('f-ramadan').value,
+      opening:          document.getElementById('f-opening-month').value,
+      budget_amount:    numVal('f-budget-amount'),
+      own_funds:        numVal('f-own-funds'),
+      founder_works:    document.getElementById('f-founder-works').value,
+      competitors_list: ['f-comp-1','f-comp-2','f-comp-3'].map(id => ({ name: document.getElementById(id).value.trim() })).filter(c => c.name),
+    },
     submitted_at:    new Date().toISOString()
   };
 }
@@ -1186,7 +1365,7 @@ const COUNTRY_LABELS = {
   fr: { MA:'Maroc',DZ:'Algérie',TN:'Tunisie',EG:'Égypte',SN:'Sénégal',CI:"Côte d'Ivoire",CM:'Cameroun',NG:'Nigeria',KE:'Kenya',ZA:'Afrique du Sud',AE:'Émirats Arabes Unis',SA:'Arabie Saoudite',FR:'France',BE:'Belgique',CH:'Suisse',GB:'Royaume-Uni',OTHER:'Autre' }
 };
 const SECTION_IDS = {
-  1:'f-name',2:'f-concept-name',3:'f-city',4:'f-budget',5:'f-competitors',6:'f-stage'
+  1:'f-name',2:'f-concept-name',3:'f-city',4:'f-seats',5:'f-comp-1',6:'f-stage'
 };
 
 function populateReview(data) {
@@ -1212,11 +1391,14 @@ function populateReview(data) {
   set('r-city',            data.city);
   set('r-neighbourhood',   data.neighbourhood);
   set('r-audience',        (data.audience || []).join(', '));
-  set('r-budget',          (BUDGET_LABELS[lang] && BUDGET_LABELS[lang][data.budget]) || data.budget);
-  set('r-ticket',          data.ticket);
-  set('r-covers',          data.covers);
+  const v2 = data.concept_v2 || {};
+  const fmt = n => n == null ? '' : Number(n).toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-GB') + ' ' + (data.currency || '');
+  const SVC_LABEL = { breakfast: ['Morning', 'Matin'], lunch: ['Lunch', 'Déjeuner'], dinner: ['Evening', 'Soir'] };
+  set('r-budget',          fmt(v2.budget_amount) + (v2.own_funds != null ? (lang === 'fr' ? ' (dont apports ' : ' (own funds ') + fmt(v2.own_funds) + ')' : ''));
+  set('r-ticket',          (v2.services || []).map(x => SVC_LABEL[x.id][lang === 'fr' ? 1 : 0] + ' ' + fmt(x.ticket)).join(' · '));
+  set('r-covers',          (v2.services || []).map(x => SVC_LABEL[x.id][lang === 'fr' ? 1 : 0] + ' ' + x.covers).join(' · '));
   set('r-seats',           data.seats);
-  set('r-competitors',     data.competitors);
+  set('r-competitors',     [((v2.competitors_list || []).map(c => c.name).join(', ')), data.competitors].filter(Boolean).join(' — '));
   set('r-gap',             data.market_gap);
   set('r-stage',           (STAGE_LABELS[lang] && STAGE_LABELS[lang][data.stage]) || data.stage);
   set('r-timeline',        (TIMELINE_LABELS[lang] && TIMELINE_LABELS[lang][data.timeline]) || data.timeline);
@@ -1322,7 +1504,15 @@ async function proceedToPayment() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('submission failed');
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      if (j && j.error === 'invalid_answers') {
+        errEl.textContent = isFr() ? 'Certaines réponses chiffrées ne sont pas valides. Revenez au formulaire pour les corriger.' : 'Some figures are not valid. Go back to the form to correct them.';
+        errEl.classList.add('show'); btn.disabled = false; btn.classList.remove('loading');
+        return;
+      }
+      throw new Error('submission failed');
+    }
     const result = await res.json();
     if (result.checkoutUrl) {
       window.location.href = result.checkoutUrl;

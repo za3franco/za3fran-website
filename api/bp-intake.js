@@ -26,6 +26,7 @@ import I from '../lib/bp-intake.js';
 import { loadEffectiveConcept } from '../lib/crr-concept.js';
 import M from '../lib/emails.js';
 import P from '../lib/places.js';
+import CR from '../lib/concept-record.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -191,6 +192,13 @@ export default async function handler(req, res) {
       const v = eff.values || {};
       const intake = saved.data?.intake || {};
       const market = await marketFor(project, I.resolverConcept(v, intake), intake);
+      // bpi-1.5.0: a first intake starts from the project's concept record (Validator v2): nothing typed twice.
+      let prefill = null;
+      if (!saved.data) {
+        const rec = await withRetry(() => supabase.from('concept_records').select('data').eq('project_id', project.id).order('version', { ascending: false }).limit(1));
+        const row = !rec.error && rec.data && rec.data[0];
+        if (row) prefill = CR.bpPrefill(CR.applyAmendments(row.data, []));
+      }
       return res.status(200).json({
         project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status },
         concept: { seats: v.seats ?? null, ticket: v.ticket ?? null, covers: v.covers ?? null, city: v.city ?? null, neighbourhood: v.neighbourhood ?? null, concept_type: v.concept_type ?? null },
@@ -199,6 +207,7 @@ export default async function handler(req, res) {
         places: !!process.env.GOOGLE_PLACES_API_KEY,
         plan: { url: planUrl(project.bp.id, code), done: project.bp.done },
         saved: saved.data ? { intake: saved.data.intake, status: saved.data.status, preview: saved.data.preview, updated_at: saved.data.updated_at, submitted_at: saved.data.submitted_at } : null,
+        prefill,
       });
     }
 

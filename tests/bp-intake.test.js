@@ -108,7 +108,7 @@ test('missing answers stay missing (Ramadan, opening, services)', () => {
 
 test('input-shape errors are reported, not silently fixed', () => {
   const { errors } = I.normalizeIntake({
-    opening: '2027-13', ramadan: 'sometimes', services: [{ id: 'breakfast', days: [1] }, { id: 'lunch', days: [] }],
+    opening: '2027-13', ramadan: 'sometimes', services: [{ id: 'brunch_late', days: [1] }, { id: 'lunch', days: [] }],
     roster: [{ role: 'astronaut', count: 1 }, { role: 'other', label: 'Sommelier', count: 1 }],
     investment: [{ category: 'fitout', amount: 100, low: 200 }],
     funding_mode: 'amounts', shareholders: [{ label: 'X', amount: 1000, price_factor: 0.5 }],
@@ -138,7 +138,9 @@ test('amounts mode: shareholders with a premium and a loan amount', () => {
 test('format: founder choice, concept mapping, else none (gap, built on demand)', () => {
   assert.equal(I.formatFor('bistro', {}), 'bistro_wine_bar');
   assert.equal(I.formatFor('other', { format: 'bistro_wine_bar' }), 'bistro_wine_bar');
-  assert.equal(I.formatFor('beach_club', {}), null);
+  assert.equal(I.formatFor('beach_club', {}), 'bar_lounge');
+  assert.equal(I.formatFor('dark_kitchen', {}), null);
+  assert.equal(I.formatFor('other', {}), null);
   assert.equal(I.normalizeIntake({ format: 'nightclub' }).errors[0].code, 'unknown_format');
 });
 

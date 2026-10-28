@@ -240,6 +240,10 @@ footer .foot-bottom a:hover{color:var(--white);}
         <select id="format">
           <option value="" data-en="Choose…" data-fr="Choisir…">Choose…</option>
           <option value="bistro_wine_bar" data-en="Bistro / wine bar" data-fr="Bistro / bar à vin">Bistro / wine bar</option>
+          <option value="restaurant" data-en="Restaurant" data-fr="Restaurant">Restaurant</option>
+          <option value="cafe_brunch" data-en="Café / brunch" data-fr="Café / brunch">Café / brunch</option>
+          <option value="fast_casual" data-en="Fast casual / quick service" data-fr="Fast casual / restauration rapide">Fast casual / quick service</option>
+          <option value="bar_lounge" data-en="Bar / lounge" data-fr="Bar / lounge">Bar / lounge</option>
           <option value="none" data-en="None of these (Za3fran builds benchmarks on request)" data-fr="Aucune (Za3fran construit les références sur demande)">None of these</option>
         </select>
         <p class="hint"><span data-en>Sets the food cost, turns and occupancy references used where you give no figure.</span><span data-fr>Détermine le coût matière, les rotations et le taux d'occupation de référence là où vous ne donnez pas de chiffre.</span></p>
@@ -547,7 +551,7 @@ const esc = (s)=> String(s == null ? '' : s).replace(/[&<>"']/g, c=>({ '&':'&amp
 const bi = (en, fr)=> `<span data-en>${en}</span><span data-fr>${fr}</span>`;
 const state = { code:'', data:null, preview:null, lastStatus:null, dirty:false, busy:false };
 const DAYS = [[1,'Mon','Lun'],[2,'Tue','Mar'],[3,'Wed','Mer'],[4,'Thu','Jeu'],[5,'Fri','Ven'],[6,'Sat','Sam'],[0,'Sun','Dim']];
-const SERVICES = [['lunch','Lunch','Déjeuner'],['dinner','Dinner','Dîner']];
+const SERVICES = [['breakfast','Morning','Matin'],['lunch','Lunch','Déjeuner'],['dinner','Dinner / evening','Dîner / soir']];
 const ROLES = [['chef','Head chef','Chef de cuisine'],['cook','Cook','Cuisinier'],['commis','Commis','Commis'],['kitchen_porter','Kitchen porter','Plongeur'],['server','Server','Serveur'],['bartender','Bartender','Barman'],['sommelier','Sommelier','Sommelier'],['cleaner','Cleaner','Agent d\'entretien'],['manager','Restaurant manager','Directeur de salle'],['other','Other','Autre']];
 const CATS = [['fitout','Works and fit-out','Travaux et aménagement'],['equipment','Equipment','Équipement'],['furniture','Furniture and decor','Mobilier et décoration'],['it','IT and payments','Informatique et encaissement'],['preopening','Pre-opening costs','Frais de pré-ouverture'],['licence','Licence','Licence'],['initial_stock','Opening stock','Stock initial'],['key_money','Key money','Pas-de-porte'],['contingency','Contingency','Imprévus'],['other','Other','Autre']];
 const cur = ()=> (state.data && state.data.project.currency) || 'MAD';
@@ -1110,8 +1114,8 @@ async function open(code){
     $('capVal').textContent = j.brain.guarantee_cap ? `${fmt(j.brain.guarantee_cap)} ${j.project.currency}` : T('Not available for this market', 'Non disponible pour ce marché');
     if (!(j.brain.loan_programmes || []).includes('intelaka')) $('programme').querySelector('option[value="intelaka"]').disabled = true;
     $('placesBox').classList.toggle('hidden', !j.places);
-    restore(j.saved ? j.saved.intake : {});
-    if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); $('fval').value = '20'; applyModes(); }
+    restore(j.saved ? j.saved.intake : (j.prefill || {}));   // bpi-1.5.0: a new intake starts from the concept record
+    if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); if (!(j.prefill && j.prefill.sizing)) $('fval').value = '20'; applyModes(); }
     renderStatus(j.saved && j.saved.status);
     if (j.saved && j.saved.preview) renderPreview(j.saved.preview, j.saved.status);
     setLang(lang);

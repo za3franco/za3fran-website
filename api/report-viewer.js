@@ -76,30 +76,54 @@ function parseCookies(header) {
 // Matches report-menu-viewer.js's reference pattern: logo, tool label,
 // dashboard link, AI disclaimer, print note. No workbook download here
 // (Validator has a single HTML deliverable).
-function injectToolbar(html, accessCode) {
+function injectToolbar(html, accessCode, opts = {}) {
   const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
+  const meta = opts.meta || {};
+  const v2 = /^val-2/.test(String(meta.generator || ''));
+  const fr = meta.language === 'fr';
+  // v2 (val-2.0.0): bilingual by the report's language, PDF download; the disclaimer sits at the end of the report itself.
+  const pdfUrl = v2 ? `${BASE_URL}/api/validator-pdf?id=${encodeURIComponent(opts.id || '')}&code=${encodeURIComponent(accessCode)}` : null;
+  const right = v2
+    ? `<a href="${pdfUrl}" style="margin-left:auto;color:#FAFAF7;border:1px solid #C9862A;padding:6px 12px;border-radius:2px;text-decoration:none;font-size:12px;">${fr ? 'Télécharger le PDF' : 'Download PDF'}</a>`
+    : `<span style="margin-left:auto;color:#8b93a8;font-size:11px;">Use your browser's Print function to save as PDF</span>`;
+  const banner = v2 ? '' : `
+<div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
+  This report was AI-generated using Za3fran's F&amp;B expertise frameworks — please review for accuracy before acting on it.
+</div>`;
   const toolbar = `
 <div class="za3fran-toolbar" style="position:fixed;top:0;left:0;right:0;z-index:999;background:#0F1F3D;color:#FAFAF7;padding:12px 24px;display:flex;gap:20px;align-items:center;font-family:'DM Sans',sans-serif;font-size:13px;flex-wrap:wrap;box-sizing:border-box;width:100%;">
-  <a href="${dashboardUrl}" style="color:#C9862A;text-decoration:none;font-weight:600;">&larr; Dashboard</a>
+  <a href="${dashboardUrl}" style="color:#C9862A;text-decoration:none;font-weight:600;">&larr; ${v2 && fr ? 'Tableau de bord' : 'Dashboard'}</a>
   <span style="width:1px;height:16px;background:rgba(255,255,255,.15);"></span>
   <span style="font-family:'Cormorant Garamond',serif;font-size:16px;display:flex;align-items:center;gap:8px;">
-    <img src="${BASE_URL}/assets/logo.png" alt="Za3fran" style="width:22px;height:22px;object-fit:contain;border-radius:4px;">
+    <img src="${BASE_URL}/assets/logo.png" alt="Za3fran" onerror="this.style.display='none'" style="width:22px;height:22px;object-fit:contain;border-radius:4px;">
     Za3fran<span style="color:#C9862A;">.io</span>
   </span>
   <span style="width:1px;height:16px;background:rgba(255,255,255,.15);"></span>
-  <span style="color:#C9862A;">Concept Validation Report</span>
-  <span style="margin-left:auto;color:#8b93a8;font-size:11px;">Use your browser's Print function to save as PDF</span>
-</div>
-<div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
-  This report was AI-generated using Za3fran's F&amp;B expertise frameworks — please review for accuracy before acting on it.
-</div>
-<div style="height:78px;"></div>
-<style>@media print { .za3fran-toolbar, .za3fran-toolbar + div { display: none !important; } }</style>`;
+  <span style="color:#C9862A;">${v2 && fr ? 'Rapport de validation de concept' : 'Concept Validation Report'}</span>
+  ${right}
+</div>${banner}
+<div class="za3fran-toolbar-spacer" style="height:${v2 ? 56 : 78}px;"></div>
+<style>@media print { .za3fran-toolbar, .za3fran-toolbar + div, .za3fran-toolbar-spacer { display: none !important; } }</style>`;
 
   if (/<body[^>]*>/i.test(html)) {
     return html.replace(/<body[^>]*>/i, (match) => match + toolbar);
   }
   return toolbar + html;
+}
+
+/** A v2 report row that has no HTML yet (being generated, or held by the quality checks). */
+function pendingPage(meta, accessCode) {
+  const fr = meta.language === 'fr';
+  const held = meta.status === 'qa_failed' || meta.status === 'error';
+  const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
+  const msg = held
+    ? (fr ? 'Votre rapport est en cours de finalisation par notre équipe. Vous recevrez un e-mail dès qu’il sera prêt.' : 'Your report is being finalised by our team. You will receive an email as soon as it is ready.')
+    : (fr ? 'Votre rapport est en cours de préparation (environ deux minutes). Rechargez cette page dans un instant.' : 'Your report is being prepared (about two minutes). Reload this page in a moment.');
+  return `<!DOCTYPE html><html lang="${fr ? 'fr' : 'en'}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Za3fran</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+body{margin:0;background:#0a0e18;color:#FAFAF7;font-family:'DM Sans',sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;}
+.card{max-width:460px;text-align:center}h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px;margin:16px 0 12px}p{color:#8b93a8;line-height:1.6}a{color:#E7A63E}</style></head>
+<body><div class="card"><img src="/assets/logo.png" alt="" width="48" height="48" onerror="this.style.display='none'"><h1>${fr ? 'Rapport de validation' : 'Validation report'}</h1><p>${msg}</p><p><a href="${dashboardUrl}">${fr ? 'Retour au tableau de bord' : 'Back to the dashboard'}</a></p></div></body></html>`;
 }
 
 export default async function handler(req, res) {
@@ -123,14 +147,15 @@ export default async function handler(req, res) {
       const { data: report, error } = await withRetry(() =>
         supabase
           .from('validator_reports')
-          .select('id, report_html, access_code')
+          .select('id, report_html, access_code, report_json->meta')
           .eq('id', id)
           .single()
       );
 
       if (!error && report && report.access_code && candidateCode.toUpperCase() === report.access_code.toUpperCase()) {
         res.setHeader('Set-Cookie', `${cookieKey}=${encodeURIComponent(report.access_code)}; Path=/; HttpOnly; Max-Age=7200; SameSite=Lax`);
-        return res.status(200).send(injectToolbar(report.report_html, report.access_code));
+        if (!report.report_html) return res.status(200).send(pendingPage(report.meta || {}, report.access_code));
+        return res.status(200).send(injectToolbar(report.report_html, report.access_code, { id, meta: report.meta || {} }));
       }
       // Wrong or unresolvable code — fall through to the normal gate.
     }
@@ -173,7 +198,7 @@ export default async function handler(req, res) {
     const { data: report, error } = await withRetry(() =>
       supabase
         .from('validator_reports')
-        .select('id, report_html, access_code')
+        .select('id, report_html, access_code, report_json->meta')
         .eq('id', id)
         .single()
     );
@@ -207,7 +232,8 @@ export default async function handler(req, res) {
     // ── Code correct — reset tracker, set session cookie, return report ──
     attemptTracker[id] = { attempts: 0, lockedAt: null };
     res.setHeader('Set-Cookie', `za3fran_v_${id}=${encodeURIComponent(report.access_code)}; Path=/; HttpOnly; Max-Age=7200; SameSite=Lax`);
-    return res.status(200).json({ success: true, html: injectToolbar(report.report_html, report.access_code) });
+    if (!report.report_html) return res.status(200).json({ success: true, html: pendingPage(report.meta || {}, report.access_code) });
+    return res.status(200).json({ success: true, html: injectToolbar(report.report_html, report.access_code, { id, meta: report.meta || {} }) });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });

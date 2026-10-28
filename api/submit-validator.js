@@ -19,6 +19,7 @@
 
 import Stripe from 'stripe';
 import { getPriceId, normalizeCurrency } from '../lib/currency.js';
+import CR from '../lib/concept-record.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -39,6 +40,22 @@ export default async function handler(req, res) {
   // 'bundle_menu' (Validator + Menu Engineer), or 'bundle_full' (all three)
   const VALID_PURCHASE_TYPES = ['validator', 'bundle', 'bundle_menu', 'bundle_full'];
   const purchaseType = VALID_PURCHASE_TYPES.includes(data.purchase_type) ? data.purchase_type : 'validator';
+
+  // ── v4 (Validator v2, val-2.0.0): structured answers for the financial engine ──
+  // concept_v2 = services with a ticket and covers each, premises, alcohol, Ramadan, opening month, exact
+  // budget and own funds, named competitors (lib/concept-record.js). The v1 columns stay filled (derived when
+  // the v2 answers imply them) so the readiness review and every v1 reader keep working.
+  let conceptV2 = null;
+  let legacy = {};
+  if (data.concept_v2 && typeof data.concept_v2 === 'object') {
+    const { v2, errors } = CR.normalizeForm(data.concept_v2);
+    if (errors.length) {
+      console.warn('[submit-validator] v2 answers rejected:', JSON.stringify(errors));
+      return res.status(400).json({ error: 'invalid_answers', fields: errors });
+    }
+    conceptV2 = v2;
+    legacy = CR.derivedLegacy(v2);
+  }
 
   // ── STEP 1: Save to Supabase — now blocking ──
   const supabaseUrl = process.env.SUPABASE_URL;
@@ -75,11 +92,12 @@ export default async function handler(req, res) {
         neighbourhood:   data.neighbourhood,
         audience:        data.audience,
         // Financials
-        budget:          data.budget,
-        ticket:          data.ticket,
-        covers:          data.covers,
+        budget:          legacy.budget || data.budget,
+        ticket:          legacy.ticket || data.ticket,
+        covers:          legacy.covers || data.covers,
         seats:           data.seats,
-        opening_hours:   data.opening_hours,
+        opening_hours:   data.opening_hours || legacy.opening_hours,
+        concept_v2:      conceptV2,
         // Competition
         competitors:     data.competitors,
         market_gap:      data.market_gap,

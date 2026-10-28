@@ -49,6 +49,8 @@ import { getModel } from '../lib/claude-config.js';
 import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 import { ensureTagged } from '../lib/crr-tagging.js';
 import { SYSTEM_PROMPT, buildReportPrompt, extractReportJson } from '../lib/validator-generate.js';
+import CR from '../lib/concept-record.js';
+import { generateValidatorV2, isV2Record, notifyZa3fran, qaNotice } from '../lib/validator-v2-run.js';
 
 // ── Raise Node's default fetch timeout ──────────────────────────
 // Node's built-in fetch (undici) times out waiting for a response after
@@ -195,63 +197,88 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     return;
   }
 
-  // ── Step 2: Generate Validator report HTML via Claude ─────────
+  // ── Step 2 (v2, val-2.0.0): submissions from the v2 form carry concept_v2 ──
+  // Figures from the financial engine, checked text, fixed template; report_json built in code.
+  const v2Record = submission.concept_v2 ? CR.fromSubmission(submission) : null;
+  const useV2 = !!(v2Record && isV2Record(v2Record));
   let reportHtml;
-  const validatorModel = getModel('validator');
-
-  try {
-    console.log(`Calling Claude (${validatorModel}) for Validator report...`);
-    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-      },
-      body: JSON.stringify({
-        model: validatorModel,
-        max_tokens: 32000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: buildReportPrompt(submission) }],
-      }),
-    });
-
-    const anthropicData = await anthropicResponse.json();
-
-    if (!anthropicResponse.ok) {
-      throw new Error(`Anthropic API error: ${anthropicData.error?.message || JSON.stringify(anthropicData)}`);
-    }
-
-    // Find the text block by type — never assume content[0] (a thinking
-    // block can precede it). See project rules, Principle 3.
-    const reportTextBlock = (anthropicData.content || []).find(b => b.type === 'text');
-    if (!reportTextBlock || !reportTextBlock.text) {
-      throw new Error('Anthropic API returned empty content');
-    }
-
-    reportHtml = reportTextBlock.text.trim();
-
-    if (!reportHtml.startsWith('<!DOCTYPE') && !reportHtml.startsWith('<html')) {
-      throw new Error('Anthropic did not return valid HTML. Got: ' + reportHtml.substring(0, 200));
-    }
-
-    console.log(`Validator report HTML generated. Length: ${reportHtml.length} chars`);
-  } catch (err) {
-    console.error('Claude API Validator report generation failed:', err);
-    await supabase
-      .from('validator_submissions')
-      .update({ status: 'report_error' })
-      .eq('id', submission.id);
-    return;
-  }
-
-  // ── Step 3: Extract report_json via Haiku (non-fatal) ─────────
   let reportJson = null;
-  try {
-    reportJson = await extractReportJson(reportHtml, submission);
-    console.log('report_json extracted successfully.');
-  } catch (err) {
-    console.error('[Phase 4] report_json extraction failed (non-fatal):', err.message);
+  if (useV2) {
+    let r = null;
+    for (let attempt = 1; attempt <= 2 && !(r && r.ok); attempt++) {
+      try {
+        r = await generateValidatorV2(supabase, v2Record, { meta: { submission_id: submission.id, purchase_type: purchaseType } });
+        console.log(`[processReport] v2 attempt ${attempt}: ${r.ok ? 'ok' : 'qa_failed'} ${JSON.stringify(r.audit)}`);
+      } catch (err) {
+        console.error(`[processReport] v2 attempt ${attempt} failed:`, err && err.stack || err);
+        r = { ok: false, errors: [{ where: 'pipeline', code: 'exception', detail: String(err && err.message || err) }] };
+      }
+    }
+    if (!r || !r.ok) {
+      await supabase.from('validator_submissions').update({ status: 'report_error' }).eq('id', submission.id);
+      await notifyZa3fran(`Validator v2 report failed — ${submission.concept_name || submission.id} (paid)`,
+        qaNotice(`${submission.concept_name || ''} (submission ${submission.id}, ${customerEmail})`, r && r.errors));
+      return;
+    }
+    reportHtml = r.html;
+    reportJson = r.json;
+  } else {
+    // ── Step 2: Generate Validator report HTML via Claude ─────────
+    const validatorModel = getModel('validator');
+
+    try {
+      console.log(`Calling Claude (${validatorModel}) for Validator report...`);
+      const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+        },
+        body: JSON.stringify({
+          model: validatorModel,
+          max_tokens: 32000,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: 'user', content: buildReportPrompt(submission) }],
+        }),
+      });
+
+      const anthropicData = await anthropicResponse.json();
+
+      if (!anthropicResponse.ok) {
+        throw new Error(`Anthropic API error: ${anthropicData.error?.message || JSON.stringify(anthropicData)}`);
+      }
+
+      // Find the text block by type — never assume content[0] (a thinking
+      // block can precede it). See project rules, Principle 3.
+      const reportTextBlock = (anthropicData.content || []).find(b => b.type === 'text');
+      if (!reportTextBlock || !reportTextBlock.text) {
+        throw new Error('Anthropic API returned empty content');
+      }
+
+      reportHtml = reportTextBlock.text.trim();
+
+      if (!reportHtml.startsWith('<!DOCTYPE') && !reportHtml.startsWith('<html')) {
+        throw new Error('Anthropic did not return valid HTML. Got: ' + reportHtml.substring(0, 200));
+      }
+
+      console.log(`Validator report HTML generated. Length: ${reportHtml.length} chars`);
+    } catch (err) {
+      console.error('Claude API Validator report generation failed:', err);
+      await supabase
+        .from('validator_submissions')
+        .update({ status: 'report_error' })
+        .eq('id', submission.id);
+      return;
+    }
+
+    // ── Step 3: Extract report_json via Haiku (non-fatal) ─────────
+    try {
+      reportJson = await extractReportJson(reportHtml, submission);
+      console.log('report_json extracted successfully.');
+    } catch (err) {
+      console.error('[Phase 4] report_json extraction failed (non-fatal):', err.message);
+    }
   }
 
   // ── Step 4: Create/upsert user + project records ───────────────
@@ -319,6 +346,14 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   // reuses this exact same code. This is now the ONLY access code the
   // customer ever needs, and the only one shown in delivery emails.
   const accessCode = await getOrCreateProjectAccessCode(supabase, projectId);
+
+  // ── Step 5b (v2): the project's concept record, version 1 (read by the review and the BP intake) ──
+  if (v2Record && projectId) {
+    try {
+      const { error: crErr } = await supabase.from('concept_records').insert({ project_id: projectId, version: 1, data: v2Record, source: 'validator_form', schema: CR.RECORD_VERSION });
+      if (crErr && !/duplicate key/i.test(crErr.message || '')) console.error('[processReport] concept record insert failed (non-fatal):', crErr.message);
+    } catch (err) { console.error('[processReport] concept record insert failed (non-fatal):', err.message); }
+  }
 
   // ── Step 6: Save Validator report, tagged with the unified code ──
   const reportId = `rpt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
@@ -613,7 +648,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
   // ── Step 10: CRR per-risk field tagging (§3.18) — non-fatal ──
   // Runs after the delivery email so it never delays the customer.
   // If it fails, the Concept Readiness Review tags on demand instead.
-  if (reportJson) {
+  if (reportJson && !useV2) {
     try {
       await ensureTagged(supabase, reportId);
       console.log(`[CRR] Risk field tagging stored for ${reportId}`);
