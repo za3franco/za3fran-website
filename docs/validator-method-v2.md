@@ -31,7 +31,7 @@ Never blocked: a gap in the inputs or the Brain is shown in the report ("not com
 | 3 Competition | 15% | rubric, 5 criteria × 0–4; competitors from the founder (Places suggestions on the form) |
 | 4 Financial viability | 30% | computed from the engine (below) |
 | 5 Execution readiness | 10% | computed: funding cover, timeline vs stage, share of founder figures |
-| 6 Risk exposure | 10% | computed: 100 − 15 per critical alert or high-impact risk − 7 per warning alert or medium risk (floor 0) |
+| 6 Risk exposure | 10% | computed: 100 − 12 per high alert − 6 per medium alert − the three most serious risks (high impact: 15 / 10 / 5 by likelihood; medium impact: 7 / 5 / 2), floor 0 (val-2.0.1) |
 
 **Financial viability (0–100):** capacity (claimed covers vs seats × turns, 15); break-even occupancy vs the format's cruise occupancy, year 2 (25); EBITDA margin year 2 base (15); minimum DSCR, conservative case (15; no loan = full marks); budget vs total uses (15); conservative cash never negative (15).
 

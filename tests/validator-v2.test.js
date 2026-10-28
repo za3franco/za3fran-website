@@ -152,7 +152,7 @@ test('pipeline (mock model): checked text, filled template, report_json in the s
   assert.doesNotMatch(r.html, /\{[a-z0-9_]+\}|undefined|NaN/);
   assert.match(r.html, /AI-generated|intelligence artificielle/);
   const j = r.json;
-  assert.equal(j.meta.generator, 'val-2.0.0');
+  assert.match(j.meta.generator, /^val-2\.0\./);
   assert.ok(['STRONG', 'VIABLE', 'FRAGILE', 'HIGH_RISK'].includes(j.overall.verdict));
   assert.equal(j.score_breakdown.length, 6);
   assert.ok(j.sections.s4_financial.alerts.length >= 1);
