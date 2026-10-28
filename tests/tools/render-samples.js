@@ -16,12 +16,10 @@ const want = (k) => !which.length || which.includes(k);
   await CH.withBrowser(async (browser) => {
     if (want('plan')) {
       const P = require('../../lib/bp-plan-pdf.js');
-      const first = await CH.htmlToPdf(browser, P.renderPlanPdf({ facts, text: S.text }));
-      const pages = P.tocPages(facts, await CH.outlinePages(first));
-      console.log('toc pages', JSON.stringify(pages));
-      const html = P.renderPlanPdf({ facts, text: S.text, pages });
-      fs.writeFileSync(path.join(outDir, 'plan.html'), html);
-      fs.writeFileSync(path.join(outDir, 'plan.pdf'), await CH.htmlToPdf(browser, html));
+      const r = await P.renderPlanPdfFitted(browser, { facts, text: S.text }, CH);
+      console.log('fit', JSON.stringify(r.fit), 'pages', JSON.stringify(r.pages));
+      fs.writeFileSync(path.join(outDir, 'plan.html'), r.html);
+      fs.writeFileSync(path.join(outDir, 'plan.pdf'), r.pdf);
     }
     if (want('teaser')) {
       const T = require('../../lib/bp-teaser.js');
