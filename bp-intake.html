@@ -340,8 +340,13 @@ footer .foot-bottom a:hover{color:var(--white);}
       </div>
     </div>
     <div class="field hidden" id="fsalField">
-      <label class="lbl" for="fsal"><span data-en>Your gross monthly salary</span><span data-fr>Votre salaire brut mensuel</span> <span class="cur"></span></label>
+      <div class="choices row" id="fsalBasisBox" style="margin-bottom:10px">
+        <label class="choice"><input type="radio" name="fsalbasis" value="net"><b><span data-en>I give it net</span><span data-fr>Je l'indique en net</span></b></label>
+        <label class="choice"><input type="radio" name="fsalbasis" value="gross"><b><span data-en>I give it gross</span><span data-fr>Je l'indique en brut</span></b></label>
+      </div>
+      <label class="lbl" for="fsal"><span id="fsalLblNet"><span data-en>Your monthly salary, net (what you receive)</span><span data-fr>Votre salaire mensuel net (ce que vous percevez)</span></span><span id="fsalLblGross"><span data-en>Your gross monthly salary</span><span data-fr>Votre salaire brut mensuel</span></span> <span class="cur"></span></label>
       <input type="text" inputmode="numeric" id="fsal" data-en-placeholder="Empty = market salary of a restaurant manager" data-fr-placeholder="Vide = salaire de marché d'un directeur de restaurant">
+      <p class="hint hidden" id="fsalConv"></p>
     </div>
     <div class="choices" style="margin-top:6px">
       <label class="choice"><input type="radio" name="rmode" value="founder"><span><b><span data-en>I'll list the team</span><span data-fr>Je liste l'équipe</span></b><small><span data-en>Leave a salary empty to use Za3fran's sourced market salary for that role.</span><span data-fr>Laissez un salaire vide pour utiliser le salaire de marché sourcé par Za3fran.</span></small></span></label>
@@ -536,6 +541,7 @@ function setLang(l){
   document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === lang));
   try { localStorage.setItem('za3fran_lang', lang); } catch(e){}
   document.querySelectorAll('option[data-en]').forEach(o=>{ o.textContent = lang === 'fr' ? o.getAttribute('data-fr') : o.getAttribute('data-en'); });
+  if (typeof syncSalary === 'function' && document.getElementById('fsalConv')) syncSalary();
   document.querySelectorAll('[data-en-placeholder]').forEach(el=>{ el.placeholder = lang === 'fr' ? el.getAttribute('data-fr-placeholder') : el.getAttribute('data-en-placeholder'); });
   if (state.preview) renderPreview(state.preview, state.lastStatus);
   updateCapHint();
@@ -723,6 +729,7 @@ document.addEventListener('input', e=>{ if (e.target.closest('#roster, #inv')) s
 function applyModes(){
   $('coversField').classList.toggle('hidden', radio('covers') !== 'founder');
   $('fsalField').classList.toggle('hidden', radio('fworks') !== 'yes');
+  syncSalary();
   $('rosterBox').classList.toggle('hidden', radio('rmode') !== 'founder');
   $('invBox').classList.toggle('hidden', radio('imode') !== 'founder');
   $('ruleBox').classList.toggle('hidden', radio('fmode') !== 'rule');
@@ -736,6 +743,50 @@ document.addEventListener('change', e=>{ if (e.target.matches('input[type=radio]
 $('form').addEventListener('input', ()=>{ markDirty(); });
 $('coversDay').addEventListener('input', updateCapHint);
 
+/* ---------------- founder salary: net <-> gross (bpi-1.6.0) ----------------
+   Same calculation as lib/payroll.js (pr-1.0.0), on the Brain's payroll rules sent with the page.
+   The server converts again on save: this line is only what the founder sees while typing. */
+/* payroll:start */
+function payGrossToNet(g, R){
+  const soc = R.social.reduce((a,x)=>a + (x.ceiling_monthly != null ? Math.min(g, x.ceiling_monthly) : g) * x.rate, 0);
+  const ded = R.social.filter(x=>x.deductible !== false).reduce((a,x)=>a + (x.ceiling_monthly != null ? Math.min(g, x.ceiling_monthly) : g) * x.rate, 0) * 12;
+  const ag = g * 12;
+  const pb = R.prof_expenses.brackets.find(b=>b.up_to_annual_gross == null || ag <= b.up_to_annual_gross) || R.prof_expenses.brackets[R.prof_expenses.brackets.length - 1];
+  const fp = pb.cap_annual != null ? Math.min(ag * pb.rate, pb.cap_annual) : ag * pb.rate;
+  const t = Math.max(0, ag - fp - ded);
+  const tb = R.income_tax.brackets.find(b=>b.up_to == null || t <= b.up_to) || R.income_tax.brackets[R.income_tax.brackets.length - 1];
+  const tax = t > 0 ? Math.max(0, t * tb.rate - (tb.deduct || 0)) : 0;
+  return Math.round((g - soc - tax / 12) * 100) / 100;
+}
+function payNetToGross(n, R){
+  if (!(n > 0)) return 0;
+  let lo = n, hi = n * 2.5;
+  while (payGrossToNet(hi, R) < n) hi *= 2;
+  for (let i = 0; i < 80 && hi - lo > 0.005; i++){ const m = (lo + hi) / 2; if (payGrossToNet(m, R) < n) lo = m; else hi = m; }
+  return Math.ceil(hi - 1e-9);
+}
+/* payroll:end */
+function payrollRules(){ return state.data && state.data.brain && state.data.brain.payroll || null; }
+function syncSalary(){
+  const R = payrollRules();
+  $('fsalBasisBox').classList.toggle('hidden', !R);
+  const net = !!R && (radio('fsalbasis') || 'net') === 'net';
+  $('fsalLblNet').classList.toggle('hidden', !net);
+  $('fsalLblGross').classList.toggle('hidden', net);
+  const v = parseFloat(String($('fsal').value).replace(/[\s\u202f,]/g, ''));
+  const box = $('fsalConv');
+  if (!R || !(v > 0)){ box.classList.add('hidden'); return; }
+  const cur = state.data.project.currency;
+  box.textContent = net
+    ? T(`Gross used in the plan: ${fmt(payNetToGross(v, R))} ${cur} a month (employee social contributions and income tax ${R.year || ''}, salaried status, no dependents).`,
+        `Brut retenu dans le plan : ${fmt(payNetToGross(v, R))} ${cur} par mois (cotisations salariales et impôt sur le revenu ${R.year || ''}, statut de salarié, sans personne à charge).`)
+    : T(`About ${fmt(payGrossToNet(v, R))} ${cur} net a month (salaried status, no dependents).`,
+        `Environ ${fmt(payGrossToNet(v, R))} ${cur} net par mois (statut de salarié, sans personne à charge).`);
+  box.classList.remove('hidden');
+}
+$('fsal').addEventListener('input', syncSalary);
+document.querySelectorAll('input[name="fsalbasis"]').forEach(r=>r.addEventListener('change', syncSalary));
+
 /* ---------------- payload ---------------- */
 function collect(){
   const p = {
@@ -746,7 +797,7 @@ function collect(){
     services: readServices(),
     covers_source: radio('covers') === 'benchmark' ? 'benchmark' : 'founder', covers_per_day: $('coversDay').value,
     rent_monthly: $('rent').value, surface_m2: $('surface').value, rent_free_months: $('rentFree').value, supplier_days: $('supDays').value,
-    founder_works: radio('fworks'), founder_salary: $('fsal').value,
+    founder_works: radio('fworks'), founder_salary: $('fsal').value, founder_salary_basis: payrollRules() ? (radio('fsalbasis') || 'net') : 'gross',
     roster_mode: radio('rmode') || 'founder',
     roster: [...document.querySelectorAll('#roster tr')].map(tr=>Object.assign({ role: tr.querySelector('.rRole').value, label: tr.querySelector('.rLabel').value, count: tr.querySelector('.rCount').value, monthly_gross: tr.querySelector('.rSal').value },
         tr.dataset.est ? { est: true, count_low: tr.dataset.low, count_high: tr.dataset.high, note: tr.dataset.note } : {}))
@@ -792,6 +843,7 @@ function restore(intake){
   const founderRow = roster.find(r=>r.role === 'founder');
   setRadio('fworks', ui.founder_works === true || founderRow ? 'yes' : ui.founder_works === false ? 'no' : '');
   $('fsal').value = ui.founder_salary ?? (founderRow && founderRow.monthly_gross) ?? '';
+  setRadio('fsalbasis', ui.founder_salary_basis || (ui.founder_salary != null || (founderRow && founderRow.monthly_gross != null) ? 'gross' : 'net'));
   setRadio('rmode', ui.roster_mode || 'founder');
   const known = ROLES.map(r=>r[0]);
   $('roster').innerHTML = roster.filter(r=>r.role !== 'founder').map(r=>{
@@ -844,7 +896,7 @@ const GAP = {
 const ERR = {
   bad_month: ['month not valid','mois non valide'], bad_email: ['email not valid','e-mail non valide'], bad_phone: ['phone not valid','téléphone non valide'], bad_choice: ['choice not valid','choix non valide'], no_days: ['no day ticked','aucun jour coché'],
   out_of_range: ['value out of range','valeur hors limites'], missing: ['missing','manquant'], unknown_role: ['unknown role','poste inconnu'],
-  salary_needed_for_other: ['salary needed for an "other" role','salaire requis pour un poste « autre »'], range_around_amount: ['low must be ≤ amount ≤ high','bas ≤ montant ≤ haut'],
+  salary_needed_for_other: ['salary needed for an "other" role','salaire requis pour un poste « autre »'], net_not_available: ['a net salary cannot be converted for this market: give it gross','un salaire net ne peut pas être converti pour ce marché : indiquez-le en brut'], range_around_amount: ['low must be ≤ amount ≤ high','bas ≤ montant ≤ haut'],
   unknown_category: ['unknown type','catégorie inconnue'],
   shares_incomplete: ['give the agreed share for every shareholder, or for none','indiquez la part convenue pour chaque associé, ou pour aucun'],
   shares_sum: ['agreed shares must add up to 100 %','les parts convenues doivent totaliser 100 %'],

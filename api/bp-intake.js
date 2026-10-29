@@ -30,6 +30,7 @@ import CR from '../lib/concept-record.js';
 import VP from '../lib/validator-pipeline.js';
 import V from '../lib/validator-v2.js';
 import { triggerBpIfReady } from '../lib/bp-trigger.js';
+import PAY from '../lib/payroll.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -111,6 +112,7 @@ async function brainHints(market) {
     guarantee_cap: (cap.data || [])[0]?.value_num ?? null,
     loan_programmes: [...new Set((rate.data || []).map((r) => r.qualifier))],
     ramadan: (ram.data || []).length > 0,   // the Ramadan question is asked only where the Brain has the dates
+    payroll: await PAY.loadPayrollRules(supabase, ids),   // bpi-1.6.0: net -> gross shown live on the salary field
   };
 }
 
@@ -218,7 +220,7 @@ export default async function handler(req, res) {
         project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status },
         concept: { seats: v.seats ?? null, ticket: v.ticket ?? null, covers: v.covers ?? null, city: v.city ?? null, neighbourhood: v.neighbourhood ?? null, concept_type: v.concept_type ?? null },
         format_default: I.formatFor(v.concept_type, {}),
-        brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false },
+        brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false, payroll: null },
         places: !!process.env.GOOGLE_PLACES_API_KEY,
         plan: { url: planUrl(project.bp.id, code), done: project.bp.done },
         saved: saved.data ? { intake: saved.data.intake, status: saved.data.status, preview: saved.data.preview, updated_at: saved.data.updated_at, submitted_at: saved.data.submitted_at } : null,
@@ -233,7 +235,14 @@ export default async function handler(req, res) {
     const project = await findProject(req, res, String(body.code || '').toUpperCase().trim());
     if (!project) return;
 
-    const { intake, errors } = I.normalizeIntake(body.intake);
+    // bpi-1.6.0: a salary entered net needs the market's payroll rules (Brain) to be converted to gross.
+    let payroll = null;
+    if (body.intake && body.intake.founder_salary_basis === 'net') {
+      const eff0 = await loadEffectiveConcept(supabase, project);
+      const m0 = await marketFor(project, I.resolverConcept(eff0.values || {}, {}), {});
+      payroll = m0 ? await PAY.loadPayrollRules(supabase, m0.chain.map((m) => m.id)) : null;
+    }
+    const { intake, errors } = I.normalizeIntake(body.intake, { payroll });
     if (errors.length) return res.status(422).json({ error: 'invalid_input', errors });
 
     const row = { project_id: project.id, intake, status: 'draft', updated_at: new Date().toISOString() };
