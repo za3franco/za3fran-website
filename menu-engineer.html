@@ -437,7 +437,8 @@ function verifyCode() {
         ? (isFr() ? 'Menu Engineer — tarif fidélité (Validator + BP)' : 'Menu Engineer — loyalty rate (Validator + BP)')
         : (isFr() ? 'Menu Engineer — client Validator existant' : 'Menu Engineer — returning Validator customer');
     document.getElementById('revealSaving').textContent =
-      state.priceTier === 'loyalty' ? (isFr() ? 'Économisez 50€ — tarif fidélité appliqué' : 'Save €50 — loyalty rate applied') : '';
+      state.priceTier === 'loyalty' ? (function(){ var s = { EUR:['€50','50€'], MAD:['MAD 500','500 MAD'], USD:['$60','60$'] }[state.currency] || ['€50','50€'];
+        return isFr() ? 'Économisez ' + s[1] + ' — tarif fidélité appliqué' : 'Save ' + s[0] + ' — loyalty rate applied'; })() : '';
     document.getElementById('priceReveal').classList.add('visible');
 
     document.getElementById('formDivider').style.display = 'block';

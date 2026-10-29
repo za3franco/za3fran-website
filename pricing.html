@@ -21,11 +21,11 @@
     financial_teaser:{ EUR:{main:'€499–€799', alt:''}, MAD:{main:'MAD 4,990–7,990', alt:''}, USD:{main:'$549–$849', alt:''} }
   };
   var SAVE_TABLE = {
-    bundle_bp:   { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $99 vs separate',  fr:'Économisez 99$ vs séparé'} },
-    bundle_menu: { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $99 vs separate',  fr:'Économisez 99$ vs séparé'} },
-    bundle_full: { EUR:{en:'Save €248 vs buying separately', fr:'Économisez 248€ vs achat séparé'},  MAD:{en:'Save MAD 2,480 vs buying separately',fr:'Économisez 2 480 MAD vs achat séparé'},USD:{en:'Save $248 vs buying separately', fr:'Économisez 248$ vs achat séparé'} },
-    bp_standalone:{ EUR:{en:'Loyalty rate — save €100', fr:'Tarif fidélité — économisez 100€'}, MAD:{en:'Loyalty rate — save MAD 1,000', fr:'Tarif fidélité — économisez 1 000 MAD'}, USD:{en:'Loyalty rate — save $100', fr:'Tarif fidélité — économisez 100$'} },
-    menu_loyalty:{ EUR:{en:'Loyalty rate — save €50', fr:'Tarif fidélité — économisez 50€'}, MAD:{en:'Loyalty rate — save MAD 500', fr:'Tarif fidélité — économisez 500 MAD'}, USD:{en:'Loyalty rate — save $50', fr:'Tarif fidélité — économisez 50$'} }
+    bundle_bp:   { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $119 vs separate', fr:'Économisez 119$ vs séparé'} },
+    bundle_menu: { EUR:{en:'Save €99 vs separate',  fr:'Économisez 99€ vs séparé'},   MAD:{en:'Save MAD 990 vs separate',  fr:'Économisez 990 MAD vs séparé'},  USD:{en:'Save $119 vs separate', fr:'Économisez 119$ vs séparé'} },
+    bundle_full: { EUR:{en:'Save €198 vs buying separately', fr:'Économisez 198€ vs achat séparé'},  MAD:{en:'Save MAD 1,980 vs buying separately',fr:'Économisez 1 980 MAD vs achat séparé'},USD:{en:'Save $208 vs buying separately', fr:'Économisez 208$ vs achat séparé'} },
+    bp_standalone:{ EUR:{en:'Validator client rate', fr:'Tarif client Validator'}, MAD:{en:'Validator client rate', fr:'Tarif client Validator'}, USD:{en:'Validator client rate', fr:'Tarif client Validator'} },
+    menu_loyalty:{ EUR:{en:'Loyalty rate — save €50', fr:'Tarif fidélité — économisez 50€'}, MAD:{en:'Loyalty rate — save MAD 500', fr:'Tarif fidélité — économisez 500 MAD'}, USD:{en:'Loyalty rate — save $60', fr:'Tarif fidélité — économisez 60$'} }
   };
   window.ZA3FRAN_setCurrency = function(c){
     window.ZA3FRAN_CURRENCY = c;
@@ -386,7 +386,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <div class="card-price">
         <p class="price-main" data-price-main="bundle_full">€849</p>
         <p class="price-alt" data-price-alt="bundle_full">MAD 8,490 · $949</p>
-        <span class="price-saving"><span data-en data-save-en="bundle_full">Save €248 vs buying separately</span><span data-fr data-save-fr="bundle_full">Économisez 248€ vs achat séparé</span></span>
+        <span class="price-saving"><span data-en data-save-en="bundle_full">Save €198 vs buying separately</span><span data-fr data-save-fr="bundle_full">Économisez 198€ vs achat séparé</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Concept Validator — full report, online and PDF</span><span data-fr>Concept Validator — rapport complet, en ligne et en PDF</span></li>
@@ -434,7 +434,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <div class="card-price">
         <p class="price-main" data-price-main="bp_standalone">€499</p>
         <p class="price-alt" data-price-alt="bp_standalone">MAD 4,990 · $549</p>
-        <span class="price-saving"><span data-en data-save-en="bp_standalone">Loyalty rate — save €100</span><span data-fr data-save-fr="bp_standalone">Tarif fidélité — économisez 100€</span></span>
+        <span class="price-saving"><span data-en data-save-en="bp_standalone">Validator client rate</span><span data-fr data-save-fr="bp_standalone">Tarif client Validator</span></span>
       </div>
       <ul class="card-includes">
         <li><span data-en>Business plan for your bank, built on your own figures</span><span data-fr>Business plan pour votre banque, établi sur vos propres chiffres</span></li>
