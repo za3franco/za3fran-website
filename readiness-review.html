@@ -250,7 +250,7 @@ footer.foot-bottom a{color:var(--muted);margin:0 8px;}
           <div class="picker"><select id="otherField" aria-label="Answer to change"></select></div>
           <div id="otherEditor"></div>
           <label class="block-label" for="otherReason"><span data-en>Reason for the change</span><span data-fr>Raison de la modification</span></label>
-          <textarea id="otherReason" data-en-placeholder="e.g. Premises found in Gauthier with an existing licence" data-fr-placeholder="ex. Local trouvé à Gauthier avec une licence existante"></textarea>
+          <textarea id="otherReason" data-en-placeholder="Why you are changing this answer" data-fr-placeholder="Pourquoi vous modifiez cette réponse"></textarea>
           <div class="card-actions"><button class="btn small" id="otherSave"><span data-en>Save change</span><span data-fr>Enregistrer la modification</span></button><span class="err" id="otherErr" role="alert"></span></div>
         </div>
       </details>
@@ -500,7 +500,7 @@ function renderList(el, items){
 
 function cardHTML(it){
   var st = cardState(it), open = openCards[it.risk_key], d = it.decision, k = esc(it.risk_key);
-  var pill = st === 'done' ? t(TYPE_LABEL[d.type][0], TYPE_LABEL[d.type][1]) : st === 'stale' ? t('Decide again', 'À redécider') : t('To decide', 'À décider');
+  var pill = st === 'done' ? t(TYPE_LABEL[d.type][0], TYPE_LABEL[d.type][1]) : st === 'stale' ? t('Decide again', 'À redécider') : (it.required === false ? t('Optional', 'Facultatif') : t('Required', 'Requis'));
   var h = '<div class="card ' + st + '" data-key="' + k + '">'
     + '<div class="card-head" role="button" tabindex="0" aria-expanded="' + (open ? 'true' : 'false') + '">'
     + '<div><div class="t">' + esc(it.title) + '</div><div class="meta">' + metaLine(it) + '</div></div>'
@@ -545,7 +545,7 @@ function cardHTML(it){
   var pre = d && !d.stale ? d.rationale : (d ? d.rationale : (it.legacy_note || ''));
   h += '<div class="panel js-panel" data-panel="risk_accepted"' + (type === 'risk_accepted' ? '' : ' hidden') + '>'
     + '<label class="block-label" style="margin-top:0;">' + t('Why is this risk acceptable, and what will you watch for?', 'Pourquoi ce risque est-il acceptable, et que surveillerez-vous ?') + '</label>'
-    + '<textarea class="js-rationale" data-for="risk_accepted" data-en-placeholder="e.g. We will only sign a lease on premises that already hold a licence. Warning sign: no suitable premises found by March." data-fr-placeholder="ex. Nous ne signerons qu\'un bail sur un local déjà titulaire d\'une licence. Signal d\'alerte : aucun local adapté trouvé d\'ici mars.">' + esc(type === 'risk_accepted' || !d ? pre : '') + '</textarea>'
+    + '<textarea class="js-rationale" data-for="risk_accepted" data-en-placeholder="Why this risk is acceptable for your project, what limits it, and the warning sign that would make you change course." data-fr-placeholder="Pourquoi ce risque reste acceptable pour votre projet, ce qui le limite, et le signal qui vous ferait changer de cap.">' + esc(type === 'risk_accepted' || !d ? pre : '') + '</textarea>'
     + '<p class="hint">' + t('Required. This is what a bank or investor will read next to the risk.', 'Obligatoire. C\'est ce qu\'une banque ou un investisseur lira à côté du risque.') + '</p></div>';
   h += '<div class="panel js-panel" data-panel="facts_corrected"' + (type === 'facts_corrected' ? '' : ' hidden') + '>'
     + '<label class="block-label" style="margin-top:0;">' + t('What did the Validator get wrong, and what is your evidence?', 'Qu\'est-ce que le Validator a mal évalué, et sur quels éléments vous appuyez-vous ?') + '</label>'
@@ -569,7 +569,7 @@ function pickOpt(name, val, cur, en, fr, sen, sfr){
   return '<label><input type="radio" name="' + name + '" value="' + val + '"' + (cur === val ? ' checked' : '') + '><b>' + t(en, fr) + '</b>' + t(sen, sfr) + '</label>';
 }
 function preRow(v){
-  return '<div class="pre"><input type="text" class="js-pre" maxlength="300" value="' + esc(v || '') + '" data-en-placeholder="e.g. Suspensive licence clause in the lease" data-fr-placeholder="ex. Clause suspensive de licence dans le bail">'
+  return '<div class="pre"><input type="text" class="js-pre" maxlength="300" value="' + esc(v || '') + '" data-en-placeholder="A concrete action, with a date if you can" data-fr-placeholder="Une action concrète, avec une date si possible">'
     + '<button class="btn ghost small js-rmpre" type="button" aria-label="Remove">✕</button></div>';
 }
 function fieldOptions(){
@@ -786,9 +786,15 @@ function renderBar(){
   var show = s.items.length > 0 && s.project.crr_status !== 'cleared' || s.reassessment.pending || s.reassessment.status === 'running';
   bar.classList.toggle('hidden', !show); document.body.classList.toggle('has-bar', show);
   if (!show) return;
-  var pct = s.counts.total ? Math.round(100 * s.counts.decided / s.counts.total) : 100;
-  $('progTxt').innerHTML = t(s.counts.decided + ' of ' + s.counts.total + ' decided', s.counts.decided + ' sur ' + s.counts.total + ' décidés')
-    + (s.counts.remaining ? ' <span class="m">' + t('(' + s.counts.remaining + ' to go)', '(encore ' + s.counts.remaining + ')') + '</span>' : '');
+  // Progress counts the items required for this verdict; optional items never block.
+  var req = s.counts.required != null ? s.counts.required : s.counts.total;
+  var reqLeft = s.counts.required_remaining != null ? s.counts.required_remaining : s.counts.remaining;
+  var reqDone = req - reqLeft;
+  var pct = req ? Math.round(100 * reqDone / req) : 100;
+  $('progTxt').innerHTML = (req
+      ? t(reqDone + ' of ' + req + ' required points decided', reqDone + ' sur ' + req + ' points requis décidés')
+      : t('No point is required for this verdict', 'Aucun point requis pour ce verdict'))
+    + (reqLeft ? ' <span class="m">' + t('(' + reqLeft + ' to go)', '(encore ' + reqLeft + ')') + '</span>' : '');
   $('progBar').style.width = pct + '%';
 
   var rem = s.regeneration.remaining, lim = s.regeneration.limit;
@@ -802,7 +808,7 @@ function renderBar(){
     right += '<div class="err" id="barErr" role="alert"></div>';
   } else if (s.blockers.indexOf('undecided_items') >= 0) {
     right = '<button class="btn" disabled>' + t('Unlock my tools', 'Débloquer mes outils') + '</button><div class="sub">'
-      + t('Decide the ' + s.counts.remaining + ' remaining item(s) first', 'Décidez d\'abord le(s) ' + s.counts.remaining + ' point(s) restant(s)') + '</div>';
+      + t('Decide the ' + reqLeft + ' required point(s) first', 'Décidez d\'abord le(s) ' + reqLeft + ' point(s) requis') + '</div>';
   } else if (s.blockers.indexOf('disclaimer_required') >= 0) {
     right = '<label class="ack"><input type="checkbox" id="ackBox"><span>'
       + t('I understand this concept was rated ' + (s.report.verdict === 'HIGH_RISK' ? 'high risk' : 'fragile') + ', and that the risks I accepted will appear as open risks in my Business Plan.',

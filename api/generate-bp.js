@@ -31,6 +31,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Agent, setGlobalDispatcher } from 'undici';
 import { loadDownstreamContext, loadLiveReport, assertGeneratable, DownstreamError } from '../lib/crr-downstream.js';
+import { refreshClearance } from '../lib/crr-review.js';
 import { describeValue } from '../lib/crr-concept.js';
 import { getModel } from '../lib/claude-config.js';
 import R from '../lib/assumption-resolver.js';
@@ -123,6 +124,11 @@ export default async function handler(req, res) {
     .select('id, user_id, concept_name, currency, language, access_code, crr_status, validator_submission_id, crr_disclaimer_accepted_at').eq('id', run.project_id).maybeSingle());
   if (projRes.error || !projRes.data) return res.status(404).json({ error: 'project_not_found' });
   const project = projRes.data;
+  // A review with nothing required for its verdict clears on its own (rule of 29 Oct 2026).
+  if (project.crr_status !== 'cleared' && project.access_code) {
+    const st = await refreshClearance(supabase, project.access_code);
+    if (st) project.crr_status = st.project.crr_status;
+  }
   if (project.crr_status !== 'cleared') {
     await setRunStatus(runId, meta, { status: 'blocked_crr' });
     return res.status(409).json({ error: 'crr_not_cleared' });

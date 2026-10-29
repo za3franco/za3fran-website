@@ -12,7 +12,7 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { loadReviewContext, buildReviewState } from '../lib/crr-review.js';
+import { refreshClearance } from '../lib/crr-review.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -86,7 +86,9 @@ export default async function handler(req, res) {
   let review = null;
   if (validator && validator.report_html) {
     try {
-      const st = buildReviewState(await loadReviewContext(supabase, code, { tag: false }));
+      const st = await refreshClearance(supabase, code);
+      if (!st) throw new Error('no review state');
+      project.crr_status = st.project.crr_status;
       review = {
         key: 'readiness_review',
         name: 'Concept Readiness Review',

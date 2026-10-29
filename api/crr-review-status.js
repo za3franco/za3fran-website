@@ -10,7 +10,7 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { loadReviewContext, buildReviewState, ReviewError } from '../lib/crr-review.js';
+import { loadReviewContext, buildReviewState, syncProjectClearance, ReviewError } from '../lib/crr-review.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -21,7 +21,12 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
   try {
     const ctx = await loadReviewContext(supabase, req.query.code, { tag: true });
-    return res.status(200).json(buildReviewState(ctx));
+    const state = buildReviewState(ctx);
+    // Nothing required for this verdict (or all required points decided): the review clears on its own.
+    const transition = await syncProjectClearance(supabase, ctx, state);
+    if (transition === 'cleared') state.project.crr_status = 'cleared';
+    if (transition === 'reopened') state.project.crr_status = 'pending';
+    return res.status(200).json(state);
   } catch (err) {
     if (err instanceof ReviewError) return res.status(err.status).json({ error: err.code, detail: err.detail || null });
     console.error('[crr-review-status] unexpected error:', err);

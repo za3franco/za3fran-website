@@ -45,6 +45,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { getModel } from '../lib/claude-config.js';
+import { refreshClearance } from '../lib/crr-review.js';
 import ExcelJS from 'exceljs';
 import { Agent, setGlobalDispatcher } from 'undici';
 
@@ -778,6 +779,11 @@ export default async function handler(req, res) {
     // is deliberately left untouched (not marked 'error' or 'blocked') —
     // this is a policy refusal, not a generation failure, so the viewer
     // can retry once the gate clears without any stuck-state cleanup.
+    // A review with nothing required for its verdict clears on its own (rule of 29 Oct 2026).
+    if (project.crr_status !== 'cleared' && project.access_code) {
+      const st = await refreshClearance(supabase, project.access_code);
+      if (st) project.crr_status = st.project.crr_status;
+    }
     if (project.crr_status !== 'cleared') {
       await supabase.from('menu_engineer_runs')
         .update({

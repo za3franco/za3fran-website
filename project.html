@@ -197,12 +197,12 @@ async function loadProject(code) {
 
 function toolNote(tool, statusKey) {
   if (tool.key === 'readiness_review') {
-    const left = tool.counts ? tool.counts.remaining : null;
+    const left = tool.counts ? (tool.counts.required_remaining != null ? tool.counts.required_remaining : tool.counts.remaining) : null;
     if (statusKey === 'review_cleared') return `<div class="tool-note">${bi(['Every point raised by the Validator has been decided. You can come back to amend your concept at any time.', 'Chaque point relevé par le Validator est arbitré. Vous pouvez revenir amender votre concept à tout moment.'])}</div>`;
     const n = left != null ? `${left} ` : '';
     return `<div class="tool-note">${bi([
-      `${n}point(s) raised by the Validator to decide: change your concept, accept the risk or correct a fact. About 10 minutes.${tool.required ? ' Required before your business plan is generated.' : ''}`,
-      `${n}point(s) relevé(s) par le Validator à arbitrer : modifier le concept, accepter le risque ou corriger un fait. Environ 10 minutes.${tool.required ? ' Nécessaire avant la génération de votre business plan.' : ''}`])}</div>`;
+      `${n}required point(s) raised by the Validator to decide: change your concept, accept the risk or correct a fact. About 10 minutes.${tool.required ? ' Required before your business plan is generated.' : ''}`,
+      `${n}point(s) requis relevé(s) par le Validator à arbitrer : modifier le concept, accepter le risque ou corriger un fait. Environ 10 minutes.${tool.required ? ' Nécessaire avant la génération de votre business plan.' : ''}`])}</div>`;
   }
   if (tool.key !== 'business_plan') return '';
   const reviewPending = window.__CRR !== 'cleared';
