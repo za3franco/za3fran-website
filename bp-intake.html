@@ -61,7 +61,7 @@ label.lbl,.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transfor
 .hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
 .hint.warn{color:var(--copper-bright);}
 .hint.bad{color:var(--bad);}
-input[type=text],input[type=month],input[type=number],select{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--white);outline:none;-webkit-appearance:none;appearance:none;}
+input[type=text],input[type=email],input[type=tel],input[type=month],input[type=number],select{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--white);outline:none;-webkit-appearance:none;appearance:none;}
 select{background-color:var(--charcoal2);background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px;}
 select option,select optgroup{background-color:var(--charcoal2);color:var(--white);}
 select option:disabled{color:var(--muted);}
@@ -483,13 +483,13 @@ footer .foot-bottom a:hover{color:var(--white);}
   <!-- 9. Competitors -->
   <section class="card">
     <h2><span class="n">09</span><span data-en>Comparable venues</span><span data-fr>Établissements comparables</span></h2>
-    <p class="lead"><span data-en>Three to five venues your customers could choose instead, with the prices on their current menu. The plan presents them to show your positioning.</span><span data-fr>Trois à cinq établissements que vos clients pourraient choisir à la place, avec les prix de leur carte actuelle. Le plan les présente pour montrer votre positionnement.</span></p>
+    <p class="lead"><span data-en>Three to five venues your customers could choose instead, with the prices on their current menu. The plan presents them to show your positioning.</span><span data-fr>Trois à cinq établissements que vos clients pourraient choisir à la place, avec les prix de leur carte actuelle. Le plan les présente pour montrer votre positionnement.</span> <span data-en>Give the month you checked their menu (website, booking page or a dated photo): prices older than about 18 months are flagged.</span><span data-fr>Indiquez le mois où vous avez consulté leur carte (site, page de réservation ou photo datée) : des prix de plus de 18 mois environ sont signalés.</span></p>
     <table class="rows"><thead><tr>
       <th><span data-en>Name</span><span data-fr>Nom</span></th>
       <th><span data-en>Type</span><span data-fr>Type</span></th>
       <th><span data-en>Lunch ticket</span><span data-fr>Ticket déjeuner</span></th>
       <th><span data-en>Dinner ticket</span><span data-fr>Ticket dîner</span></th>
-      <th><span data-en>Prices seen (month)</span><span data-fr>Prix relevés (mois)</span></th><th></th>
+      <th><span data-en>Menu checked in</span><span data-fr>Carte consultée en</span></th><th></th>
     </tr></thead><tbody id="comps"></tbody></table>
     <button class="add" id="addComp" type="button"><span data-en>+ Add a venue</span><span data-fr>+ Ajouter un établissement</span></button>
     <div id="placesBox" class="hidden" style="margin-top:16px">
@@ -659,7 +659,7 @@ function compRow(r){
     <td${lab('Type','Type')}><input type="text" class="cKind" maxlength="80" value="${esc(r.kind||'')}" placeholder="${esc(T('e.g. wine bar','ex. bar à vin'))}"></td>
     <td${lab('Lunch ticket','Ticket déjeuner')}><input type="text" inputmode="numeric" class="cLunch" value="${esc(r.lunch_ticket ?? '')}"></td>
     <td${lab('Dinner ticket','Ticket dîner')}><input type="text" inputmode="numeric" class="cDinner" value="${esc(r.dinner_ticket ?? '')}"></td>
-    <td${lab('Prices seen','Prix relevés')}><input type="month" class="cSeen" value="${esc(r.seen_on ? String(r.seen_on).slice(0,7) : '')}"></td>
+    <td${lab('Menu checked in','Carte consultée en')}><input type="month" class="cSeen" value="${esc(r.seen_on ? String(r.seen_on).slice(0,7) : '')}"></td>
     <td class="x"><button type="button" class="del" aria-label="Remove">×</button></td></tr>`;
 }
 bindTable('comps','addComp', compRow, ()=>({}));
