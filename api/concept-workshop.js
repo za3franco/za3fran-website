@@ -59,7 +59,11 @@ function today() { return new Date().toISOString().slice(0, 10); }
 
 async function previewOf(ctx, record) {
   const { market, brain } = await marketFor(record);
-  return WS.preview({ record, market, brain, reportJson: ctx.report && ctx.report.report_json, today: today() });
+  const rj = ctx.report && ctx.report.report_json;
+  const run = (r) => WS.preview({ record: r, market, brain, reportJson: rj, today: today() });
+  const current = ctx.currentPreview || (ctx.currentPreview = run(ctx.record));
+  const next = record === ctx.record ? current : run(record);
+  return WS.anchor(current, next, rj && rj.overall ? { score: rj.overall.score, verdict: String(rj.overall.verdict || '').toUpperCase().replace('-', '_') } : null);
 }
 
 function stateOf(ctx, record, preview) {

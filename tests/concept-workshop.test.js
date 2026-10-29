@@ -61,3 +61,13 @@ test('diffRecords lists what changed, in the report language', () => {
   assert.ok(d.some((x) => /^Loyer mensuel :/.test(x)));
   assert.deepEqual(W.diffRecords(REC, REC, 'fr'), []);
 });
+
+test('provisional score starts from the report score and moves with the figures only', () => {
+  const cur = run(REC);
+  const same = W.anchor(cur, cur, { score: 74, verdict: 'VIABLE' });
+  assert.equal(same.overall, 74);
+  assert.equal(same.verdict, 'VIABLE');
+  const next = run(W.applyPatch(REC, { licence_cost: 250000 }).record);
+  const moved = W.anchor(cur, next, { score: 74, verdict: 'VIABLE' });
+  assert.equal(moved.overall, Math.round(74 + next.overall - cur.overall));
+});
