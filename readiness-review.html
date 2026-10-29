@@ -518,7 +518,7 @@ function wsRenderForm(){
     + wsField('ws-budget', t('Total budget (' + cur + ')', 'Budget total (' + cur + ')'), e.budget_amount, { mode: 'decimal' })
     + wsField('ws-own', t('Of which own funds (' + cur + ')', 'Dont apports (' + cur + ')'), e.own_funds, { mode: 'decimal' })
     + '<div><label class="l" for="ws-fw">' + t('You work in the venue', 'Vous travaillez dans l\'établissement') + '</label><select id="ws-fw"><option value="yes"' + (e.founder_works ? ' selected' : '') + ' data-en="Yes" data-fr="Oui">Yes</option><option value="no"' + (!e.founder_works ? ' selected' : '') + ' data-en="No" data-fr="Non">No</option></select></div>'
-    + '</div></div>';
+    + '</div><p class="hint" id="ws-budget-hint"></p></div>';
   h += '<div class="ws-block"><h3>' + t('Team', 'Équipe') + '</h3><p class="sub" id="ws-team-sub"></p><div id="ws-team"></div>'
     + '<button class="linkbtn" type="button" id="ws-team-reset" style="margin-top:8px;">' + t('Back to Za3fran\'s estimate', 'Revenir à l\'estimation Za3fran') + '</button></div>';
   h += '<div class="ws-block"><details class="ws-texts"><summary>' + t('My concept texts', 'Les textes de mon concept') + '</summary>'
@@ -604,6 +604,10 @@ function wsStatus(msg){
 var WS_ERR = { above_budget: ['Own funds above the total budget', 'Apports supérieurs au budget total'], no_service: ['Keep at least one service', 'Gardez au moins un service'], no_days: ['Pick the days of each service', 'Choisissez les jours de chaque service'], out_of_range: ['A value is out of range', 'Une valeur est hors limites'] };
 function wsRenderPanel(p, errors){
   WS.lastPreview = p;
+  // Budget vs the need computed from these figures (the budget is what you can raise; the need is computed).
+  var bh = $('ws-budget-hint'), need = p.figures && p.figures.besoin_total;
+  if (bh) bh.innerHTML = need ? t('Funding need computed from these figures: ' + esc(need.text) + ' (estimated investment and cash reserve). Your budget only needs to cover it; the loan is your need less your own funds.',
+    'Besoin de financement calculé avec ces chiffres : ' + esc(need.text) + ' (investissement estimé et réserve de trésorerie). Votre budget doit seulement le couvrir ; l\'emprunt est ce besoin moins vos apports.') : '';
   var base = WS.base || p, rep = WS.data.report || {};
   var v = VERDICTS[p.verdict] || { cls: 'warn', en: p.verdict || '—', fr: p.verdict || '—' };
   var d = p.overall != null && rep.score != null ? p.overall - Number(rep.score) : 0;   // vs the last report
