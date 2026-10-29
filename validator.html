@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Za3fran — Concept Validator</title>
-<meta name="description" content="An independent assessment of your F&B concept: a score out of 100, financial viability computed from your own figures, risks and a 30-day action plan. Delivered in minutes.">
+<meta name="description" content="An independent assessment of your F&B concept — a score out of 100, financial viability computed from your own figures, risks and a 30-day plan — then a guided readiness review and up to 5 re-assessments to bring it to viability.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -83,7 +83,7 @@ nav.nav-pushed{top:2.5rem;}
 .v-h1 em{font-style:italic;color:var(--copper);}
 .v-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2vw,1.5rem);
   font-weight:300;font-style:italic;color:var(--muted);margin-bottom:2.5rem;}
-.v-what{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap;margin-bottom:3rem;}
+.v-what{display:grid;grid-template-columns:repeat(4,auto);justify-content:center;gap:2rem;margin-bottom:3rem;}
 .v-what-item{display:flex;flex-direction:column;align-items:center;gap:0.4rem;}
 .v-what-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--copper);}
 .v-what-label{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
@@ -281,7 +281,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   .v-row.two,.v-row.three{row-gap:1.25rem;}
   .v-row.two>.v-field,.v-row.three>.v-field{display:flex;grid-row:auto;}
   .v-row.two>.v-field>.v-label,.v-row.three>.v-field>.v-label{margin-bottom:0;align-self:auto;}
-  .v-what{gap:1.5rem;}
+  .v-what{grid-template-columns:repeat(2,auto);gap:1.5rem 2rem;}
   .v-price-band{flex-direction:column;text-align:center;gap:0.5rem;}
   .v-price-divider{display:none;}
   #bundle-banner{padding:0.65rem 1rem;font-size:0.72rem;}
@@ -329,7 +329,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   <div class="v-hero-content">
     <div class="v-eyebrow fade-up"><span data-en>Za3fran Digital · Concept Validator</span><span data-fr>Za3fran Digital · Validateur de Concept</span></div>
     <h1 class="v-h1 fade-up d1" id="hero-h1"><span data-en id="hero-h1-en">Your concept.<br><em>Validated.</em></span><span data-fr id="hero-h1-fr">Votre concept.<br><em>Validé.</em></span></h1>
-    <p class="v-sub fade-up d2"><span data-en>An independent assessment of your concept, with figures computed from your own answers — delivered to your inbox.</span><span data-fr>Une évaluation indépendante de votre concept, chiffrée à partir de vos propres réponses — dans votre boîte mail.</span></p>
+    <p class="v-sub fade-up d2"><span data-en>An independent assessment of your concept, with figures computed from your own answers — then guidance to bring it to viability: a readiness review of every risk and up to 5 re-assessments included.</span><span data-fr>Une évaluation indépendante de votre concept, chiffrée à partir de vos propres réponses — puis un accompagnement pour l'amener à sa viabilité&nbsp;: une revue de chaque risque et jusqu'à 5 réévaluations incluses.</span></p>
     <div class="v-what fade-up d2">
       <div class="v-what-item">
         <span class="v-what-num">3</span>
@@ -342,6 +342,10 @@ footer .foot-bottom a:hover{color:var(--white);}
       <div class="v-what-item">
         <span class="v-what-num">6</span>
         <span class="v-what-label"><span data-en>Strategic sections</span><span data-fr>Sections stratégiques</span></span>
+      </div>
+      <div class="v-what-item">
+        <span class="v-what-num">5</span>
+        <span class="v-what-label"><span data-en>Re-assessments included</span><span data-fr>Réévaluations incluses</span></span>
       </div>
     </div>
     <div class="v-price-band fade-up d3" id="hero-price-band-standard">
@@ -886,7 +890,7 @@ footer .foot-bottom a:hover{color:var(--white);}
           <div class="v-bundle-radio"></div>
           <div class="v-bundle-content">
             <div class="v-bundle-label"><span data-en>Concept Validator only</span><span data-fr>Concept Validator seul</span></div>
-            <div class="v-bundle-desc"><span data-en>Score out of 100 · Market fit · Financial viability · Risk register · PDF</span><span data-fr>Score sur 100 · Adéquation marché · Viabilité financière · Registre des risques · PDF</span></div>
+            <div class="v-bundle-desc"><span data-en>Score out of 100 · Market fit · Financial viability · Risk register · PDF · Readiness review + 5 re-assessments</span><span data-fr>Score sur 100 · Adéquation marché · Viabilité financière · Registre des risques · PDF · Revue de préparation + 5 réévaluations</span></div>
           </div>
           <div class="v-bundle-price" id="price-validator-opt">€199</div>
         </div>
