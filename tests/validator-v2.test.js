@@ -278,3 +278,34 @@ test('writer vw-1.0.6: an approximate number in words is rejected', () => {
   const out = { s4: { paragraphes: [paras.slice(0, 3).join(' '), paras.slice(3).join(' ')], cette_semaine: ['Appeler la banque.'] }, s5: { paragraphes: ['Le Coravin sert une cinquantaine de références au verre.'], cette_semaine: ['Lister les concurrents.'] } };
   assert.ok(W.checkGroup(g3, out, A, { record: REC, names, allowedExtra: [] }).some((e) => e.code === 'spelled' && /cinquantaine/.test(e.detail)));
 });
+
+test('writer vw-1.1.0: impact scale in the prompt; at most one CRITICAL and half HIGH+; last resort demotes the lowest-ranked risks', () => {
+  const fin = V.runFinancials({ record: REC, market: C.market, brain });
+  const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
+  const { names } = P.allowedNames(REC);
+  const ctx = { record: REC, names, allowedExtra: [] };
+  const g4 = W.GROUPS.find((g) => g.id === 'g4');
+  assert.match(W.groupPrompt(g4, A, ctx), /au plus un risque CRITICAL/);
+  const risk = (impact, probabilite = 'MEDIUM') => ({ titre: 'Fréquentation du midi', categorie: 'demand', probabilite, impact, champs: ['audience'],
+    analyse: 'La clientèle de bureau du quartier reste à confirmer. Le midi dépend de cette clientèle.', parade: 'Compter les passages devant le local à midi pendant une semaine.' });
+  const out = { risques: [risk('CRITICAL'), risk('CRITICAL'), risk('HIGH'), risk('HIGH')],
+    recommandations: Array.from({ length: 5 }, () => ({ titre: 'Tester le midi', texte: 'Proposer une formule courte du midi. Mesurer la fréquentation sur un mois.' })),
+    plan_30_jours: [['Compter les passages du midi.'], ['Rencontrer deux bailleurs.'], ['Goûter les cartes voisines.'], ['Revoir la carte.']],
+    risques_cette_semaine: ['Compter les passages du midi.'] };
+  const errs = W.checkGroup(g4, out, A, ctx);
+  assert.deepEqual(errs.map((e) => e.code), ['impact_spread', 'impact_spread'], JSON.stringify(errs));
+  const pr = W.pruneActions(g4, out, errs, A, ctx);
+  assert.ok(pr);
+  assert.deepEqual(pr.out.risques.map((r) => r.impact), ['CRITICAL', 'HIGH', 'MEDIUM', 'MEDIUM']);
+  assert.ok(pr.pruned.every((x) => x.action === 'impact_demoted'));
+  // a spread that respects the scale passes untouched; LOW is a valid impact
+  const fine = clone(out); fine.risques = [risk('HIGH'), risk('MEDIUM'), risk('LOW', 'LOW')];
+  assert.deepEqual(W.checkGroup(g4, fine, A, ctx), []);
+  assert.equal(W.WRITER_VERSION, 'vw-1.1.0');
+});
+
+test('writer vw-1.1.0: always-wrong French elisions are corrected in code before the checks', () => {
+  assert.equal(W.elide('Le prix de une assiette et de un verre, que il faut voir si ils viennent.'), 'Le prix d’une assiette et d’un verre, qu’il faut voir s’ils viennent.');
+  assert.deepEqual(W.elide({ p: ['De une part.'], n: 3 }), { p: ['D’une part.'], n: 3 });
+  assert.equal(W.elide('le monde uni, de unités'), 'le monde uni, de unités');
+});
