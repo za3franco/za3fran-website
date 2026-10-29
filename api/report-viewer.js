@@ -83,8 +83,11 @@ function injectToolbar(html, accessCode, opts = {}) {
   const fr = meta.language === 'fr';
   // v2 (val-2.0.0): bilingual by the report's language, PDF download; the disclaimer sits at the end of the report itself.
   const pdfUrl = v2 ? `${BASE_URL}/api/validator-pdf?id=${encodeURIComponent(opts.id || '')}&code=${encodeURIComponent(accessCode)}` : null;
+  // Readiness review: the next step after reading the report (online only, never in the PDF).
+  const reviewUrl = `${BASE_URL}/readiness-review.html?code=${encodeURIComponent(accessCode)}`;
   const right = v2
-    ? `<a href="${pdfUrl}" style="margin-left:auto;color:#FAFAF7;border:1px solid #C9862A;padding:6px 12px;border-radius:2px;text-decoration:none;font-size:12px;">${fr ? 'Télécharger le PDF' : 'Download PDF'}</a>`
+    ? `<a href="${reviewUrl}" style="margin-left:auto;color:#0a0e18;background:#C9862A;padding:6px 12px;border-radius:2px;text-decoration:none;font-size:12px;font-weight:600;">${fr ? 'Revue de préparation' : 'Readiness review'}</a>`
+      + `<a href="${pdfUrl}" style="color:#FAFAF7;border:1px solid #C9862A;padding:6px 12px;border-radius:2px;text-decoration:none;font-size:12px;">${fr ? 'Télécharger le PDF' : 'Download PDF'}</a>`
     : `<span style="margin-left:auto;color:#8b93a8;font-size:11px;">Use your browser's Print function to save as PDF</span>`;
   const banner = v2 ? '' : `
 <div style="background:#101a30;color:#8b93a8;font-size:11px;padding:8px 24px;text-align:center;font-family:'DM Sans',sans-serif;">
@@ -105,10 +108,20 @@ function injectToolbar(html, accessCode, opts = {}) {
 <div class="za3fran-toolbar-spacer" style="height:${v2 ? 56 : 78}px;"></div>
 <style>@media print { .za3fran-toolbar, .za3fran-toolbar + div, .za3fran-toolbar-spacer { display: none !important; } }</style>`;
 
-  if (/<body[^>]*>/i.test(html)) {
-    return html.replace(/<body[^>]*>/i, (match) => match + toolbar);
-  }
-  return toolbar + html;
+  // v2: closing call to action after the report (online only).
+  const cta = !v2 ? '' : `
+<div class="za3fran-cta" style="max-width:820px;margin:40px auto 64px;padding:28px 32px;border:1px solid #C9862A;border-radius:6px;background:#0F1F3D;color:#FAFAF7;font-family:'DM Sans',sans-serif;box-sizing:border-box;">
+  <p style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0 0 10px;color:#FAFAF7;">${fr ? 'Prochaine étape : votre revue de préparation' : 'Next step: your readiness review'}</p>
+  <p style="color:#c9cfdc;line-height:1.65;margin:0 0 18px;font-size:15px;">${fr
+    ? 'Pour chaque point relevé dans ce rapport, modifiez votre concept, acceptez le risque ou corrigez un fait. Vos modifications peuvent être réévaluées pour obtenir un rapport mis à jour. Environ 10 minutes. Si vous avez acheté le Business Plan, il est généré une fois la revue validée.'
+    : 'For each point raised in this report, change your concept, accept the risk or correct a fact. Your changes can be re-assessed to get an updated report. About 10 minutes. If you bought the Business Plan, it is generated once the review is cleared.'}</p>
+  <a href="${reviewUrl}" style="display:inline-block;background:#C9862A;color:#0a0e18;text-decoration:none;padding:12px 26px;border-radius:2px;font-weight:700;font-size:14px;">${fr ? 'Faire ma revue de préparation →' : 'Complete my readiness review →'}</a>
+</div>
+<style>@media print { .za3fran-cta { display: none !important; } }</style>`;
+
+  let out = /<body[^>]*>/i.test(html) ? html.replace(/<body[^>]*>/i, (match) => match + toolbar) : toolbar + html;
+  if (cta) out = /<\/body>/i.test(out) ? out.replace(/<\/body>/i, cta + '</body>') : out + cta;
+  return out;
 }
 
 /** A v2 report row that has no HTML yet (being generated, or held by the quality checks). */

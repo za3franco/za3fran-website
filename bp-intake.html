@@ -1044,11 +1044,21 @@ function renderStatus(status){
         ? bi('Inputs submitted. You have reached the number of new plans included; write to hello@za3fran.io to generate another.','Données envoyées. Vous avez atteint le nombre de nouveaux plans inclus ; écrivez à hello@za3fran.io pour en générer un autre.')
         : p.done
           ? bi('Inputs saved. Submit again after a change to build a new plan from your updated figures.','Données enregistrées. Renvoyez-les après une modification pour établir un nouveau plan avec vos chiffres à jour.')
-          : bi('Inputs submitted. Your plan can now be generated (a few minutes).','Données envoyées. Votre plan peut maintenant être généré (quelques minutes).');
+          : p.started
+            ? bi('Inputs submitted. Your plan is being generated (about 2 minutes).','Données envoyées. Votre plan est en cours de génération (environ 2 minutes).')
+            : (state.data && state.data.project.crr_status !== 'cleared')
+              ? bi('Inputs submitted. Your plan will be generated automatically as soon as your readiness review is cleared.','Données envoyées. Votre plan sera généré automatiquement dès que votre revue de préparation sera validée.')
+              : bi('Inputs submitted. Your plan can now be generated (a few minutes).','Données envoyées. Votre plan peut maintenant être généré (quelques minutes).');
     b.innerHTML = `<div class="banner ok">${msg}${p.capped ? '' : planLink()}</div>`;
   }
   else b.innerHTML = '';
-  if (state.data && state.data.project.crr_status !== 'cleared') b.innerHTML += `<div class="banner bad">${bi('Your Concept Readiness Review is not cleared yet. You can fill in your inputs now; the plan is generated once the review is cleared.','Votre revue de préparation du concept n\'est pas encore validée. Vous pouvez saisir vos données ; le plan sera généré une fois la revue validée.')}</div>`;
+  if (state.data && state.data.project.crr_status !== 'cleared') {
+    const rv = '/readiness-review.html?code=' + encodeURIComponent(state.code || '');
+    b.innerHTML += `<div class="banner info">${bi(
+      'First step: your readiness review. The Validator raised points to decide (change the concept, accept the risk or correct a fact). Decisions can change your seats, ticket or covers, which feed this form — so do the review first (about 10 minutes). Your plan is generated as soon as the review is cleared and your figures are submitted.',
+      'Première étape : votre revue de préparation. Le Validator a relevé des points à arbitrer (modifier le concept, accepter le risque ou corriger un fait). Vos décisions peuvent changer vos places, votre ticket ou vos couverts, qui alimentent ce formulaire : faites donc la revue d\'abord (environ 10 minutes). Votre plan est généré dès que la revue est validée et vos chiffres envoyés.')}
+      <div style="margin-top:12px"><a class="btn primary" style="display:inline-block;text-decoration:none" href="${rv}">${bi('Complete my readiness review →','Faire ma revue de préparation →')}</a></div></div>`;
+  }
 }
 
 /* ---------------- API ---------------- */

@@ -27,6 +27,7 @@ import { loadEffectiveConcept } from '../lib/crr-concept.js';
 import M from '../lib/emails.js';
 import P from '../lib/places.js';
 import CR from '../lib/concept-record.js';
+import { triggerBpIfReady } from '../lib/bp-trigger.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -246,6 +247,8 @@ export default async function handler(req, res) {
       const code = String(body.code || '').toUpperCase().trim();
       const r = await newRunAfterResubmit(project, code);
       plan = { url: planUrl(r.runId, code), new_run: r.created, capped: !!r.capped };
+      // Review already cleared: the plan starts now (otherwise it starts when the review is cleared).
+      if (!r.capped) { const t = await triggerBpIfReady(supabase, project.id); plan.started = !!t.triggered; plan.waiting_for = t.triggered ? null : t.reason; }
     }
     if (action === 'submit') {
       try { await sendSubmitEmails(project, String(body.code || '').toUpperCase().trim(), intake, summary, resubmitted); }

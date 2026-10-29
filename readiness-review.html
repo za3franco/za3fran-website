@@ -264,6 +264,7 @@ footer.foot-bottom a{color:var(--muted);margin:0 8px;}
     <div id="clearedBox" class="cleared hidden">
       <h2><span data-en>Your concept is ready</span><span data-fr>Votre concept est prêt</span></h2>
       <p><span data-en>Every risk has a recorded decision. Your Business Plan and Menu Strategy will be built on your updated concept and these decisions.</span><span data-fr>Chaque risque a une décision enregistrée. Votre Business Plan et votre Stratégie Menu seront construits sur votre concept mis à jour et sur ces décisions.</span></p>
+      <p id="clearedNext" class="hidden"></p>
       <a class="btn" id="clearedLink" href="/project.html"><span data-en>Go to my project dashboard</span><span data-fr>Aller au tableau de bord</span></a>
     </div>
   </div>
@@ -428,6 +429,14 @@ function renderAll(){
   renderList($('alertList'), alerts);
   renderChanges(); renderOther(); renderHistory(); renderBar();
   $('clearedBox').classList.toggle('hidden', s.project.crr_status !== 'cleared');
+  // Business plan next step after clearance (from the save that cleared the review).
+  var cn = $('clearedNext'), bt = s.bp_trigger, code = encodeURIComponent(CODE || '');
+  if (cn) {
+    var h = '';
+    if (bt && bt.triggered) h = '<strong>' + t('Your business plan is being generated now (about 2 minutes).', 'Votre business plan est en cours de génération (environ 2 minutes).') + '</strong>';
+    else if (bt && bt.reason === 'figures_pending') h = t('Next step: enter your figures — your plan is generated as soon as you submit them.', 'Étape suivante : renseignez vos chiffres — votre plan est généré dès que vous les envoyez.') + ' <a href="/bp-intake?code=' + code + '">' + t('Enter my figures →', 'Renseigner mes chiffres →') + '</a>';
+    cn.innerHTML = h; cn.classList.toggle('hidden', !h);
+  }
   applyLangHelpers();
 }
 

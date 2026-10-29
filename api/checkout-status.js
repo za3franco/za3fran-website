@@ -89,10 +89,11 @@ export default async function handler(req, res) {
       concept_name: responseBase.concept_name || project?.concept_name || null,
       ready: !!accessCode,
       access_code: accessCode,
+      crr_status: project?.crr_status || null,
       dashboard_url: accessCode ? `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}` : null,
     });
   };
-  const COLS = 'access_code, concept_name, created_at';
+  const COLS = 'access_code, concept_name, created_at, crr_status';
   try {
     if (meta.submission_id) {
       const { data } = await supabase.from('za3fran_projects').select(COLS)

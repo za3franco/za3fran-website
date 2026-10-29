@@ -16,7 +16,9 @@ body.lang-fr [data-en]:not(option){display:none;}
 .tool-btn.primary{background:#C9862A;color:#0a0e18;}
 .tool-btn.primary:hover{background:#E7A63E;}
 .tool-note{font-size:.78rem;color:#8b93a8;margin-top:.5rem;line-height:1.5;max-width:340px;}
-.status-awaiting_intake .dot,.status-ready_to_generate .dot,.status-blocked_crr .dot{background:#E7A63E;}
+.status-awaiting_intake .dot,.status-ready_to_generate .dot,.status-blocked_crr .dot,.status-review_pending .dot,.status-after_review .dot{background:#E7A63E;}
+.status-review_pending,.status-after_review{color:#E7A63E;}
+.status-review_cleared .dot{background:#6fbf8e;}.status-review_cleared{color:#6fbf8e;}
 .status-awaiting_intake,.status-ready_to_generate,.status-blocked_crr{color:#E7A63E;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:#0a0e18;color:#FAFAF7;
@@ -123,6 +125,7 @@ input:focus{border-color:#C9862A;}
 <script>
 const TOOL_META = {
   validator:      { label: 'Concept Validator',        pricingAnchor: 'validator' },
+  readiness_review: { label: 'Revue de préparation', label_en: 'Readiness review', pricingAnchor: 'validator' },
   business_plan:  { label: 'Business Plan Essentials',  pricingAnchor: 'business-plan' },
   menu_engineer:  { label: 'Menu Engineer',             pricingAnchor: 'menu-engineer' }
 };
@@ -134,7 +137,10 @@ const STATUS_LABEL = {
   error: ['Not delivered — open to retry', 'Non livré — ouvrez pour relancer'],
   awaiting_intake: ['Your figures needed', 'Vos chiffres d\'abord'],
   ready_to_generate: ['Ready to generate', 'Prêt à générer'],
-  blocked_crr: ['Concept review to complete', 'Revue du concept à terminer'],
+  blocked_crr: ['Readiness review to complete first', 'Revue de préparation à terminer d\'abord'],
+  review_pending: ['To complete', 'À compléter'],
+  review_cleared: ['Cleared', 'Validée'],
+  after_review: ['After the review', 'Après la revue'],
   none: ['Not purchased', 'Non acheté']
 };
 const bi = (pair) => `<span data-en>${pair[0]}</span><span data-fr>${pair[1]}</span>`;
@@ -190,16 +196,27 @@ async function loadProject(code) {
 }
 
 function toolNote(tool, statusKey) {
+  if (tool.key === 'readiness_review') {
+    const left = tool.counts ? tool.counts.remaining : null;
+    if (statusKey === 'review_cleared') return `<div class="tool-note">${bi(['Every point raised by the Validator has been decided. You can come back to amend your concept at any time.', 'Chaque point relevé par le Validator est arbitré. Vous pouvez revenir amender votre concept à tout moment.'])}</div>`;
+    const n = left != null ? `${left} ` : '';
+    return `<div class="tool-note">${bi([
+      `${n}point(s) raised by the Validator to decide: change your concept, accept the risk or correct a fact. About 10 minutes.${tool.required ? ' Required before your business plan is generated.' : ''}`,
+      `${n}point(s) relevé(s) par le Validator à arbitrer : modifier le concept, accepter le risque ou corriger un fait. Environ 10 minutes.${tool.required ? ' Nécessaire avant la génération de votre business plan.' : ''}`])}</div>`;
+  }
   if (tool.key !== 'business_plan') return '';
+  const reviewPending = window.__CRR !== 'cleared';
+  if (reviewPending && statusKey !== 'complete') return `<div class="tool-note">${bi(['Your plan is generated once the readiness review above is cleared. You can enter your figures now or after it.', 'Votre plan est généré une fois la revue de préparation ci-dessus validée. Vous pouvez saisir vos chiffres maintenant ou après.'])}</div>`;
   if (statusKey === 'awaiting_intake') return `<div class="tool-note">${bi(['Your plan is built on your own figures: opening, services, team, investment and funding. About 15 minutes.', 'Votre plan est établi sur vos propres chiffres : ouverture, services, équipe, investissement et financement. Environ 15 minutes.'])}</div>`;
   if (statusKey === 'complete') return `<div class="tool-note">${bi(['The business plan is for your bank and investors; the preparation report is for you only.', 'Le business plan est destiné à votre banque et à vos investisseurs ; le rapport de préparation est pour vous seul.'])}</div>`;
   return '';
 }
 
 function toolLinks(tool, statusKey, meta) {
+  if (tool.key === 'readiness_review') return `<a class="tool-btn${statusKey === 'review_pending' ? ' primary' : ''}" href="${tool.viewer_url}">${bi(statusKey === 'review_pending' ? ['Complete the review →', 'Faire la revue →'] : ['Open the review →', 'Ouvrir la revue →'])}</a>`;
   if (!tool.purchased || !tool.viewer_url) return `<a class="tool-btn" href="/pricing.html#${meta.pricingAnchor}">${bi(['Add this tool →', 'Ajouter cet outil →'])}</a>`;
   if (tool.key === 'business_plan') {
-    if (statusKey === 'awaiting_intake') return `<a class="tool-btn primary" href="${tool.intake_url}">${bi(['Enter my figures →', 'Renseigner mes chiffres →'])}</a>`;
+    if (statusKey === 'awaiting_intake') return `<a class="tool-btn${window.__CRR === 'cleared' ? ' primary' : ''}" href="${tool.intake_url}">${bi(['Enter my figures →', 'Renseigner mes chiffres →'])}</a>`;
     if (statusKey === 'complete') return `<a class="tool-btn primary" href="${tool.viewer_url}">${bi(['Business plan →', 'Business plan →'])}</a>`
       + (tool.founder_report_url ? `<a class="tool-btn" href="${tool.founder_report_url}">${bi(['Preparation report →', 'Rapport de préparation →'])}</a>` : '')
       + (tool.files ? `<a class="tool-btn" href="${tool.files.plan}" target="_blank" rel="noopener">${bi(['Plan PDF', 'Plan PDF'])}</a><a class="tool-btn" href="${tool.files.summary}" target="_blank" rel="noopener">${bi(['One-page summary', 'Fiche 1 page'])}</a><a class="tool-btn" href="${tool.files.deck}" target="_blank" rel="noopener">${bi(['Presentation', 'Présentation'])}</a><a class="tool-btn" href="${tool.files.workbook}" download>${bi(['Excel workbook', 'Classeur Excel'])}</a>` : '')
@@ -217,6 +234,7 @@ function renderDashboard(data, code) {
   let saved = null; try { saved = localStorage.getItem('za3fran_lang'); } catch (e) {}
   if (!saved && data.project.language === 'fr') setLang('fr');
 
+  window.__CRR = data.project.crr_status;
   const listEl = document.getElementById('toolList');
   listEl.innerHTML = '';
 
@@ -226,6 +244,8 @@ function renderDashboard(data, code) {
   data.tools.forEach(tool => {
     const meta = TOOL_META[tool.key] || { label: tool.name };
     const statusKey = tool.purchased ? tool.status : 'none';
+    // Business plan waiting for the readiness review: say so (the review comes first).
+    const shownKey = (tool.key === 'business_plan' && tool.purchased && window.__CRR !== 'cleared' && ['awaiting_intake', 'ready_to_generate', 'blocked_crr'].includes(statusKey)) ? 'after_review' : statusKey;
     if (statusKey === 'generating') anyGenerating = true;
     if (!tool.purchased) missingTools.push(meta.label);
 
@@ -233,8 +253,8 @@ function renderDashboard(data, code) {
     card.className = 'tool-card';
     card.innerHTML = `
       <div class="tool-info">
-        <div class="tool-name">${meta.label}</div>
-        <div class="tool-status status-${statusKey}"><span class="dot"></span>${bi(STATUS_LABEL[statusKey] || STATUS_LABEL.generating)}</div>
+        <div class="tool-name">${meta.label_en ? bi([meta.label_en, meta.label]) : meta.label}</div>
+        <div class="tool-status status-${shownKey}"><span class="dot"></span>${bi(STATUS_LABEL[shownKey] || STATUS_LABEL.generating)}</div>
         ${toolNote(tool, statusKey)}
       </div>
       <div class="tool-action"><div class="tool-links">${toolLinks(tool, statusKey, meta)}</div></div>

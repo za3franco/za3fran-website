@@ -133,6 +133,20 @@ export default async function handler(req, res) {
     const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(bpAccessCode)}`;
     // v14: the plan is built on the founder's own figures, so the first step is the intake form.
     const intakeUrl   = `${BASE_URL}/bp-intake?code=${encodeURIComponent(bpAccessCode)}`;
+    // Readiness review not cleared yet: it comes first (the plan is generated only once it is cleared).
+    const reviewUrl   = `${BASE_URL}/readiness-review.html?code=${encodeURIComponent(bpAccessCode)}`;
+    let reviewPending = false;
+    try {
+      const { data: pr } = await supabase.from('za3fran_projects').select('crr_status').eq('id', projectId).maybeSingle();
+      reviewPending = !pr || pr.crr_status !== 'cleared';
+    } catch (_) { reviewPending = false; }
+    const reviewBlock = (fr) => !reviewPending ? '' : `
+  <div style="border:1px solid #C9862A;border-radius:4px;padding:20px 24px;margin:0 0 28px;">
+    <p style="color:#1a1a1a;line-height:1.7;margin:0 0 14px;">${fr
+      ? '<strong>Avant vos chiffres : votre revue de préparation</strong> (environ 10 minutes). Pour chaque point relevé par le Validator, modifiez le concept, acceptez le risque ou corrigez un fait. Votre plan est généré dès que la revue est validée et vos chiffres envoyés.'
+      : '<strong>Before your figures: your readiness review</strong> (about 10 minutes). For each point the Validator raised, change your concept, accept the risk or correct a fact. Your plan is generated as soon as the review is cleared and your figures are submitted.'}</p>
+    <div style="text-align:center;"><a href="${reviewUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:12px 30px;font-size:14px;font-weight:600;border-radius:2px;">${fr ? 'Faire ma revue de préparation →' : 'Complete my readiness review →'}</a></div>
+  </div>`;
     const firstName   = name ? name.split(' ')[0] : 'there';
     const isFr        = language === 'fr';
     const conceptName = meta.conceptName || 'your concept';
@@ -152,6 +166,7 @@ export default async function handler(req, res) {
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Bonjour ${firstName},</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Votre paiement pour <strong>${conceptName}</strong> est confirmé.</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Votre business plan est établi sur vos propres chiffres. <strong>Étape 1</strong> : renseignez-les (ouverture, services, équipe, investissement, financement — environ 15 minutes ; Za3fran peut estimer l'équipe et l'investissement pour vous). <strong>Étape 2</strong> : votre plan est généré en quelques minutes — un business plan à présenter à votre banque, et un rapport de préparation pour vous seul.</p>
+${reviewBlock(true)}
   <div style="text-align:center;margin:0 0 32px;">
     <a href="${intakeUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Renseigner mes chiffres →</a>
   </div>
@@ -179,6 +194,7 @@ export default async function handler(req, res) {
   <p style="font-family:Georgia,serif;font-size:22px;color:#0F1F3D;margin:0 0 20px;">Hi ${firstName},</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 16px;">Your payment for <strong>${conceptName}</strong> is confirmed.</p>
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 32px;">Your business plan is built on your own figures. <strong>Step 1</strong>: enter them (opening, services, team, investment, funding — about 15 minutes; Za3fran can estimate the team and the investment for you). <strong>Step 2</strong>: your plan is generated in a few minutes — a business plan to present to your bank, and a preparation report for you only.</p>
+${reviewBlock(false)}
   <div style="text-align:center;margin:0 0 32px;">
     <a href="${intakeUrl}" style="display:inline-block;background:#C9862A;color:#FAFAF7;text-decoration:none;padding:16px 40px;font-size:15px;font-weight:600;border-radius:2px;">Enter my figures →</a>
   </div>

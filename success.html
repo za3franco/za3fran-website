@@ -75,6 +75,8 @@ h1{font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin-bottom:16px;}
 .dash-wait .dot{flex:0 0 10px;height:10px;border-radius:50%;background:var(--copper);animation:dw 1.4s ease-in-out infinite;}
 @keyframes dw{0%,100%{opacity:.25}50%{opacity:1}}
 .dash-box .db-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+.dash-box .db-next{font-size:14px;line-height:1.6;color:var(--muted);margin:-6px 0 16px;}
+.btn-dash.secondary{background:none;border:1px solid var(--copper);color:var(--copper);}
 .dash-box .db-code{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--white);letter-spacing:.15em;margin-bottom:18px;}
 .btn-dash{display:inline-block;background:var(--copper);color:var(--black);padding:14px 32px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;}
 .btn-dash:hover{background:var(--copper-bright);transform:translateY(-1px);}
@@ -159,6 +161,8 @@ footer .foot-bottom a:hover{color:var(--white);}
     <div class="dash-box" id="dashBox">
       <p class="db-label"><span data-en>Your project access code</span><span data-fr>Votre code d'accès projet</span></p>
       <p class="db-code" id="dashCode">—</p>
+      <p class="db-next" id="reviewNext" style="display:none;"><span data-en>Next step: your readiness review (about 10 minutes), then your figures. Your plan is generated once both are done.</span><span data-fr>Étape suivante : votre revue de préparation (environ 10 minutes), puis vos chiffres. Votre plan est généré dès que les deux sont faits.</span></p>
+      <a href="#" class="btn-dash" id="reviewLink" style="display:none;margin-bottom:10px;"><span data-en>Complete my readiness review →</span><span data-fr>Faire ma revue de préparation →</span></a>
       <a href="#" class="btn-dash" id="intakeLink" style="display:none;margin-bottom:10px;"><span data-en>Enter my figures →</span><span data-fr>Renseigner mes chiffres →</span></a>
       <a href="#" class="btn-dash" id="dashLink"><span data-en>Go to my project dashboard →</span><span data-fr>Accéder à mon tableau de bord →</span></a>
     </div>
@@ -302,6 +306,14 @@ function revealDashboard(data) {
     const il = document.getElementById('intakeLink');
     il.href = '/bp-intake?code=' + encodeURIComponent(data.access_code);
     il.style.display = 'inline-block';
+    // Readiness review first when it is not cleared yet (it can amend what pre-fills the figures form).
+    if (data.crr_status !== 'cleared') {
+      const rl = document.getElementById('reviewLink');
+      rl.href = '/readiness-review.html?code=' + encodeURIComponent(data.access_code);
+      rl.style.display = 'inline-block';
+      document.getElementById('reviewNext').style.display = 'block';
+      il.classList.add('secondary');
+    }
   }
   document.getElementById('dashBox').classList.add('show');
   document.getElementById('dashWait').classList.remove('show');

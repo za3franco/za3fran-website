@@ -19,6 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import {
   loadReviewContext, buildReviewState, applyReviewChanges, syncProjectClearance, ReviewError,
 } from '../lib/crr-review.js';
+import { triggerBpIfReady } from '../lib/bp-trigger.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -41,9 +42,12 @@ export default async function handler(req, res) {
     const state = buildReviewState(fresh);
     const transition = await syncProjectClearance(supabase, fresh, state);
     if (transition === 'cleared')  { state.project.crr_status = 'cleared'; state.project.crr_cleared_at = new Date().toISOString(); }
+    // Review cleared: start the business plan right away if the figures are already submitted.
+    let bp_trigger = null;
+    if (transition === 'cleared') bp_trigger = await triggerBpIfReady(supabase, fresh.project.id);
     if (transition === 'reopened') { state.project.crr_status = 'pending'; state.project.crr_cleared_at = null; }
 
-    return res.status(200).json(Object.assign(state, { saved: true, transition, notices }));
+    return res.status(200).json(Object.assign(state, { saved: true, transition, notices, bp_trigger }));
   } catch (err) {
     if (err instanceof ReviewError) return res.status(err.status).json({ error: err.code, detail: err.detail || null });
     console.error('[crr-review-decide] unexpected error:', err);

@@ -12,6 +12,7 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
+import { loadReviewContext, buildReviewState } from '../lib/crr-review.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
   // 1. Find the project by its unified access code
   const { data: project, error: projectError } = await supabase
     .from('za3fran_projects')
-    .select('id, concept_name, currency, language, created_at, validator_submission_id')
+    .select('id, concept_name, currency, language, created_at, validator_submission_id, crr_status')
     .eq('access_code', code)
     .single();
 
@@ -80,6 +81,26 @@ export default async function handler(req, res) {
     else bpStatus = 'ready_to_generate';
   }
 
+  // Concept Readiness Review: shown once the Validator report exists (decisions left, cleared or not).
+  // Required before the Business Plan and the Menu Engineer are generated.
+  let review = null;
+  if (validator && validator.report_html) {
+    try {
+      const st = buildReviewState(await loadReviewContext(supabase, code, { tag: false }));
+      review = {
+        key: 'readiness_review',
+        name: 'Concept Readiness Review',
+        purchased: true,
+        status: st.project.crr_status === 'cleared' ? 'review_cleared' : 'review_pending',
+        counts: st.counts,
+        required: !!(bp || menu),
+        viewer_url: `/readiness-review.html?code=${encodeURIComponent(code)}`,
+      };
+    } catch (e) {
+      console.error('[project-status] review state unavailable (non-fatal):', e.message);
+    }
+  }
+
   // 3. Normalize each into a common shape the dashboard can render generically
   const tools = [
     {
@@ -92,6 +113,7 @@ export default async function handler(req, res) {
         : null,
       created_at: validator?.created_at || null,
     },
+    ...(review ? [review] : []),
     {
       key: 'business_plan',
       name: 'Business Plan Essentials',
@@ -132,6 +154,7 @@ export default async function handler(req, res) {
       currency: project.currency,
       language: project.language,
       created_at: project.created_at,
+      crr_status: project.crr_status || 'pending',
     },
     tools,
   });
