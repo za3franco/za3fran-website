@@ -27,6 +27,8 @@ import { loadEffectiveConcept } from '../lib/crr-concept.js';
 import M from '../lib/emails.js';
 import P from '../lib/places.js';
 import CR from '../lib/concept-record.js';
+import VP from '../lib/validator-pipeline.js';
+import V from '../lib/validator-v2.js';
 import { triggerBpIfReady } from '../lib/bp-trigger.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
@@ -198,7 +200,19 @@ export default async function handler(req, res) {
       if (!saved.data) {
         const rec = await withRetry(() => supabase.from('concept_records').select('data').eq('project_id', project.id).order('version', { ascending: false }).limit(1));
         const row = !rec.error && rec.data && rec.data[0];
-        if (row) prefill = CR.bpPrefill(CR.applyAmendments(row.data, []));
+        if (row) {
+          const recData = CR.applyAmendments(row.data, []);
+          prefill = CR.bpPrefill(recData);
+          // Same base as the Validator (Arnaud, 29 Oct 2026): when the founder's covers exceed the format's usual
+          // occupancy, the plan starts from Za3fran's reference occupancy; the founder's figure stays as the visible option.
+          try {
+            const { market: vm, brain: vb } = await VP.loadMarket(supabase, recData);
+            if (vm && prefill.covers_per_day != null) {
+              const fin = V.runFinancials({ record: recData, market: vm, brain: vb });
+              if (fin.base_source === 'benchmark') { prefill.covers_source = 'benchmark'; prefill.covers_hint = 'above_reference'; }
+            }
+          } catch (e) { console.error('[bp-intake] reference occupancy check failed (non-fatal):', e.message); }
+        }
       }
       return res.status(200).json({
         project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status },

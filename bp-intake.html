@@ -305,6 +305,7 @@ footer .foot-bottom a:hover{color:var(--white);}
       <input type="text" inputmode="numeric" id="coversDay">
       <p class="hint" id="capHint"></p>
     </div>
+    <p class="hint hidden" id="refHint" style="margin-top:10px"><span data-en>Like your Validator report, the plan starts from Za3fran's reference occupancy: your estimate is above what this format usually fills. You can still choose your estimate; the plan will then point out the gap.</span><span data-fr>Comme votre rapport Validator, le plan part du taux d'occupation de référence Za3fran : votre estimation dépasse le remplissage habituel de ce format. Vous pouvez toujours choisir votre estimation ; le plan signalera alors l'écart.</span></p>
   </section>
 
   <!-- 5. Premises -->
@@ -1125,6 +1126,7 @@ async function open(code){
     if (!(j.brain.loan_programmes || []).includes('intelaka')) $('programme').querySelector('option[value="intelaka"]').disabled = true;
     $('placesBox').classList.toggle('hidden', !j.places);
     restore(j.saved ? j.saved.intake : (j.prefill || {}));   // bpi-1.5.0: a new intake starts from the concept record
+    if (!j.saved && j.prefill && j.prefill.covers_hint === 'above_reference') { var rh = $('refHint'); if (rh) rh.classList.remove('hidden'); }
     if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); if (!(j.prefill && j.prefill.sizing)) $('fval').value = '20'; applyModes(); }
     renderStatus(j.saved && j.saved.status);
     if (j.saved && j.saved.preview) renderPreview(j.saved.preview, j.saved.status);
