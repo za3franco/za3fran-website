@@ -10,8 +10,13 @@
     "api/bp-pdf.js":                { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" },
     "api/bp-docs.js":               { "maxDuration": 120, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" },
     "api/generate-validator.js":    { "maxDuration": 800 },
-    "api/validator-pdf.js":         { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" }
+    "api/validator-pdf.js":         { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" },
+    "api/brain-inbox.js":           { "maxDuration": 60 },
+    "api/brain-extract.js":         { "maxDuration": 300, "memory": 1536 }
   },
+  "crons": [
+    { "path": "/api/brain-extract", "schedule": "*/15 * * * *" }
+  ],
   "rewrites": [
     { "source": "/api/currency",              "destination": "/api/currency.js" },
     { "source": "/api/scorecard",             "destination": "/api/scorecard.js" },

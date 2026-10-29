@@ -1,0 +1,29 @@
+{
+  "name": "Za3fran Brain",
+  "short_name": "Brain",
+  "description": "Send articles, menus, links and notes to the Za3fran Brain, and review what Claude extracts.",
+  "id": "/brain",
+  "start_url": "/brain",
+  "scope": "/brain",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0e18",
+  "theme_color": "#0a0e18",
+  "lang": "fr",
+  "icons": [
+    { "src": "/assets/brain/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brain/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brain/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "/brain/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [{ "name": "files", "accept": ["image/*", "application/pdf", "text/*"] }]
+    }
+  }
+}
