@@ -93,7 +93,32 @@ async function getRawBody(req) {
 }
 
 // ── Main handler ──────────────────────────────────────────────
+// ── Recovery of a paid report stuck at report_error (29 Oct 2026) ──
+// GET /api/webhook-validator?recover=<Stripe checkout session id>. The link is in the failure notice sent to
+// hello@za3fran.io. Safe without a secret: the session is fetched from Stripe (paid), its submission must be the
+// one at report_error, and the claim is atomic (report_error -> processing), so a second click does nothing.
+async function recover(req, res) {
+  const sid = String(req.query.recover || '');
+  const page = (title, body, code = 200) => res.status(code).setHeader('Content-Type', 'text/html; charset=utf-8')
+    .send(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><body style="background:#0a0e18;color:#FAFAF7;font-family:system-ui,sans-serif;padding:32px;max-width:560px;margin:auto"><h2 style="color:#E7A63E">${title}</h2><p>${body}</p></body>`);
+  if (!/^cs_(test|live)_[A-Za-z0-9]+$/.test(sid)) return page('Invalid link', 'This recovery link is not valid.', 400);
+  let session;
+  try { session = await stripe.checkout.sessions.retrieve(sid); } catch (e) { return page('Not found', 'Stripe does not know this session.', 404); }
+  if (session.payment_status !== 'paid') return page('Not paid', 'This Stripe session is not paid.', 409);
+  const email = session.customer_details?.email || session.customer_email;
+  const submissionId = session.metadata?.submission_id || null;
+  if (!email || !submissionId) return page('Not recoverable', 'This session has no submission attached (older checkout): recover it by hand.', 409);
+  const { data: sub } = await withRetry(() => supabase.from('validator_submissions').select('id, status, concept_name').eq('id', submissionId).limit(1));
+  const row = sub && sub[0];
+  if (!row) return page('Not found', 'No submission matches this session.', 404);
+  if (row.status !== 'report_error') return page('Nothing to do', `This submission is at status <b>${row.status}</b>: only a report in error is relaunched.`, 409);
+  console.log(`[recover] relaunching submission ${row.id} (${row.concept_name || ''}) from session ${sid}`);
+  waitUntil(processReport(email, sid, session.metadata?.purchase_type || 'validator', row.id, { fromStatus: 'report_error' }));
+  return page('Relaunched', `The report for <b>${String(row.concept_name || row.id).replace(/</g, '&lt;')}</b> is being generated again (about 3 minutes). The customer receives the usual delivery email when it is ready; if it fails again, a new notice reaches hello@za3fran.io.`);
+}
+
 export default async function handler(req, res) {
+  if (req.method === 'GET' && req.query && req.query.recover) return recover(req, res);
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -157,14 +182,14 @@ async function withRetry(fn, attempts = 3, delayMs = 1500) {
 }
 
 // ── Async report processing ───────────────────────────────────
-async function processReport(customerEmail, sessionId, purchaseType, submissionId = null) {
+async function processReport(customerEmail, sessionId, purchaseType, submissionId = null, { fromStatus = 'pending_payment' } = {}) {
   console.log(`[processReport] Starting for: ${customerEmail}, type: ${purchaseType}`);
 
   // ── Step 1: Look up submission (with retry — see withRetry above) ──
   // The submission id travels in the Stripe session (submit-validator, since 29 Oct 2026);
   // older sessions fall back to the customer's latest pending submission.
   const { data: submissions, error: fetchError } = await withRetry(() => {
-    let q = supabase.from('validator_submissions').select('*').eq('status', 'pending_payment');
+    let q = supabase.from('validator_submissions').select('*').eq('status', fromStatus);
     q = submissionId ? q.eq('id', submissionId) : q.eq('email', customerEmail);
     return q.order('created_at', { ascending: false }).limit(1);
   });
@@ -188,7 +213,7 @@ async function processReport(customerEmail, sessionId, purchaseType, submissionI
     .from('validator_submissions')
     .update({ status: 'processing' })
     .eq('id', submission.id)
-    .eq('status', 'pending_payment')
+    .eq('status', fromStatus)
     .select('id');
 
   if (claimError || !claimed || claimed.length === 0) {
@@ -216,7 +241,8 @@ async function processReport(customerEmail, sessionId, purchaseType, submissionI
     if (!r || !r.ok) {
       await supabase.from('validator_submissions').update({ status: 'report_error' }).eq('id', submission.id);
       await notifyZa3fran(`Validator v2 report failed — ${submission.concept_name || submission.id} (paid)`,
-        qaNotice(`${submission.concept_name || ''} (submission ${submission.id}, ${customerEmail})`, r && r.errors));
+        qaNotice(`${submission.concept_name || ''} (submission ${submission.id}, ${customerEmail})`, r && r.errors)
+        + (sessionId ? `<p><a href="https://www.za3fran.io/api/webhook-validator?recover=${encodeURIComponent(sessionId)}">Relancer la génération et la livraison / Relaunch generation and delivery</a></p>` : ''));
       return;
     }
     reportHtml = r.html;
