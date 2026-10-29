@@ -206,7 +206,7 @@ async function processReport(customerEmail, sessionId, purchaseType, submissionI
     let r = null;
     for (let attempt = 1; attempt <= 2 && !(r && r.ok); attempt++) {
       try {
-        r = await generateValidatorV2(supabase, v2Record, { meta: { submission_id: submission.id, purchase_type: purchaseType } });
+        r = await generateValidatorV2(supabase, v2Record, { meta: { submission_id: submission.id, purchase_type: purchaseType, record_version: 1 } });
         console.log(`[processReport] v2 attempt ${attempt}: ${r.ok ? 'ok' : 'qa_failed'} ${JSON.stringify(r.audit)}`);
       } catch (err) {
         console.error(`[processReport] v2 attempt ${attempt} failed:`, err && err.stack || err);

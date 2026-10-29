@@ -150,6 +150,54 @@ details.other summary{padding:14px 18px;cursor:pointer;font-weight:500;font-size
 details.other .inner{padding:0 18px 18px;}
 .history .card-head{cursor:default;}
 
+/* ── Concept workshop (step 1, v2 projects) ── */
+.ws{margin-top:28px;}
+.ws-steps{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px;font-size:.82rem;color:var(--muted);}
+.ws-steps b{color:var(--copper-bright);}
+.ws-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start;}
+@media (max-width:860px){.ws-grid{grid-template-columns:1fr;}}
+.ws-block{border:1px solid var(--line);border-radius:8px;background:var(--charcoal);padding:16px 18px;margin-bottom:12px;}
+.ws-block h3{font-size:.95rem;font-weight:700;margin-bottom:10px;}
+.ws-block .sub{color:var(--muted);font-size:.8rem;margin:-6px 0 10px;}
+.ws-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.ws-row.two{grid-template-columns:repeat(2,minmax(0,1fr));}
+@media (max-width:560px){.ws-row,.ws-row.two{grid-template-columns:1fr;}}
+.ws label.l{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px;}
+.ws input[type=text],.ws select,.ws input[type=month]{width:100%;padding:9px 11px;border-radius:6px;border:1px solid var(--line2);background:var(--black);color:var(--white);font:400 .92rem 'DM Sans',sans-serif;}
+.ws input.bad{border-color:#E8927C;}
+.svc{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+.svc:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+.svc-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-weight:600;font-size:.9rem;}
+.svc-head input{accent-color:var(--copper);width:16px;height:16px;}
+.svc.off .svc-body{display:none;}
+.days{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.days label{font-size:.78rem;border:1px solid var(--line2);border-radius:14px;padding:4px 10px;cursor:pointer;color:var(--muted);}
+.days label:has(input:checked){border-color:var(--copper);color:var(--copper-bright);}
+.days input{position:absolute;opacity:0;pointer-events:none;}
+.team-row{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:.88rem;}
+.team-row:last-child{border-bottom:none;}
+.team-row .fixed{color:var(--muted);font-size:.8rem;}
+.ws-panel{position:sticky;top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--charcoal2,#152242);padding:18px;}
+@media (max-width:860px){.ws-panel{position:static;}}
+.ws-panel .big{font-family:'Cormorant Garamond',serif;font-size:3rem;line-height:1;color:var(--copper-bright);}
+.ws-panel .big small{font-size:1.1rem;color:var(--muted);}
+.ws-panel .delta{font-size:.84rem;margin-left:6px;}
+.ws-panel .delta.up{color:#7FC39A;} .ws-panel .delta.down{color:#E8927C;}
+.ws-panel .note{font-size:.76rem;color:var(--muted);margin-top:8px;line-height:1.45;}
+.ws-figs{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;}
+.ws-figs div{display:flex;justify-content:space-between;gap:10px;font-size:.84rem;padding:3px 0;}
+.ws-figs div span:first-child{color:var(--muted);}
+.ws-alerts{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;}
+.ws-alert{font-size:.82rem;padding:8px 10px;border-radius:6px;margin-top:6px;background:rgba(201,85,58,.08);border:1px solid rgba(201,85,58,.3);}
+.ws-alert.MEDIUM{background:rgba(201,134,42,.08);border-color:rgba(201,134,42,.3);}
+.ws-alert b{display:block;font-size:.84rem;margin-bottom:2px;}
+.ws-ok{font-size:.84rem;color:#7FC39A;margin-top:8px;}
+.ws-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+.ws-status{font-size:.82rem;color:var(--muted);}
+.ws-status.dirty{color:var(--copper-bright);}
+details.ws-texts summary{cursor:pointer;font-weight:700;font-size:.95rem;}
+details.ws-texts textarea{margin-top:6px;min-height:90px;}
+
 /* ── Sticky action bar ── */
 .bar{position:sticky;bottom:0;z-index:40;background:rgba(10,14,24,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line2);margin-top:36px;}
 .bar-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
@@ -222,7 +270,19 @@ footer.foot-bottom a{color:var(--muted);margin:0 8px;}
 
     <div id="topNotices"></div>
 
-    <div class="intro">
+    <!-- Concept workshop: step 1 (v2 projects only) -->
+    <section id="wsSec" class="ws hidden">
+      <h2 class="sec" style="margin-top:8px;"><span data-en>Step 1 — Adjust my figures</span><span data-fr>Étape 1 — Ajuster mes chiffres</span></h2>
+      <p class="intro" style="padding-top:0;"><span data-en>Change any figure and see at once what it does to your score, your key figures and the financial alerts. Nothing is final until you save; then update your report (step 3) to rewrite the analysis and the risks.</span><span data-fr>Modifiez un chiffre et voyez aussitôt son effet sur votre score, vos chiffres clés et les alertes financières. Rien n'est définitif avant l'enregistrement ; mettez ensuite votre rapport à jour (étape 3) pour réécrire l'analyse et les risques.</span></p>
+      <div class="ws-grid">
+        <div id="wsForm"></div>
+        <aside class="ws-panel" id="wsPanel" aria-live="polite"></aside>
+      </div>
+      <h2 class="sec"><span data-en>Step 2 — Decide the points raised</span><span data-fr>Étape 2 — Arbitrer les points relevés</span></h2>
+      <p class="intro" style="padding-top:0;"><span data-en>Only the points marked <b>Required</b> must be decided before your Business Plan. A financial alert that your new figures remove disappears when you update your report; otherwise accept it in a sentence. For a risk, “Change the plan” means you changed your figures or your texts in step 1 — say what you changed.</span><span data-fr>Seuls les points marqués <b>Requis</b> doivent être arbitrés avant votre Business Plan. Une alerte financière que vos nouveaux chiffres font disparaître s'efface à la mise à jour du rapport ; sinon, acceptez-la en une phrase. Pour un risque, « Modifier le plan » signifie que vous avez changé vos chiffres ou vos textes à l'étape 1 : dites ce que vous avez changé.</span></p>
+    </section>
+
+    <div class="intro" id="introV1">
       <p><span data-en>The Validator flagged the risks below. Before your Business Plan or Menu Strategy is built on this concept, decide how you'll handle each one. Your decisions go straight into those documents, so a bank or investor sees how every risk is dealt with.</span><span data-fr>Le Validator a signalé les risques ci-dessous. Avant que votre Business Plan ou votre Stratégie Menu soit construit sur ce concept, décidez comment traiter chacun d'eux. Vos décisions sont reprises telles quelles dans ces documents : une banque ou un investisseur voit comment chaque risque est traité.</span></p>
       <div class="choices-legend">
         <div><strong><span data-en>Change the plan</span><span data-fr>Modifier le plan</span></strong><span data-en>Update the answers behind the risk. The concept is then re-assessed.</span><span data-fr>Mettez à jour les réponses concernées. Le concept est ensuite réévalué.</span></div>
@@ -325,6 +385,10 @@ var ERRORS = {
   rationale_required: ['Please explain your decision in at least a sentence (10 characters minimum).', 'Expliquez votre décision en une phrase au moins (10 caractères minimum).'],
   rationale_too_long: ['This text is too long (2,000 characters maximum).', 'Ce texte est trop long (2 000 caractères maximum).'],
   plan_change_without_amendment: ['Change at least one answer, or pick another option.', 'Modifiez au moins une réponse, ou choisissez une autre option.'],
+  plan_change_without_workshop_change: ['Save a change in step 1 first, then say here what you changed (one sentence at least).', 'Enregistrez d\'abord une modification à l\'étape 1, puis dites ici ce que vous avez changé (une phrase au moins).'],
+  invalid_values: ['Some figures are not valid. Check the highlighted fields.', 'Certains chiffres ne sont pas valides. Vérifiez les champs signalés.'],
+  save_conflict: ['Your figures were just saved elsewhere. Reload the page and try again.', 'Vos chiffres viennent d\'être enregistrés ailleurs. Rechargez la page et réessayez.'],
+  workshop_not_available: ['Figures cannot be adjusted for this project.', 'Les chiffres ne peuvent pas être ajustés pour ce projet.'],
   field_not_linked_to_risk: ['That answer is not linked to this risk. Use "Change another answer" below.', 'Cette réponse n\'est pas liée à ce risque. Utilisez « Modifier une autre réponse » plus bas.'],
   invalid_value: ['One of the values is not valid. Check the highlighted answer.', 'Une des valeurs n\'est pas valide. Vérifiez la réponse concernée.'],
   reason_required: ['Please give a reason for this change.', 'Indiquez la raison de cette modification.'],
@@ -374,6 +438,191 @@ async function api(method, url, body){
 }
 function loadState(){ return api('GET', '/api/crr-review-status?code=' + encodeURIComponent(CODE)); }
 function saveReview(body){ return api('POST', '/api/crr-review-decide', Object.assign({ code: CODE }, body)); }
+
+// ═══ Concept workshop (step 1, v2 projects) ══════════════════════
+// Figures are recalculated by the Validator's own code on every change (/api/concept-workshop,
+// no model call). Saving stores a new concept record version; "Update my report" re-assesses it.
+function WSON(){ return !!(STATE && STATE.workshop); }
+var WS = { loaded: false, loading: false, data: null, base: null, dirty: false, teamTouched: false, timer: null, seq: 0 };
+var DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+var DAY_LBL = { 0: ['Sun', 'Dim'], 1: ['Mon', 'Lun'], 2: ['Tue', 'Mar'], 3: ['Wed', 'Mer'], 4: ['Thu', 'Jeu'], 5: ['Fri', 'Ven'], 6: ['Sat', 'Sam'] };
+var FIG_LBL = {
+  ca_a2: ['Revenue, year 2 (excl. VAT)', 'Chiffre d\'affaires année 2 (HT)'], ebe_a2: ['EBITDA, year 2', 'EBE année 2'], marge_ebe_a2: ['EBITDA margin', 'Marge d\'EBE'],
+  resultat_net_a2: ['Net result, year 2', 'Résultat net année 2'], couverts_jour_a2: ['Covers per open day', 'Couverts par jour d\'ouverture'],
+  point_mort_couverts_jour: ['Break-even, covers per day', 'Point mort, couverts par jour'], marge_securite: ['Safety margin', 'Marge de sécurité'],
+  besoin_total: ['Total funding need', 'Besoin de financement total'], emprunt: ['Loan needed', 'Emprunt nécessaire'],
+  dscr_min_prudent: ['Debt cover, conservative case', 'Couverture de l\'annuité, cas prudent'], loyer_pct_a2: ['Rent / revenue', 'Loyer / CA'],
+  cout_principal_pct_a2: ['Food + payroll / revenue', 'Matières + salaires / CA'],
+};
+function numIn(v){ var x = String(v == null ? '' : v).replace(/[\s  ]/g, '').replace(',', '.'); if (x === '') return null; var n = Number(x); return isFinite(n) ? n : NaN; }
+function fmtIn(n){ return n == null ? '' : String(n); }
+function wsApi(body){ return body ? api('POST', '/api/concept-workshop', Object.assign({ code: CODE }, body)) : api('GET', '/api/concept-workshop?code=' + encodeURIComponent(CODE)); }
+
+async function wsLoad(){
+  WS.loading = true;
+  $('wsForm').innerHTML = '<p class="hint">' + t('Loading your figures…', 'Chargement de vos chiffres…') + '</p>';
+  var r = await wsApi(null);
+  WS.loading = false;
+  if (!r.ok) { $('wsForm').innerHTML = '<div class="notice bad">' + errMsg(r.error) + '</div>'; return; }
+  WS.loaded = true; WS.data = r.data; WS.base = r.data.preview; WS.dirty = false; WS.teamTouched = false;
+  wsRenderForm(); wsRenderPanel(r.data.preview, []);
+}
+
+function wsField(id, label, value, opts){
+  opts = opts || {};
+  return '<div><label class="l" for="' + id + '">' + label + '</label><input type="text" inputmode="' + (opts.mode || 'numeric') + '" id="' + id + '" value="' + esc(fmtIn(value)) + '"' + (opts.ph ? ' placeholder="' + esc(opts.ph) + '"' : '') + '></div>';
+}
+function wsRenderForm(){
+  var e = WS.data.editable, cur = esc(WS.data.currency || '');
+  var byId = {}; (e.services || []).forEach(function(x){ byId[x.id] = x; });
+  var h = '<div class="ws-block"><h3>' + t('Services', 'Services') + '</h3><p class="sub">' + t('Days open, average ticket incl. VAT and covers per service at cruise.', 'Jours d\'ouverture, ticket moyen TTC et couverts par service en rythme de croisière.') + '</p>';
+  WS.data.services.forEach(function(sv){
+    var x = byId[sv.id], on = !!x;
+    h += '<div class="svc' + (on ? '' : ' off') + '" data-svc="' + sv.id + '"><div class="svc-head"><input type="checkbox" class="js-svc-on"' + (on ? ' checked' : '') + ' aria-label="' + esc(sv.fr) + '">' + t(esc(sv.en), esc(sv.fr)) + '</div><div class="svc-body"><div class="days">';
+    DAY_ORDER.forEach(function(d){ var c = x && x.days.indexOf(d) >= 0; h += '<label><input type="checkbox" class="js-day" value="' + d + '"' + (c ? ' checked' : '') + '>' + t(DAY_LBL[d][0], DAY_LBL[d][1]) + '</label>'; });
+    h += '</div><div class="ws-row two">' + wsField('ws-t-' + sv.id, t('Average ticket incl. VAT (' + cur + ')', 'Ticket moyen TTC (' + cur + ')'), x && x.ticket, { mode: 'decimal' })
+      + wsField('ws-c-' + sv.id, t('Covers per service', 'Couverts par service'), x && x.covers, { ph: e.covers_per_day ? (LANG === 'fr' ? 'vide = ' + e.covers_per_day + ' couverts/jour au total' : 'empty = ' + e.covers_per_day + ' covers/day in total') : '' }) + '</div></div></div>';
+  });
+  h += '</div>';
+  h += '<div class="ws-block"><h3>' + t('Room and premises', 'Salle et local') + '</h3><div class="ws-row">'
+    + wsField('ws-seats', t('Seats', 'Places assises'), e.seats)
+    + wsField('ws-surface', t('Surface (m²)', 'Surface (m²)'), e.surface_m2)
+    + wsField('ws-rent', t('Monthly rent excl. VAT (' + cur + ')', 'Loyer mensuel HT (' + cur + ')'), e.rent_monthly, { mode: 'decimal' }) + '</div></div>';
+  h += '<div class="ws-block"><h3>' + t('Calendar and licence', 'Calendrier et licence') + '</h3><div class="ws-row">'
+    + '<div><label class="l" for="ws-opening">' + t('Target opening', 'Ouverture visée') + '</label><input type="month" id="ws-opening" value="' + esc(e.opening || '') + '"></div>'
+    + '<div><label class="l" for="ws-ramadan">Ramadan</label><select id="ws-ramadan">'
+    + [['closed', 'Closed', 'Fermé'], ['reduced', 'Open, reduced trade', 'Ouvert, activité réduite'], ['normal', 'Normal trade', 'Activité normale']].map(function(o){ return '<option value="' + o[0] + '"' + (e.ramadan === o[0] ? ' selected' : '') + ' data-en="' + o[1] + '" data-fr="' + o[2] + '">' + o[1] + '</option>'; }).join('') + '</select></div>'
+    + '<div><label class="l" for="ws-alcohol">' + t('Alcohol served', 'Alcool servi') + '</label><select id="ws-alcohol"><option value="yes"' + (e.alcohol === true ? ' selected' : '') + ' data-en="Yes" data-fr="Oui">Yes</option><option value="no"' + (e.alcohol === false ? ' selected' : '') + ' data-en="No" data-fr="Non">No</option></select></div>'
+    + '</div><div class="ws-row" id="ws-lic-row" style="margin-top:10px;' + (e.alcohol === true ? '' : 'display:none') + '">' + wsField('ws-licence', t('Licence cost (' + cur + ')', 'Coût de la licence (' + cur + ')'), e.licence_cost, { mode: 'decimal', ph: LANG === 'fr' ? 'vide = non chiffré' : 'empty = not priced' }) + '</div></div>';
+  h += '<div class="ws-block"><h3>' + t('Funding', 'Financement') + '</h3><div class="ws-row">'
+    + wsField('ws-budget', t('Total budget (' + cur + ')', 'Budget total (' + cur + ')'), e.budget_amount, { mode: 'decimal' })
+    + wsField('ws-own', t('Of which own funds (' + cur + ')', 'Dont apports (' + cur + ')'), e.own_funds, { mode: 'decimal' })
+    + '<div><label class="l" for="ws-fw">' + t('You work in the venue', 'Vous travaillez dans l\'établissement') + '</label><select id="ws-fw"><option value="yes"' + (e.founder_works ? ' selected' : '') + ' data-en="Yes" data-fr="Oui">Yes</option><option value="no"' + (!e.founder_works ? ' selected' : '') + ' data-en="No" data-fr="Non">No</option></select></div>'
+    + '</div></div>';
+  h += '<div class="ws-block"><h3>' + t('Team', 'Équipe') + '</h3><p class="sub" id="ws-team-sub"></p><div id="ws-team"></div>'
+    + '<button class="linkbtn" type="button" id="ws-team-reset" style="margin-top:8px;">' + t('Back to Za3fran\'s estimate', 'Revenir à l\'estimation Za3fran') + '</button></div>';
+  h += '<div class="ws-block"><details class="ws-texts"><summary>' + t('My concept texts', 'Les textes de mon concept') + '</summary>'
+    + [['description', 'Concept description', 'Description du concept'], ['differentiation', 'What sets it apart', 'Ce qui le différencie'], ['market_gap', 'Market gap', 'Vide du marché'], ['competitors', 'Competition', 'Concurrence']].map(function(f){
+      return '<label class="l" style="margin-top:12px;" for="ws-x-' + f[0] + '">' + t(f[1], f[2]) + '</label><textarea id="ws-x-' + f[0] + '">' + esc(e.texts[f[0]] || '') + '</textarea>';
+    }).join('') + '</details></div>';
+  $('wsForm').innerHTML = h;
+  wsRenderTeam(WS.base && WS.base.team);
+  $('wsForm').addEventListener('input', wsOnChange);
+  $('wsForm').addEventListener('change', function(ev){
+    if (ev.target.classList.contains('js-svc-on')) ev.target.closest('.svc').classList.toggle('off', !ev.target.checked);
+    if (ev.target.id === 'ws-alcohol') $('ws-lic-row').style.display = ev.target.value === 'yes' ? '' : 'none';
+    wsOnChange(ev);
+  });
+  $('ws-team-reset').addEventListener('click', function(){ WS.teamTouched = false; WS.resetTeam = true; wsOnChange(); });
+  applyLangHelpers();
+}
+function wsRenderTeam(team){
+  var el = $('ws-team'); if (!el) return;
+  if (!team) { el.innerHTML = '<p class="hint">' + t('The team is estimated once the figures can be computed.', 'L\'équipe est estimée dès que les chiffres peuvent être calculés.') + '</p>'; return; }
+  $('ws-team-sub').innerHTML = team.source === 'estimate'
+    ? t('Estimated by Za3fran from your seats, services and opening days (market salaries). Change a headcount to set your own team.', 'Estimée par Za3fran à partir de vos places, services et jours d\'ouverture (salaires du marché). Changez un effectif pour fixer votre propre équipe.')
+    : t('Your team (market salaries for each role).', 'Votre équipe (salaires du marché pour chaque poste).');
+  if (WS.teamTouched) return;   // keep what the founder is typing
+  el.innerHTML = team.lines.map(function(l){
+    return '<div class="team-row" data-role="' + esc(l.role) + '" data-brain="' + esc(l.brain_role || '') + '"><span>' + esc(l.label) + (l.fixed ? ' <span class="fixed">' + t('(you)', '(vous)') + '</span>' : '') + '</span>'
+      + (l.fixed ? '<span class="fixed">1</span>' : '<input type="text" inputmode="decimal" class="js-team" value="' + esc(l.count) + '" aria-label="' + esc(l.label) + '">') + '</div>';
+  }).join('') + '<div class="team-row"><b>' + t('Total', 'Total') + '</b><b>' + esc(team.total) + '</b></div>';
+}
+
+function wsCollect(){
+  var patch = { services: [], texts: {} }, bad = [];
+  document.querySelectorAll('#wsForm input.bad').forEach(function(i){ i.classList.remove('bad'); });
+  WS.data.services.forEach(function(sv){
+    var box = document.querySelector('.svc[data-svc="' + sv.id + '"]');
+    if (!box.querySelector('.js-svc-on').checked) return;
+    var days = Array.from(box.querySelectorAll('.js-day:checked')).map(function(x){ return Number(x.value); });
+    var tk = numIn($('ws-t-' + sv.id).value), cv = numIn($('ws-c-' + sv.id).value);
+    if (isNaN(tk)) bad.push('ws-t-' + sv.id); if (isNaN(cv)) bad.push('ws-c-' + sv.id);
+    patch.services.push({ id: sv.id, days: days, ticket: isNaN(tk) ? null : tk, covers: isNaN(cv) ? null : cv });
+  });
+  [['seats', 'ws-seats'], ['surface_m2', 'ws-surface'], ['rent_monthly', 'ws-rent'], ['budget_amount', 'ws-budget'], ['own_funds', 'ws-own'], ['licence_cost', 'ws-licence']].forEach(function(p){
+    var n = numIn($(p[1]).value); if (isNaN(n)) { bad.push(p[1]); return; } patch[p[0]] = n;
+  });
+  if (patch.seats == null) delete patch.seats;
+  patch.opening = $('ws-opening').value || null;
+  patch.ramadan = $('ws-ramadan').value;
+  patch.alcohol = $('ws-alcohol').value === 'yes';
+  patch.founder_works = $('ws-fw').value === 'yes';
+  ['description', 'differentiation', 'market_gap', 'competitors'].forEach(function(k){ patch.texts[k] = $('ws-x-' + k).value; });
+  if (WS.resetTeam) patch.team = null;
+  else if (WS.teamTouched) {
+    patch.team = Array.from(document.querySelectorAll('#ws-team .team-row[data-role]')).map(function(r){
+      var inp = r.querySelector('.js-team'); var c = inp ? numIn(inp.value) : 1;
+      if (isNaN(c)) bad.push(null);
+      return { role: r.dataset.role, brain_role: r.dataset.brain || null, count: isNaN(c) ? 0 : c };
+    });
+  }
+  bad.forEach(function(id){ if (id && $(id)) $(id).classList.add('bad'); });
+  return { patch: patch, bad: bad };
+}
+function wsOnChange(ev){
+  if (ev && ev.target && ev.target.classList && ev.target.classList.contains('js-team')) WS.teamTouched = true;
+  WS.dirty = true; wsStatus();
+  clearTimeout(WS.timer);
+  WS.timer = setTimeout(wsPreview, 450);
+}
+async function wsPreview(){
+  var c = wsCollect(); if (c.bad.length) return;
+  var my = ++WS.seq;
+  var r = await wsApi({ action: 'preview', patch: c.patch });
+  if (my !== WS.seq || !r.ok) return;
+  wsRenderPanel(r.data.preview, r.data.errors || []);
+  if (!WS.teamTouched) wsRenderTeam(r.data.preview.team);
+}
+function wsStatus(msg){
+  var el = $('ws-status'); if (!el) return;
+  if (msg) { el.className = 'ws-status'; el.innerHTML = msg; return; }
+  el.className = 'ws-status' + (WS.dirty ? ' dirty' : '');
+  el.innerHTML = WS.dirty ? t('Changes not saved yet', 'Modifications non enregistrées')
+    : (STATE.workshop && STATE.workshop.pending ? t('Saved. Update your report (bottom bar) to rewrite the analysis.', 'Enregistré. Mettez votre rapport à jour (barre du bas) pour réécrire l\'analyse.') : t('Figures of your current report', 'Chiffres de votre rapport actuel'));
+}
+var WS_ERR = { above_budget: ['Own funds above the total budget', 'Apports supérieurs au budget total'], no_service: ['Keep at least one service', 'Gardez au moins un service'], no_days: ['Pick the days of each service', 'Choisissez les jours de chaque service'], out_of_range: ['A value is out of range', 'Une valeur est hors limites'] };
+function wsRenderPanel(p, errors){
+  var base = WS.base || p, rep = WS.data.report || {};
+  var v = VERDICTS[p.verdict] || { cls: 'warn', en: p.verdict || '—', fr: p.verdict || '—' };
+  var d = p.overall != null && base.overall != null ? p.overall - base.overall : 0;
+  var h = '<div style="font-size:.8rem;color:var(--muted);">' + t('Provisional score', 'Score provisoire') + '</div>'
+    + '<div class="big">' + esc(p.overall != null ? p.overall : '—') + '<small>/100</small>'
+    + (d ? '<span class="delta ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '+' : '') + d + '</span>' : '') + '</div>'
+    + '<span class="verdict ' + v.cls + '">' + t(esc(v.en), esc(v.fr)) + '</span>'
+    + '<div class="note">' + t('Last report: ' + esc(rep.score != null ? rep.score : '—') + '/100. ', 'Dernier rapport : ' + esc(rep.score != null ? rep.score : '—') + '/100. ') + esc(p.provisional_note || '') + '</div>';
+  if (p.fin_status !== 'computed') h += '<div class="notice bad" style="margin-top:12px;">' + t('The figures cannot be computed with these answers (check services, seats and opening).', 'Les chiffres ne peuvent pas être calculés avec ces réponses (vérifiez services, places et ouverture).') + '</div>';
+  var figs = p.figures || {}, keys = Object.keys(FIG_LBL).filter(function(k){ return figs[k]; });
+  if (keys.length) h += '<div class="ws-figs">' + keys.map(function(k){ return '<div><span>' + t(FIG_LBL[k][0], FIG_LBL[k][1]) + '</span><span>' + esc(figs[k].text) + '</span></div>'; }).join('') + '</div>';
+  h += '<div class="ws-alerts"><div style="font-size:.84rem;font-weight:700;">' + t('Financial alerts', 'Alertes financières') + '</div>';
+  var baseCodes = (base.alerts || []).map(function(a){ return a.code; }), nowCodes = (p.alerts || []).map(function(a){ return a.code; });
+  (p.alerts || []).forEach(function(a){ h += '<div class="ws-alert ' + esc(a.severity) + '"><b>' + esc(a.title) + '</b>' + esc(a.body) + '</div>'; });
+  var gone = (base.alerts || []).filter(function(a){ return nowCodes.indexOf(a.code) < 0; });
+  gone.forEach(function(a){ h += '<div class="ws-ok">✓ ' + t('Resolved by your figures: ', 'Réglée par vos chiffres : ') + esc(a.title) + '</div>'; });
+  if (!(p.alerts || []).length && !gone.length) h += '<div class="ws-ok">' + t('No financial alert.', 'Aucune alerte financière.') + '</div>';
+  h += '</div>';
+  if (errors && errors.length) h += '<div class="err">' + errors.map(function(e){ var m = WS_ERR[e.code]; return m ? t(m[0], m[1]) : esc(e.path + ': ' + e.code); }).join('<br>') + '</div>';
+  h += '<div class="ws-actions"><button class="btn small" id="ws-save" type="button">' + t('Save my figures', 'Enregistrer mes chiffres') + '</button><span class="ws-status" id="ws-status"></span></div>';
+  $('wsPanel').innerHTML = h;
+  $('ws-save').addEventListener('click', wsSave);
+  wsStatus();
+  applyLangHelpers();
+}
+async function wsSave(){
+  var c = wsCollect();
+  if (c.bad.length) { wsStatus(errMsg('invalid_values')); return; }
+  var btn = $('ws-save'); btn.disabled = true;
+  var r = await wsApi({ action: 'save', patch: c.patch });
+  btn.disabled = false;
+  if (!r.ok) { wsStatus(errMsg(r.error)); return; }
+  WS.dirty = false; WS.resetTeam = false;
+  if (r.data.saved === false) { wsStatus(t('Nothing changed.', 'Aucun changement.')); return; }
+  WS.data = r.data; WS.teamTouched = false;
+  var st = await loadState();
+  if (st.ok) { STATE = st.data; renderAll(); }
+  wsRenderPanel(r.data.preview, []); wsRenderTeam(r.data.preview.team);
+  wsStatus(t('Saved. Update your report (bottom bar) to rewrite the analysis and the risks.', 'Enregistré. Mettez votre rapport à jour (barre du bas) pour réécrire l\'analyse et les risques.'));
+}
 
 // ═══ Gate & boot ═════════════════════════════════════════════════
 async function openWith(code, fromGate){
@@ -427,6 +676,11 @@ function renderAll(){
   });
   renderList($('riskList'), risks);
   renderList($('alertList'), alerts);
+  // v2 projects: the concept workshop replaces the answer editors.
+  $('wsSec').classList.toggle('hidden', !WSON());
+  $('introV1').classList.toggle('hidden', WSON());
+  $('changesSec').classList.toggle('hidden', WSON());
+  if (WSON() && !WS.loaded && !WS.loading) { var f = $('wsForm'); if (f) { var nf = f.cloneNode(false); f.parentNode.replaceChild(nf, f); } wsLoad(); }
   renderChanges(); renderOther(); renderHistory(); renderBar();
   $('clearedBox').classList.toggle('hidden', s.project.crr_status !== 'cleared');
   // Business plan next step after clearance (from the save that cleared the review).
@@ -449,11 +703,15 @@ function renderNotices(){
   }
   if (s.reassessment.status === 'running') {
     h += '<div class="notice info"><strong>' + t('Re-assessing your concept', 'Réévaluation de votre concept en cours') + '</strong>'
-      + t('The Validator is rewriting your report on the updated answers. This usually takes 8 to 10 minutes. You can leave this page; your results will be here when you come back.',
-          'Le Validator réécrit votre rapport à partir des réponses mises à jour. Cela prend généralement 8 à 10 minutes. Vous pouvez quitter cette page : vos résultats seront là à votre retour.') + '</div>';
+      + t('The Validator is rewriting your report on the updated answers. This usually takes 2 to 3 minutes. You can leave this page; your results will be here when you come back.',
+          'Le Validator réécrit votre rapport à partir des réponses mises à jour. Cela prend généralement 2 à 3 minutes. Vous pouvez quitter cette page : vos résultats seront là à votre retour.') + '</div>';
   } else if (s.reassessment.status === 'error') {
     h += '<div class="notice bad"><strong>' + t('The re-assessment did not complete', 'La réévaluation n\'a pas abouti') + '</strong>'
       + t('Nothing was charged and your changes are kept. Start it again from the bar at the bottom.', 'Rien n\'a été décompté et vos modifications sont conservées. Relancez-la depuis la barre en bas de page.') + '</div>';
+  } else if (s.reassessment.pending && WSON() && s.workshop && s.workshop.pending) {
+    h += '<div class="notice info"><strong>' + t('Your saved figures are not in your report yet', 'Vos chiffres enregistrés ne sont pas encore dans votre rapport') + '</strong>'
+      + t('Decide the required points below, then update your report from the bar at the bottom: the Validator rewrites the analysis and the risks on your new figures.',
+          'Arbitrez les points requis ci-dessous, puis mettez votre rapport à jour depuis la barre du bas : le Validator réécrit l\'analyse et les risques sur vos nouveaux chiffres.') + '</div>';
   } else if (s.reassessment.pending) {
     h += '<div class="notice info"><strong>' + t('Your changes are not assessed yet', 'Vos modifications ne sont pas encore évaluées') + '</strong>'
       + t('You changed ' + s.reassessment.pending_changes.length + ' answer(s). Re-assess the concept so the Validator can judge them before your tools are unlocked.',
@@ -520,15 +778,25 @@ function cardHTML(it){
 
   var name = 'pick_' + k;
   h += '<fieldset class="pick"><legend>' + t('How will you handle this?', 'Comment allez-vous traiter ce point ?') + '</legend>'
-    + pickOpt(name, 'plan_changed', type, 'Change the plan', 'Modifier le plan', 'Update the answers behind it', 'Mettre à jour les réponses concernées')
+    + (WSON()
+      ? pickOpt(name, 'plan_changed', type, 'I changed the plan', 'J\'ai modifié le plan', 'Figures or texts adjusted in step 1', 'Chiffres ou textes ajustés à l\'étape 1')
+      : pickOpt(name, 'plan_changed', type, 'Change the plan', 'Modifier le plan', 'Update the answers behind it', 'Mettre à jour les réponses concernées'))
     + pickOpt(name, 'risk_accepted', type, 'Accept the risk', 'Accepter le risque', 'Keep the plan, explain why', 'Garder le plan, expliquer pourquoi')
-    + pickOpt(name, 'facts_corrected', type, 'Correct the facts', 'Corriger les faits', 'The Validator got it wrong', 'Le Validator s\'est trompé')
+    // A financial alert is computed from your own figures: change them, or accept it (nothing for the Validator to correct).
+    + (WSON() && it.category === 'financial_alert' ? '' : pickOpt(name, 'facts_corrected', type, 'Correct the facts', 'Corriger les faits', 'The Validator got it wrong', 'Le Validator s\'est trompé'))
     + '</fieldset>';
 
   // Change the plan
   h += '<div class="panel js-panel" data-panel="plan_changed"' + (type === 'plan_changed' ? '' : ' hidden') + '>';
   var linked = it.fields && it.fields.length ? it.fields : null;
-  if (linked) {
+  if (WSON()) {
+    var pend = STATE.workshop && STATE.workshop.pending;
+    h += '<p class="hint" style="margin:0 0 10px;">' + (pend
+      ? t('Your changes from step 1 are saved. Say what you changed for this point; the next report update takes it into account.', 'Vos modifications de l\'étape 1 sont enregistrées. Dites ce que vous avez changé pour ce point ; la prochaine mise à jour du rapport en tiendra compte.')
+      : t('First adjust your figures or texts in step 1 and save them, then say here what you changed.', 'Ajustez d\'abord vos chiffres ou vos textes à l\'étape 1 et enregistrez-les, puis dites ici ce que vous avez changé.')) + ' <a href="#wsSec">' + t('Go to step 1', 'Aller à l\'étape 1') + '</a></p>';
+    h += '<label class="block-label">' + t('What you changed for this point', 'Ce que vous avez changé pour ce point') + '</label>'
+      + '<textarea class="js-rationale" data-for="plan_changed">' + (type === 'plan_changed' && d ? esc(d.rationale) : '') + '</textarea></div>';
+  } else if (linked) {
     h += '<p class="hint" style="margin:0 0 14px;">' + t('These are the answers behind this risk. Edit the ones you are changing; leave the others as they are.', 'Voici les réponses liées à ce risque. Modifiez celles que vous changez, laissez les autres telles quelles.') + '</p>';
     linked.forEach(function(f){ h += fieldEditor(f, k); });
   } else {
@@ -538,7 +806,7 @@ function cardHTML(it){
     (it.amended_fields || []).forEach(function(f){ h += fieldEditor(f, k); });
     h += '</div>';
   }
-  h += '<label class="block-label">' + t('Why this change? (optional)', 'Pourquoi ce changement ? (facultatif)') + '</label>'
+  if (!WSON()) h += '<label class="block-label">' + t('Why this change? (optional)', 'Pourquoi ce changement ? (facultatif)') + '</label>'
     + '<textarea class="js-rationale" data-for="plan_changed">' + (type === 'plan_changed' && d ? esc(d.rationale) : '') + '</textarea></div>';
 
   // Accept / correct
@@ -699,7 +967,10 @@ async function saveCard(node, it){
   var decision = { risk_key: key, decision_type: type,
     rationale: (body.querySelector('.js-rationale[data-for="' + type + '"]') || {}).value || '',
     pre_conditions: Array.from(body.querySelectorAll('.js-pre')).map(function(x){ return x.value.trim(); }).filter(Boolean) };
-  if (type === 'plan_changed') {
+  if (type === 'plan_changed' && WSON()) {
+    if (decision.rationale.trim().length < 10) { errEl.innerHTML = errMsg('plan_change_without_workshop_change'); return; }
+    decision.amendments = [];
+  } else if (type === 'plan_changed') {
     decision.amendments = Array.from(body.querySelectorAll('.js-panel[data-panel="plan_changed"] .fe'))
       .filter(fieldChanged).map(function(fe){ return { field_key: fe.dataset.field, value: readField(fe) }; });
   } else if (decision.rationale.trim().length < 10) {
@@ -799,10 +1070,10 @@ function renderBar(){
 
   var rem = s.regeneration.remaining, lim = s.regeneration.limit;
   if (s.reassessment.status === 'running') {
-    right = '<button class="btn" disabled><span class="spinner"></span>' + t('Re-assessing…', 'Réévaluation…') + '</button><div class="sub">' + t('Usually 8 to 10 minutes', 'En général 8 à 10 minutes') + '</div>';
+    right = '<button class="btn" disabled><span class="spinner"></span>' + t('Re-assessing…', 'Réévaluation…') + '</button><div class="sub">' + t('Usually 2 to 3 minutes', 'En général 2 à 3 minutes') + '</div>';
   } else if (s.reassessment.pending) {
     right = rem > 0
-      ? '<button class="btn" id="reassessBtn">' + t('Re-assess my concept', 'Réévaluer mon concept') + '</button><div class="sub">'
+      ? '<button class="btn" id="reassessBtn">' + (WSON() ? t('Update my report', 'Mettre à jour mon rapport') : t('Re-assess my concept', 'Réévaluer mon concept')) + '</button><div class="sub">'
         + t('Uses 1 of your ' + lim + ' free re-assessments (' + rem + ' left)', 'Utilise 1 de vos ' + lim + ' réévaluations gratuites (reste ' + rem + ')') + '</div>'
       : '<button class="btn" disabled>' + t('Re-assess my concept', 'Réévaluer mon concept') + '</button><div class="sub">' + errMsg('regeneration_limit_reached') + '</div>';
     right += '<div class="err" id="barErr" role="alert"></div>';
@@ -857,13 +1128,14 @@ function startPolling(){
       // new report version → new items; reset open state so everything to decide is open
       openCards = {}; dirty = {};
       document.getElementById('riskList').innerHTML = ''; document.getElementById('alertList').innerHTML = '';
+      WS.loaded = false;   // the workshop reloads its baseline from the new report
       renderAll(); window.scrollTo({ top: 0 });
     } else if (was !== 'running') renderAll();
   }, 8000);
 }
 
 window.addEventListener('beforeunload', function(e){
-  if (Object.keys(dirty).some(function(k){ return dirty[k]; })) { e.preventDefault(); e.returnValue = ''; }
+  if (WS.dirty || Object.keys(dirty).some(function(k){ return dirty[k]; })) { e.preventDefault(); e.returnValue = ''; }
 });
 
 // ── Boot: ?code= in URL, else 2-hour session cookie, else gate ──
