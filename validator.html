@@ -107,6 +107,13 @@ nav.nav-pushed{top:2.5rem;}
 .v-row.two{grid-template-columns:1fr 1fr;align-items:start;}
 .v-row.three{grid-template-columns:1fr 1fr 1fr;align-items:start;}
 .v-field{display:flex;flex-direction:column;gap:0.5rem;}
+/* Side-by-side fields line up: label, input and hint share rows across the row (subgrid),
+   labels sit on the bottom line of their row so inputs align whatever the label length. */
+@supports (grid-template-rows:subgrid){
+  .v-row.two,.v-row.three{row-gap:0;column-gap:1.25rem;}
+  .v-row.two>.v-field,.v-row.three>.v-field{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start;}
+  .v-row.two>.v-field>.v-label,.v-row.three>.v-field>.v-label{align-self:end;margin-bottom:0.5rem;}
+}
 .v-label{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;
   color:var(--muted);display:flex;align-items:center;gap:0.5rem;min-height:2.2rem;flex-wrap:wrap;}
 .v-label .req{color:var(--copper);font-size:0.65rem;}
@@ -271,6 +278,9 @@ footer .foot-bottom a:hover{color:var(--white);}
   .v-hero.bundle-mode{padding-top:11rem;}
   .v-form-wrap{padding:0 1.5rem 5rem;}
   .v-row.two,.v-row.three{grid-template-columns:1fr;}
+  .v-row.two,.v-row.three{row-gap:1.25rem;}
+  .v-row.two>.v-field,.v-row.three>.v-field{display:flex;grid-row:auto;}
+  .v-row.two>.v-field>.v-label,.v-row.three>.v-field>.v-label{margin-bottom:0;align-self:auto;}
   .v-what{gap:1.5rem;}
   .v-price-band{flex-direction:column;text-align:center;gap:0.5rem;}
   .v-price-divider{display:none;}

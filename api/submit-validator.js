@@ -18,7 +18,7 @@
 // /api/checkout-status, so no per-tool intermediate route is needed.
 
 import Stripe from 'stripe';
-import { getPriceId, normalizeCurrency } from '../lib/currency.js';
+import { getLineItem, normalizeCurrency } from '../lib/currency.js';
 import CR from '../lib/concept-record.js';
 
 export default async function handler(req, res) {
@@ -137,12 +137,12 @@ export default async function handler(req, res) {
     // Resolve correct price ID from lib/currency.js
     // 'validator' → Validator only · 'bundle' → Validator + BP
     // 'bundle_menu' → Validator + Menu Engineer · 'bundle_full' → all three
-    const priceId = getPriceId(purchaseType, currency);
+    const lineItem = getLineItem(purchaseType, currency);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       allow_promotion_codes: true,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [lineItem],
       customer_email: data.email,
       metadata: {
         submitter_name: data.name,

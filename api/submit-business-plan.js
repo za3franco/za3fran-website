@@ -15,7 +15,7 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { getPriceId, getDisplayPrice, normalizeCurrency } from '../lib/currency.js';
+import { getLineItem, getDisplayPrice, normalizeCurrency } from '../lib/currency.js';
 
 const stripe    = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase  = createClient(
@@ -72,23 +72,15 @@ export default async function handler(req, res) {
     const customerEmail = submission?.email;
     const customerName  = submission?.name;
 
-    // ── Get Stripe price ID ───────────────────────────────────
-    const priceId = getPriceId('essentials', currency);
-    if (!priceId) {
-      return res.status(500).json({
-        error: `Stripe price not configured for ${currency}. Contact hello@za3fran.io.`
-      });
-    }
+    // ── Stripe line item (configured price, or inline price from lib/currency.js) ──
+    const lineItem = getLineItem('essentials', currency);
 
     // ── Create Stripe checkout session ───────────────────────
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       allow_promotion_codes: true,
-      line_items: [{
-        price: priceId,
-        quantity: 1,
-      }],
+      line_items: [lineItem],
       customer_email: customerEmail,
       metadata: {
         type:         'business_plan_essentials',

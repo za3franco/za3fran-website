@@ -18,7 +18,7 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { getPriceId, normalizeCurrency } from '../lib/currency.js';
+import { getLineItem, normalizeCurrency } from '../lib/currency.js';
 
 const stripe   = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -120,12 +120,7 @@ export default async function handler(req, res) {
 
     const conceptName = submission.concept_name || project.concept_name || 'Your Concept';
 
-    const priceId = getPriceId(priceTierKey, currency);
-    if (!priceId) {
-      return res.status(500).json({
-        error: `Stripe price not configured for ${priceTierKey} / ${currency}. Contact hello@za3fran.io.`
-      });
-    }
+    const lineItem = getLineItem(priceTierKey, currency);
 
     // ── Store intake in Supabase ──
     const runId = generateRunId();
@@ -159,7 +154,7 @@ export default async function handler(req, res) {
       mode: 'payment',
       payment_method_types: ['card'],
       allow_promotion_codes: true,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [lineItem],
       customer_email: email,
       metadata: {
         type: 'menu_engineer',
