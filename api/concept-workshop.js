@@ -57,12 +57,34 @@ async function load(code) {
 
 function today() { return new Date().toISOString().slice(0, 10); }
 
+/**
+ * The record the latest report was assessed on: its concept_records version (report meta.record_version, else 1)
+ * with the readiness-review amendments made between that version and the next one (same rule as loadRecord).
+ */
+async function assessedRecord(ctx) {
+  const rj = (ctx.report && ctx.report.report_json) || {};
+  const v = Number(rj.meta && rj.meta.record_version) || 1;
+  if (ctx.latestRecord && ctx.latestRecord.version === v) return ctx.record;
+  const [rows, ams] = await Promise.all([
+    P.withRetry(() => supabase.from('concept_records').select('version, created_at, data').eq('project_id', ctx.project.id).in('version', [v, v + 1])),
+    P.withRetry(() => supabase.from('crr_amendments').select('field_key, amended_value, amendment_status, amended_at').eq('project_id', ctx.project.id).eq('amendment_status', 'active')),
+  ]);
+  const row = (rows.data || []).find((r) => r.version === v), next = (rows.data || []).find((r) => r.version === v + 1);
+  if (!row) return ctx.record;
+  const from = Date.parse(row.created_at), to = next ? Date.parse(next.created_at) : Infinity;
+  const rec = CR.applyAmendments(row.data, (ams.data || []).filter((a) => { const t = Date.parse(a.amended_at); return t > from && t < to; }));
+  if (!rec.language) rec.language = ctx.record.language;
+  if (!rec.currency) rec.currency = ctx.record.currency;
+  return rec;
+}
+
 async function previewOf(ctx, record) {
   const { market, brain } = await marketFor(record);
   const rj = ctx.report && ctx.report.report_json;
   const run = (r) => WS.preview({ record: r, market, brain, reportJson: rj, today: today() });
-  const current = ctx.currentPreview || (ctx.currentPreview = run(ctx.record));
-  const next = record === ctx.record ? current : run(record);
+  // Anchor: the figures the report was computed on; the provisional score moves from there.
+  const current = ctx.currentPreview || (ctx.currentPreview = run(ctx.assessed || (ctx.assessed = await assessedRecord(ctx))));
+  const next = run(record);
   return WS.anchor(current, next, rj && rj.overall ? { score: rj.overall.score, verdict: String(rj.overall.verdict || '').toUpperCase().replace('-', '_') } : null);
 }
 
@@ -109,13 +131,15 @@ export default async function handler(req, res) {
     const nextVersion = ((ctx.latestRecord && ctx.latestRecord.version) || 0) + 1;
     const data = Object.assign({}, record, { schema: CR.RECORD_VERSION });
     const ins = await P.withRetry(() => supabase.from('concept_records').insert({
-      project_id: ctx.project.id, version: nextVersion, data, source: 'workshop', schema: CR.RECORD_VERSION,
+      // source: the concept_records check constraint allows 'readiness_review' (the workshop is its step 1).
+      project_id: ctx.project.id, version: nextVersion, data, source: 'readiness_review', schema: CR.RECORD_VERSION,
       note: changes.join(' | ').slice(0, 2000),
     }).select('version, created_at, data'));
     if (ins.error) {
+      console.error('[concept-workshop] save failed', ins.error.code, ins.error.message || ins.error);
       // Two saves at once: the unique (project_id, version) index refused this one; the founder retries.
-      console.error('[concept-workshop] save failed', ins.error.message || ins.error);
-      return res.status(409).json({ error: 'save_conflict' });
+      if (ins.error.code === '23505') return res.status(409).json({ error: 'save_conflict' });
+      return res.status(502).json({ error: 'save_failed' });
     }
     const saved = Object.assign({}, ctx, { latestRecord: (ins.data || [])[0], record });
     console.log(`[concept-workshop] ${ctx.code}: record v${nextVersion} saved (${changes.length} change(s))`);

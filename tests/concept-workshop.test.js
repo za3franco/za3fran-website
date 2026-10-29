@@ -71,3 +71,13 @@ test('provisional score starts from the report score and moves with the figures 
   const moved = W.anchor(cur, next, { score: 74, verdict: 'VIABLE' });
   assert.equal(moved.overall, Math.round(74 + next.overall - cur.overall));
 });
+
+test('the workshop saves with a source the concept_records table accepts', () => {
+  const fs = require('node:fs'), path = require('node:path');
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase/migrations/20261028c_validator_v2_concept_records.sql'), 'utf8');
+  const allowed = (sql.match(/source in \(([^)]*)\)/) || [])[1].split(',').map((x) => x.trim().replace(/'/g, ''));
+  const api = fs.readFileSync(path.join(__dirname, '..', 'api/concept-workshop.js'), 'utf8');
+  const used = [...api.matchAll(/source: '([a-z_]+)'/g)].map((m) => m[1]);
+  assert.ok(used.length);
+  used.forEach((u) => assert.ok(allowed.includes(u), `source '${u}' not allowed by the table (${allowed.join(', ')})`));
+});

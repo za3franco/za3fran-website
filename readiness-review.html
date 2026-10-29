@@ -387,6 +387,7 @@ var ERRORS = {
   plan_change_without_amendment: ['Change at least one answer, or pick another option.', 'Modifiez au moins une réponse, ou choisissez une autre option.'],
   plan_change_without_workshop_change: ['Save a change in step 1 first, then say here what you changed (one sentence at least).', 'Enregistrez d\'abord une modification à l\'étape 1, puis dites ici ce que vous avez changé (une phrase au moins).'],
   invalid_values: ['Some figures are not valid. Check the highlighted fields.', 'Certains chiffres ne sont pas valides. Vérifiez les champs signalés.'],
+  save_failed: ['Your figures could not be saved. Nothing was lost on this page: try again in a moment.', 'Vos chiffres n\'ont pas pu être enregistrés. Rien n\'est perdu sur cette page : réessayez dans un instant.'],
   save_conflict: ['Your figures were just saved elsewhere. Reload the page and try again.', 'Vos chiffres viennent d\'être enregistrés ailleurs. Rechargez la page et réessayez.'],
   workshop_not_available: ['Figures cannot be adjusted for this project.', 'Les chiffres ne peuvent pas être ajustés pour ce projet.'],
   field_not_linked_to_risk: ['That answer is not linked to this risk. Use "Change another answer" below.', 'Cette réponse n\'est pas liée à ce risque. Utilisez « Modifier une autre réponse » plus bas.'],
@@ -443,6 +444,25 @@ function saveReview(body){ return api('POST', '/api/crr-review-decide', Object.a
 // Figures are recalculated by the Validator's own code on every change (/api/concept-workshop,
 // no model call). Saving stores a new concept record version; "Update my report" re-assesses it.
 function WSON(){ return !!(STATE && STATE.workshop); }
+/** A financial alert of the current report that the figures in step 1 no longer raise. */
+function resolvedByFigures(it){
+  if (!WSON() || it.category !== 'financial_alert' || !WS.lastPreview) return false;
+  return !(WS.lastPreview.alerts || []).some(function(a){ return a.risk_key === it.risk_key || a.title === it.title; });
+}
+function wsMarkAlerts(){
+  if (!STATE) return;
+  var alerts = STATE.items.filter(function(i){ return i.category === 'financial_alert'; });
+  alerts.forEach(function(it){
+    var card = document.querySelector('.card[data-key="' + it.risk_key + '"]'); if (!card || dirty[it.risk_key]) return;
+    var was = card.dataset.solved === '1', now = resolvedByFigures(it);
+    if (was !== now) {
+      openCards[it.risk_key] = !now && (!it.decision || it.decision.stale) && it.required !== false;
+      rerenderCard(it);
+      var nc = document.querySelector('.card[data-key="' + it.risk_key + '"]'); if (nc) nc.dataset.solved = now ? '1' : '';
+    }
+  });
+  renderBar();
+}
 var WS = { loaded: false, loading: false, data: null, base: null, dirty: false, teamTouched: false, timer: null, seq: 0 };
 var DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 var DAY_LBL = { 0: ['Sun', 'Dim'], 1: ['Mon', 'Lun'], 2: ['Tue', 'Mar'], 3: ['Wed', 'Mer'], 4: ['Thu', 'Jeu'], 5: ['Fri', 'Ven'], 6: ['Sat', 'Sam'] };
@@ -583,9 +603,10 @@ function wsStatus(msg){
 }
 var WS_ERR = { above_budget: ['Own funds above the total budget', 'Apports supérieurs au budget total'], no_service: ['Keep at least one service', 'Gardez au moins un service'], no_days: ['Pick the days of each service', 'Choisissez les jours de chaque service'], out_of_range: ['A value is out of range', 'Une valeur est hors limites'] };
 function wsRenderPanel(p, errors){
+  WS.lastPreview = p;
   var base = WS.base || p, rep = WS.data.report || {};
   var v = VERDICTS[p.verdict] || { cls: 'warn', en: p.verdict || '—', fr: p.verdict || '—' };
-  var d = p.overall != null && base.overall != null ? p.overall - base.overall : 0;
+  var d = p.overall != null && rep.score != null ? p.overall - Number(rep.score) : 0;   // vs the last report
   var h = '<div style="font-size:.8rem;color:var(--muted);">' + t('Provisional score', 'Score provisoire') + '</div>'
     + '<div class="big">' + esc(p.overall != null ? p.overall : '—') + '<small>/100</small>'
     + (d ? '<span class="delta ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '+' : '') + d + '</span>' : '') + '</div>'
@@ -595,9 +616,10 @@ function wsRenderPanel(p, errors){
   var figs = p.figures || {}, keys = Object.keys(FIG_LBL).filter(function(k){ return figs[k]; });
   if (keys.length) h += '<div class="ws-figs">' + keys.map(function(k){ return '<div><span>' + t(FIG_LBL[k][0], FIG_LBL[k][1]) + '</span><span>' + esc(figs[k].text) + '</span></div>'; }).join('') + '</div>';
   h += '<div class="ws-alerts"><div style="font-size:.84rem;font-weight:700;">' + t('Financial alerts', 'Alertes financières') + '</div>';
-  var baseCodes = (base.alerts || []).map(function(a){ return a.code; }), nowCodes = (p.alerts || []).map(function(a){ return a.code; });
+  var nowKeys = (p.alerts || []).map(function(a){ return a.risk_key; }), nowTitles = (p.alerts || []).map(function(a){ return a.title; });
   (p.alerts || []).forEach(function(a){ h += '<div class="ws-alert ' + esc(a.severity) + '"><b>' + esc(a.title) + '</b>' + esc(a.body) + '</div>'; });
-  var gone = (base.alerts || []).filter(function(a){ return nowCodes.indexOf(a.code) < 0; });
+  // Alerts of the last report that these figures no longer raise.
+  var gone = ((STATE && STATE.items) || []).filter(function(i){ return i.category === 'financial_alert' && nowKeys.indexOf(i.risk_key) < 0 && nowTitles.indexOf(i.title) < 0; });
   gone.forEach(function(a){ h += '<div class="ws-ok">✓ ' + t('Resolved by your figures: ', 'Réglée par vos chiffres : ') + esc(a.title) + '</div>'; });
   if (!(p.alerts || []).length && !gone.length) h += '<div class="ws-ok">' + t('No financial alert.', 'Aucune alerte financière.') + '</div>';
   h += '</div>';
@@ -607,6 +629,7 @@ function wsRenderPanel(p, errors){
   $('ws-save').addEventListener('click', wsSave);
   wsStatus();
   applyLangHelpers();
+  wsMarkAlerts();
 }
 async function wsSave(){
   var c = wsCollect();
@@ -672,7 +695,7 @@ function renderAll(){
 
   // Default open state: first render opens every card still to decide.
   s.items.forEach(function(it){
-    if (openCards[it.risk_key] === undefined) openCards[it.risk_key] = !it.decision || it.decision.stale;
+    if (openCards[it.risk_key] === undefined) openCards[it.risk_key] = (!it.decision || it.decision.stale) && it.required !== false && !resolvedByFigures(it);
   });
   renderList($('riskList'), risks);
   renderList($('alertList'), alerts);
@@ -758,7 +781,7 @@ function renderList(el, items){
 
 function cardHTML(it){
   var st = cardState(it), open = openCards[it.risk_key], d = it.decision, k = esc(it.risk_key);
-  var pill = st === 'done' ? t(TYPE_LABEL[d.type][0], TYPE_LABEL[d.type][1]) : st === 'stale' ? t('Decide again', 'À redécider') : (it.required === false ? t('Optional', 'Facultatif') : t('Required', 'Requis'));
+  var pill = st === 'done' ? t(TYPE_LABEL[d.type][0], TYPE_LABEL[d.type][1]) : st === 'stale' ? t('Decide again', 'À redécider') : resolvedByFigures(it) ? t('Resolved by your figures', 'Réglée par vos chiffres') : (it.required === false ? t('Optional', 'Facultatif') : t('Required', 'Requis'));
   var h = '<div class="card ' + st + '" data-key="' + k + '">'
     + '<div class="card-head" role="button" tabindex="0" aria-expanded="' + (open ? 'true' : 'false') + '">'
     + '<div><div class="t">' + esc(it.title) + '</div><div class="meta">' + metaLine(it) + '</div></div>'
@@ -789,6 +812,7 @@ function cardHTML(it){
   // Change the plan
   h += '<div class="panel js-panel" data-panel="plan_changed"' + (type === 'plan_changed' ? '' : ' hidden') + '>';
   var linked = it.fields && it.fields.length ? it.fields : null;
+  if (resolvedByFigures(it)) h = h.replace('<fieldset class="pick">', '<div class="notice ok" style="margin:14px 0 0;">' + t('Your figures in step 1 remove this alert. No decision is needed: it disappears when you update your report.', 'Vos chiffres de l\'étape 1 lèvent cette alerte. Aucune décision n\'est nécessaire : elle disparaîtra à la mise à jour de votre rapport.') + '</div><fieldset class="pick">');
   if (WSON()) {
     var pend = STATE.workshop && STATE.workshop.pending;
     h += '<p class="hint" style="margin:0 0 10px;">' + (pend
@@ -1060,6 +1084,9 @@ function renderBar(){
   // Progress counts the items required for this verdict; optional items never block.
   var req = s.counts.required != null ? s.counts.required : s.counts.total;
   var reqLeft = s.counts.required_remaining != null ? s.counts.required_remaining : s.counts.remaining;
+  // A required alert your figures already remove needs no decision: it disappears at the report update.
+  var solved = s.items.filter(function(i){ return i.required && !(i.decision && !i.decision.stale) && resolvedByFigures(i); }).length;
+  reqLeft = Math.max(0, reqLeft - solved); req = Math.max(0, req - solved);
   var reqDone = req - reqLeft;
   var pct = req ? Math.round(100 * reqDone / req) : 100;
   $('progTxt').innerHTML = (req
