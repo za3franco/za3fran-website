@@ -353,6 +353,7 @@ footer .foot-bottom a:hover{color:var(--white);}
       <label class="choice"><input type="radio" name="rmode" value="estimate"><span><b><span data-en>Za3fran estimates the team</span><span data-fr>Za3fran estime l'équipe</span></b><small><span data-en>Built at once from your seats, opening days and the legal working week, at market salaries. Labelled "Estimate" in the plan; you see it under "Check my figures" and can adjust it.</span><span data-fr>Établie immédiatement à partir de vos places, jours d'ouverture et de la durée légale du travail, aux salaires du marché. Signalée « Estimation » dans le plan ; vous la voyez dans « Vérifier mes chiffres » et pouvez l'ajuster.</span></small></span></label>
     </div>
     <div id="rosterBox" style="margin-top:14px">
+      <p class="hint hidden" id="teamHint"><span data-en>Pre-filled with the team you set in your concept workshop. Salaries left empty use Za3fran's market salary for the role.</span><span data-fr>Pré-rempli avec l'équipe définie dans votre atelier concept. Les salaires laissés vides prennent le salaire de marché Za3fran du poste.</span></p>
       <p class="hint estHint hidden"><span data-en>Lines marked in copper are Za3fran estimates. Change a line and it becomes your figure.</span><span data-fr>Les lignes marquées en cuivre sont des estimations Za3fran. Modifiez une ligne et elle devient votre chiffre.</span></p>
       <table class="rows"><thead><tr>
         <th><span data-en>Role</span><span data-fr>Poste</span></th>
@@ -1179,6 +1180,7 @@ async function open(code){
     $('placesBox').classList.toggle('hidden', !j.places);
     restore(j.saved ? j.saved.intake : (j.prefill || {}));   // bpi-1.5.0: a new intake starts from the concept record
     if (!j.saved && j.prefill && j.prefill.covers_hint === 'above_reference') { var rh = $('refHint'); if (rh) rh.classList.remove('hidden'); }
+    if (!j.saved && j.prefill && j.prefill.ui && j.prefill.ui.team_from === 'workshop') $('teamHint').classList.remove('hidden');
     if (!j.saved) { setRadio('fmode','rule'); setRadio('capmode','guarantee'); if (!(j.prefill && j.prefill.sizing)) $('fval').value = '20'; applyModes(); }
     renderStatus(j.saved && j.saved.status);
     if (j.saved && j.saved.preview) renderPreview(j.saved.preview, j.saved.status);

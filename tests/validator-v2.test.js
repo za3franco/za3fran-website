@@ -177,6 +177,23 @@ test('BP intake pre-fill from the concept record (bpi-1.5.0 shape)', () => {
   assert.deepEqual(I.SERVICE_IDS, ['breakfast', 'lunch', 'dinner']);
 });
 
+test('BP intake pre-fill: the workshop team becomes the founder roster (market salaries), the founder line stays out', () => {
+  assert.equal(CR.bpPrefill(REC).roster, undefined);   // no own team in the record: no roster pre-fill
+  const rec = { ...REC, team: [{ role: 'founder', brain_role: 'manager', count: 1 }, { role: 'chef', count: 1 }, { role: 'server', count: 3.5 },
+    { role: 'barista', brain_role: 'bartender', count: 1 }, { role: 'cook', count: 0 }] };
+  const p = CR.bpPrefill(rec);
+  assert.equal(p.ui.roster_mode, 'founder');
+  assert.equal(p.ui.team_from, 'workshop');
+  assert.deepEqual(p.roster, [{ role: 'chef', count: 1, source: 'founder' }, { role: 'server', count: 3.5, source: 'founder' },
+    { role: 'barista', brain_role: 'bartender', count: 1, source: 'founder' }]);
+  // As the page sends it back (roles mapped to the intake list), the roster parses with no error and no salary.
+  const I = require('../lib/bp-intake.js');
+  const back = p.roster.map((r) => ({ role: I.ROLES.includes(r.brain_role || r.role) ? (r.brain_role || r.role) : 'other', count: r.count }));
+  const { intake, errors } = I.normalizeIntake({ founder_works: 'yes', roster_mode: 'founder', roster: back });
+  assert.deepEqual(errors, []);
+  assert.deepEqual(intake.roster.map((x) => [x.role, x.count, x.monthly_gross]), [['founder', 1, undefined], ['chef', 1, undefined], ['server', 3.5, undefined], ['bartender', 1, undefined]]);
+});
+
 test('writer vw-1.0.2: a failing action line is dropped after the rewrites, never the analysis, never the last action', () => {
   const fin = V.runFinancials({ record: REC, market: C.market, brain });
   const A = V.assess({ record: REC, fin, lang: 'fr', currency: 'MAD', today: TODAY });
