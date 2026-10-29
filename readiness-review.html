@@ -20,8 +20,8 @@
 html{scroll-behavior:smooth;}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{transition:none!important;animation:none!important;}}
 body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);min-height:100vh;line-height:1.55;}
-body:not(.lang-fr) [data-fr]{display:none;}
-body.lang-fr [data-en]{display:none;}
+body:not(.lang-fr) [data-fr]:not(option){display:none;}
+body.lang-fr [data-en]:not(option){display:none;}
 a{color:var(--copper-bright);}
 :focus-visible{outline:2px solid var(--copper-bright);outline-offset:2px;}
 .hidden{display:none!important;}

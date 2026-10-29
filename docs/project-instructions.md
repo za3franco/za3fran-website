@@ -48,8 +48,8 @@ These instructions apply to **every chat in this project** without exception. Re
 
 **Bilingual mechanism — one standard, no exceptions**
 ```css
-body:not(.lang-fr) [data-fr]{display:none;}
-body.lang-fr [data-en]{display:none;}
+body:not(.lang-fr) [data-fr]:not(option){display:none;}
+body.lang-fr [data-en]:not(option){display:none;}
 ```
 Every bilingual string is a sibling-span pair: `<span data-en>...</span><span data-fr>...</span>`. This is the only bilingual mechanism used anywhere on the site. The `.en` / `.fr` class-toggle and `data-i18n` + JS dictionary patterns are retired. (Generated documents — plan, PDF, deck, workbook — are rendered in the plan's single language, `facts.lang`.)
 
