@@ -70,6 +70,10 @@ h1{font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin-bottom:16px;}
 
 .dash-box{background:rgba(201,134,42,.06);border:1px solid rgba(201,134,42,.25);border-radius:10px;padding:26px 28px;margin-bottom:32px;display:none;}
 .dash-box.show{display:block;}
+.dash-wait{display:none;align-items:center;gap:14px;text-align:left;border:1px dashed rgba(201,134,42,.3);border-radius:10px;padding:18px 22px;margin-bottom:32px;color:var(--muted);font-size:14px;line-height:1.6;}
+.dash-wait.show{display:flex;}
+.dash-wait .dot{flex:0 0 10px;height:10px;border-radius:50%;background:var(--copper);animation:dw 1.4s ease-in-out infinite;}
+@keyframes dw{0%,100%{opacity:.25}50%{opacity:1}}
 .dash-box .db-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
 .dash-box .db-code{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--white);letter-spacing:.15em;margin-bottom:18px;}
 .btn-dash{display:inline-block;background:var(--copper);color:var(--black);padding:14px 32px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;}
@@ -147,6 +151,11 @@ footer .foot-bottom a:hover{color:var(--white);}
     </div>
 
     <!-- Reveals once checkout-status confirms the access code exists -->
+    <!-- Shown while the deliverables are being prepared (the access code exists only then) -->
+    <div class="dash-wait" id="dashWait" role="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span><span data-en>Your access code and the link to your dashboard will appear here as soon as your report is ready — usually 2 to 3 minutes. You can leave this page: everything also arrives by email.</span><span data-fr>Votre code d'accès et le lien vers votre tableau de bord s'afficheront ici dès que votre rapport sera prêt, en général sous 2 à 3 minutes. Vous pouvez quitter cette page : tout vous parvient aussi par email.</span></span>
+    </div>
     <div class="dash-box" id="dashBox">
       <p class="db-label"><span data-en>Your project access code</span><span data-fr>Votre code d'accès projet</span></p>
       <p class="db-code" id="dashCode">—</p>
@@ -295,6 +304,7 @@ function revealDashboard(data) {
     il.style.display = 'inline-block';
   }
   document.getElementById('dashBox').classList.add('show');
+  document.getElementById('dashWait').classList.remove('show');
 }
 
 // ── Poll in the background for up to ~5 min for the access code.
@@ -304,7 +314,7 @@ function revealDashboard(data) {
 //    without ever revealing the dashboard box; the email is still the
 //    reliable path in that case, and the page already says so. ──
 function pollForAccessCode(sessionId, attempts) {
-  if (attempts <= 0) return;
+  if (attempts <= 0) { document.getElementById('dashWait').classList.remove('show'); return; }
   setTimeout(async () => {
     try {
       const data = await fetchCheckoutStatus(sessionId);
@@ -330,6 +340,7 @@ function pollForAccessCode(sessionId, attempts) {
     const data = await fetchCheckoutStatus(sessionId);
     renderConfirmed(data);
     if (!data.ready) {
+      document.getElementById('dashWait').classList.add('show');
       pollForAccessCode(sessionId, 60); // ~5 min at 5s intervals (a Validator report takes 2–3 min)
     }
   } catch (err) {
@@ -338,6 +349,8 @@ function pollForAccessCode(sessionId, attempts) {
     // page — the payment succeeded (that's why Stripe sent them here);
     // we just couldn't enrich the message. Email is still coming.
     renderConfirmed({ purchase_type: 'default', ready: false });
+    document.getElementById('dashWait').classList.add('show');
+    pollForAccessCode(sessionId, 60);
   }
 })();
 </script>
