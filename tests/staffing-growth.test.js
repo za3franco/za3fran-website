@@ -55,7 +55,7 @@ test('estimates est-1.2.0: hires follow covers, half-time steps, fixed roles nev
 
 test('resolver ar-1.7.0: Canaille gets year-3 hires; years 1-2, funding and reserve unchanged', () => {
   const a = resolve(decided, fx2), b = resolve(decided, fx3);
-  assert.equal(R.RESOLVER_VERSION, 'ar-1.8.0');
+  assert.equal(R.RESOLVER_VERSION, 'ar-1.9.0');
   assert.equal(b.status, 'ready', JSON.stringify(b.gaps.filter((g) => g.severity === 'blocking')));
   assert.equal(a.estimated.hires_y3, null);
   assert.deepEqual(b.estimated.hires_y3.lines.map((l) => [l.role, l.count]), [['server', 0.5], ['cook', 0.5]]);

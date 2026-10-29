@@ -78,7 +78,7 @@ test('resolver ar-1.8.0: covers per service set each service occupancy and flag 
   assert.equal(res.status, 'ready');
   const b = res.assumptions.find((a) => a.parameter_key === 'services.breakfast.occupancy');
   assert.ok(Math.abs(b.value_num - Math.min(0.85, 50 / (40 * 3))) < 1e-3);
-  assert.equal(R.RESOLVER_VERSION, 'ar-1.8.0');
+  assert.equal(R.RESOLVER_VERSION, 'ar-1.9.0');
 });
 
 test('Canaille v2: base case = format benchmark (same year-2 revenue as the cleared plan), claim tested against the room', () => {
