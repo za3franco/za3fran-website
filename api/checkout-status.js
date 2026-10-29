@@ -74,37 +74,16 @@ export default async function handler(req, res) {
     concept_name:  meta.conceptName || meta.concept_name || null,
   };
 
-  if (!customerEmail) {
-    // Shouldn't happen in practice (Stripe requires an email for these
-    // checkout sessions), but fail soft rather than 500 — the frontend
-    // still has purchase_type to work with.
-    return res.status(200).json({ ...responseBase, ready: false, access_code: null, dashboard_url: null });
-  }
-
-  // ── Step 2: Look up the customer's most recent project ────────────
-  // Tool-agnostic: whichever tool/bundle they bought, there's one user →
-  // one (most recent) project → one access_code.
-  try {
-    const { data: user } = await supabase
-      .from('za3fran_users')
-      .select('id')
-      .eq('email', customerEmail)
-      .maybeSingle();
-
-    if (!user) {
-      return res.status(200).json({ ...responseBase, ready: false, access_code: null, dashboard_url: null });
-    }
-
-    const { data: project } = await supabase
-      .from('za3fran_projects')
-      .select('access_code, concept_name, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
+  // ── Step 2: Find THE project this checkout belongs to ────────────
+  // Never "the customer's latest project": before the webhook has created the new
+  // project, that is an older one (same e-mail) and the page showed the wrong code.
+  //   Validator sessions carry metadata.submission_id (since 29 Oct 2026)
+  //   Business Plan sessions carry metadata.accessCode
+  //   Menu Engineer sessions carry metadata.projectId
+  // Older sessions without these: the customer's latest project, only if it was
+  // created after this checkout session.
+  const answer = (project) => {
     const accessCode = project?.access_code || null;
-
     return res.status(200).json({
       ...responseBase,
       concept_name: responseBase.concept_name || project?.concept_name || null,
@@ -112,6 +91,32 @@ export default async function handler(req, res) {
       access_code: accessCode,
       dashboard_url: accessCode ? `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}` : null,
     });
+  };
+  const COLS = 'access_code, concept_name, created_at';
+  try {
+    if (meta.submission_id) {
+      const { data } = await supabase.from('za3fran_projects').select(COLS)
+        .eq('validator_submission_id', meta.submission_id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      return answer(data);
+    }
+    if (meta.accessCode) {
+      const { data } = await supabase.from('za3fran_projects').select(COLS)
+        .eq('access_code', String(meta.accessCode).toUpperCase().trim()).limit(1).maybeSingle();
+      return answer(data);
+    }
+    if (meta.projectId) {
+      const { data } = await supabase.from('za3fran_projects').select(COLS).eq('id', meta.projectId).maybeSingle();
+      return answer(data);
+    }
+
+    if (!customerEmail) return answer(null);
+    const { data: user } = await supabase.from('za3fran_users').select('id').eq('email', customerEmail).maybeSingle();
+    if (!user) return answer(null);
+    const since = new Date((session.created || 0) * 1000).toISOString();
+    const { data: project } = await supabase.from('za3fran_projects').select(COLS)
+      .eq('user_id', user.id).gte('created_at', since)
+      .order('created_at', { ascending: false }).limit(1).maybeSingle();
+    return answer(project);
 
   } catch (err) {
     console.error('[checkout-status] Supabase lookup failed (non-fatal):', err.message);

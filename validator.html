@@ -483,7 +483,31 @@ footer .foot-bottom a:hover{color:var(--white);}
         <span class="v-section-num">03</span>
         <h2 class="v-section-title"><span data-en>Location &amp; <em>market</em></span><span data-fr>Localisation &amp; <em>marché</em></span></h2>
       </div>
-      <div class="v-row two">
+      <div class="v-row three">
+        <div class="v-field">
+          <label class="v-label" for="f-project-country"><span data-en>Country of the project</span><span data-fr>Pays du projet</span> <span class="req">*</span></label>
+          <select class="v-select" id="f-project-country">
+            <option value="" disabled selected data-en="Select the country..." data-fr="Sélectionnez le pays..."></option>
+            <option value="MA" data-en="Morocco" data-fr="Maroc">Morocco</option>
+            <option value="DZ" data-en="Algeria" data-fr="Algérie">Algeria</option>
+            <option value="TN" data-en="Tunisia" data-fr="Tunisie">Tunisia</option>
+            <option value="EG" data-en="Egypt" data-fr="Égypte">Egypt</option>
+            <option value="SN" data-en="Senegal" data-fr="Sénégal">Senegal</option>
+            <option value="CI" data-en="Côte d'Ivoire" data-fr="Côte d'Ivoire">Côte d'Ivoire</option>
+            <option value="CM" data-en="Cameroon" data-fr="Cameroun">Cameroon</option>
+            <option value="NG" data-en="Nigeria" data-fr="Nigeria">Nigeria</option>
+            <option value="KE" data-en="Kenya" data-fr="Kenya">Kenya</option>
+            <option value="ZA" data-en="South Africa" data-fr="Afrique du Sud">South Africa</option>
+            <option value="AE" data-en="UAE" data-fr="Émirats Arabes Unis">UAE</option>
+            <option value="SA" data-en="Saudi Arabia" data-fr="Arabie Saoudite">Saudi Arabia</option>
+            <option value="FR" data-en="France" data-fr="France">France</option>
+            <option value="BE" data-en="Belgium" data-fr="Belgique">Belgium</option>
+            <option value="CH" data-en="Switzerland" data-fr="Suisse">Switzerland</option>
+            <option value="GB" data-en="United Kingdom" data-fr="Royaume-Uni">United Kingdom</option>
+            <option value="OTHER" data-en="Other" data-fr="Autre">Other</option>
+          </select>
+          <span class="v-hint"><span data-en>Can differ from where you live. Amounts are entered in its currency.</span><span data-fr>Peut différer de votre pays de résidence. Les montants se saisissent dans sa devise.</span></span>
+        </div>
         <div class="v-field">
           <label class="v-label" for="f-city"><span data-en>City</span><span data-fr>Ville</span> <span class="req">*</span></label>
           <input class="v-input" type="text" id="f-city" placeholder="Casablanca, Marrakech, Dakar...">
@@ -608,7 +632,7 @@ footer .foot-bottom a:hover{color:var(--white);}
         </div>
       </div>
       <div class="v-row two">
-        <div class="v-field">
+        <div class="v-field" id="wrap-ramadan">
           <label class="v-label" for="f-ramadan"><span data-en>During Ramadan</span><span data-fr>Pendant le Ramadan</span> <span class="req">*</span></label>
           <select class="v-select" id="f-ramadan">
             <option value="" disabled selected data-en="Select..." data-fr="Sélectionnez..."></option>
@@ -1228,9 +1252,35 @@ function servicesData() {
     covers: numVal('c-' + id),
   }));
 }
-function setCurrencyTags() {
-  document.querySelectorAll('.cur-tag').forEach(el => { el.textContent = '(' + (CURRENCY || 'EUR') + ')'; });
+// Amounts are entered in the currency of the PROJECT's country (a founder in France with a
+// Casablanca project enters MAD); payment stays in the visitor's currency (CURRENCY).
+const PROJECT_CURRENCY_BY_COUNTRY = { MA:'MAD', DZ:'DZD', TN:'TND', EG:'EGP', SN:'XOF', CI:'XOF', CM:'XAF', NG:'NGN', KE:'KES',
+  ZA:'ZAR', AE:'AED', SA:'SAR', FR:'EUR', BE:'EUR', CH:'CHF', GB:'GBP' };
+// Countries where the Ramadan question applies; elsewhere it is not asked and trade is taken as normal.
+const RAMADAN_COUNTRIES = ['MA','DZ','TN','EG','SN','NG','AE','SA'];
+function projectCountry() {
+  const pc = document.getElementById('f-project-country');
+  return (pc && pc.value) || document.getElementById('f-country').value || '';
 }
+function projectCurrency() { return PROJECT_CURRENCY_BY_COUNTRY[projectCountry()] || CURRENCY || 'EUR'; }
+function ramadanApplies() { const c = projectCountry(); return !c || c === 'OTHER' || RAMADAN_COUNTRIES.includes(c); }
+function setCurrencyTags() {
+  document.querySelectorAll('.cur-tag').forEach(el => { el.textContent = '(' + projectCurrency() + ')'; });
+}
+function updateProjectCountry() {
+  setCurrencyTags();
+  const w = document.getElementById('wrap-ramadan');
+  if (w) w.style.display = ramadanApplies() ? '' : 'none';
+}
+document.getElementById('f-country').addEventListener('change', e => {
+  const pc = document.getElementById('f-project-country');
+  if (pc && !pc.dataset.touched) pc.value = e.target.value;
+  updateProjectCountry();
+});
+document.getElementById('f-project-country').addEventListener('change', e => {
+  e.target.dataset.touched = '1';
+  updateProjectCountry();
+});
 document.querySelectorAll('[data-svc-toggle]').forEach(el => el.addEventListener('change', () => {
   document.getElementById('svc-' + el.dataset.svcToggle).classList.toggle('on', el.checked);
 }));
@@ -1243,19 +1293,20 @@ document.getElementById('f-type').addEventListener('change', e => {
 (function() {
   const rl = document.getElementById('f-report-lang');
   if (rl) { rl.value = isFr() ? 'fr' : 'en'; rl.addEventListener('change', () => { rl.dataset.touched = '1'; }); }
-  setCurrencyTags();
+  updateProjectCountry();
 })();
 
 function validateForm() {
   let valid = true;
   const required = ['f-name','f-email','f-country','f-role','f-concept-name',
-    'f-type','f-cuisine','f-description','f-differentiation','f-city',
+    'f-type','f-cuisine','f-description','f-differentiation','f-project-country','f-city',
     'f-seats','f-alcohol','f-ramadan','f-opening-month','f-budget-amount','f-own-funds','f-founder-works',
     'f-gap','f-stage','f-timeline'];
 
   required.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
+    if (id === 'f-ramadan' && !ramadanApplies()) { el.classList.remove('error'); return; }
     if (!el.value.trim()) { el.classList.add('error'); valid = false; }
     else { el.classList.remove('error'); }
   });
@@ -1333,7 +1384,9 @@ function collectData() {
       rent_monthly:     numVal('f-rent'),
       alcohol:          document.getElementById('f-alcohol').value,
       licence_cost:     document.getElementById('f-alcohol').value === 'yes' ? numVal('f-licence') : null,
-      ramadan:          document.getElementById('f-ramadan').value,
+      ramadan:          ramadanApplies() ? document.getElementById('f-ramadan').value : 'normal',
+      project_country:  projectCountry(),
+      currency:         projectCurrency(),
       opening:          document.getElementById('f-opening-month').value,
       budget_amount:    numVal('f-budget-amount'),
       own_funds:        numVal('f-own-funds'),
@@ -1398,11 +1451,12 @@ function populateReview(data) {
   set('r-cuisine',         data.cuisine);
   set('r-description',     data.description);
   set('r-differentiation', data.differentiation);
-  set('r-city',            data.city);
+  const pcLabel = (COUNTRY_LABELS[lang] && COUNTRY_LABELS[lang][(data.concept_v2 || {}).project_country]) || (data.concept_v2 || {}).project_country || '';
+  set('r-city',            [data.city, pcLabel].filter(Boolean).join(', '));
   set('r-neighbourhood',   data.neighbourhood);
   set('r-audience',        (data.audience || []).join(', '));
   const v2 = data.concept_v2 || {};
-  const fmt = n => n == null ? '' : Number(n).toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-GB') + ' ' + (data.currency || '');
+  const fmt = n => n == null ? '' : Number(n).toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-GB') + ' ' + (v2.currency || data.currency || '');
   const SVC_LABEL = { breakfast: ['Morning', 'Matin'], lunch: ['Lunch', 'Déjeuner'], dinner: ['Evening', 'Soir'] };
   set('r-budget',          fmt(v2.budget_amount) + (v2.own_funds != null ? (lang === 'fr' ? ' (dont apports ' : ' (own funds ') + fmt(v2.own_funds) + ')' : ''));
   set('r-ticket',          (v2.services || []).map(x => SVC_LABEL[x.id][lang === 'fr' ? 1 : 0] + ' ' + fmt(x.ticket)).join(' · '));

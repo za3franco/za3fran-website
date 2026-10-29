@@ -297,7 +297,7 @@ function revealDashboard(data) {
   document.getElementById('dashBox').classList.add('show');
 }
 
-// ── Poll in the background for up to ~60s for the access code.
+// ── Poll in the background for up to ~5 min for the access code.
 //    Never blocks the main confirmation message — that's already shown.
 //    Validator-only purchases generate the full report inline before
 //    the access code even exists, so this can legitimately time out
@@ -330,7 +330,7 @@ function pollForAccessCode(sessionId, attempts) {
     const data = await fetchCheckoutStatus(sessionId);
     renderConfirmed(data);
     if (!data.ready) {
-      pollForAccessCode(sessionId, 12); // ~60s at 5s intervals
+      pollForAccessCode(sessionId, 60); // ~5 min at 5s intervals (a Validator report takes 2–3 min)
     }
   } catch (err) {
     console.error(err);

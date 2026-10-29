@@ -46,6 +46,7 @@ import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
 import { Agent, setGlobalDispatcher } from 'undici';
 import { getModel } from '../lib/claude-config.js';
+import { getDisplayPrice, normalizeCurrency } from '../lib/currency.js';
 import { getOrCreateProjectAccessCode } from '../lib/project-access.js';
 import { ensureTagged } from '../lib/crr-tagging.js';
 import { SYSTEM_PROMPT, buildReportPrompt, extractReportJson } from '../lib/validator-generate.js';
@@ -134,7 +135,7 @@ export default async function handler(req, res) {
 
   console.log(`Payment confirmed for: ${customerEmail}, type: ${purchaseType}, session: ${session.id}`);
 
-  waitUntil(processReport(customerEmail, session.id, purchaseType));
+  waitUntil(processReport(customerEmail, session.id, purchaseType, session.metadata?.submission_id || null));
   return res.status(200).json({ received: true });
 }
 
@@ -156,19 +157,17 @@ async function withRetry(fn, attempts = 3, delayMs = 1500) {
 }
 
 // ── Async report processing ───────────────────────────────────
-async function processReport(customerEmail, sessionId, purchaseType) {
+async function processReport(customerEmail, sessionId, purchaseType, submissionId = null) {
   console.log(`[processReport] Starting for: ${customerEmail}, type: ${purchaseType}`);
 
   // ── Step 1: Look up submission (with retry — see withRetry above) ──
-  const { data: submissions, error: fetchError } = await withRetry(() =>
-    supabase
-      .from('validator_submissions')
-      .select('*')
-      .eq('email', customerEmail)
-      .eq('status', 'pending_payment')
-      .order('created_at', { ascending: false })
-      .limit(1)
-  );
+  // The submission id travels in the Stripe session (submit-validator, since 29 Oct 2026);
+  // older sessions fall back to the customer's latest pending submission.
+  const { data: submissions, error: fetchError } = await withRetry(() => {
+    let q = supabase.from('validator_submissions').select('*').eq('status', 'pending_payment');
+    q = submissionId ? q.eq('id', submissionId) : q.eq('email', customerEmail);
+    return q.order('created_at', { ascending: false }).limit(1);
+  });
 
   if (fetchError || !submissions || submissions.length === 0) {
     console.error('No matching submission found for:', customerEmail, fetchError);
@@ -326,7 +325,8 @@ async function processReport(customerEmail, sessionId, purchaseType) {
             user_id:                  userId,
             concept_name:             submission.concept_name || 'Untitled',
             validator_submission_id:  submission.id,
-            currency:                 submission.currency || 'EUR',
+            // Project currency = currency of the project's amounts (project country), not the payment currency.
+            currency:                 (v2Record && v2Record.currency) || submission.currency || 'EUR',
             language:                 submission.language || 'en',
           })
           .select('id')
@@ -397,7 +397,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         project_id:  projectId,
         output_html: null,
         access_code: bpAccessCode,
-        currency:    submission.currency || 'EUR',
+        currency:    (v2Record && v2Record.currency) || submission.currency || 'EUR',
         language:    submission.language || 'en',
         model_used:  getModel('essentials'),
         output_json: {
@@ -431,7 +431,7 @@ async function processReport(customerEmail, sessionId, purchaseType) {
         output_html: null,
         output_xlsx_url: null,
         access_code: menuAccessCode,
-        currency:    submission.currency || 'EUR',
+        currency:    (v2Record && v2Record.currency) || submission.currency || 'EUR',
         language:    submission.language || 'en',
         status:      'pending_generation',
         model_used:  getModel('menuEngineer'),
@@ -457,7 +457,11 @@ async function processReport(customerEmail, sessionId, purchaseType) {
 
   // ── Step 9: Send delivery email ───────────────────────────────
   const BASE_URL    = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.za3fran.io';
-  const reportUrl   = `${BASE_URL}/report/${reportId}`;
+  // Direct viewer link with the access code (the /report/:id rewrite 404s on Vercel).
+  const reportUrl   = `${BASE_URL}/api/report-viewer?id=${encodeURIComponent(reportId)}&code=${encodeURIComponent(accessCode)}`;
+  // Business Plan price in the currency the customer paid in ('MAD 4 990' / '€499' / '$549').
+  const bpPriceEn   = getDisplayPrice('essentials_returning', normalizeCurrency(submission.currency || 'EUR'));
+  const bpPriceFr   = bpPriceEn.replace(/^€\s*(.+)$/, '$1 €').replace(/^\$\s*(.+)$/, '$1 $').replace(/^MAD\s*(.+)$/, '$1 MAD');
   const dashboardUrl = `${BASE_URL}/project.html?code=${encodeURIComponent(accessCode)}`;
   const conceptName = submission.concept_name || 'your concept';
   const firstName   = submission.name ? submission.name.split(' ')[0] : 'there';
@@ -543,22 +547,22 @@ async function processReport(customerEmail, sessionId, purchaseType) {
     <a href="${menuUrl}" style="display:inline-block;background:#0F1F3D;color:#C9862A;text-decoration:none;padding:14px 36px;font-size:14px;font-weight:600;border-radius:2px;">Accéder à mon Menu Engineer →</a>
   </div>` : '';
 
-  // Upsell section for Validator-only buyers (points to BP standalone at €499)
+  // Upsell section for Validator-only buyers (BP standalone at the returning-client rate, in the paid currency)
   // v3.1: no fake "was €599" — €499 is simply stated as the real returning-client rate.
   const upsellSection_en = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Next step:</strong> Turn this report into a complete Business Plan with financial projections.</p>
-  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">€499</strong> — your exclusive returning-client rate.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">As a Za3fran client, your Business Plan Essentials is <strong style="color:#C9862A;">${bpPriceEn}</strong> — your exclusive returning-client rate.</p>
   <div style="text-align:center;margin:0 0 8px;">
-    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Get my Business Plan — €499 →</a>
+    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Get my Business Plan — ${bpPriceEn} →</a>
   </div>` : '';
 
   const upsellSection_fr = purchaseType === 'validator' ? `
   <hr style="border:none;border-top:1px solid #e8e8e4;margin:0 0 32px;">
   <p style="color:#1a1a1a;line-height:1.75;margin:0 0 12px;"><strong>Prochaine étape :</strong> Transformez ce rapport en Business Plan complet avec projections financières.</p>
-  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">499 €</strong> — tarif fidélité exclusif.</p>
+  <p style="color:#888880;font-size:13px;line-height:1.7;margin:0 0 16px;">En tant que client Za3fran, votre Business Plan Essentials est à <strong style="color:#C9862A;">${bpPriceFr}</strong> — tarif fidélité exclusif.</p>
   <div style="text-align:center;margin:0 0 8px;">
-    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Obtenir mon Business Plan — 499 € →</a>
+    <a href="${BASE_URL}/business-plan?code=${accessCode}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Obtenir mon Business Plan — ${bpPriceFr} →</a>
   </div>` : '';
 
   const emailHtml = isFr ? `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>

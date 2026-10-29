@@ -66,6 +66,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error. Please contact hello@za3fran.io.' });
   }
 
+  let submissionId = null;
   try {
     const supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/validator_submissions`, {
       method: 'POST',
@@ -73,7 +74,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
-        'Prefer': 'return=minimal',
+        'Prefer': 'return=representation',
       },
       body: JSON.stringify({
         // Contact
@@ -121,6 +122,9 @@ export default async function handler(req, res) {
         error: 'We could not save your submission. Please try again — if this keeps happening, contact hello@za3fran.io.',
       });
     }
+    // The new row's id goes into the Stripe session, so the webhook and the success page
+    // find THIS submission and its project (not the customer's latest one).
+    try { const rows = await supabaseResponse.json(); submissionId = (rows && rows[0] && rows[0].id) || null; } catch (_) { submissionId = null; }
   } catch (supabaseErr) {
     console.error('[submit-validator] Supabase save error (network/exception):', supabaseErr);
     return res.status(500).json({
@@ -151,6 +155,7 @@ export default async function handler(req, res) {
         currency:       currency,
         language:       data.language || 'en',
         purchase_type:  purchaseType,  // ← webhook reads this to decide whether to chain BP
+        submission_id:  submissionId || '',
       },
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/validator`,

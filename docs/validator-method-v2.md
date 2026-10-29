@@ -47,3 +47,10 @@ Table `concept_records` (one live version per project; RLS on, no policies): the
 
 ## Acceptance
 Unit tests (`tests/validator-v2.test.js`); Canaille re-run compared side by side with the v1 report; report looked at as images (FR and EN); bundle path and readiness review checked on Canaille.
+
+## Country of the project and currencies (29 Oct 2026)
+
+- The form asks for the **country of the project** (section 03), pre-filled with the founder's country and changeable (a founder living in France can study a Casablanca project).
+- **Amounts are entered in the currency of the project's country** (Morocco → MAD). The concept record keeps it as `project_country` and `currency`; the market is looked up from `project_country` (older records: inferred from the currency). The project row (`za3fran_projects.currency`) and the BP runs take the same project currency.
+- **Payment stays in the visitor's currency** (`/api/currency`, by location): `validator_submissions.currency` and the Stripe session.
+- **Ramadan** is asked only when the project is in Morocco, Algeria, Tunisia, Egypt, Senegal, Nigeria, the UAE, Saudi Arabia or "Other"; elsewhere it is not asked and recorded as `normal`.
