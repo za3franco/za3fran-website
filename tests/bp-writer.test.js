@@ -258,6 +258,11 @@ test('bpw-2.3.0: the six writing faults of bp_v14_canaille_9 are caught; the app
   const S = require('./tools/canaille-sample.js');
   const facts = S.make('fr');
   assert.match(W.WRITER_VERSION, /^bpw-2\.3/);
+  // bp_v14_canaille_12
+  assert.deepEqual(W.moreChecks('Canaille est un bistro implanté au Gauthier, à Casablanca.', facts).map((e) => e.code), ['grammar']);
+  assert.deepEqual(W.moreChecks('Canaille est implanté dans le quartier Gauthier, à Casablanca, et le Gauthier attire.', facts).map((e) => e.code), ['grammar']);
+  assert.deepEqual(W.moreChecks('Canaille est implanté à Gauthier, dans le quartier Gauthier, à Casablanca.', facts), []);
+  assert.ok(W.BANK_BANNED.some((re) => re.test('des prix accessibles, selon sa propre formulation')));
   // bp_v14_canaille_11
   assert.deepEqual(W.moreChecks('Le point bas tombe en plein mois de fermeture du {ramadan_a1}.', facts).map((e) => e.code), ['grammar']);
   assert.deepEqual(W.moreChecks('Le point bas tombe pendant la fermeture de {ramadan_a1}.', facts), []);
