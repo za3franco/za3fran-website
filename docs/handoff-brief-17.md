@@ -23,7 +23,7 @@
 - `brain_add_value()` tested in a rolled-back transaction (supersede, new market).
 - Headless Chrome on `/brain` with a mocked API: every screen, no JS error, no horizontal overflow; review cards rendered with real method data.
 - **Live by Arnaud (29–30 Oct): the app works** (« it's perfect »).
-- Regulatory watch: see the result of the first manual run in section 7.
+- **Regulatory watch, live manual run (30 Oct):** 15 values checked against the CGI 2026, DGI notes 733 and 737, decree 2.25.983 (BO 7469), law 49-16 and ONSSA sources — **no change found**; 12 web searches, about 98,000 input tokens, about €0.40.
 
 ## 2. Decisions taken
 1. Brain Inbox in the app only; e-mail capture built but not switched on (Arnaud, 30 Oct). Recorded in the instructions, Phase A step 7.
@@ -45,7 +45,7 @@
 ## 4. Permanent rules added (merged into the instructions)
 - Brain Inbox section (Phase A step 7): access, capture, extraction, review semantics, readable review cards, methods amended only in a chat, monthly maintenance and regulatory watch, one current value per entry (a future change is added when it takes effect).
 - Brain rule 8: the random audit is monthly.
-- Stack: `postal-mime`, `sharp` (free); Claude web search for the watch (a few cents a month).
+- Stack: `postal-mime`, `sharp` (free); Claude web search for the watch (about €0.40 a month).
 
 ## 5. Open cleanup (not blocking)
 New: knowledge-only facts are not yet read by any tool (consultant agent, Phase D); a Brain value has no "applies from" date; one source per inbox item; the e-mail sender check trusts the From address (if e-mail is switched on); the watch's first scheduled run is 1 Dec 2026; `memory` settings in `vercel.json` are ignored on Active CPU billing (harmless warning).

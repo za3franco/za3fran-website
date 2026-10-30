@@ -131,7 +131,7 @@ Without this, the language choice resets on every navigation — a real, site-wi
 - PowerPoint generation: `pptxgenjs` (free, MIT), in code, from the slide model
 - Server-side PDF: headless Chrome on Vercel (puppeteer-core + @sparticuz/chromium) — no paid rendering service; `pdf-lib` (MIT) reads the PDF outline for the contents page
 - Comparable-venue suggestions in the BP intake: Google Places API (New), key `GOOGLE_PLACES_API_KEY` in Vercel (live since 28 Oct 2026; Google Cloud free trial, $300 credit)
-- The Brain (Phase A): Supabase tables + full-text search, private Storage bucket, Vercel functions and crons (`postal-mime` for e-mail parsing, `sharp` for photo resizing — both free) — **no new subscriptions**. Claude's web search (regulatory watch) costs a few cents a month.
+- The Brain (Phase A): Supabase tables + full-text search, private Storage bucket, Vercel functions and crons (`postal-mime` for e-mail parsing, `sharp` for photo resizing — both free) — **no new subscriptions**. Claude's web search (regulatory watch) costs about €0.40 a month (12 searches + Sonnet, measured on the first run).
 
 **When a paid tool is unavoidable:** state the cost explicitly, explain why the free alternative won't work, and confirm with Arnaud before building with it. (Canva's Autofill API was evaluated and rejected — Enterprise-only, 30+ seat minimum. Paid data sources such as Numbeo or market-research houses are deferred until revenue justifies them; Google Places API is acceptable at a few cents per lookup. Outscraper: free tier only until Arnaud confirms a paid cost.)
 
