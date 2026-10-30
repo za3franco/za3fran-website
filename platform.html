@@ -196,6 +196,22 @@ section{position:relative;padding:110px 0;}
 .j-desc{color:var(--muted);font-size:14px;line-height:1.65;max-width:640px;margin-bottom:10px;}
 .j-price{font-size:13px;color:var(--copper-bright);font-weight:700;}
 
+/* START POINTS + FLOW */
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px;}
+.door{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;display:flex;flex-direction:column;transition:border-color .3s,transform .3s;}
+.door:hover{border-color:rgba(201,134,42,.4);transform:translateY(-3px);}
+.door .d-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin-bottom:10px;font-weight:700;}
+.door h3{font-size:22px;margin-bottom:10px;}
+.door p{color:var(--muted);font-size:13.5px;line-height:1.7;margin-bottom:18px;}
+.door .d-cta{margin-top:auto;align-self:flex-start;font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;cursor:pointer;}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:36px;}
+.flow-step{background:var(--charcoal2);padding:24px 20px;}
+.flow-step .fs-n{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);font-weight:700;margin-bottom:8px;}
+.flow-step h4{font-family:'Cormorant Garamond';font-size:21px;font-weight:500;margin-bottom:6px;}
+.flow-step p{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.flow-step .j-status{display:inline-block;}
+@media(max-width:900px){.doors{grid-template-columns:1fr;}.flow{grid-template-columns:1fr;}}
+
 /* PRICING TEASER */
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
 .price-col{background:var(--charcoal2);padding:36px 28px;display:flex;flex-direction:column;}
@@ -293,6 +309,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       </select>
       <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
       <div class="checks">
+        <label class="check"><input type="checkbox" class="m_tool" value="Concept Studio"><span>Concept Studio</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Financial Builder"><span>Financial Builder</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Staffing Builder"><span>Staffing Builder</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Marketing Plan"><span>Marketing Plan</span></label>
@@ -355,6 +372,67 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     <div class="hero-ctas">
       <a href="/scorecard" class="btn-primary" data-en>Start Free — Get My Scorecard</a><a href="/scorecard" class="btn-primary" data-fr>Commencer — Score gratuit</a>
       <a href="#journey" class="link-secondary" data-en>See how it works ↓</a><a href="#journey" class="link-secondary" data-fr>Comment ça marche ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- START POINTS -->
+<section class="tint-a" id="start">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Start where you are</span><span data-fr>Partez de là où vous en êtes</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px"><span data-en>Where are you<br><em>starting from?</em></span><span data-fr>D’où<br><em>partez-vous ?</em></span></h2>
+    <div class="doors reveal">
+      <div class="door">
+        <div class="d-tag"><span data-en>Live</span><span data-fr>Disponible</span></div>
+        <h3><span data-en>A worked-out concept</span><span data-fr>Un concept abouti</span></h3>
+        <p><span data-en>You know the format, the area and roughly the numbers. Test it: a score out of 100, financial viability computed from your own figures, and a risk register.</span><span data-fr>Vous connaissez le format, le quartier et à peu près les chiffres. Testez-le : un score sur 100, une viabilité financière calculée à partir de vos chiffres et un registre des risques.</span></p>
+        <a href="/validator" class="d-cta"><span data-en>Open the Validator →</span><span data-fr>Ouvrir le Validator →</span></a>
+      </div>
+      <div class="door">
+        <div class="d-tag"><span data-en>Coming soon · Casablanca first</span><span data-fr>Bientôt · Casablanca d’abord</span></div>
+        <h3><span data-en>A concept, no location yet</span><span data-fr>Un concept, pas encore de lieu</span></h3>
+        <p><span data-en>The Concept Studio will shortlist two or three districts, with the reasons and what to check on the ground. Meanwhile, get a free first read of your concept.</span><span data-fr>Le Concept Studio proposera une sélection de deux ou trois quartiers, avec les raisons et ce qu’il faut vérifier sur place. En attendant, obtenez une première lecture gratuite de votre concept.</span></p>
+        <a href="#" class="d-cta" onclick="openModal('Concept Studio');return false;"><span data-en>Join the Studio waitlist →</span><span data-fr>Rejoindre la liste d’attente du Studio →</span></a>
+      </div>
+      <div class="door">
+        <div class="d-tag"><span data-en>Coming soon · Casablanca first</span><span data-fr>Bientôt · Casablanca d’abord</span></div>
+        <h3><span data-en>An idea and a city</span><span data-fr>Une idée et une ville</span></h3>
+        <p><span data-en>The Concept Studio will guide you step by step — positioning, customers, format, offer, pricing, ambience, name options — and write the concept you then validate.</span><span data-fr>Le Concept Studio vous guidera pas à pas — positionnement, clientèle, format, offre, prix, ambiance, pistes de nom — et rédigera le concept que vous validerez ensuite.</span></p>
+        <a href="#" class="d-cta" onclick="openModal('Concept Studio');return false;"><span data-en>Join the Studio waitlist →</span><span data-fr>Rejoindre la liste d’attente du Studio →</span></a>
+      </div>
+    </div>
+
+    <div class="flow reveal">
+      <div class="flow-step">
+        <div class="fs-n"><span data-en>1 · Create</span><span data-fr>1 · Créer</span></div>
+        <h4>Concept Studio</h4>
+        <p><span data-en>Design the concept and shortlist the district.</span><span data-fr>Concevoir le concept et présélectionner le quartier.</span></p>
+        <span class="j-status soon"><span data-en>Coming Soon</span><span data-fr>Bientôt</span></span>
+      </div>
+      <div class="flow-step">
+        <div class="fs-n"><span data-en>2 · Validate</span><span data-fr>2 · Valider</span></div>
+        <h4>Concept Validator</h4>
+        <p><span data-en>An independent score and figures computed from yours.</span><span data-fr>Un score indépendant et des chiffres calculés à partir des vôtres.</span></p>
+        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
+      </div>
+      <div class="flow-step">
+        <div class="fs-n"><span data-en>3 · Review</span><span data-fr>3 · Revoir</span></div>
+        <h4><span data-en>Readiness review</span><span data-fr>Revue de préparation</span></h4>
+        <p><span data-en>Adjust the concept, decide each risk, up to 5 re-assessments.</span><span data-fr>Ajuster le concept, trancher chaque risque, jusqu’à 5 réévaluations.</span></p>
+        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
+      </div>
+      <div class="flow-step">
+        <div class="fs-n"><span data-en>4 · Build</span><span data-fr>4 · Construire</span></div>
+        <h4><span data-en>Business plan · Menu</span><span data-fr>Business plan · Menu</span></h4>
+        <p><span data-en>Your plan dossier for the bank, then a costed menu.</span><span data-fr>Votre dossier de business plan pour la banque, puis un menu chiffré.</span></p>
+        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
+      </div>
+      <div class="flow-step">
+        <div class="fs-n"><span data-en>5 · Monitor</span><span data-fr>5 · Piloter</span></div>
+        <h4><span data-en>Operator tools</span><span data-fr>Outils opérateur</span></h4>
+        <p><span data-en>Follow your numbers once you are open.</span><span data-fr>Suivre vos chiffres une fois ouvert.</span></p>
+        <span class="j-status soon"><span data-en>Later</span><span data-fr>Plus tard</span></span>
+      </div>
     </div>
   </div>
 </section>
@@ -546,6 +624,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 
     <div class="reveal">
       <div class="faq-item">
+        <h4><span data-en>Where do the numbers in my reports come from?</span><span data-fr>D’où viennent les chiffres de mes rapports ?</span></h4>
+        <p><span data-en>Every figure is calculated by our financial model from your inputs and our reference data, and each assumption is tied to one of four source classes: your figure, Za3fran verified, a dated published source, or an estimate shown as a range. <a href="/methodology" style="color:var(--copper-bright)">How we source and verify data →</a></span><span data-fr>Chaque chiffre est calculé par notre modèle financier à partir de vos données et de nos références, et chaque hypothèse relève de l’une de quatre classes de source : votre chiffre, vérifié par Za3fran, source publiée datée, ou estimation présentée en fourchette. <a href="/methodology" style="color:var(--copper-bright)">Comment nous sourçons et vérifions les données →</a></span></p>
+      </div>
+      <div class="faq-item">
         <h4><span data-en>Do I need to buy the Validator before Business Plan Essentials or Menu Engineer?</span><span data-fr>Dois-je acheter le Validator avant Business Plan Essentials ou Menu Engineer ?</span></h4>
         <p><span data-en>Yes — both are generated from your Validator data, so a completed Validator report is required either way. If you're new, a bundle (from <span data-bundle-price>€599</span>) is the fastest and cheapest way to get everything at once. If you already bought the Validator, add Business Plan Essentials on its own for <span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span>, or Menu Engineer for <span data-en data-menu-price="en">€399</span><span data-fr data-menu-price="fr">399€</span> — just enter your access code at checkout.</span><span data-fr>Oui — les deux sont générés depuis vos données Validator, un rapport Validator est donc requis dans tous les cas. Si vous démarrez, un bundle (dès <span data-bundle-price>599€</span>) est le moyen le plus rapide et économique de tout obtenir. Si vous avez déjà le Validator, ajoutez Business Plan Essentials seul pour <span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span>, ou Menu Engineer pour <span data-en data-menu-price="en">€399</span><span data-fr data-menu-price="fr">399€</span> — entrez simplement votre code d'accès au moment du paiement.</span></p>
       </div>
@@ -583,6 +665,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
           <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Menu Engineer</span></a></li>
           <li><a href="/business-plan">Business Plan Essentials</a></li>
           <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+          <li><a href="/methodology"><span data-en>How we source data</span><span data-fr>Nos sources de données</span></a></li>
         </ul>
       </div>
       <div>

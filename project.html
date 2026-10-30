@@ -83,6 +83,17 @@ input:focus{border-color:#C9862A;}
   pointer-events:none;}
 .upsell{margin-top:1.5rem;text-align:center;font-size:.75rem;color:rgba(250,250,247,.35);line-height:1.7;}
 .upsell a{color:#C9862A;text-decoration:none;}
+.stage{display:flex;gap:.5rem;margin-bottom:1.25rem;}
+.stage-step{flex:1;border:.5px solid rgba(250,250,247,.12);border-radius:10px;padding:.7rem .6rem;text-align:center;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,247,.4);}
+.stage-step .sn{display:block;font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:0;text-transform:none;margin-bottom:.15rem;}
+.stage-step.done{border-color:rgba(124,191,124,.4);color:#8fd48f;}
+.stage-step.active{border-color:#C9862A;background:rgba(201,134,42,.08);color:#E7A63E;}
+.nextstep{border:.5px solid rgba(201,134,42,.35);background:rgba(201,134,42,.06);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1.75rem;}
+.nextstep .ns-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#C9862A;margin-bottom:.4rem;}
+.nextstep .ns-text{font-size:.88rem;line-height:1.6;color:rgba(250,250,247,.85);margin-bottom:.8rem;}
+.nextstep .ns-text:last-child{margin-bottom:0;}
+.srcnote{margin-top:1rem;text-align:center;font-size:.72rem;color:rgba(250,250,247,.35);}
+.srcnote a{color:#C9862A;text-decoration:none;}
 
 .loading, .error-screen{text-align:center;}
 .loading{color:rgba(250,250,247,.4);font-size:.85rem;}
@@ -116,8 +127,11 @@ input:focus{border-color:#C9862A;}
       <div class="concept-name" id="conceptName"></div>
       <div class="dash-sub"><span data-en>Your Za3fran project — every tool in one place</span><span data-fr>Votre projet Za3fran — tous vos outils au même endroit</span></div>
     </div>
+    <div class="stage" id="stage"></div>
+    <div class="nextstep" id="nextStep"></div>
     <div id="toolList"></div>
     <div class="upsell" id="upsell"></div>
+    <div class="srcnote"><a href="/methodology"><span data-en>How Za3fran sources and verifies its data →</span><span data-fr>Comment Za3fran source et vérifie ses données →</span></a></div>
   </div>
 </div>
 <div id="langtoggle"><button data-l="en" class="active">EN</button><button data-l="fr">FR</button></div>
@@ -227,6 +241,61 @@ function toolLinks(tool, statusKey, meta) {
   return `<a class="tool-btn" href="${tool.viewer_url}">${bi(statusKey === 'complete' ? ['View →', 'Voir →'] : ['Open →', 'Ouvrir →'])}</a>`;
 }
 
+function renderStageAndNext(data) {
+  const T = {};
+  data.tools.forEach(t => { T[t.key] = t; });
+  const v = T.validator, rr = T.readiness_review, bp = T.business_plan, menu = T.menu_engineer;
+  const vBought = !!(v && v.purchased);
+  const vDone = vBought && v.status === 'complete';
+  const hasReview = !!rr;
+  const cleared = !hasReview || data.project.crr_status === 'cleared';
+  const bpBought = !!(bp && bp.purchased);
+  const bpDone = bpBought && bp.status === 'complete';
+  const menuBought = !!(menu && menu.purchased);
+  const menuDone = menuBought && menu.status === 'complete';
+
+  const steps = [
+    { n: ['Validate', 'Valider'], state: vDone ? 'done' : 'active' }
+  ];
+  if (hasReview) steps.push({ n: ['Review', 'Revoir'], state: !vDone ? 'todo' : (cleared ? 'done' : 'active') });
+  steps.push({ n: ['Build', 'Construire'], state: (bpDone || menuDone) ? 'done' : ((vDone && cleared) ? 'active' : 'todo') });
+  document.getElementById('stage').innerHTML = steps.map((st, i) =>
+    `<div class="stage-step ${st.state}"><span class="sn">${i + 1} · ${bi(st.n)}</span>${bi(st.state === 'done' ? ['Done', 'Terminé'] : st.state === 'active' ? ['Now', 'En cours'] : ['Next', 'À venir'])}</div>`
+  ).join('');
+
+  let text, link;
+  const btn = (href, pair) => `<a class="tool-btn primary" href="${href}">${bi(pair)}</a>`;
+  if (!vBought) {
+    text = ['Start with the Concept Validator: a score out of 100, figures computed from your own numbers and a risk register.', 'Commencez par le Concept Validator : un score sur 100, des chiffres calculés à partir des vôtres et un registre des risques.'];
+    link = btn('/validator', ['Open the Validator →', 'Ouvrir le Validator →']);
+  } else if (!vDone) {
+    text = ['Your Validator report is being prepared. This page updates by itself.', 'Votre rapport Validator est en préparation. Cette page se met à jour toute seule.'];
+  } else if (!cleared) {
+    text = ['Complete your readiness review: adjust your concept and decide each point the Validator raised. About 10 minutes.', 'Terminez votre revue de préparation : ajustez votre concept et tranchez chaque point relevé par le Validator. Environ 10 minutes.'];
+    link = btn(rr.viewer_url, ['Complete the review →', 'Faire la revue →']);
+  } else if (!bpBought) {
+    text = ['Your concept is ready to build on. Next: a business plan for your bank, on your own figures.', 'Votre concept est prêt pour la suite. Prochaine étape : un business plan pour votre banque, sur vos propres chiffres.'];
+    link = btn('/pricing.html#business-plan', ['See Business Plan Essentials →', 'Voir Business Plan Essentials →']);
+  } else if (bp.status === 'awaiting_intake') {
+    text = ['Enter your figures: opening, services, team, investment and funding. About 15 minutes; Za3fran can estimate what you do not have yet.', 'Renseignez vos chiffres : ouverture, services, équipe, investissement et financement. Environ 15 minutes ; Za3fran peut estimer ce qui vous manque.'];
+    link = btn(bp.intake_url, ['Enter my figures →', 'Renseigner mes chiffres →']);
+  } else if (bp.status === 'ready_to_generate') {
+    text = ['Your figures are in. Generate your business plan.', 'Vos chiffres sont saisis. Générez votre business plan.'];
+    link = btn(bp.viewer_url, ['Generate my plan →', 'Générer mon plan →']);
+  } else if (bp.status === 'generating') {
+    text = ['Your business plan is being generated, a few minutes at most. This page updates by itself.', 'Votre business plan est en cours de génération, quelques minutes au plus. Cette page se met à jour toute seule.'];
+  } else if (bp.status === 'error') {
+    text = ['Your plan could not be delivered. Open it to retry.', 'Votre plan n’a pas pu être livré. Ouvrez-le pour relancer.'];
+    link = btn(bp.viewer_url, ['Open →', 'Ouvrir →']);
+  } else if (bpDone) {
+    text = ['Your plan is ready. Read your preparation report before the bank meeting: what to prepare, and every assumption with its source.', 'Votre plan est prêt. Lisez votre rapport de préparation avant le rendez-vous bancaire : ce qu’il faut préparer, et chaque hypothèse avec sa source.'];
+    link = btn(bp.founder_report_url || bp.viewer_url, ['Preparation report →', 'Rapport de préparation →']);
+  } else {
+    text = ['Your project file is up to date. You can amend your figures or your concept at any time.', 'Votre dossier de projet est à jour. Vous pouvez modifier vos chiffres ou votre concept à tout moment.'];
+  }
+  document.getElementById('nextStep').innerHTML = `<div class="ns-label">${bi(['Your next step', 'Votre prochaine étape'])}</div><div class="ns-text">${bi(text)}</div>${link || ''}`;
+}
+
 function renderDashboard(data, code) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('dash').style.display = 'block';
@@ -235,6 +304,7 @@ function renderDashboard(data, code) {
   if (!saved && data.project.language === 'fr') setLang('fr');
 
   window.__CRR = data.project.crr_status;
+  renderStageAndNext(data);
   const listEl = document.getElementById('toolList');
   listEl.innerHTML = '';
 

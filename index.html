@@ -199,6 +199,16 @@ select.minp option{background:var(--charcoal2);color:var(--white);}
   .hero-strip{gap:28px 40px;margin-top:56px;padding-bottom:40px;}
 }
 
+/* ============ HERO DOORS ============ */
+.hero-doors{margin-top:34px;max-width:880px;}
+.hd-label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-bright);font-weight:700;margin-bottom:14px;}
+.hd-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.hd{display:flex;flex-direction:column;gap:6px;padding:16px 18px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);transition:border-color .25s,transform .25s;cursor:pointer;}
+.hd:hover{border-color:var(--copper);transform:translateY(-3px);}
+.hd-t{font-family:'Cormorant Garamond';font-size:20px;line-height:1.2;}
+.hd-s{font-size:12.5px;color:var(--muted);line-height:1.5;}
+@media(max-width:760px){.hd-row{grid-template-columns:1fr;}}
+
 /* ============ INTRO BAND (who we are, moved up) ============ */
 .intro-band{padding:90px 0;position:relative;overflow:hidden;text-align:center;}
 .intro-band .wash{position:absolute;width:520px;height:520px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;filter:blur(100px);background:radial-gradient(circle,var(--copper) 0%,transparent 70%);opacity:.14;pointer-events:none;}
@@ -378,6 +388,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
       </select>
       <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
       <div class="checks">
+        <label class="check"><input type="checkbox" class="m_tool" value="Concept Studio"><span>Concept Studio</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Financial Builder"><span>Financial Builder</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Staffing Builder"><span>Staffing Builder</span></label>
         <label class="check"><input type="checkbox" class="m_tool" value="Marketing Strategy"><span>Marketing</span></label>
@@ -435,6 +446,14 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
       <span data-en>Za3fran is a premium hospitality and F&amp;B consulting company — combining strategy, creative direction, field intelligence and AI-powered tools to help hotels, restaurants and lifestyle brands perform at their best.</span>
       <span data-fr>Za3fran est une société de conseil premium en hôtellerie et restauration — alliant stratégie, direction créative, intelligence terrain et outils IA pour aider hôtels, restaurants et marques lifestyle à atteindre l'excellence.</span>
     </p>
+    <div class="hero-doors">
+      <div class="hd-label"><span data-en>Where are you starting from?</span><span data-fr>D’où partez-vous ?</span></div>
+      <div class="hd-row">
+        <a href="/validator" class="hd"><span class="hd-t"><span data-en>A concept to test</span><span data-fr>Un concept à tester</span></span><span class="hd-s"><span data-en>Score, figures from your own numbers, risks — the Validator</span><span data-fr>Score, chiffres issus des vôtres, risques — le Validator</span></span></a>
+        <a href="#" class="hd" onclick="openModal('Concept Studio');return false;"><span class="hd-t"><span data-en>A concept, no location yet</span><span data-fr>Un concept, pas encore de lieu</span></span><span class="hd-s"><span data-en>Concept Studio · coming soon, Casablanca first — join the waitlist</span><span data-fr>Concept Studio · bientôt, Casablanca d’abord — rejoindre la liste d’attente</span></span></a>
+        <a href="#" class="hd" onclick="openModal('Concept Studio');return false;"><span class="hd-t"><span data-en>An idea and a city</span><span data-fr>Une idée et une ville</span></span><span class="hd-s"><span data-en>Concept Studio · coming soon, Casablanca first — join the waitlist</span><span data-fr>Concept Studio · bientôt, Casablanca d’abord — rejoindre la liste d’attente</span></span></a>
+      </div>
+    </div>
     <div class="hero-ctas">
       <a href="#scorecard" class="btn-primary" data-en>Test Your Concept — Free</a><a href="#scorecard" class="btn-primary" data-fr>Tester Votre Concept — Gratuit</a>
       <a href="#disciplines" class="link-secondary" data-en>Explore our services</a><a href="#disciplines" class="link-secondary" data-fr>Nos services</a>
@@ -684,6 +703,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background
           <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></a></li>
           <li><a href="/business-plan">Business Plan Essentials</a></li>
           <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+          <li><a href="/methodology"><span data-en>How we source data</span><span data-fr>Nos sources de données</span></a></li>
         </ul>
       </div>
       <div>

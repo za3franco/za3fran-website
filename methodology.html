@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Za3fran sources and verifies its data — Za3fran Digital</title>
+<meta name="description" content="Where every figure in a Za3fran plan or report comes from: computed by a financial model, tied to one of four source classes, and checked before delivery. Market coverage stated up front.">
+<!-- Google Analytics GA4 — Za3fran -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --cream:#F4F1EA; --ink:#111826;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+.measure{max-width:62ch;}
+::selection{background:var(--copper);color:var(--black);}
+:focus-visible{outline:2px solid var(--copper-bright);outline-offset:3px;}
+
+body:not(.lang-fr) [data-fr]:not(option){display:none;}
+body.lang-fr [data-en]:not(option){display:none;}
+
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
+
+/* ============ WHATSAPP + MODAL ============ */
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;right:auto;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.modal.open{display:flex;}
+.mbox{background:var(--charcoal2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:40px;max-width:520px;width:100%;position:relative;max-height:92vh;overflow-y:auto;}
+.mcls{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.mcls:hover{color:var(--white);}
+.mt{font-family:'Cormorant Garamond';font-size:28px;font-weight:500;margin-bottom:8px;}
+.ms{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.minp{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--white);font-size:13.5px;font-family:'DM Sans';outline:none;margin-bottom:10px;transition:border-color .2s;}
+.minp:focus{border-color:var(--copper);}
+.minp::placeholder{color:var(--muted);}
+select.minp{appearance:none;cursor:pointer;}
+select.minp option{background:var(--charcoal2);color:var(--white);}
+.mtxt{resize:vertical;min-height:56px;font-family:'DM Sans';}
+.check-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);margin:16px 0 10px;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(250,250,247,.75);cursor:pointer;}
+.check input{width:14px;height:14px;accent-color:var(--copper);cursor:pointer;}
+.mbtn{width:100%;padding:14px;background:var(--copper);border:none;border-radius:100px;color:var(--black);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans';margin-top:8px;transition:background .2s;}
+.mbtn:hover{background:var(--copper-bright);}
+.mbtn:disabled{opacity:.6;cursor:wait;}
+.merr{margin-top:10px;font-size:13px;color:#E07060;text-align:center;min-height:16px;}
+.msuc{display:none;text-align:center;padding:30px 0;}
+.msuc.show{display:block;}
+.msuc-t{font-family:'Cormorant Garamond';font-size:24px;font-weight:500;margin-bottom:10px;}
+.msuc p{font-size:14px;color:var(--muted);line-height:1.7;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
+nav.scrolled{background:rgba(10,14,24,.92);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 0;}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;display:flex;align-items:center;gap:10px;}
+.nav-product-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-left:1px solid rgba(255,255,255,.15);padding-left:16px;}
+.navlinks{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--muted);}
+.navlinks a{position:relative;}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
+.navlinks a:hover::after{width:100%;}
+.navlinks a:hover{color:var(--white);}
+.navcta{border:1px solid var(--copper);padding:9px 20px;border-radius:100px;font-size:13px;transition:.25s;}
+.navcta:hover{background:var(--copper);color:var(--black);}
+@media(max-width:640px){ .logo span:last-child{display:none;} .nav-product-label{display:none;} .navlinks{gap:16px;font-size:12.5px;} }
+
+section{position:relative;padding:110px 0;}
+.tint-a{background:var(--black);}
+.tint-b{background:linear-gradient(180deg,var(--charcoal),var(--charcoal2));}
+.section-tag{display:flex;align-items:center;gap:10px;color:var(--copper);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px;font-weight:700;}
+.section-tag::before{content:'';width:22px;height:1px;background:var(--copper);}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+
+/* HERO */
+.hero{min-height:74vh;display:flex;align-items:center;padding-top:130px;position:relative;overflow:hidden;}
+.wash{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.32;}
+.hero .w1{width:600px;height:600px;top:-15%;right:-10%;background:radial-gradient(circle,var(--copper) 0%,transparent 70%);}
+.hero .w2{width:520px;height:520px;bottom:-20%;left:-10%;background:radial-gradient(circle,var(--navy-bright) 0%,transparent 70%);}
+.hero .wrap{position:relative;z-index:2;text-align:center;}
+.hero h1{font-size:clamp(42px,6.2vw,80px);line-height:1.04;margin-bottom:22px;}
+.hero p.sub{color:var(--muted);font-size:17px;max-width:680px;margin:0 auto 30px;line-height:1.7;}
+.hero-tools-line{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto 40px;max-width:760px;}
+.hero-tools-line span{font-size:12px;color:rgba(250,250,247,.7);border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:100px;}
+.btn-primary{background:var(--copper);color:var(--black);padding:17px 34px;border-radius:100px;font-weight:700;font-size:14.5px;display:inline-block;transition:transform .3s,box-shadow .3s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(201,134,42,.28);}
+.link-secondary{font-size:14px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;transition:.25s;}
+.link-secondary:hover{color:var(--white);border-color:var(--copper);}
+.hero-ctas{display:flex;align-items:center;gap:26px;justify-content:center;flex-wrap:wrap;}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;}
+.how-cell{background:var(--charcoal2);padding:36px 30px;}
+.how-cell .hn{font-family:'Cormorant Garamond';font-size:15px;color:var(--copper);margin-bottom:14px;font-weight:700;}
+.how-cell h3{font-size:22px;margin-bottom:12px;}
+.how-cell p{color:var(--muted);font-size:14px;line-height:1.7;}
+@media(max-width:860px){.how-grid{grid-template-columns:1fr;}}
+
+/* JOURNEY */
+.journey-rail{position:relative;padding-left:36px;}
+.journey-rail::before{content:'';position:absolute;left:11px;top:10px;bottom:10px;width:1px;background:linear-gradient(to bottom, var(--copper) 0%, rgba(201,134,42,.15) 55%, transparent 100%);}
+.j-item{position:relative;padding:26px 28px;margin-bottom:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .3s,transform .25s;display:block;}
+.j-item:hover{border-color:rgba(201,134,42,.35);transform:translateX(4px);}
+.j-item::before{content:'';position:absolute;left:-30px;top:32px;width:11px;height:11px;border-radius:50%;background:var(--black);border:2px solid var(--copper);}
+.j-item.live::before{background:var(--copper);}
+.j-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px;}
+.j-name{font-family:'Cormorant Garamond';font-size:23px;}
+.j-status{font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:5px 13px;border-radius:100px;white-space:nowrap;}
+.j-status.live{background:rgba(124,191,124,.15);color:#8fd48f;}
+.j-status.soon{background:rgba(255,255,255,.06);color:var(--muted);}
+.j-status.headline{background:rgba(201,134,42,.15);color:var(--copper-bright);}
+.j-desc{color:var(--muted);font-size:14px;line-height:1.65;max-width:640px;margin-bottom:10px;}
+.j-price{font-size:13px;color:var(--copper-bright);font-weight:700;}
+
+/* PRICING TEASER */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:50px;align-items:stretch;}
+.price-col{background:var(--charcoal2);padding:36px 28px;display:flex;flex-direction:column;}
+.price-col.feat{background:linear-gradient(180deg,rgba(201,134,42,.08),transparent);}
+.price-col .p-name{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+.price-col .p-cost{font-family:'Cormorant Garamond';font-size:38px;color:var(--white);margin-bottom:6px;}
+.price-col .p-note{color:var(--copper-bright);font-size:12px;margin-bottom:22px;}
+.price-col ul{list-style:none;}
+.price-col li{font-size:13px;color:var(--muted);padding:8px 0;border-top:1px solid rgba(255,255,255,.06);}
+.price-col li:first-child{border-top:none;}
+.price-col .p-cta{display:block;text-align:center;margin-top:auto;padding:12px;padding-top:12px;border-radius:100px;border:1px solid rgba(255,255,255,.2);font-size:13px;transition:.3s;}
+.price-col.feat .p-cta{background:var(--copper);color:var(--black);border:none;font-weight:700;}
+.price-col .p-cta:hover{border-color:var(--copper);}
+.next-step-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px;}
+.next-step-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px;}
+.next-step-box h4{font-family:'Cormorant Garamond';font-size:19px;margin-bottom:8px;}
+.next-step-box p{color:var(--muted);font-size:13.5px;line-height:1.65;margin-bottom:16px;}
+.next-step-box a{font-size:13px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:1px;}
+@media(max-width:900px){.price-grid{grid-template-columns:1fr;} .next-step-grid{grid-template-columns:1fr;}}
+
+/* SAMPLE */
+.sample-panel{background:linear-gradient(150deg,var(--navy),var(--black));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:44px;margin-top:50px;}
+.sample-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:24px;}
+.sample-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:28px;align-items:center;}
+.score-ring{width:90px;height:90px;border-radius:50%;border:3px solid var(--copper);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-ring .sr-num{font-family:'Cormorant Garamond';font-size:26px;color:var(--copper-bright);}
+.score-ring .sr-lbl{font-size:9px;color:var(--muted);}
+.sample-metric .sm-num{font-family:'Cormorant Garamond';font-size:24px;color:var(--white);}
+.sample-metric .sm-lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.sample-more-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;}
+.sample-more-card{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;}
+.sample-more-card .sml{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin-bottom:14px;}
+.sample-more-card ul{list-style:none;}
+.sample-more-card li{font-size:13.5px;color:rgba(250,250,247,.8);padding:7px 0 7px 18px;position:relative;line-height:1.5;}
+.sample-more-card li::before{content:'—';position:absolute;left:0;color:var(--copper);}
+@media(max-width:700px){.sample-grid{grid-template-columns:1fr 1fr;gap:20px;} .sample-more-grid{grid-template-columns:1fr;}}
+
+/* WAITLIST / FAQ */
+.faq-item{padding:22px 0;border-top:1px solid rgba(255,255,255,.08);}
+.faq-item:last-child{border-bottom:1px solid rgba(255,255,255,.08);}
+.faq-item h4{font-size:17px;font-weight:500;margin-bottom:8px;font-family:'DM Sans';}
+.faq-item p{color:var(--muted);font-size:14px;line-height:1.7;}
+
+/* CTA */
+.cta-final{text-align:center;padding:130px 0 110px;}
+.cta-final h2{font-size:clamp(32px,4.4vw,54px);max-width:740px;margin:0 auto 22px;}
+.cta-final p.measure{margin:0 auto 34px;color:var(--muted);}
+footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background:var(--charcoal);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.foot-grid h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.foot-grid ul{list-style:none;}
+.foot-grid li{margin-bottom:10px;font-size:13.5px;color:var(--muted);}
+.foot-grid li a:hover{color:var(--copper-bright);}
+.foot-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px;}
+@media(max-width:760px){
+  .foot-grid{grid-template-columns:1fr 1fr;gap:32px 24px;}
+  .foot-grid > div:first-child{grid-column:1 / -1;}
+}
+@media(max-width:480px){ .foot-grid{grid-template-columns:1fr;} }
+
+/* METHODOLOGY */
+.src-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-top:44px;}
+.src-cell{background:var(--charcoal2);padding:30px 24px;}
+.src-cell .sn{font-family:'Cormorant Garamond';font-size:15px;color:var(--copper);margin-bottom:12px;font-weight:700;}
+.src-cell h3{font-size:21px;margin-bottom:10px;}
+.src-cell p{color:var(--muted);font-size:13.5px;line-height:1.7;}
+@media(max-width:900px){.src-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.src-grid{grid-template-columns:1fr;}}
+.prose{max-width:68ch;color:var(--muted);line-height:1.8;font-size:15px;}
+.prose p{margin-bottom:16px;}
+.prose strong{color:var(--white);font-weight:500;}
+.note-line{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:var(--copper-bright);max-width:68ch;line-height:1.7;}
+.cov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px;}
+.cov-card{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;}
+.cov-card .cv-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin-bottom:10px;font-weight:700;}
+.cov-card h3{font-size:22px;margin-bottom:10px;}
+.cov-card p{color:var(--muted);font-size:13.5px;line-height:1.7;}
+@media(max-width:900px){.cov-grid{grid-template-columns:1fr;}}
+.hero.slim{min-height:58vh;}
+</style>
+</head>
+<body>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20check%20market%20coverage%20for%20my%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
+
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
+<nav id="nav">
+  <div class="wrap">
+    <div class="nav-left">
+      <a href="/" class="logo">
+        <img src="/assets/logo.png" alt="Za3fran" style="width:32px;height:32px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+        <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+      </a>
+      <a href="/platform" class="nav-product-label">Za3fran Digital</a>
+    </div>
+    <div class="navlinks">
+      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero slim tint-a">
+  <div class="wash w1"></div>
+  <div class="wash w2"></div>
+  <div class="wrap">
+    <div class="section-tag" style="justify-content:center"><span data-en>Methodology</span><span data-fr>Méthodologie</span></div>
+    <h1><span data-en>Every figure<br>has a <em>source.</em></span><span data-fr>Chaque chiffre<br>a une <em>source.</em></span></h1>
+    <p class="sub"><span data-en>A bank reads your numbers line by line. Here is where ours come from, how they are checked, and what we tell you when we do not know.</span><span data-fr>Une banque lit vos chiffres ligne par ligne. Voici d'où viennent les nôtres, comment ils sont vérifiés, et ce que nous vous disons quand nous ne savons pas.</span></p>
+  </div>
+</section>
+
+<!-- COMPUTED, NOT WRITTEN -->
+<section class="tint-b">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Computed, not written</span><span data-fr>Calculé, pas rédigé</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px"><span data-en>The AI never<br>produces a <em>number.</em></span><span data-fr>L'IA ne produit jamais<br>un <em>chiffre.</em></span></h2>
+    <div class="how-grid reveal">
+      <div class="how-cell">
+        <div class="hn">01</div>
+        <h3><span data-en>The model calculates</span><span data-fr>Le modèle calcule</span></h3>
+        <p><span data-en>Every figure in your plan or report — seating capacity, revenue, loan schedule, cash plan, break-even — is calculated by Za3fran's financial model from your inputs and our reference data.</span><span data-fr>Chaque chiffre de votre plan ou rapport — capacité, chiffre d'affaires, échéancier du prêt, trésorerie, point mort — est calculé par le modèle financier de Za3fran à partir de vos données et de nos références.</span></p>
+      </div>
+      <div class="how-cell">
+        <div class="hn">02</div>
+        <h3><span data-en>The AI writes around them</span><span data-fr>L'IA rédige autour</span></h3>
+        <p><span data-en>The AI writes the text around those figures, in French or English. The figures are inserted by the system afterwards, so the words cannot drift away from the numbers.</span><span data-fr>L'IA rédige le texte autour de ces chiffres, en français ou en anglais. Les chiffres sont insérés ensuite par le système : les mots ne peuvent pas s'écarter des nombres.</span></p>
+      </div>
+      <div class="how-cell">
+        <div class="hn">03</div>
+        <h3><span data-en>Automated checks</span><span data-fr>Contrôles automatiques</span></h3>
+        <p><span data-en>Before delivery, checks confirm that every number in the text matches the model, that the language reads correctly, and that no company or supplier name appears unless you gave it or a source supports it. A document that still fails after rewriting is not delivered.</span><span data-fr>Avant livraison, des contrôles vérifient que chaque nombre du texte correspond au modèle, que la langue est correcte et qu'aucun nom d'entreprise ou de fournisseur n'apparaît sans que vous l'ayez fourni ou qu'une source l'appuie. Un document qui échoue encore après réécriture n'est pas livré.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUR SOURCE CLASSES -->
+<section class="tint-a" id="sources">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Four kinds of source</span><span data-fr>Quatre types de source</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px"><span data-en>You always know<br>what a number <em>rests on.</em></span><span data-fr>Vous savez toujours<br>sur quoi un chiffre <em>repose.</em></span></h2>
+    <div class="src-grid reveal">
+      <div class="src-cell">
+        <div class="sn">01</div>
+        <h3><span data-en>Your figure</span><span data-fr>Votre chiffre</span></h3>
+        <p><span data-en>A number you entered: your rent offer, your ticket, your funding. It always takes precedence.</span><span data-fr>Un nombre que vous avez saisi : votre offre de loyer, votre ticket, votre financement. Il prime toujours.</span></p>
+      </div>
+      <div class="src-cell">
+        <div class="sn">02</div>
+        <h3><span data-en>Za3fran verified</span><span data-fr>Vérifié par Za3fran</span></h3>
+        <p><span data-en>A reference value reviewed and approved by Za3fran's founder before it is shown as verified.</span><span data-fr>Une valeur de référence relue et approuvée par le fondateur de Za3fran avant d'être présentée comme vérifiée.</span></p>
+      </div>
+      <div class="src-cell">
+        <div class="sn">03</div>
+        <h3><span data-en>Published source</span><span data-fr>Source publiée</span></h3>
+        <p><span data-en>A figure taken from a named, dated public source: an official text, a published study, a venue menu.</span><span data-fr>Un chiffre issu d'une source publique nommée et datée : un texte officiel, une étude publiée, la carte d'un établissement.</span></p>
+      </div>
+      <div class="src-cell">
+        <div class="sn">04</div>
+        <h3><span data-en>Estimate</span><span data-fr>Estimation</span></h3>
+        <p><span data-en>Where no source exists, we give a range and say it is a judgment — never a single unlabelled number.</span><span data-fr>Là où aucune source n'existe, nous donnons une fourchette et nous disons que c'est un jugement — jamais un chiffre unique sans étiquette.</span></p>
+      </div>
+    </div>
+    <p class="note-line reveal"><span data-en>When two sources disagree, the order above decides. In Business Plan Essentials, the private preparation report lists every assumption with its source in its “Assumptions and sources” section.</span><span data-fr>Quand deux sources divergent, l'ordre ci-dessus tranche. Dans Business Plan Essentials, le rapport de préparation privé liste chaque hypothèse avec sa source dans sa section « Hypothèses et sources ».</span></p>
+  </div>
+</section>
+
+<!-- THE BRAIN -->
+<section class="tint-b">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>The Za3fran Brain</span><span data-fr>Le Cerveau Za3fran</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px;margin-bottom:30px"><span data-en>Curated knowledge,<br>not <em>guesswork.</em></span><span data-fr>Une connaissance triée,<br>pas de <em>devinettes.</em></span></h2>
+    <div class="prose reveal">
+      <p><span data-en>The Brain is Za3fran's reference base: labour and payroll rules, rents, taxes, licences and format benchmarks for the markets we cover. It is curated by people. The AI reads from it; it does not invent from it.</span><span data-fr>Le Cerveau est la base de référence de Za3fran : règles de travail et de paie, loyers, fiscalité, licences et références par format pour les marchés couverts. Elle est constituée par des personnes. L'IA y puise ; elle n'en invente pas.</span></p>
+      <p><span data-en><strong>Every entry records its source, its date, its confidence and who reviewed it.</strong> A new entry is <strong>researched</strong>: sourced, not yet reviewed. It is shown as <strong>verified</strong> only once Za3fran's founder has reviewed it. Nothing changes silently.</span><span data-fr><strong>Chaque entrée garde sa source, sa date, son niveau de confiance et son relecteur.</strong> Une nouvelle entrée est <strong>étudiée</strong> : sourcée, pas encore relue. Elle n'est présentée comme <strong>vérifiée</strong> qu'une fois relue par le fondateur de Za3fran. Rien ne change en silence.</span></p>
+      <p><span data-en>The Brain is maintained every month: regulatory values are re-read against official sources, and a random sample of entries is audited again. When you or a customer report an error, it becomes a correction in the Brain and, where useful, a new automated check.</span><span data-fr>Le Cerveau est entretenu chaque mois : les valeurs réglementaires sont relues face aux sources officielles et un échantillon aléatoire d'entrées est de nouveau audité. Quand vous ou un client signalez une erreur, elle devient une correction dans le Cerveau et, si utile, un nouveau contrôle automatique.</span></p>
+      <p><span data-en>Where we have no source, the value stays empty and your report says so. We do not fill a gap with an unlabelled number — and where a city has no sourced rent, we ask for your own rent offer.</span><span data-fr>Là où nous n'avons pas de source, la valeur reste vide et votre rapport le dit. Nous ne comblons pas un vide avec un chiffre sans étiquette — et quand une ville n'a pas de loyer sourcé, nous vous demandons votre propre offre de loyer.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET COVERAGE -->
+<section class="tint-a" id="coverage">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Market coverage</span><span data-fr>Couverture des marchés</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:700px"><span data-en>What is covered today,<br>stated <em>before you buy.</em></span><span data-fr>Ce qui est couvert aujourd'hui,<br>dit <em>avant l'achat.</em></span></h2>
+    <div class="cov-grid reveal">
+      <div class="cov-card">
+        <div class="cv-tag"><span data-en>Covered today</span><span data-fr>Couvert aujourd'hui</span></div>
+        <h3><span data-en>Morocco — Casablanca, Marrakech, Rabat</span><span data-fr>Maroc — Casablanca, Marrakech, Rabat</span></h3>
+        <p><span data-en>Reference values for Morocco and these three cities are built into the Brain. Each one shows whether it is verified or researched. Where a value is not sourced yet — a district rent, for example — we ask for your own figure.</span><span data-fr>Les valeurs de référence du Maroc et de ces trois villes sont intégrées au Cerveau. Chacune indique si elle est vérifiée ou étudiée. Là où une valeur n'est pas encore sourcée — un loyer de quartier, par exemple — nous vous demandons votre propre chiffre.</span></p>
+      </div>
+      <div class="cov-card">
+        <div class="cv-tag"><span data-en>Gaps flagged</span><span data-fr>Écarts signalés</span></div>
+        <h3><span data-en>Other cities in Morocco</span><span data-fr>Autres villes du Maroc</span></h3>
+        <p><span data-en>The national values apply. Anything specific to your city that we cannot source is flagged in your report, so you know what to confirm on the ground. Your project is not blocked.</span><span data-fr>Les valeurs nationales s'appliquent. Tout élément propre à votre ville que nous ne pouvons pas sourcer est signalé dans votre rapport, pour que vous sachiez quoi confirmer sur le terrain. Votre projet n'est pas bloqué.</span></p>
+      </div>
+      <div class="cov-card">
+        <div class="cv-tag"><span data-en>On request</span><span data-fr>Sur demande</span></div>
+        <h3><span data-en>Other countries</span><span data-fr>Autres pays</span></h3>
+        <p><span data-en>Sales are open worldwide, but we build a country's reference values when a project needs them. Tell us your country before you buy and we will confirm what is covered and how long it takes.</span><span data-fr>La vente est ouverte dans le monde entier, mais nous construisons les valeurs de référence d'un pays lorsqu'un projet en a besoin. Dites-nous votre pays avant d'acheter et nous vous confirmerons ce qui est couvert et le délai.</span></p>
+      </div>
+    </div>
+    <div style="margin-top:34px" class="reveal">
+      <a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20check%20market%20coverage%20for%20my%20project." target="_blank" rel="noopener" class="link-secondary"><span data-en>Ask about your market on WhatsApp →</span><span data-fr>Poser la question pour votre marché sur WhatsApp →</span></a>
+      <span style="color:var(--muted);margin:0 10px">·</span>
+      <a href="mailto:hello@za3fran.io" class="link-secondary">hello@za3fran.io</a>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITS -->
+<section class="tint-b">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>Limits, stated plainly</span><span data-fr>Limites, dites clairement</span></div>
+    <h2 class="reveal" style="font-size:clamp(26px,3.2vw,38px);margin-bottom:30px"><span data-en>What this does <em>not</em> promise</span><span data-fr>Ce que cela ne <em>promet pas</em></span></h2>
+    <div class="prose reveal">
+      <p><span data-en>Your plan and your reports are generated with AI, using Za3fran's F&amp;B expertise frameworks, and should be reviewed before you act on them.</span><span data-fr>Votre plan et vos rapports sont générés avec l'IA, à partir des cadres d'expertise F&amp;B de Za3fran, et doivent être relus avant que vous agissiez.</span></p>
+      <p><span data-en>Tax, payroll and licence values come from public sources and can differ from your own situation. Have your accountant check them before you sign a loan. A well-documented plan is a solid basis for your bank conversation; it is not a guarantee of financing.</span><span data-fr>Les valeurs fiscales, de paie et de licence proviennent de sources publiques et peuvent différer de votre situation. Faites-les vérifier par votre comptable avant de signer un prêt. Un plan bien documenté est une base solide pour votre échange avec la banque ; ce n'est pas une garantie de financement.</span></p>
+      <p><span data-en>We only use material that Za3fran is free to reuse. We never use confidential documents from a third party or any guest data.</span><span data-fr>Nous n'utilisons que des éléments que Za3fran peut librement réutiliser. Nous n'utilisons jamais de documents confidentiels d'un tiers ni de données de clients.</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="tint-a">
+  <div class="cta-final wrap">
+    <h2 class="reveal"><span data-en>See it in <em>your own project.</em></span><span data-fr>Voyez-le sur <em>votre projet.</em></span></h2>
+    <div class="hero-ctas reveal">
+      <a href="/validator" class="btn-primary"><span data-en>Validate my concept</span><span data-fr>Valider mon concept</span></a>
+      <a href="/business-plan" class="link-secondary"><span data-en>Business Plan Essentials →</span><span data-fr>Business Plan Essentials →</span></a>
+      <a href="/platform" class="link-secondary"><span data-en>The platform →</span><span data-fr>La plateforme →</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px">Za3fran<span style="color:var(--copper)">.io</span></div>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
+      </div>
+      <div>
+        <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
+        <ul>
+          <li><a href="/validator">Concept Validator</a></li>
+          <li><a href="/menu-engineer">Menu Engineer</a></li>
+          <li><a href="/business-plan">Business Plan Essentials</a></li>
+          <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+          <li><a href="/methodology"><span data-en>How we source data</span><span data-fr>Nos sources de données</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Pricing</h4><h4 data-fr>Tarifs</h4>
+        <ul>
+          <li><a href="/pricing"><span data-en>All packages</span><span data-fr>Toutes les formules</span></a></li>
+          <li><a href="/validator?bundle=bundle_full"><span data-en>Full journey bundle</span><span data-fr>Formule parcours complet</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
+        <ul>
+          <li><a href="/#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="/privacy"><span data-en>Privacy</span><span data-fr>Confidentialité</span></a></li>
+          <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
+          <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+function setLang(l){
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.documentElement.lang = l;
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === l));
+  localStorage.setItem('za3fran_lang', l);
+}
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') setLang('fr');
+})();
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  setLang(b.dataset.l);
+});
+
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('is-visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.reveal').forEach(el=>{el.style.transition='none';el.classList.add('is-visible');});
+}
+</script>
+</body>
+</html>
