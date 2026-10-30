@@ -250,7 +250,7 @@ async function reviewList(rows) {
   const ids = rows.map((r) => r.value_id).filter(Boolean);
   const [P, M, vals] = await Promise.all([
     params(), marketsIndex(),
-    ids.length ? W(() => supabase.from('brain_parameter_values').select('id, format_key, qualifier, market_id, value_num, low, high, value_text, value_json, unit, currency, status, source_class, source_name, observed_at').in('id', ids)) : Promise.resolve({ data: [] }),
+    ids.length ? W(() => supabase.from('brain_parameter_values').select('id, parameter_key, format_key, qualifier, market_id, value_num, low, high, value_text, value_json, unit, currency, status, source_class, source_name, observed_at').in('id', ids)) : Promise.resolve({ data: [] }),
   ]);
   const byId = {}; (vals.data || []).forEach((v) => { byId[v.id] = v; });
   return rows.map((r) => {
@@ -258,7 +258,8 @@ async function reviewList(rows) {
     return {
       id: r.id, reason: r.reason, parameter_key: r.parameter_key, label_fr: P[r.parameter_key] ? P[r.parameter_key].label_fr : r.parameter_key,
       created_at: r.created_at, detail: r.detail,
-      value: v ? { value_num: v.value_num, low: v.low, high: v.high, value_text: v.value_text, has_json: !!v.value_json && !v.value_num, unit: v.unit, currency: v.currency,
+      format: v ? (v.format_key || (r.parameter_key === 'benchmark.capex_model' ? v.qualifier : null)) : null,
+      value: v ? { value_num: v.value_num, low: v.low, high: v.high, value_text: v.value_text, has_json: !!v.value_json && !v.value_num, json: v.value_json && !v.value_num ? v.value_json : null, unit: v.unit, currency: v.currency,
         status: v.status, source_class: v.source_class, source_name: v.source_name, observed_at: v.observed_at, format_key: v.format_key, qualifier: v.qualifier,
         market: m ? [m.city, m.district].filter(Boolean).join(' · ') || m.country_code : null } : null,
     };
@@ -375,21 +376,21 @@ async function itemAction(req, res, b) {
 
 /** Arnaud's existing review list: approve = the value becomes verified with Arnaud as reviewer. */
 async function reviewAction(res, b) {
-  if (!isUuid(b.id) || !['approve', 'reject'].includes(b.op)) return send(res, 400, { error: 'bad_request' });
-  const { data: row } = await W(() => supabase.from('brain_review_queue').select('*').eq('id', b.id).maybeSingle());
-  if (!row) return send(res, 404, { error: 'not_found' });
-  if (row.status !== 'open') return send(res, 409, { error: 'already_resolved', status: row.status });
+  const ids = Array.isArray(b.ids) ? b.ids.filter(isUuid) : (isUuid(b.id) ? [b.id] : []);
+  if (!ids.length || ids.length > 60 || !['approve', 'reject'].includes(b.op)) return send(res, 400, { error: 'bad_request' });
+  const { data: rows } = await W(() => supabase.from('brain_review_queue').select('*').in('id', ids).eq('status', 'open'));
+  if (!rows || !rows.length) return send(res, 409, { error: 'already_resolved' });
   const now = new Date().toISOString();
-  if (b.op === 'approve' && row.value_id) {
-    await W(() => supabase.from('brain_parameter_values').update({ status: 'verified', reviewer: 'arnaud', reviewed_at: now })
-      .eq('id', row.value_id).eq('status', 'researched'));
+  if (b.op === 'approve') {
+    const vids = rows.map((r) => r.value_id).filter(Boolean);
+    if (vids.length) await W(() => supabase.from('brain_parameter_values').update({ status: 'verified', reviewer: 'arnaud', reviewed_at: now }).in('id', vids).eq('status', 'researched'));
   }
-  // A rejection flags the value for Claude; the value stays in use until it is corrected (no silent gap in the engine).
+  // A rejection flags the value for Claude with Arnaud's comment; the value stays in use until it is corrected.
   await W(() => supabase.from('brain_review_queue').update({
     status: b.op === 'approve' ? 'approved' : 'rejected', resolved_at: now, resolved_by: 'arnaud',
-    note: b.note ? String(b.note).slice(0, 1000) : (b.op === 'reject' ? 'Rejeté dans la Brain Inbox — à corriger par Claude' : null),
-  }).eq('id', row.id).eq('status', 'open'));
-  return send(res, 200, { ok: true });
+    note: b.note ? String(b.note).slice(0, 2000) : (b.op === 'reject' ? 'Rejeté dans la Brain Inbox — à corriger par Claude' : null),
+  }).in('id', rows.map((r) => r.id)).eq('status', 'open'));
+  return send(res, 200, { ok: true, resolved: rows.length });
 }
 
 // ── Router ────────────────────────────────────────────────────────────────────────────────────────────
@@ -405,7 +406,12 @@ export default async function handler(req, res) {
     }
     if (action === 'login') return login(req, res, b.code);
     if (action === 'logout') { res.setHeader('Set-Cookie', `${BI.COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`); return send(res, 200, { ok: true }); }
-    if (action === 'session') return send(res, 200, { ok: signedIn(req) });
+    if (action === 'session') {
+      // Sliding session: every opening of the app renews the device for another year.
+      const ok = signedIn(req);
+      if (ok) res.setHeader('Set-Cookie', BI.sessionCookie(BI.makeSession(process.env.BRAIN_APP_SECRET)));
+      return send(res, 200, { ok });
+    }
     if (!signedIn(req)) return send(res, 401, { error: 'sign_in' });
 
     if (req.method === 'GET') {

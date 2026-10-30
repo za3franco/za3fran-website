@@ -141,6 +141,11 @@ body.gated #langtoggle{bottom:20px;}
 .files a{display:block;font-size:.85rem;margin:4px 0;word-break:break-all;}
 .body-text{white-space:pre-wrap;font-size:.84rem;color:var(--muted);max-height:220px;overflow:auto;background:var(--black);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:8px;}
 details summary{cursor:pointer;color:var(--muted);font-size:.85rem;margin-top:10px;}
+.msec{margin-top:12px;font-size:.88rem;}
+.msec .mh{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--copper-bright);margin-bottom:4px;font-weight:700;}
+ul.mlist{list-style:none;padding:0;}
+ul.mlist li{padding:5px 0;border-bottom:1px solid var(--line);}
+ul.mlist li:last-child{border-bottom:none;}
 .sticky-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
 .sticky-acts .full{grid-column:1 / -1;}
 </style>
@@ -209,7 +214,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.85rem;margin-top:10
     <h2><span data-en>Received items</span><span data-fr>Éléments reçus</span></h2>
     <div id="items"></div>
     <h2><span data-en>Brain review list</span><span data-fr>Points de revue du Brain</span></h2>
-    <p class="small"><span data-en>Values Claude researched or methods it changed. Approve = verified by you. Reject = flagged for Claude to correct (the value stays in use meanwhile).</span><span data-fr>Valeurs recherchées ou méthodes modifiées par Claude. Valider = vérifié par vous. Rejeter = signalé à Claude pour correction (la valeur reste utilisée d'ici là).</span></p>
+    <p class="small"><span data-en>The figures the tools use today, grouped by format. Validate = verified by you. « Something is off » = your comment goes to Claude, who corrects it (the value stays in use meanwhile).</span><span data-fr>Les chiffres que les outils utilisent aujourd'hui, regroupés par format. Valider = vérifié par vous. « Quelque chose cloche » = votre commentaire part à Claude, qui corrige (la valeur reste utilisée d'ici là).</span></p>
     <div id="reviewList" style="margin-top:12px"></div>
   </section>
 
@@ -416,7 +421,8 @@ function loadQueue(){
   return api('GET', { action: 'queue' }).then(function(j){
     if (!j.items) return;
     QUEUE = j; renderRecent(); renderItems(); renderReview();
-    var open = j.items.filter(function(i){ return i.status === 'ready' || i.status === 'error' || i.status === 'refused'; }).length + (j.review || []).length;
+    var fm = {}, singles = 0; (j.review || []).forEach(function(r){ if (r.format && r.value && /^benchmark\./.test(r.parameter_key)) fm[r.format] = 1; else singles++; });
+    var open = j.items.filter(function(i){ return i.status === 'ready' || i.status === 'error' || i.status === 'refused'; }).length + Object.keys(fm).length + singles;
     $('badge').textContent = open ? String(open) : '';
     clearTimeout(pollTimer);
     if (j.items.some(function(i){ return ['uploading', 'received', 'extracting'].indexOf(i.status) >= 0; }) && VIEW !== 'item') pollTimer = setTimeout(loadQueue, 8000);
@@ -443,9 +449,81 @@ function renderItems(){
 }
 document.addEventListener('click', function(e){ var c = e.target.closest('.card.tap'); if (c && c.dataset.id) { openItem(c.dataset.id); } });
 
+// Methods and benchmarks are grouped by format: one readable card per format, validated in one tap.
+var ROLE = { chef: ['Head chef', 'Chef'], manager: ['Manager', 'Responsable'], server: ['Server', 'Serveur'], cook: ['Cook', 'Cuisinier'], commis: ['Commis', 'Commis'],
+  kitchen_porter: ['Kitchen porter', 'Plongeur'], bartender: ['Bartender', 'Barman'], barista: ['Barista', 'Barista'], cleaner: ['Cleaner', 'Agent d\'entretien'],
+  counter: ['Counter staff', 'Équipier comptoir'], sommelier: ['Sommelier', 'Sommelier'] };
+var SVC = { breakfast: ['Morning', 'Matin'], lunch: ['Lunch', 'Déjeuner'], dinner: ['Evening', 'Soir'], default: ['Other', 'Autre'] };
+var ORDER = ['benchmark.cruise_occupancy', 'benchmark.ramp_months', 'benchmark.ramp_start_factor', 'benchmark.occupancy_growth_y3', 'benchmark.staffing_model', 'benchmark.capex_model'];
+function role(r){ var x = ROLE[r] || [r, r]; return tt(x[0], x[1]); }
+function n(x, d){ return fmtNum(x, d == null ? 1 : d); }
+function pc(x){ return fmtNum(Number(x) * 100, 0) + ' %'; }
+function rg(o, f){ f = f || n; return o && o.low != null && o.high != null ? ' <span class="small">(' + f(o.low) + '–' + f(o.high) + ')</span>' : ''; }
+function staffingHtml(j){
+  var L = [];
+  (j.fixed || []).forEach(function(r){ L.push(r.count + ' ' + role(r.role) + (r.covers && r.covers.length ? tt(' — also works as ', ' — tient aussi un poste de ') + r.covers.map(role).join(', ').toLowerCase() : '') + (r.founder_replaces ? tt(' (the founder can hold this post)', ' (le fondateur peut tenir ce poste)') : '')); });
+  (j.on_duty || []).forEach(function(r){
+    var x = '<b>' + role(r.role) + '</b> : ';
+    if (r.seats_per) x += tt('1 per ', '1 pour ') + n(r.seats_per.base, 0) + tt(' seats', ' places') + rg(r.seats_per, function(v){ return n(v, 0); }) + tt(' per service', ' par service');
+    else if (r.hours_per_open_day) x += n(r.hours_per_open_day.base) + tt(' h per opening day', ' h par jour d\'ouverture') + rg(r.hours_per_open_day);
+    else x += (r.count || 1);
+    if (r.min_seats) x += tt(' from ', ' dès ') + r.min_seats + tt(' seats', ' places');
+    if (r.alcohol_only) x += tt(' (if alcohol is served)', ' (si alcool)');
+    if (r.prep_hours_per_day) x += ' + ' + n(r.prep_hours_per_day.base) + tt(' h prep a day', ' h de mise en place/jour') + rg(r.prep_hours_per_day);
+    L.push(x);
+  });
+  if (j.service_hours) L.push(tt('Length of a shift: ', 'Durée d\'un service : ') + Object.keys(j.service_hours).filter(function(k){ return k !== 'default'; }).map(function(k){ var x = SVC[k] || [k, k]; return tt(x[0], x[1]).toLowerCase() + ' ' + n(j.service_hours[k].base) + ' h'; }).join(', '));
+  if (j.absence_factor) L.push(tt('Leave and absence: +', 'Congés et absences : +') + pc(j.absence_factor.base - 1));
+  if (j.growth) L.push(tt('Year 3: covers-driven posts follow the rise in covers, in half-time steps', 'Année 3 : les postes liés aux couverts suivent la hausse des couverts, par demi-postes'));
+  return '<ul class="mlist">' + L.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+}
+function capexHtml(j, cur){
+  cur = cur || 'MAD';
+  var byKey = {}; (j.lines || []).forEach(function(l){ byKey[l.key] = l; });
+  function lab(l){ var p = String(l.label || l.key).split(' / '); return LANG === 'fr' ? p[0] : (p[1] || p[0]); }
+  var L = (j.lines || []).map(function(l){
+    var x = '<b>' + esc(lab(l)) + '</b> : ';
+    if (l.per === 'm2') x += n(l.base, 0) + ' ' + cur + tt('/m²', '/m²') + rg(l, function(v){ return n(v, 0); });
+    else if (l.per === 'seat') x += n(l.base, 0) + ' ' + cur + tt(' per seat', ' par place') + rg(l, function(v){ return n(v, 0); });
+    else if (l.per === 'lump') x += n(l.base, 0) + ' ' + cur + rg(l, function(v){ return n(v, 0); });
+    else if (l.per === 'pct_of') x += pc(l.base) + tt(' of ', ' de : ') + (l.of || []).map(function(k){ return byKey[k] ? esc(lab(byKey[k])).toLowerCase() : k; }).join(', ') + rg(l, pc);
+    else if (l.per === 'preopening') x += [l.works_months ? n(l.works_months.base) + tt(' months of works', ' mois de travaux') : null, l.payroll_months ? n(l.payroll_months.base) + tt(' month(s) of salaries before opening', ' mois de salaires avant ouverture') : null,
+      l.launch_marketing ? tt('launch ', 'lancement ') + n(l.launch_marketing.base, 0) + ' ' + cur : null, l.chef_extra_months ? n(l.chef_extra_months.base) + tt(' extra month for the chef', ' mois de plus pour le chef') : null].filter(Boolean).join(', ');
+    if (l.alcohol_only) x += tt(' (if alcohol is served)', ' (si alcool)');
+    if (l.alcohol_extra_per_seat) x += tt(' + ', ' + ') + n(l.alcohol_extra_per_seat.base, 0) + ' ' + cur + tt(' per seat if alcohol', ' par place si alcool');
+    return x;
+  });
+  if (j.m2_per_seat) L.unshift(tt('Floor area: ', 'Surface : ') + n(j.m2_per_seat.base) + tt(' m² per seat', ' m² par place') + rg(j.m2_per_seat));
+  return '<ul class="mlist">' + L.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+}
+function groupHtml(fmt, rows){
+  rows.sort(function(a, b){ return ORDER.indexOf(a.parameter_key) - ORDER.indexOf(b.parameter_key) || ['breakfast', 'lunch', 'dinner'].indexOf(a.value.qualifier) - ['breakfast', 'lunch', 'dinner'].indexOf(b.value.qualifier); });
+  var by = {}; rows.forEach(function(r){ (by[r.parameter_key] = by[r.parameter_key] || []).push(r); });
+  var h = '';
+  if (by['benchmark.cruise_occupancy']) h += '<div class="msec"><div class="mh">' + t('Occupancy once established', 'Remplissage en croisière') + '</div>' +
+    by['benchmark.cruise_occupancy'].map(function(r){ var x = SVC[r.value.qualifier] || [r.value.qualifier, r.value.qualifier]; return tt(x[0], x[1]) + ' <b>' + pc(r.value.value_num) + '</b>' + rg(r.value, pc); }).join(' · ') + '</div>';
+  var ramp = []; if (by['benchmark.ramp_months']) { var v = by['benchmark.ramp_months'][0].value; ramp.push('<b>' + n(v.value_num, 0) + tt(' months', ' mois') + '</b>' + rg(v, function(x){ return n(x, 0); })); }
+  if (by['benchmark.ramp_start_factor']) { var v2 = by['benchmark.ramp_start_factor'][0].value; ramp.push(tt('first month at ', '1er mois à ') + '<b>' + pc(v2.value_num) + '</b>' + rg(v2, pc) + tt(' of the established level', ' du niveau de croisière')); }
+  if (ramp.length) h += '<div class="msec"><div class="mh">' + t('Ramp-up', 'Montée en charge') + '</div>' + ramp.join(', ') + '</div>';
+  if (by['benchmark.occupancy_growth_y3']) { var v3 = by['benchmark.occupancy_growth_y3'][0].value; h += '<div class="msec"><div class="mh">' + t('Year 3', 'Année 3') + '</div><b>+' + fmtNum(v3.value_num * 100, 0) + tt(' points', ' points') + '</b>' + rg(v3, function(x){ return fmtNum(x * 100, 0); }) + tt(' of occupancy', ' de remplissage') + '</div>'; }
+  if (by['benchmark.staffing_model']) h += '<div class="msec"><div class="mh">' + t('Team (Za3fran estimate)', 'Équipe (estimation Za3fran)') + '</div>' + staffingHtml(by['benchmark.staffing_model'][0].value.json || {}) + '</div>';
+  if (by['benchmark.capex_model']) h += '<div class="msec"><div class="mh">' + t('Investment (Za3fran estimate)', 'Investissement (estimation Za3fran)') + '</div>' + capexHtml(by['benchmark.capex_model'][0].value.json || {}, by['benchmark.capex_model'][0].value.currency) + '</div>';
+  var ids = rows.map(function(r){ return r.id; }).join(',');
+  var f = FORMATS[fmt] || [fmt, fmt];
+  var src = rows.some(function(r){ return /judgment/i.test((r.value && r.value.source_name) || ''); }) ? t('Za3fran judgment — no published figure for most of these values. Used today in every Validator and plan for this format.', 'Jugement Za3fran — pas de chiffre publié pour la plupart de ces valeurs. Utilisé aujourd\'hui dans chaque Validator et chaque plan de ce format.') : '';
+  return '<div class="card" id="rg-' + fmt + '"><div class="meta" style="margin-top:0"><span class="tag copper">' + t('Method to validate', 'Méthode à valider') + '</span><span class="small">' + rows.length + tt(' values', ' valeurs') + '</span></div>' +
+    '<div class="t" style="margin-top:8px;font-size:1.1rem">' + tt(f[0], f[1]) + '</div>' + h +
+    (src ? '<div class="small" style="margin-top:10px">' + src + '</div>' : '') +
+    '<div class="row" style="margin-top:12px"><button class="btn ok sm" type="button" data-rg="' + ids + '" data-op="approve">' + t('Validate this format', 'Valider ce format') + '</button><button class="btn ghost sm" type="button" data-rg="' + ids + '" data-op="comment">' + t('Something is off', 'Quelque chose cloche') + '</button></div>' +
+    '<div class="hidden rgc"><label class="f">' + t('What should change? Claude corrects it in the next chat.', 'Que faut-il changer ? Claude corrige au prochain chat.') + '</label><textarea data-en-placeholder="e.g. a server handles 14 seats, not 16" data-fr-placeholder="ex. un serveur tient 14 places, pas 16" placeholder="' + tt('e.g. a server handles 14 seats, not 16', 'ex. un serveur tient 14 places, pas 16') + '"></textarea>' +
+    '<button class="btn primary sm" style="margin-top:8px" type="button" data-rg="' + ids + '" data-op="reject">' + t('Send to Claude', 'Envoyer à Claude') + '</button></div></div>';
+}
 function renderReview(){
   var list = (QUEUE && QUEUE.review) || [];
-  $('reviewList').innerHTML = list.length ? list.map(function(r){
+  var groups = {}, single = [];
+  list.forEach(function(r){ if (r.format && r.value && /^benchmark\./.test(r.parameter_key)) (groups[r.format] = groups[r.format] || []).push(r); else single.push(r); });
+  var h = Object.keys(groups).sort(function(a, b){ return Object.keys(FORMATS).indexOf(a) - Object.keys(FORMATS).indexOf(b); }).map(function(k){ return groupHtml(k, groups[k]); }).join('');
+  h += single.map(function(r){
     var v = r.value, reason = REASON[r.reason] || [r.reason, r.reason];
     var note = r.detail && (r.detail.note || r.detail.why) ? esc(r.detail.note || r.detail.why) : '';
     if (r.reason === 'founder_evidence' && r.detail && r.detail.founder != null) note = t('A founder entered ', 'Un fondateur a saisi ') + fmtNum(r.detail.founder, 0) + (r.detail.brain ? t(' (Brain: ', ' (Brain : ') + fmtNum(r.detail.brain.low, 0) + '–' + fmtNum(r.detail.brain.high, 0) + ')' : '');
@@ -453,18 +531,28 @@ function renderReview(){
     return '<div class="card" id="rq-' + r.id + '"><div class="meta" style="margin-top:0"><span class="tag copper">' + t(reason[0], reason[1]) + '</span>' + (v ? '<span class="tag">' + esc(v.status) + '</span>' : '') + '</div>' +
       '<div class="t" style="margin-top:8px">' + esc(r.label_fr) + '</div>' +
       (where ? '<div class="small">' + where + '</div>' : '') +
-      (v ? '<div style="margin-top:6px">' + (v.has_json ? '<span class="small">' + t('Method (structured value)', 'Méthode (valeur structurée)') + '</span>' : '<b>' + fmtRange(v, v.unit, v.currency) + '</b>') + '</div>' : '') +
+      (v ? '<div style="margin-top:6px">' + (v.has_json ? '<span class="small">' + t('Structured rules (payroll scale): checked against a real payslip', 'Règles structurées (barème de paie) : à vérifier sur une vraie fiche de paie') + '</span>' : '<b>' + fmtRange(v, v.unit, v.currency) + '</b>') + '</div>' : '') +
       (v && v.source_name ? '<div class="small" style="margin-top:4px">' + esc(v.source_name) + (v.observed_at ? ' · ' + fmtDate(v.observed_at) : '') + '</div>' : '') +
       (note ? '<div class="small" style="margin-top:6px">' + note + '</div>' : '') +
-      '<div class="row" style="margin-top:12px"><button class="btn ok sm" type="button" data-rq="' + r.id + '" data-op="approve">' + t('Approve', 'Valider') + '</button><button class="btn danger sm" type="button" data-rq="' + r.id + '" data-op="reject">' + t('Reject', 'Rejeter') + '</button></div></div>';
-  }).join('') : '<div class="empty">' + t('Nothing waiting.', 'Rien en attente.') + '</div>';
+      '<div class="row" style="margin-top:12px"><button class="btn ok sm" type="button" data-rg="' + r.id + '" data-op="approve">' + t('Approve', 'Valider') + '</button><button class="btn ghost sm" type="button" data-rg="' + r.id + '" data-op="comment">' + t('Something is off', 'Quelque chose cloche') + '</button></div>' +
+      '<div class="hidden rgc"><textarea placeholder="' + tt('What should change?', 'Que faut-il changer ?') + '"></textarea><button class="btn primary sm" style="margin-top:8px" type="button" data-rg="' + r.id + '" data-op="reject">' + t('Send to Claude', 'Envoyer à Claude') + '</button></div></div>';
+  }).join('');
+  $('reviewList').innerHTML = h || '<div class="empty">' + t('Nothing waiting.', 'Rien en attente.') + '</div>';
 }
 $('reviewList').addEventListener('click', function(e){
-  var b = e.target.closest('button[data-rq]'); if (!b) return;
-  var card = $('rq-' + b.dataset.rq); card.style.opacity = .5;
-  api('POST', null, { action: 'review', id: b.dataset.rq, op: b.dataset.op }).then(function(j){
-    if (j.ok || j.error === 'already_resolved') { card.remove(); QUEUE.review = QUEUE.review.filter(function(r){ return r.id !== b.dataset.rq; }); var n = Number($('badge').textContent || 0) - 1; $('badge').textContent = n > 0 ? String(n) : ''; toast(b.dataset.op === 'approve' ? t('Verified.', 'Validé.') : t('Flagged for Claude.', 'Signalé à Claude.')); }
-    else { card.style.opacity = 1; toast(errText(j.error)); }
+  var b = e.target.closest('button[data-rg]'); if (!b) return;
+  var card = b.closest('.card'), ids = b.dataset.rg.split(',');
+  if (b.dataset.op === 'comment') { card.querySelector('.rgc').classList.remove('hidden'); card.querySelector('textarea').focus(); return; }
+  var note = b.dataset.op === 'reject' ? card.querySelector('textarea').value.trim() : '';
+  if (b.dataset.op === 'reject' && !note) { card.querySelector('textarea').focus(); return; }
+  card.style.opacity = .5;
+  api('POST', null, { action: 'review', ids: ids, op: b.dataset.op, note: note }).then(function(j){
+    if (j.ok || j.error === 'already_resolved') {
+      card.remove(); QUEUE.review = QUEUE.review.filter(function(r){ return ids.indexOf(r.id) < 0; });
+      var c = Number($('badge').textContent || 0) - 1; $('badge').textContent = c > 0 ? String(c) : '';
+      if (!QUEUE.review.length) renderReview();
+      toast(b.dataset.op === 'approve' ? t('Validated.', 'Validé.') : t('Sent to Claude.', 'Envoyé à Claude.'));
+    } else { card.style.opacity = 1; toast(errText(j.error)); }
   });
 });
 
