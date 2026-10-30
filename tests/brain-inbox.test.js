@@ -21,12 +21,12 @@ test('personal code and signed session cookie', () => {
   assert.ok(!BI.codeMatches('', ''));
   const t = Date.parse('2026-10-29T20:00:00Z');
   const s = BI.makeSession('secret', t);
-  assert.ok(BI.sessionValid(s, 'secret', t + 29 * 86400000));
-  assert.ok(!BI.sessionValid(s, 'secret', t + 31 * 86400000), 'expires after 30 days');
+  assert.ok(BI.sessionValid(s, 'secret', t + 364 * 86400000));
+  assert.ok(!BI.sessionValid(s, 'secret', t + 366 * 86400000), 'one year, renewed at every opening of the app');
   assert.ok(!BI.sessionValid(s, 'other', t), 'other secret');
   const [exp, sig] = s.split('.');
   assert.ok(!BI.sessionValid((Number(exp) + 1e9) + '.' + sig, 'secret', t), 'tampered expiry');
-  assert.match(BI.sessionCookie(s), /HttpOnly; Secure; SameSite=Lax; Max-Age=2592000/);
+  assert.match(BI.sessionCookie(s), /HttpOnly; Secure; SameSite=Lax; Max-Age=31536000/);
 });
 
 test('lockout: 5 failures lock for 30 minutes, then the count restarts', () => {
