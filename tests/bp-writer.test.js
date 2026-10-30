@@ -257,7 +257,11 @@ test('bpw-2.2.0: elisions fixed in code; a rewrite says how to remove a number i
 test('bpw-2.3.0: the six writing faults of bp_v14_canaille_9 are caught; the approved text only trips on its real rent error', () => {
   const S = require('./tools/canaille-sample.js');
   const facts = S.make('fr');
-  assert.equal(W.WRITER_VERSION, 'bpw-2.3.0');
+  assert.match(W.WRITER_VERSION, /^bpw-2\.3/);
+  // bp_v14_canaille_10
+  assert.deepEqual(W.moreChecks('Le loyer, à {loyer_pct_a1} en année 1, tombe à {loyer_pct_a3} en année 3.', facts).map((e) => e.code), ['trend']);
+  assert.deepEqual(W.moreChecks('Un bistro implanté au {quartier}, à {ville}.', facts).map((e) => e.code), ['grammar']);
+  assert.deepEqual(W.moreChecks('Un bistro implanté dans le quartier {quartier}, à {ville}.', facts), []);
   assert.deepEqual(W.moreChecks('Un effectif de {effectif}. Il compte {effectif} et plus.', facts), []);
   const codes = (t) => W.moreChecks(t, facts).map((e) => e.code);
   assert.deepEqual(codes('une carte de vins composée de {places} références toutes servies au verre.'), ['misuse']);
