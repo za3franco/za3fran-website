@@ -243,7 +243,7 @@ test('founder report speaks to the founder: French titles from the writer, no "p
 });
 
 test('bpw-2.2.0: elisions fixed in code; a rewrite says how to remove a number in words (bp_v14_canaille_9)', () => {
-  assert.equal(W.WRITER_VERSION, 'bpw-2.2.0');
+  assert.match(W.WRITER_VERSION, /^bpw-2\.[2-9]/);
   assert.deepEqual(CK.elide({ a: ['Le choix de une cave', 'parce que il ouvre', 'si il pleut'] }),
     { a: ['Le choix d’une cave', 'parce qu’il ouvre', 's’il pleut'] });
   assert.equal(CK.elide('de unité'), 'de unité');
@@ -252,4 +252,27 @@ test('bpw-2.2.0: elisions fixed in code; a rewrite says how to remove a number i
   assert.match(p, /une large sélection de/);
   const ok = W.rewritePrompt('{}', [{ where: 'x', code: 'language', detail: 'English word' }], 'fr');
   assert.doesNotMatch(ok, /supprime cette quantité/);
+});
+
+test('bpw-2.3.0: the six writing faults of bp_v14_canaille_9 are caught; the approved text only trips on its real rent error', () => {
+  const S = require('./tools/canaille-sample.js');
+  const facts = S.make('fr');
+  assert.equal(W.WRITER_VERSION, 'bpw-2.3.0');
+  assert.deepEqual(W.moreChecks('Un effectif de {effectif}. Il compte {effectif} et plus.', facts), []);
+  const codes = (t) => W.moreChecks(t, facts).map((e) => e.code);
+  assert.deepEqual(codes('une carte de vins composée de {places} références toutes servies au verre.'), ['misuse']);
+  assert.deepEqual(codes('La proposition de valeur — accès à {alcool} avec une large sélection de références au verre — tient.'), ['misuse']);
+  assert.deepEqual(codes('Elle absorbe la montée en charge des {montee_en_charge} premiers mois.'), ['misuse']);
+  assert.deepEqual(codes('Le ticket réalisé au déjeuner est comparé au {ticket_ht_a1} inscrit au plan.'), ['grammar']);
+  assert.deepEqual(codes('Le loyer, à {loyer_pct_a1} du chiffre d’affaires en année 1, suit la même logique : sa part diminue à {loyer_pct_a3} en année 3.'), ['trend']);
+  assert.deepEqual(codes('Des rotations atteignables, que les valeurs {rotation_haute_dinner} et {rotation_haute_dinner} documentent.'), ['misuse']);
+  // correct uses pass
+  assert.deepEqual(codes('Un bistro de {places} couverts, une équipe de {effectif} personnes, les {places} places de la salle.'), []);
+  assert.deepEqual(codes('La masse salariale descend à {masse_salariale_pct_a3} après {masse_salariale_pct_a1} en année 1, à mesure que le chiffre d’affaires progresse.'), []);
+  assert.deepEqual(codes('Un ticket moyen de {ticket_lunch} au déjeuner, une ouverture en {ouverture}, soit le {rang_tresorerie_min}.'), []);
+  // the approved run-7 text: one flag, its real error (rent share said to fall while it rises)
+  const flags = [];
+  for (const [id, ps] of Object.entries(S.text.sections)) ps.forEach((p, i) => W.moreChecks(p, facts).forEach((e) => flags.push(`${id}[${i}] ${e.code}`)));
+  for (const [id, r] of Object.entries(S.text.risks)) W.moreChecks(r.mesures, facts).forEach((e) => flags.push(`${id} ${e.code}`));
+  assert.deepEqual(flags, ['previsions[4] trend']);
 });
