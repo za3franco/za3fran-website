@@ -294,3 +294,44 @@ test('menu photos are deleted once their prices are reviewed, not before', async
   assert.ok(F.db.brain_inbox_items[0].files[0].deleted_at);
   assert.ok(!F.db.brain_inbox_items[0].files[1].deleted_at, 'only the photos');
 });
+
+// ── Monthly regulatory watch (lib/brain-watch.js, bw-1.0.0) ───────────────────────────────────────────
+const BW = require('../lib/brain-watch');
+const REGS = [
+  { key: 'labour.minimum_wage_monthly', label_fr: 'Salaire minimum (mensuel)', unit: 'currency_per_month', value_type: 'number', value_num: 3422.72, currency: 'MAD', observed_at: '2026-10-03', source_name: 'BO 7469' },
+  { key: 'tax.vat_food_service', label_fr: 'TVA sur la restauration', unit: 'pct', value_type: 'number', value_num: 0.1, currency: null, observed_at: '2026-10-03', source_name: 'CGI' },
+  { key: 'tax.corporate_brackets', label_fr: 'Barème IS', unit: 'json', value_type: 'json', value_num: null, observed_at: '2026-10-03', source_name: 'CGI' },
+];
+
+test('watch: only sourced, real changes become items; figures copied, never computed', () => {
+  const p = BW.prompts(REGS, 'Morocco', '2026-11-01');
+  assert.match(p.user, /labour\.minimum_wage_monthly .* current value 3422\.72 MAD/);
+  assert.match(p.system, /Never guess, never compute/);
+  const raw = BW.parse('Here: {"changes":[' +
+    '{"key":"labour.minimum_wage_monthly","new_value":3600,"effective_date":"2027-01-01","source_name":"BO n° 7600","source_url":"https://www.sgg.gov.ma/x","summary_fr":"Le SMIG passe à 3 600 MAD au 1er janvier 2027.","confidence":"high"},' +
+    '{"key":"tax.vat_food_service","new_value":10,"source_name":"DGI","source_url":"https://tax.gov.ma"},' +
+    '{"key":"tax.corporate_brackets","new_value":null,"source_name":"LF 2027","source_url":"https://x.ma","summary_fr":"Nouveau barème IS."},' +
+    '{"key":"unknown","new_value":1,"source_name":"x","source_url":"https://x"},' +
+    '{"key":"labour.minimum_wage_monthly","new_value":3700,"source_name":"blog"}' +
+    '],"notes_fr":"ok"}');
+  const ch = BW.checkChanges(raw, REGS);
+  assert.deepStrictEqual(ch.map((c) => c.reg.key), ['labour.minimum_wage_monthly', 'tax.corporate_brackets'], 'VAT 10 % unchanged, unknown key and unsourced change dropped');
+  const { item, fact } = BW.itemFor(ch[0], 'MA', '2026-11-01');
+  assert.strictEqual(item.status, 'ready');
+  assert.strictEqual(item.contributor, 'veille-claude');
+  assert.strictEqual(item.source_name, 'BO n° 7600');
+  assert.match(item.summary, /Valeur actuelle du Brain : 3[\s ]422,72 MAD/);
+  assert.match(item.summary, /En vigueur le 2027-01-01/);
+  assert.strictEqual(fact.parameter_key, 'labour.minimum_wage_monthly');
+  assert.strictEqual(fact.value_num, 3600);
+  assert.strictEqual(fact.currency, 'MAD');
+  assert.strictEqual(fact.observed_at, '2027-01-01');
+  const rules = BW.itemFor(ch[1], 'MA', '2026-11-01');
+  assert.strictEqual(rules.fact.parameter_key, null, 'structured rules: kept as knowledge, updated by Claude in a chat');
+  assert.strictEqual(rules.item.destination, 'method');
+  // The fact passes the same review path as any inbox fact.
+  const pay = BI.valuePayload(Object.assign({}, fact), Object.assign({ id: 'w1' }, item), { key: 'labour.minimum_wage_monthly', scope: 'local', unit: 'currency_per_month', value_type: 'number' }, 'verify', 'arnaud');
+  assert.strictEqual(pay.payload.source_class, 'published');
+  assert.strictEqual(pay.payload.status, 'verified');
+  assert.strictEqual(BW.answerText([{ type: 'server_tool_use' }, { type: 'text', text: '{"a":' }, { type: 'web_search_tool_result' }, { type: 'text', text: '1}' }]), '{"a":1}');
+});

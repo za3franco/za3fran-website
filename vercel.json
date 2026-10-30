@@ -12,10 +12,12 @@
     "api/generate-validator.js":    { "maxDuration": 800 },
     "api/validator-pdf.js":         { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" },
     "api/brain-inbox.js":           { "maxDuration": 60 },
-    "api/brain-extract.js":         { "maxDuration": 300, "memory": 1536 }
+    "api/brain-extract.js":         { "maxDuration": 300, "memory": 1536 },
+    "api/brain-watch.js":           { "maxDuration": 300 }
   },
   "crons": [
-    { "path": "/api/brain-extract", "schedule": "*/15 * * * *" }
+    { "path": "/api/brain-extract", "schedule": "*/15 * * * *" },
+    { "path": "/api/brain-watch",   "schedule": "17 6 1 * *" }
   ],
   "rewrites": [
     { "source": "/api/currency",              "destination": "/api/currency.js" },
