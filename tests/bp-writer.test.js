@@ -258,6 +258,10 @@ test('bpw-2.3.0: the six writing faults of bp_v14_canaille_9 are caught; the app
   const S = require('./tools/canaille-sample.js');
   const facts = S.make('fr');
   assert.match(W.WRITER_VERSION, /^bpw-2\.3/);
+  // bp_v14_canaille_11
+  assert.deepEqual(W.moreChecks('Le point bas tombe en plein mois de fermeture du {ramadan_a1}.', facts).map((e) => e.code), ['grammar']);
+  assert.deepEqual(W.moreChecks('Le point bas tombe pendant la fermeture de {ramadan_a1}.', facts), []);
+  assert.ok(W.BANK_BANNED.some((re) => re.test('le DSCR reste positif chaque année, avec un plancher à 1,42')));
   // bp_v14_canaille_10
   assert.deepEqual(W.moreChecks('Le loyer, à {loyer_pct_a1} en année 1, tombe à {loyer_pct_a3} en année 3.', facts).map((e) => e.code), ['trend']);
   assert.deepEqual(W.moreChecks('Un bistro implanté au {quartier}, à {ville}.', facts).map((e) => e.code), ['grammar']);
