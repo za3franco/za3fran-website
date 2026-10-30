@@ -241,3 +241,15 @@ test('founder report speaks to the founder: French titles from the writer, no "p
   if (concept) assert.ok(h.includes(`Titre ${concept.title_src}`));
   assert.equal((h.match(/Concurrence :/g) || []).length <= 1, true);
 });
+
+test('bpw-2.2.0: elisions fixed in code; a rewrite says how to remove a number in words (bp_v14_canaille_9)', () => {
+  assert.equal(W.WRITER_VERSION, 'bpw-2.2.0');
+  assert.deepEqual(CK.elide({ a: ['Le choix de une cave', 'parce que il ouvre', 'si il pleut'] }),
+    { a: ['Le choix d’une cave', 'parce qu’il ouvre', 's’il pleut'] });
+  assert.equal(CK.elide('de unité'), 'de unité');
+  const p = W.rewritePrompt('{}', [{ where: 'projet[0]', code: 'spelled', detail: 'number written in words: "cinquante"' }], 'fr');
+  assert.match(p, /supprime cette quantité/);
+  assert.match(p, /une large sélection de/);
+  const ok = W.rewritePrompt('{}', [{ where: 'x', code: 'language', detail: 'English word' }], 'fr');
+  assert.doesNotMatch(ok, /supprime cette quantité/);
+});
