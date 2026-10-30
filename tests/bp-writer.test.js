@@ -289,3 +289,10 @@ test('bpw-2.3.0: the six writing faults of bp_v14_canaille_9 are caught; the app
   for (const [id, r] of Object.entries(S.text.risks)) W.moreChecks(r.mesures, facts).forEach((e) => flags.push(`${id} ${e.code}`));
   assert.deepEqual(flags, ['previsions[4] trend']);
 });
+
+test('bpf-1.2.1: fixed operating lines are labelled yearly in the assumptions table (the Brain figure is annual)', () => {
+  const S = require('./tools/canaille-sample.js');
+  const html = RP.renderReport({ facts: S.make('fr'), text: S.text });
+  assert.match(html, /Assurances \(montant annuel\)<\/td><td>12\D000\sMAD/);
+  assert.doesNotMatch(html, /montant mensuel/);
+});
