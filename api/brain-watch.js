@@ -6,7 +6,7 @@
 //   2. brain_enqueue_random_audit() — about 1 value in 20 picked for a random check
 //   3. regulatory watch — Claude (web search) checks Morocco's regulatory values; each change found becomes
 //      a Brain Inbox item with its source, ready to validate in the app (nothing changes without Arnaud)
-// Manual run: same URL with ?token=<CRON_SECRET>.
+// Manual run: same URL with ?token=<CRON_SECRET> (add &only=watch to skip the two review-list jobs).
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
   const ok = s && (String(req.headers.authorization || '') === 'Bearer ' + s || (req.query && req.query.token === s));
   if (!ok) return res.status(401).json({ error: 'unauthorised' });
   const out = { version: BW.WATCH_VERSION };
-  try {
+  if (!(req.query && req.query.only === 'watch')) try {
     const [{ data: due }, { data: audit }] = await Promise.all([
       supabase.rpc('brain_enqueue_refresh_due'), supabase.rpc('brain_enqueue_random_audit'),
     ]);
