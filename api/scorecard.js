@@ -334,7 +334,7 @@ function buildEmailHTML(name, answers, scores, sections, lang) {
       <tr><td>
         <p style="margin:0 0 10px;font-family:Georgia,serif;font-size:18px;color:#FAFAF7;">${t.upsell_label}</p>
         <p style="margin:0 0 20px;font-size:13px;color:#888880;line-height:1.6;">${t.upsell_body}</p>
-        <a href="https://za3fran.io/#validator" style="display:inline-block;background:#C9862A;color:#0a0a0a;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 24px;text-decoration:none;border-radius:3px;">${t.upsell_cta}</a>
+        <a href="https://www.za3fran.io/validator?from=scorecard_email" style="display:inline-block;background:#C9862A;color:#0a0a0a;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 24px;text-decoration:none;border-radius:3px;">${t.upsell_cta}</a>
       </td></tr>
     </table>
   </td></tr>

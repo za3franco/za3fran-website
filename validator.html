@@ -337,6 +337,7 @@ footer .foot-bottom a:hover{color:var(--white);}
 .ex-quote{margin-top:1rem;color:var(--muted);font-size:.82rem;line-height:1.65;font-style:italic;}
 .ex-note{color:var(--muted);font-size:.75rem;margin-top:.9rem;}
 @media(max-width:760px){.ex-grid{grid-template-columns:1fr;}}
+.v-prefill-note{border:1px solid var(--copper);background:rgba(201,134,42,.08);color:var(--white);font-size:13px;line-height:1.5;padding:12px 16px;border-radius:4px;margin:0 0 24px}
 </style>
 <script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
 </head>
@@ -438,6 +439,8 @@ footer .foot-bottom a:hover{color:var(--white);}
 
 <div class="v-form-wrap">
   <form id="validator-form" novalidate>
+
+    <div class="v-prefill-note" id="prefill-note" style="display:none"><span data-en>We carried over your Scorecard answers. Check them and complete the rest.</span><span data-fr>Nous avons repris vos réponses du Scorecard. Vérifiez-les et complétez le reste.</span></div>
 
     <div class="v-section">
       <div class="v-section-header">
@@ -1161,6 +1164,60 @@ function setLang(l) {
 
 function isFr() { return document.getElementById('body').classList.contains('lang-fr'); }
 
+/* prefill:start */
+function mapScorecardPrefill(p) {
+  var TYPE = { casual_restaurant:'restaurant_casual', fine_dining:'restaurant_fine', cafe_bistro:'cafe_brunch', fast_casual:'fast_casual', hotel_fb:'hotel_fb', bar_lounge:'bar_lounge', beach_club:'beach_club', other:'other' };
+  var STAGE = { exploring:'idea', refining:'idea', planning:'planning', operating:'existing' };
+  var a = (p && p.answers) || {}, out = {};
+  if (p && p.name) out['f-name'] = String(p.name);
+  if (p && p.email) out['f-email'] = String(p.email);
+  if (TYPE[a.conceptType]) out['f-type'] = TYPE[a.conceptType];
+  if (a.conceptDescription) out['f-description'] = String(a.conceptDescription);
+  if (a.differentiation) out['f-differentiation'] = String(a.differentiation);
+  if (a.competitorGap) out['f-gap'] = String(a.competitorGap);
+  if (STAGE[a.journeyStage]) out['f-stage'] = STAGE[a.journeyStage];
+  var loc = String(a.location || '').toLowerCase();
+  if (/casablanca|casa\b/.test(loc)) out['f-city'] = 'Casablanca';
+  else if (/marrakech|marrakesh/.test(loc)) out['f-city'] = 'Marrakech';
+  else if (/rabat/.test(loc)) out['f-city'] = 'Rabat';
+  return out;
+}
+function readScorecardPrefill(storage, now) {
+  try {
+    var raw = storage.getItem('za3fran_prefill'); if (!raw) return null;
+    var p = JSON.parse(raw);
+    if (!p || !p.ts || now - p.ts > 30 * 24 * 3600 * 1000) return null;
+    return p;
+  } catch (e) { return null; }
+}
+/* prefill:end */
+(function() {
+  try {
+    var p = readScorecardPrefill(localStorage, Date.now());
+    if (!p) return;
+    var vals = mapScorecardPrefill(p), n = 0;
+    Object.keys(vals).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el || el.value) return;
+      if (el.tagName === 'SELECT' && !Array.prototype.some.call(el.options, function(o) { return o.value === vals[id]; })) return;
+      el.value = vals[id]; n++;
+    });
+    if (n) document.getElementById('prefill-note').style.display = 'block';
+  } catch (e) {}
+})();
+
+/* funnel events: arrival from the Scorecard, first input */
+(function() {
+  function track(name, params) { try { if (typeof gtag !== 'undefined') gtag('event', name, Object.assign({ event_category: 'validator' }, params || {})); } catch (e) {} }
+  var from = new URLSearchParams(location.search).get('from');
+  track('validator_opened', { event_label: from || 'direct' });
+  var started = false;
+  document.getElementById('validator-form').addEventListener('input', function() {
+    if (started) return; started = true; track('validator_form_started');
+  });
+})();
+
+
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
@@ -1605,6 +1662,7 @@ document.getElementById('validator-form').addEventListener('submit', function(e)
   if (typeof gtag !== 'undefined') {
     gtag('event', 'form_submitted', { event_category: 'validator', event_label: 'review_screen_reached' });
   }
+  try { localStorage.removeItem('za3fran_prefill'); } catch (e) {}
 
   const data = collectData();
   try { populateReview(data); } catch(err) { console.error('populateReview error:', err); }

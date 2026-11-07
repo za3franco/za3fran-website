@@ -160,7 +160,8 @@ footer .foot-bottom a:hover{color:var(--white);}
   .contact-fields > div { grid-template-columns: 1fr !important; }
   footer .foot-bottom{flex-direction:column;text-align:center;}
 }
-  </style>
+  .success-carry{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
+</style>
 <script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
 </head>
 <body>
@@ -438,9 +439,10 @@ footer .foot-bottom a:hover{color:var(--white);}
       <div class="success-sub"><span data-en>Check your inbox — it should arrive within the next 60 seconds. Check your spam folder if you don't see it.</span><span data-fr>Vérifiez votre boîte mail — il devrait arriver dans les 60 secondes. Pensez à vérifier vos spams si vous ne le voyez pas.</span></div>
       <div class="success-divider"></div>
       <div class="success-cta-label"><span data-en>Want deeper answers?</span><span data-fr>Vous voulez des réponses plus précises ?</span></div>
-      <a href="/validator" class="success-cta" onclick="if(typeof gtag!=='undefined'){gtag('event','cta_click',{event_category:'conversion',event_label:'scorecard_to_validator_upsell'});}">
+      <a href="/validator?from=scorecard" class="success-cta" onclick="if(typeof gtag!=='undefined'){gtag('event','cta_click',{event_category:'conversion',event_label:'scorecard_to_validator_upsell'});}">
         <span data-en>Explore the Concept Validator →</span><span data-fr>Découvrir le Concept Validator →</span>
       </a>
+      <p class="success-carry"><span data-en>Your Scorecard answers will be carried over into the form.</span><span data-fr>Vos réponses du Scorecard seront reprises dans le formulaire.</span></p>
     </div>
 
   </div>
@@ -518,7 +520,11 @@ footer .foot-bottom a:hover{color:var(--white);}
     function goNext(stepId) { showStep(stepOrder.indexOf(stepId) + 1); }
     function goBack(stepId) { showStep(stepOrder.indexOf(stepId) - 1); }
 
+    let _scStarted = false;
+    function trackSc(name, params) { try { if (typeof gtag !== 'undefined') gtag('event', name, Object.assign({ event_category: 'scorecard' }, params || {})); } catch (e) {} }
     function selectOption(qId, value, btn) {
+      if (!_scStarted) { _scStarted = true; trackSc('scorecard_started', { event_label: qId }); }
+      trackSc('scorecard_step', { event_label: qId });
       answers[qId] = value;
       document.querySelectorAll('#' + qId + '-options .option-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
@@ -575,6 +581,7 @@ footer .foot-bottom a:hover{color:var(--white);}
       try {
         const response = await fetch('/api/scorecard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!response.ok) throw new Error('API error ' + response.status);
+        try { localStorage.setItem('za3fran_prefill', JSON.stringify({ ts: Date.now(), name: name, email: email, answers: payload.answers })); } catch (e) {}
         document.getElementById('loadingScreen').classList.remove('active');
         document.getElementById('successScreen').classList.add('active');
         scrollToForm();
