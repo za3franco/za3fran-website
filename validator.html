@@ -307,6 +307,36 @@ footer .foot-bottom a:hover{color:var(--white);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 .fade-up{animation:fadeUp 0.6s ease both;}
 .d1{animation-delay:0.1s;}.d2{animation-delay:0.2s;}.d3{animation-delay:0.3s;}
+
+.v-proof{max-width:960px;margin:0 auto;padding:3rem 1.5rem 1rem;}
+.v-proof h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:.6rem;}
+.v-proof .lead{color:var(--muted);line-height:1.7;max-width:62ch;margin-bottom:1.6rem;font-size:.95rem;}
+.v-proof ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.7rem 2rem;margin-bottom:1.6rem;}
+.v-proof li{font-size:.9rem;line-height:1.55;padding-left:1.2rem;position:relative;}
+.v-proof li:before{content:'—';position:absolute;left:0;color:var(--copper);}
+.v-proof .time{display:inline-block;border:1px solid rgba(201,134,42,.45);color:var(--copper-bright);border-radius:999px;padding:.45rem 1rem;font-size:.8rem;}
+@media(max-width:700px){.v-proof ul{grid-template-columns:1fr;}}
+
+.ex-wrap{margin:2.2rem 0 1.8rem;}
+.ex-tag{display:inline-block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--copper-bright);border:1px solid rgba(231,166,62,.45);border-radius:999px;padding:.3rem .8rem;margin-bottom:.9rem;}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.ex-card{border:1px solid rgba(255,255,255,.12);border-radius:18px;background:var(--charcoal);padding:26px;}
+.ex-card h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.5rem;margin:0 0 .25rem;}
+.ex-sub{color:var(--muted);font-size:.8rem;margin-bottom:1.1rem;}
+.ex-score{display:flex;align-items:baseline;gap:.6rem;margin-bottom:1rem;}
+.ex-score b{font-family:'Cormorant Garamond',serif;font-size:3.4rem;font-weight:500;color:var(--copper-bright);line-height:1;}
+.ex-score span{color:var(--muted);font-size:.95rem;}
+.ex-score em{font-style:normal;margin-left:auto;border:1px solid rgba(231,166,62,.5);color:var(--copper-bright);border-radius:999px;padding:.2rem .75rem;font-size:.78rem;}
+.ex-bar{display:grid;grid-template-columns:1fr 36px;gap:.2rem .8rem;align-items:center;margin-bottom:.55rem;font-size:.82rem;}
+.ex-bar i{grid-column:1 / -1;display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;}
+.ex-bar i u{display:block;height:100%;background:var(--copper);}
+.ex-bar b{text-align:right;font-weight:500;}
+.ex-row{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.85rem;}
+.ex-row span:first-child{color:var(--muted);}
+.ex-row b{font-weight:500;text-align:right;}
+.ex-quote{margin-top:1rem;color:var(--muted);font-size:.82rem;line-height:1.65;font-style:italic;}
+.ex-note{color:var(--muted);font-size:.75rem;margin-top:.9rem;}
+@media(max-width:760px){.ex-grid{grid-template-columns:1fr;}}
 </style>
 <script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
 </head>
@@ -335,7 +365,7 @@ footer .foot-bottom a:hover{color:var(--white);}
     <span>Za3fran<span style="color:var(--copper)">.io</span></span>
   </a>
   <div class="navlinks">
-    <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+    <a href="/platform" data-en>How it works</a><a href="/platform" data-fr>Comment ça marche</a>
     <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
   </div>
 </nav>
@@ -386,6 +416,25 @@ footer .foot-bottom a:hover{color:var(--white);}
     <p class="fade-up d3" style="font-size:.75rem;color:var(--muted);max-width:520px;margin:1.25rem auto 0;line-height:1.7;text-align:center;"><span data-en>Market coverage: Morocco — Casablanca, Marrakech, Rabat. Another country? Ask us before you buy. <a href="/methodology#coverage" style="color:var(--copper);border-bottom:1px solid var(--copper);">How we source our data →</a></span><span data-fr>Couverture : Maroc — Casablanca, Marrakech, Rabat. Un autre pays ? Demandez-nous avant d’acheter. <a href="/methodology#coverage" style="color:var(--copper);border-bottom:1px solid var(--copper);">Nos sources de données →</a></span></p>
   </div>
 </div>
+
+<section class="v-proof" id="proof">
+  <h2><span data-en>What you receive</span><span data-fr>Ce que vous recevez</span></h2>
+  <p class="lead"><span data-en>An online report with a PDF, built from your own figures. The financial viability is computed by a model, never written by the AI. You do not need a business plan to start.</span><span data-fr>Un rapport en ligne avec un PDF, construit à partir de vos propres chiffres. La viabilité financière est calculée par un modèle, jamais écrite par l’IA. Inutile d’avoir un business plan pour commencer.</span></p>
+  <ul>
+    <li><span data-en>A score out of 100 and a verdict, with the detail of each of the six sections</span><span data-fr>Un score sur 100 et un verdict, avec le détail des six volets</span></li>
+    <li><span data-en>Revenue, operating profit, break-even and funding need computed from your figures</span><span data-fr>Chiffre d’affaires, EBE, point mort et besoin de financement calculés à partir de vos chiffres</span></li>
+    <li><span data-en>A risk register and an action plan, ranked</span><span data-fr>Un registre des risques et un plan d’action, hiérarchisés</span></li>
+    <li><span data-en>A guided readiness review with up to 5 re-assessments to bring the concept to viability</span><span data-fr>Une revue de préparation guidée, jusqu’à 5 réévaluations pour amener le concept à la viabilité</span></li>
+  </ul>
+  <div class="ex-wrap"><div class="ex-tag"><span data-en>Example project (fictional)</span><span data-fr>Projet d’exemple (fictif)</span></div><div class="ex-card">
+  <h3><span data-en>Concept Validator report</span><span data-fr>Rapport Concept Validator</span></h3>
+  <div class="ex-sub">Maison Figue · <span data-en>neighbourhood café-brunch, Maârif, Casablanca</span><span data-fr>café-brunch de quartier, Maârif, Casablanca</span></div>
+  <div class="ex-score"><b>64</b><span>/ 100</span><em><span data-en>Viable</span><span data-fr>Viable</span></em></div>
+  <div class="ex-bar"><span><span data-en>Concept and positioning</span><span data-fr>Concept et positionnement</span></span><b>75</b><i><u style="width:75%"></u></i></div><div class="ex-bar"><span><span data-en>Market fit</span><span data-fr>Adéquation au marché</span></span><b>75</b><i><u style="width:75%"></u></i></div><div class="ex-bar"><span><span data-en>Competition</span><span data-fr>Concurrence</span></span><b>50</b><i><u style="width:50%"></u></i></div><div class="ex-bar"><span><span data-en>Financial viability</span><span data-fr>Viabilité financière</span></span><b>55</b><i><u style="width:55%"></u></i></div><div class="ex-bar"><span><span data-en>Project maturity</span><span data-fr>Maturité du projet</span></span><b>82</b><i><u style="width:82%"></u></i></div><div class="ex-bar"><span><span data-en>Risk exposure</span><span data-fr>Exposition aux risques</span></span><b>58</b><i><u style="width:58%"></u></i></div>
+  <p class="ex-quote"><span data-en>“The concept is viable, provided the flagged risks are dealt with before committing funds.”</span><span data-fr>« Le concept est viable, à condition de traiter les risques signalés avant d’engager les fonds. »</span></p>
+</div><p class="ex-note"><span data-en>Fictional project generated with the live tools, to show the format of the documents. The figures belong to this example only.</span><span data-fr>Projet fictif généré avec les outils en production, pour montrer le format des documents. Les chiffres valent pour cet exemple uniquement.</span></p></div>
+  <span class="time"><span data-en>About 15 minutes to fill in the form · report delivered in a few minutes</span><span data-fr>Environ 15 minutes pour remplir le formulaire · rapport livré en quelques minutes</span></span>
+</section>
 
 <div class="v-form-wrap">
   <form id="validator-form" novalidate>
@@ -991,7 +1040,7 @@ footer .foot-bottom a:hover{color:var(--white);}
   <div class="foot-bottom">
     <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
     <div style="display:flex;gap:24px;">
-      <a href="/platform" data-en>Platform</a><a href="/platform" data-fr>Plateforme</a>
+      <a href="/platform" data-en>How it works</a><a href="/platform" data-fr>Comment ça marche</a>
       <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
       <a href="/privacy" data-en>Privacy</a><a href="/privacy" data-fr>Confidentialité</a>
       <a href="mailto:hello@za3fran.io">hello@za3fran.io</a>
