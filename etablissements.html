@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour les établissements — Za3fran</title>
+<meta name="description" content="Conseil F&B, client mystère et design pour hôtels, restaurants et marques : stratégie, audits, direction créative. Basé au Maroc.">
+<!-- og -->
+<link rel="canonical" href="https://www.za3fran.io/etablissements">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Za3fran">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Pour les établissements — Za3fran">
+<meta property="og:description" content="Conseil F&amp;B, client mystère et design pour hôtels, restaurants et marques. Basé au Maroc.">
+<meta property="og:url" content="https://www.za3fran.io/etablissements">
+<meta property="og:image" content="https://www.za3fran.io/assets/og-share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pour les établissements — Za3fran">
+<meta name="twitter:description" content="Conseil F&amp;B, client mystère et design pour hôtels, restaurants et marques. Basé au Maroc.">
+<meta name="twitter:image" content="https://www.za3fran.io/assets/og-share.png">
+<!-- /og -->
+<!-- EmailJS SDK for waitlist auto-response emails -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
+<script>
+(function(){
+  var PRICES = { MAD:{en:'MAD 1,990',fr:'1 990 MAD'}, EUR:{en:'€199',fr:'199€'}, USD:{en:'$219',fr:'$219'} };
+  var VAL_PRICES = {
+    MAD:{en:'Validate My Concept — MAD 1,990', fr:'Valider mon concept — 1 990 MAD'},
+    EUR:{en:'Validate My Concept — €199',      fr:'Valider mon concept — 199€'},
+    USD:{en:'Validate My Concept — $219',      fr:'Valider mon concept — $219'}
+  };
+  var BUNDLE_LABEL = {
+    MAD:{en:'Validator + Business Plan — MAD 5,990', fr:'Validator + Business Plan — 5 990 MAD'},
+    EUR:{en:'Validator + Business Plan — €599',      fr:'Validator + Business Plan — 599€'},
+    USD:{en:'Validator + Business Plan — $649',      fr:'Validator + Business Plan — $649'}
+  };
+  var BP_TILE_PRICE = {
+    MAD:{en:'MAD 5,990 with Validator · MAD 4,990 standalone', fr:'5 990 MAD avec Validator · 4 990 MAD seul'},
+    EUR:{en:'€599 with Validator · €499 standalone',           fr:'599€ avec Validator · 499€ seul'},
+    USD:{en:'$649 with Validator · $549 standalone',           fr:'$649 avec Validator · $549 seul'}
+  };
+  var VALIDATOR_PRICE = { MAD:'MAD 1,990', EUR:'€199', USD:'$219' };
+  var BUNDLE_PRICE    = { MAD:'MAD 5,990', EUR:'€599', USD:'$649' };
+  var BUNDLE_SAVE = {
+    MAD:{en:'Save MAD 990', fr:'Économisez 990 MAD'},
+    EUR:{en:'Save €99',     fr:'Économisez 99€'},
+    USD:{en:'Save $119',    fr:'Économisez 119$'}
+  };
+  function setCurrency(c){
+    window.ZA3FRAN_CURRENCY = c;
+    document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = PRICES[c][el.getAttribute('data-price')]; });
+    document.querySelectorAll('[data-val-price]').forEach(function(el){ el.textContent = VAL_PRICES[c][el.getAttribute('data-val-price')]; });
+    document.querySelectorAll('[data-bundle-label]').forEach(function(el){ el.textContent = BUNDLE_LABEL[c][el.getAttribute('data-bundle-label')]; });
+    document.querySelectorAll('[data-bp-tile-price]').forEach(function(el){ el.textContent = BP_TILE_PRICE[c][el.getAttribute('data-bp-tile-price')]; });
+    var v=document.getElementById('bp-val-price'); if(v) v.textContent = VALIDATOR_PRICE[c];
+    var b=document.getElementById('bp-bundle-price'); if(b) b.textContent = BUNDLE_PRICE[c];
+    var se=document.getElementById('bp-save-en'); if(se) se.textContent = BUNDLE_SAVE[c].en;
+    var sf=document.getElementById('bp-save-fr'); if(sf) sf.textContent = BUNDLE_SAVE[c].fr;
+  }
+  function detectCurrency(){
+    fetch('/api/currency').then(function(r){return r.json();}).then(function(d){setCurrency(d.currency||'EUR');}).catch(function(){setCurrency('EUR');});
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', detectCurrency); } else { detectCurrency(); }
+})();
+</script>
+<!-- Google Analytics GA4 — Za3fran -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X7Q3Q8ZKRE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X7Q3Q8ZKRE');
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --cream:#F4F1EA; --ink:#111826;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:500;}
+em{font-style:italic;color:var(--copper-bright);}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+.measure{max-width:62ch;} /* 70-char rule */
+::selection{background:var(--copper);color:var(--black);}
+:focus-visible{outline:2px solid var(--copper-bright);outline-offset:3px;}
+img{max-width:100%;display:block;}
+
+/* bilingual toggle */
+body:not(.lang-fr) [data-fr]:not(option){display:none;}
+body.lang-fr [data-en]:not(option){display:none;}
+#langtoggle{position:fixed;bottom:24px;right:24px;z-index:200;background:rgba(10,10,10,.85);backdrop-filter:blur(8px);border:1px solid rgba(201,134,42,.35);border-radius:100px;padding:5px;display:flex;gap:2px;transition:opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled #langtoggle{opacity:1;pointer-events:auto;}
+#langtoggle button{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;}
+#langtoggle button.active{background:var(--copper);color:var(--black);}
+
+/* ambient texture (signature: warm spice-wash, not literal) */
+.grain{position:absolute;inset:0;opacity:.045;background-image:radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0);background-size:20px 20px;pointer-events:none;}
+.wash{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.35;}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .35s;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);}
+nav.menu-open{background:rgba(10,14,24,.98);}
+nav.scrolled{background:rgba(15,31,61,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(43,99,184,.18);padding:14px 0;}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Cormorant Garamond';font-size:22px;}
+.navlinks{display:flex;gap:34px;font-size:14px;color:var(--muted);}
+.navlinks a{position:relative;}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--copper);transition:width .25s;}
+.navlinks a:hover::after{width:100%;}
+.navlinks a:hover{color:var(--white);}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:8px;flex-shrink:0;}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;}
+@media(max-width:760px){
+  nav .wrap{flex-wrap:wrap;}
+  .logo span:last-child{display:none;}
+  .navlinks{display:none;width:100%;flex-direction:column;align-items:flex-start;gap:0;order:3;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);margin-top:14px;}
+  .navlinks.open{display:flex;}
+  .navlinks a{padding:12px 0;font-size:15px;width:100%;}
+  .navlinks a.navcta{width:auto;margin-top:10px;padding:13px 30px;font-size:14px;}
+  .nav-toggle{display:flex;}
+}
+.navcta{border:1px solid var(--copper);padding:9px 20px;border-radius:100px;font-size:13px;transition:.25s;}
+.navcta:hover{background:var(--copper);color:var(--black);}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+
+/* section rhythm — tinted bands, no hard rules */
+section{position:relative;padding:130px 0;}
+.tint-a{background:var(--black);}
+.tint-b{background:linear-gradient(180deg,var(--charcoal),var(--charcoal2));}
+.section-tag{display:flex;align-items:center;gap:10px;color:var(--copper);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px;font-weight:700;}
+.section-tag::before{content:'';width:22px;height:1px;background:var(--copper);}
+
+/* ============ WHATSAPP + MODAL ============ */
+.wa-btn{position:fixed;bottom:24px;left:24px;z-index:190;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s, opacity .3s;opacity:0;pointer-events:none;}
+body.scrolled .wa-btn{opacity:1;pointer-events:auto;}
+.wa-btn:hover{transform:scale(1.08);}
+.wa-btn svg{width:28px;height:28px;fill:#fff;}
+.wa-tip{position:absolute;left:64px;right:auto;top:50%;transform:translateY(-50%);background:var(--charcoal2);color:var(--white);padding:8px 14px;font-size:13px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.wa-btn:hover .wa-tip{opacity:1;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:210;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.modal.open{display:flex;}
+.mbox{background:var(--charcoal2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:40px;max-width:520px;width:100%;position:relative;max-height:92vh;overflow-y:auto;}
+.mcls{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.mcls:hover{color:var(--white);}
+.mt{font-family:'Cormorant Garamond';font-size:28px;font-weight:500;margin-bottom:8px;}
+.ms{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.minp{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--white);font-size:13.5px;font-family:'DM Sans';outline:none;margin-bottom:10px;transition:border-color .2s;}
+.minp:focus{border-color:var(--copper);}
+.minp::placeholder{color:var(--muted);}
+select.minp{appearance:none;cursor:pointer;}
+select.minp option{background:var(--charcoal2);color:var(--white);}
+.mtxt{resize:vertical;min-height:56px;font-family:'DM Sans';}
+.check-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);margin:16px 0 10px;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(250,250,247,.75);cursor:pointer;}
+.check input{width:14px;height:14px;accent-color:var(--copper);cursor:pointer;}
+.mbtn{width:100%;padding:14px;background:var(--copper);border:none;border-radius:100px;color:var(--black);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans';margin-top:8px;transition:background .2s;}
+.mbtn:hover{background:var(--copper-bright);}
+.mbtn:disabled{opacity:.6;cursor:wait;}
+.merr{margin-top:10px;font-size:13px;color:#E07060;text-align:center;min-height:16px;}
+.msuc{display:none;text-align:center;padding:30px 0;}
+.msuc.show{display:block;}
+.msuc-t{font-family:'Cormorant Garamond';font-size:24px;font-weight:500;margin-bottom:10px;}
+.msuc p{font-size:14px;color:var(--muted);line-height:1.7;}
+
+/* ============ HERO — 3-second test ============ */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:90px;overflow:hidden;}
+.bg-img{position:absolute;inset:0;z-index:0;}
+.bg-img img{width:100%;height:100%;object-fit:cover;}
+.hero .bg-img{background:var(--black);}
+.hero .bg-img img{object-fit:cover;object-position:75% center;}
+.bg-overlay{position:absolute;inset:0;z-index:1;}
+.hero .bg-overlay{background:linear-gradient(100deg,rgba(10,14,24,.97) 0%,rgba(10,14,24,.90) 34%,rgba(15,31,61,.55) 64%,rgba(10,14,24,.32) 100%);}
+.hero .wrap{position:relative;z-index:2;}
+.hero .wash.w1{width:640px;height:640px;top:-10%;right:-15%;background:radial-gradient(circle,var(--copper) 0%,transparent 70%);z-index:1;}
+.hero .wash.w2{width:560px;height:560px;bottom:-15%;left:-10%;background:radial-gradient(circle,var(--navy-bright) 0%,transparent 70%);opacity:.35;z-index:1;}
+@media(max-width:760px){
+  /* Mobile: photo becomes a band at the top, cropped on the wine glasses; text starts below it */
+  .hero{align-items:flex-start;padding-top:calc(30px + 82vw);}
+  .hero .bg-img{bottom:auto;height:calc(70px + 82vw);}
+  .hero .bg-img img{object-fit:cover;object-position:84% 62%;}
+  .hero .bg-overlay{background:linear-gradient(180deg,rgba(10,14,24,.45) 0px,rgba(10,14,24,0) 90px,rgba(10,14,24,0) calc(70px + 52vw),rgba(10,14,24,.85) calc(70px + 72vw),#0a0e18 calc(70px + 82vw),#0a0e18 100%),linear-gradient(90deg,rgba(10,14,24,.55) 0%,rgba(10,14,24,0) 45%);}
+}
+.eyebrow{color:var(--copper);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:26px;display:flex;gap:10px;align-items:center;}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+.hero h1{font-size:clamp(46px,6.6vw,88px);line-height:1.03;letter-spacing:-.01em;max-width:820px;}
+.hero .transform-line{font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--copper-bright);margin-top:22px;font-weight:700;}
+.hero p.sub{color:var(--muted);font-size:18px;margin-top:22px;line-height:1.65;}
+.hero-ctas{display:flex;align-items:center;gap:28px;margin-top:42px;flex-wrap:wrap;}
+.btn-primary{background:var(--copper);color:var(--black);padding:17px 34px;border-radius:100px;font-weight:700;font-size:14.5px;display:inline-block;transition:transform .3s,box-shadow .3s;box-shadow:0 0 0 rgba(201,134,42,0);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(201,134,42,.28);}
+.link-secondary{font-size:14px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;transition:.25s;}
+.link-secondary:hover{color:var(--white);border-color:var(--copper);}
+.hero-strip{display:flex;gap:52px;margin-top:88px;padding-top:30px;padding-bottom:80px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
+.hero-strip .num{font-family:'Cormorant Garamond';font-size:32px;color:var(--copper-bright);}
+.hero-strip .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;max-width:16ch;}
+@media(max-width:640px){
+  .hero{padding-bottom:20px;}
+  .hero-ctas{flex-direction:column;align-items:stretch;gap:14px;}
+  .hero-ctas .btn-primary{text-align:center;}
+  .hero-strip{gap:28px 40px;margin-top:56px;padding-bottom:40px;}
+}
+
+/* ============ HERO DOORS ============ */
+.hero-doors{margin-top:34px;max-width:880px;}
+.hd-label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-bright);font-weight:700;margin-bottom:14px;}
+.hd-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.hd{display:flex;flex-direction:column;gap:6px;padding:16px 18px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(10,14,24,.55);backdrop-filter:blur(6px);transition:border-color .25s,transform .25s;cursor:pointer;}
+.hd:hover{border-color:var(--copper);transform:translateY(-3px);}
+.hd-t{font-family:'Cormorant Garamond';font-size:20px;line-height:1.2;}
+.hd-s{font-size:12.5px;color:var(--muted);line-height:1.5;}
+@media(max-width:760px){.hd-row{grid-template-columns:1fr;}}
+
+/* ============ INTRO BAND (who we are, moved up) ============ */
+.intro-band{padding:90px 0;position:relative;overflow:hidden;text-align:center;}
+.intro-band .wash{position:absolute;width:520px;height:520px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;filter:blur(100px);background:radial-gradient(circle,var(--copper) 0%,transparent 70%);opacity:.14;pointer-events:none;}
+.intro-row{display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;z-index:1;}
+.intro-mark-row{display:flex;align-items:baseline;gap:14px;}
+.intro-mark-row h3{font-size:36px;}
+.intro-copy{color:var(--muted);font-size:15px;line-height:1.75;max-width:58ch;}
+.intro-link{white-space:nowrap;margin-top:6px;}
+
+/* ============ DISCIPLINES — asymmetric index/detail ============ */
+.disc-wrap{display:grid;grid-template-columns:35% 65%;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;}
+.disc-index{background:rgba(255,255,255,.02);display:flex;flex-direction:column;}
+.disc-index-fill{flex:1;position:relative;min-height:40px;}
+.disc-index-fill::before{content:'';position:absolute;left:44px;top:0;bottom:28px;width:1px;background:linear-gradient(to bottom, rgba(201,134,42,.3), transparent);}
+.disc-index-fill::after{content:'';position:absolute;left:40px;bottom:24px;width:9px;height:9px;border-radius:50%;border:1px solid rgba(201,134,42,.35);}
+.disc-item{padding:26px 28px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;gap:16px;transition:background .3s;}
+.disc-item:last-child{border-bottom:none;}
+.disc-item .di-num{font-size:12px;color:var(--muted);font-weight:700;}
+.disc-item .di-name{font-family:'Cormorant Garamond';font-size:21px;}
+.disc-item.active{background:rgba(201,134,42,.09);}
+.disc-item.active .di-num{color:var(--copper);}
+.disc-item:hover{background:rgba(201,134,42,.06);}
+.disc-detail{padding:48px 52px;}
+.disc-panel{display:none;}
+.disc-panel.active{display:block;}
+.disc-panel .dp-tag{color:var(--copper-bright);font-size:13px;font-weight:700;margin-bottom:14px;}
+.disc-panel h3{font-size:34px;margin-bottom:16px;}
+.disc-panel p{color:var(--muted);line-height:1.7;margin-bottom:26px;}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:30px;}
+.dp-grid div{font-size:13.5px;color:var(--white);padding:10px 0 10px 18px;border-left:2px solid rgba(201,134,42,.4);}
+.dp-cta{font-size:13.5px;color:var(--copper-bright);border-bottom:1px solid var(--copper);padding-bottom:2px;}
+@media(max-width:860px){.disc-wrap{grid-template-columns:1fr;}.disc-detail{padding:32px 26px;}}
+
+/* ============ SCORECARD / CRO PANEL ============ */
+.cro-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;background:rgba(201,134,42,.05);border:1px solid rgba(201,134,42,.18);border-radius:20px;padding:56px;}
+.cro-panel h2{font-size:clamp(28px,3.2vw,42px);margin-bottom:18px;}
+.cro-panel p{color:var(--muted);line-height:1.7;margin-bottom:24px;}
+.cro-list{list-style:none;margin-bottom:30px;}
+.cro-list li{padding:9px 0 9px 24px;position:relative;font-size:14px;color:var(--white);}
+.cro-list li::before{content:'—';position:absolute;left:0;color:var(--copper);}
+.cro-meta{font-size:12px;color:var(--muted);margin-top:18px;letter-spacing:.03em;}
+.cro-side{background:var(--charcoal2);border-radius:16px;padding:32px;border:1px solid rgba(255,255,255,.06);}
+.cro-side .upsell{font-size:13.5px;color:var(--muted);line-height:1.7;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);}
+@media(max-width:900px){.cro-panel{grid-template-columns:1fr;padding:36px 26px;}}
+
+/* ============ TWO-STEP + SAMPLE OUTPUT ============ */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px;}
+.step-card{background:var(--charcoal2);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:34px;transition:border-color .3s,transform .3s;}
+.step-card:hover{border-color:rgba(201,134,42,.4);transform:translateY(-4px);}
+.step-card .st-tag{color:var(--copper);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.step-card h3{font-size:24px;margin-bottom:4px;}
+.step-card .st-price{color:var(--copper-bright);font-size:15px;font-weight:700;margin-bottom:14px;}
+.step-card p{color:var(--muted);font-size:14px;line-height:1.65;}
+.bundle-cta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:70px;}
+
+.sample-panel{background:linear-gradient(150deg,var(--navy),var(--black));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:44px;}
+.sample-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:24px;}
+.sample-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:28px;align-items:center;}
+.score-ring{width:90px;height:90px;border-radius:50%;border:3px solid var(--copper);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-ring .sr-num{font-family:'Cormorant Garamond';font-size:26px;color:var(--copper-bright);}
+.score-ring .sr-lbl{font-size:9px;color:var(--muted);}
+.sample-metric .sm-num{font-family:'Cormorant Garamond';font-size:24px;color:var(--white);}
+.sample-metric .sm-lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.unlock-note{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--copper-bright);}
+@media(max-width:800px){.steps{grid-template-columns:1fr;}.sample-grid{grid-template-columns:1fr 1fr;gap:20px;}}
+
+/* ============ PLATFORM — asymmetric process rail ============ */
+.plat-wrap{display:grid;grid-template-columns:33% 67%;gap:56px;align-items:start;}
+.plat-copy h2{font-size:clamp(28px,3.4vw,44px);margin-bottom:18px;}
+.plat-copy p{color:var(--muted);line-height:1.7;margin-bottom:22px;}
+.plat-copy .link-secondary{display:inline-block;}
+.tool-rail{display:flex;flex-direction:column;gap:2px;}
+.tool-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:22px;align-items:center;background:rgba(255,255,255,.02);padding:22px 26px;border-radius:10px;transition:background .3s,transform .25s;}
+.tool-row:hover{background:rgba(201,134,42,.07);transform:translateX(6px);}
+.tool-row .tr-name{font-family:'Cormorant Garamond';font-size:20px;}
+.tool-row .tr-desc{color:var(--muted);font-size:13px;margin-top:3px;max-width:46ch;}
+.tool-row .tr-status{font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border-radius:100px;white-space:nowrap;}
+.tr-status.live{background:rgba(124,191,124,.15);color:#8fd48f;}
+.tr-status.soon{background:rgba(255,255,255,.06);color:var(--muted);}
+.tool-row .tr-price{font-size:13px;color:var(--copper-bright);font-weight:700;white-space:nowrap;}
+@media(max-width:900px){.plat-wrap{grid-template-columns:1fr;}.tool-row{grid-template-columns:1fr;gap:8px;}}
+
+/* ============ TERRITORY ============ */
+.terr-card{position:relative;overflow:hidden;border-radius:20px;padding:70px 44px;margin:50px 0;background:var(--black);}
+.terr-card .bg-img{position:absolute;inset:0;z-index:0;background:var(--black);}
+.terr-card .bg-img img{width:100%;height:100%;object-fit:contain;object-position:center;opacity:.9;}
+.terr-card .bg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(10,14,24,.94) 0%,rgba(15,31,61,.55) 42%,rgba(10,14,24,.25) 100%);}
+.terr-card .terr-inner{position:relative;z-index:2;}
+#about.tint-light .terr-card{color:var(--white);}
+#about.tint-light .terr-card .section-tag{color:var(--copper);}
+#about.tint-light .terr-card h2{color:var(--white);}
+#about.tint-light .terr-card h2 em{color:var(--copper-bright);}
+.terr-section .wrap{position:relative;z-index:2;}
+.terr-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.terr-tags span{font-size:12px;border:1px solid rgba(255,255,255,.18);padding:8px 16px;border-radius:100px;color:var(--white);opacity:.85;transition:.25s;}
+.terr-tags span:hover{border-color:var(--copper);opacity:1;color:var(--copper-bright);}
+
+/* ============ LIGHT BAND (About) ============ */
+#about.tint-light{background:linear-gradient(180deg,#F4F1EA 0%,#ECE6D8 100%);color:#12192a;}
+#about.tint-light .about-body p,
+#about.tint-light .pc-lbl,
+#about.tint-light .cro-meta{color:#4a5062;}
+#about.tint-light .proof-strip{background:rgba(21,59,115,.16);border-color:rgba(21,59,115,.16);}
+#about.tint-light .proof-cell{background:#ffffff;}
+#about.tint-light .disc-tags span{border-color:rgba(21,59,115,.25);background:#ffffff;color:#2c3140;}
+#about.tint-light .about-quote{border-left-color:var(--copper);color:#12192a;}
+#about.tint-light em{color:#a8651a;}
+#about.tint-light .section-tag{color:#a8651a;}
+#about.tint-light .section-tag::before{background:var(--copper);}
+
+/* ============ ABOUT / PROOF ============ */
+.proof-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;margin-bottom:64px;}
+.proof-cell{background:var(--charcoal2);padding:28px 22px;}
+.proof-cell .pc-num{font-family:'Cormorant Garamond';font-size:30px;color:var(--copper-bright);}
+.proof-cell .pc-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+.about-quote{font-family:'Cormorant Garamond';font-style:italic;font-size:clamp(22px,2.6vw,32px);max-width:760px;line-height:1.5;border-left:2px solid var(--copper);padding-left:26px;margin-bottom:56px;}
+.about-body{display:grid;grid-template-columns:1fr 1fr;gap:56px;}
+.about-body p{color:var(--muted);line-height:1.75;margin-bottom:16px;}
+.disc-tags{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
+.disc-tags span{font-size:12.5px;padding:9px 16px;border:1px solid rgba(255,255,255,.1);border-radius:100px;color:var(--muted);}
+@media(max-width:900px){.about-body{grid-template-columns:1fr;}.proof-strip{grid-template-columns:1fr 1fr;}}
+
+/* ============ FINAL CTA ============ */
+.cta-final{text-align:center;padding:150px 0 110px;}
+.cta-final h2{font-size:clamp(34px,4.8vw,60px);max-width:760px;margin:0 auto 24px;}
+.cta-final p.measure{margin:0 auto 38px;color:var(--muted);}
+footer{border-top:1px solid rgba(255,255,255,.08);padding:64px 0 40px;background:var(--charcoal);}
+@media(max-width:640px){footer{padding-bottom:90px;}}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:44px;}
+.foot-grid h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.foot-grid ul{list-style:none;}
+.foot-grid li{margin-bottom:10px;font-size:13.5px;color:var(--muted);}
+.foot-grid li a:hover{color:var(--copper-bright);}
+@media(max-width:760px){
+  .foot-grid{grid-template-columns:1fr 1fr;gap:32px 24px;}
+  .foot-grid > div:first-child{grid-column:1 / -1;}
+}
+@media(max-width:480px){
+  .foot-grid{grid-template-columns:1fr;gap:28px;}
+}
+.foot-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px;}
+</style>
+<script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
+</head>
+<body>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/212648960306?text=Hello%20Za3fran%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.2 0 0 7.2 0 16c0 2.8.7 5.5 2.1 7.9L0 32l8.4-2.2c2.3 1.3 4.9 1.9 7.6 1.9 8.8 0 16-7.2 16-16S24.8 0 16 0zm0 29.3c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-4.9-.3-.5C3.3 20.8 2.7 18.4 2.7 16 2.7 8.6 8.6 2.7 16 2.7s13.3 5.9 13.3 13.3-5.9 13.3-13.3 13.3zm7.4-9.9c-.4-.2-2.4-1.2-2.7-1.3-.4-.1-.7-.2-.9.2s-1.1 1.3-1.3 1.6c-.2.2-.5.3-.9.1-.4-.2-1.7-.6-3.2-2-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.6-.9-.7-.2 0-.5 0-.7 0-.2 0-.6.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.4 3.9 1.6 4.2c.2.3 2.8 4.3 6.8 6 .9.4 1.7.6 2.3.8.9.3 1.8.2 2.5.1.8-.1 2.4-1 2.7-1.9.3-1 .3-1.8.2-2-.1-.2-.4-.3-.8-.5z"/></svg>
+  <span class="wa-tip" data-en>Chat on WhatsApp</span><span class="wa-tip" data-fr>Discuter sur WhatsApp</span>
+</a>
+
+<!-- WAITLIST MODAL -->
+<div class="modal" id="modal">
+  <div class="mbox">
+    <button class="mcls" onclick="closeModal()">✕</button>
+    <div id="mform">
+      <h3 class="mt" data-en>Join the Waitlist</h3><h3 class="mt" data-fr>Liste d'attente</h3>
+      <p class="ms" data-en>Tell us a little about you and which tools matter most. We'll be in touch when they go live.</p>
+      <p class="ms" data-fr>Parlez-nous de vous et des outils qui vous intéressent. Nous vous contacterons dès leur lancement.</p>
+      <input class="minp" type="text" id="m_name" placeholder="First name / Prénom" required>
+      <input class="minp" type="email" id="m_email" placeholder="Email" required>
+      <select class="minp" id="m_country">
+        <option value="">Country / Région</option>
+        <option value="Morocco">Morocco / Maroc</option>
+        <option value="France">France</option>
+        <option value="Other Africa">Other Africa / Autre Afrique</option>
+        <option value="Indian Ocean">Indian Ocean / Océan Indien</option>
+        <option value="Other">Other / Autre</option>
+      </select>
+      <select class="minp" id="m_role">
+        <option value="">Your role / Votre rôle</option>
+        <option value="Restaurant owner">Restaurant owner / Restaurateur</option>
+        <option value="Hotel operator">Hotel operator / Hôtelier</option>
+        <option value="F&B consultant">F&B consultant / Consultant F&B</option>
+        <option value="Investor">Investor / Investisseur</option>
+        <option value="Other">Other / Autre</option>
+      </select>
+      <div class="check-label" data-en>Which tools interest you most?</div><div class="check-label" data-fr>Quels outils vous intéressent le plus ?</div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" class="m_tool" value="Concept Studio"><span>Concept Studio</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Financial Builder"><span>Financial Builder</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Staffing Builder"><span>Staffing Builder</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Marketing Strategy"><span>Marketing</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="SOP Generator"><span>SOP Generator</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Business Plan Pro"><span>Business Plan Pro</span></label>
+        <label class="check"><input type="checkbox" class="m_tool" value="Intelligence Dashboard"><span>Intelligence</span></label>
+      </div>
+      <textarea class="minp mtxt" id="m_msg" rows="2" placeholder="Anything specific we should know? (optional) / Quelque chose à nous dire ? (facultatif)"></textarea>
+      <button class="mbtn" data-en onclick="submitWL()">Join the Waitlist</button>
+      <button class="mbtn" data-fr onclick="submitWL()">Rejoindre la liste</button>
+      <p class="merr" id="m_err"></p>
+    </div>
+    <div class="msuc" id="msuc">
+      <div style="color:var(--copper);font-size:26px;margin-bottom:12px">✦</div>
+      <h3 class="msuc-t" data-en>Welcome to Za3fran Digital.</h3><h3 class="msuc-t" data-fr>Bienvenue chez Za3fran Digital.</h3>
+      <p data-en>Check your inbox — a confirmation email is on its way.</p>
+      <p data-fr>Vérifiez votre boîte de réception — un email de confirmation est en route.</p>
+    </div>
+  </div>
+</div>
+
+<div id="langtoggle">
+  <button data-l="en" class="active">EN</button>
+  <button data-l="fr">FR</button>
+</div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a href="/" class="logo" style="display:flex;align-items:center;gap:10px">
+      <img src="/assets/logo.png" alt="Za3fran" style="width:36px;height:36px;object-fit:contain;border-radius:6px;">
+      <span>Za3fran<span style="color:var(--copper)">.io</span></span>
+    </a>
+    <div class="navlinks" id="navlinks">
+      <a href="/" data-en>Founders</a><a href="/" data-fr>Porteurs de projet</a>
+      <a href="#disciplines" data-en>Services</a><a href="#disciplines" data-fr>Services</a>
+      <a href="#about" data-en>About</a><a href="#about" data-fr>À propos</a>
+      <a href="#contact" class="navcta" data-en>Contact</a><a href="#contact" class="navcta" data-fr>Nous contacter</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero tint-a">
+  <div class="bg-img"><img src="/assets/hero-new.jpg" alt="Two glasses of white wine on a wooden table in warm evening light" data-alt-en="Two glasses of white wine on a wooden table in warm evening light" data-alt-fr="Deux verres de vin blanc sur une table en bois, dans une lumière chaude de fin de journée"></div>
+  <div class="bg-overlay"></div>
+  <div class="grain"></div>
+  <div class="wash w1"></div>
+  <div class="wash w2"></div>
+  <div class="wrap">
+    <div class="eyebrow"><span data-en>For hotels, restaurants and brands</span><span data-fr>Pour les hôtels, restaurants et marques</span></div>
+    <h1><span data-en>Where Strategy<br>Meets <em>Craft.</em></span><span data-fr>Là où la Stratégie<br>Rencontre <em>l'Art.</em></span></h1>
+    <p class="sub measure">
+      <span data-en>Za3fran supports existing establishments with three human services, chosen by need: consulting to improve performance, mystery-guest audits to measure the guest experience, and creative direction to make the offer look as good as it tastes.</span>
+      <span data-fr>Za3fran accompagne les établissements en activité avec trois services humains, selon le besoin : du conseil pour améliorer la performance, des audits client mystère pour mesurer l'expérience client, et de la direction créative pour que l'offre soit aussi belle que bonne.</span>
+    </p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-primary" data-en>Discuss your needs</a><a href="#contact" class="btn-primary" data-fr>Parler de votre besoin</a>
+      <a href="/" class="link-secondary" data-en>Opening a restaurant? See the founders' page →</a><a href="/" class="link-secondary" data-fr>Vous ouvrez un restaurant ? Page porteurs de projet →</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE ARE — intro band, moved up so visitors get identity early -->
+<section class="tint-b intro-band">
+  <div class="wash"></div>
+  <div class="wrap">
+    <div class="intro-row reveal">
+      <div class="section-tag"><span data-en>Who We Are</span><span data-fr>Qui nous sommes</span></div>
+      <div class="intro-mark-row">
+        <h3 class="serif">Za3fran</h3>
+        <h3 class="serif">·</h3>
+        <h3 class="serif">الزعفران</h3>
+      </div>
+      <p class="intro-copy">
+        <span data-en>Saffron — the world's most precious spice. Rare, complex and transformative. Za3fran brings that same philosophy to every hospitality business we work with. Founded in 2015, rooted in Morocco, serving Africa.</span>
+        <span data-fr>Le safran — l'épice la plus précieuse du monde. Rare, complexe et transformatrice. Za3fran apporte cette même philosophie à chaque entreprise hôtelière. Fondé en 2015, ancré au Maroc, au service de l'Afrique.</span>
+      </p>
+      <a href="#about" class="link-secondary intro-link"><span data-en>More about us ↓</span><span data-fr>En savoir plus ↓</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- DISCIPLINES -->
+<section class="tint-b" id="disciplines">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>What We Do</span><span data-fr>Ce que nous faisons</span></div>
+    <h2 class="reveal" style="font-size:clamp(30px,4vw,46px);max-width:640px;margin-bottom:20px"><span data-en>Three services.<br><em>By need.</em></span><span data-fr>Trois services.<br><em>Selon le besoin.</em></span></h2>
+    <p class="measure reveal" style="color:var(--muted);margin-bottom:56px;line-height:1.7">
+      <span data-en>Za3fran sits at the intersection of hospitality strategy, F&amp;B expertise, brand experience, operational performance and digital intelligence.</span>
+      <span data-fr>Za3fran se situe à l'intersection de la stratégie hôtelière, de l'expertise F&amp;B, de l'expérience de marque, de la performance opérationnelle et de l'intelligence digitale.</span>
+    </p>
+
+    <div class="disc-wrap reveal">
+      <div class="disc-index">
+        <div class="disc-item active" data-target="0"><span class="di-num">01</span><span class="di-name" data-en>Consulting</span><span class="di-name" data-fr>Conseil</span></div>
+        <div class="disc-item" data-target="1"><span class="di-num">02</span><span class="di-name" data-en>Mystery guest</span><span class="di-name" data-fr>Client mystère</span></div>
+        <div class="disc-item" data-target="2"><span class="di-num">03</span><span class="di-name" data-en>Design</span><span class="di-name" data-fr>Design</span></div>
+                <div class="disc-index-fill"></div>
+      </div>
+      <div class="disc-detail">
+        <div class="disc-panel active" data-panel="0">
+          <div class="dp-tag"><span data-en>Strategy · Operations · Performance</span><span data-fr>Stratégie · Opérations · Performance</span></div>
+          <h3><span data-en>Hospitality &amp; F&amp;B Consulting</span><span data-fr>Conseil Hôtellerie &amp; Restauration</span></h3>
+          <p><span data-en>We help hotels, restaurants, cafés, beach clubs and hospitality groups improve their concept, guest experience and profitability — practical expertise that translates into measurable results.</span><span data-fr>Nous aidons les hôtels, restaurants, cafés, beach clubs et groupes hôteliers à améliorer leur concept, l'expérience client et leur rentabilité.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>F&amp;B strategy &amp; concept development</span><span data-fr>Stratégie F&amp;B &amp; développement de concept</span></div>
+            <div><span data-en>Menu structure &amp; positioning</span><span data-fr>Structure de menu &amp; positionnement</span></div>
+            <div><span data-en>Cost control &amp; profitability analysis</span><span data-fr>Contrôle des coûts &amp; rentabilité</span></div>
+            <div><span data-en>Guest journey optimisation</span><span data-fr>Optimisation du parcours client</span></div>
+          </div>
+          <a href="#contact" class="dp-cta"><span data-en>Discuss your project →</span><span data-fr>Discuter de votre projet →</span></a>
+        </div>
+        <div class="disc-panel" data-panel="1">
+          <div class="dp-tag">Audit · Standards · Intelligence</div>
+          <h3>Za3fran Mystery</h3>
+          <p><span data-en>Professional mystery guest and mystery client audits for hotels, restaurants and hospitality businesses — calibrated against your own concept standards, not generic benchmarks.</span><span data-fr>Audits mystery guest et mystery client professionnels pour les hôtels et restaurants — calibrés selon vos propres standards de concept.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>Mystery guest audits for hotels</span><span data-fr>Audits mystery guest pour hôtels</span></div>
+            <div><span data-en>Mystery client audits for restaurants</span><span data-fr>Audits mystery client pour restaurants</span></div>
+            <div><span data-en>Service quality &amp; standards compliance</span><span data-fr>Qualité de service &amp; conformité</span></div>
+            <div><span data-en>Detailed reports with recommendations</span><span data-fr>Rapports détaillés avec recommandations</span></div>
+          </div>
+          <a href="#contact" class="dp-cta"><span data-en>Request an audit →</span><span data-fr>Demander un audit →</span></a>
+        </div>
+        <div class="disc-panel" data-panel="2">
+          <div class="dp-tag"><span data-en>Food Styling · Visual Direction · Creative Production</span><span data-fr>Food Styling · Direction Visuelle · Production Créative</span></div>
+          <h3>Za3fran Design</h3>
+          <p><span data-en>Food styling, art direction and creative production for F&amp;B and hospitality brands. We help restaurants, hotels and food brands make their product look as good as it tastes.</span><span data-fr>Food styling, direction artistique et production créative pour les marques F&amp;B et hôtelières.</span></p>
+          <div class="dp-grid">
+            <div><span data-en>Food styling &amp; art direction</span><span data-fr>Food styling &amp; direction artistique</span></div>
+            <div><span data-en>Photo &amp; video shoot direction</span><span data-fr>Direction de shoots photo &amp; vidéo</span></div>
+            <div><span data-en>Social media content direction</span><span data-fr>Direction de contenu réseaux sociaux</span></div>
+            <div><span data-en>Advertising visuals &amp; menu imagery</span><span data-fr>Visuels publicitaires &amp; imagerie de menu</span></div>
+          </div>
+          <a href="#contact" class="dp-cta"><span data-en>Explore creative services →</span><span data-fr>Services créatifs →</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERRITORY -->
+<!-- ABOUT / PROOF / TERRITORY — merged into one section -->
+<section class="tint-light" id="about">
+  <div class="wrap">
+    <div class="section-tag reveal"><span data-en>About Za3fran</span><span data-fr>À propos de Za3fran</span></div>
+    <h2 class="reveal" style="font-size:clamp(30px,4vw,46px);max-width:640px;margin-bottom:44px"><span data-en>Premium. Practical.<br><em>Results-oriented.</em></span><span data-fr>Premium. Pratique.<br><em>Orienté résultats.</em></span></h2>
+
+    <div class="proof-strip reveal">
+      <div class="proof-cell"><div class="pc-num">2015</div><div class="pc-lbl" data-en>Founded</div><div class="pc-lbl" data-fr>Fondation</div></div>
+      <div class="proof-cell"><div class="pc-num">03</div><div class="pc-lbl" data-en>Services</div><div class="pc-lbl" data-fr>Services</div></div>
+      <div class="proof-cell"><div class="pc-num" data-en>Morocco</div><div class="pc-num" data-fr>Maroc</div><div class="pc-lbl" data-en>Africa base</div><div class="pc-lbl" data-fr>Base Afrique</div></div>
+      <div class="proof-cell"><div class="pc-num">F&amp;B</div><div class="pc-lbl" data-en>Strategy &amp; Operations</div><div class="pc-lbl" data-fr>Stratégie &amp; Opérations</div></div>
+    </div>
+
+    <div class="terr-card reveal">
+      <div class="bg-img"><img src="/assets/africa.png" alt="Morocco — gateway to Africa"></div>
+      <div class="bg-overlay"></div>
+      <div class="terr-inner">
+        <div class="section-tag"><span data-en>Our Territory</span><span data-fr>Notre Territoire</span></div>
+        <h2 style="font-size:clamp(26px,3.2vw,40px);margin-bottom:20px"><span data-en>Morocco.<br><em>Gateway to Africa.</em></span><span data-fr>Le Maroc.<br><em>Porte de l'Afrique.</em></span></h2>
+        <p class="measure" style="color:var(--muted);line-height:1.75">
+          <span data-en>Za3fran is rooted in Morocco — a market that combines French business culture, Arabic hospitality traditions and rapid economic development. From this base, we work across francophone and anglophone Africa.</span>
+          <span data-fr>Za3fran est ancré au Maroc — un marché qui conjugue culture d'affaires française, traditions d'hospitalité arabes et développement économique rapide.</span>
+        </p>
+        <div class="terr-tags">
+          <span>Casablanca</span><span>Marrakech</span><span>Rabat</span>
+          <span data-en>Francophone Africa</span><span data-fr>Afrique francophone</span>
+          <span data-en>Anglophone Africa</span><span data-fr>Afrique anglophone</span>
+          <span data-en>Indian Ocean</span><span data-fr>Océan Indien</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-quote reveal">
+      <span data-en>"Not just giving advice — helping clients structure, improve, launch, monitor and grow their business."</span>
+      <span data-fr>« Pas seulement donner des conseils — aider les clients à structurer, améliorer, lancer, suivre et développer leur activité. »</span>
+    </div>
+
+    <div class="about-body reveal">
+      <div>
+        <p><span data-en>Za3fran Consulting is a hospitality, F&amp;B and guest-experience consulting company built around one clear objective: helping hotels, restaurants, cafés, hospitality groups and lifestyle brands improve their concept, operations, customer experience, positioning and commercial performance.</span><span data-fr>Za3fran Consulting est une société de conseil construite autour d'un objectif clair : aider les hôtels, restaurants et marques lifestyle à améliorer leur concept, opérations et performance commerciale.</span></p>
+        <p><span data-en>Our positioning is premium, practical and results-oriented — not just recommendations, but hands-on support to structure, improve, launch, monitor and grow.</span><span data-fr>Notre positionnement est premium, pratique et orienté résultats — un accompagnement concret pour structurer, améliorer, lancer, suivre et développer.</span></p>
+      </div>
+      <div>
+        <div class="section-tag" style="margin-bottom:10px"><span data-en>The Name</span><span data-fr>Le Nom</span></div>
+        <h3 class="serif" style="font-size:22px;margin-bottom:14px">Za3fran · الزعفران</h3>
+        <p><span data-en>Saffron — the world's most precious spice. Rare, complex and transformative. Za3fran brings that same philosophy to every hospitality business we work with.</span><span data-fr>Le safran — l'épice la plus précieuse du monde. Rare, complexe et transformatrice. Za3fran apporte cette même philosophie à chaque entreprise avec laquelle nous travaillons.</span></p>
+        <div class="disc-tags">
+          <span data-en>Hospitality Strategy</span><span data-fr>Stratégie hôtelière</span>
+          <span data-en>F&amp;B Expertise</span><span data-fr>Expertise F&amp;B</span>
+          <span data-en>Brand &amp; Creative Direction</span><span data-fr>Marque &amp; direction créative</span>
+          <span data-en>Operational Performance</span><span data-fr>Performance opérationnelle</span>
+          <span data-en>Digital Intelligence &amp; AI</span><span data-fr>Intelligence digitale &amp; IA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="tint-b" id="contact">
+  <div class="cta-final wrap">
+    <div class="section-tag reveal" style="justify-content:center"><span data-en>Get Started · Work With Us</span><span data-fr>Commencer · Travailler avec nous</span></div>
+    <h2 class="reveal"><span data-en>Ready to build <em>something real?</em></span><span data-fr>Prêt à construire <em>quelque chose de réel ?</em></span></h2>
+    <p class="measure reveal"><span data-en>Whether you're launching a concept, improving an operation, commissioning an audit or looking for creative direction — Za3fran is built to deliver results, not just recommendations.</span><span data-fr>Que vous lanciez un concept, amélioriez une opération ou cherchiez une direction créative — Za3fran est construit pour produire des résultats.</span></p>
+    <div class="hero-ctas reveal" style="justify-content:center">
+      <a href="mailto:hello@za3fran.io" class="btn-primary" data-en>Get in Touch</a>
+      <a href="mailto:hello@za3fran.io" class="btn-primary" data-fr>Nous contacter</a>
+      <a href="tel:+212648960306" class="link-secondary">+212 648 960 306</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px">Za3fran.io</div>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:32ch"><span data-en>Premium hospitality and F&amp;B consulting — strategy, audits, creative direction and AI-powered tools.</span><span data-fr>Conseil premium en hôtellerie et restauration — stratégie, audits, direction créative et outils IA.</span></p>
+      </div>
+      <div>
+        <h4 data-en>Services</h4><h4 data-fr>Services</h4>
+        <ul>
+          <li><a href="#disciplines"><span data-en>Hospitality Consulting</span><span data-fr>Conseil Hôtellerie</span></a></li>
+          <li><a href="#disciplines"><span data-en>Mystery guest</span><span data-fr>Client mystère</span></a></li>
+          <li><a href="#disciplines">Za3fran Design</a></li>
+          <li><a href="/">Za3fran Digital</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Platform</h4><h4 data-fr>Plateforme</h4>
+        <ul>
+          <li><a href="/validator">Concept Validator</a></li>
+          <li><a href="/menu-engineer"><span data-en>Menu Engineer</span><span data-fr>Ingénieur de Menu</span></a></li>
+          <li><a href="/business-plan">Business Plan Essentials</a></li>
+          <li><a href="/platform"><span data-en>All Tools</span><span data-fr>Tous les outils</span></a></li>
+          <li><a href="/methodology"><span data-en>How we source data</span><span data-fr>Nos sources de données</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en>Company</h4><h4 data-fr>Entreprise</h4>
+        <ul>
+          <li><a href="#about"><span data-en>About</span><span data-fr>À propos</span></a></li>
+          <li><a href="/privacy"><span data-en>Privacy</span><span data-fr>Confidentialité</span></a></li>
+          <li><a href="mailto:hello@za3fran.io">hello@za3fran.io</a></li>
+          <li><a href="tel:+212648960306">+212 648 960 306</a></li>
+          <li><a href="https://wa.me/212648960306">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div><span data-en>© 2026 Za3fran Consulting. All rights reserved.</span><span data-fr>© 2026 Za3fran Consulting. Tous droits réservés.</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  document.body.classList.toggle('scrolled', window.scrollY > 120);
+});
+
+const navToggle = document.getElementById('navToggle');
+const navlinksEl = document.getElementById('navlinks');
+if(navToggle){
+  navToggle.addEventListener('click', () => {
+    navlinksEl.classList.toggle('open');
+    nav.classList.toggle('menu-open', navlinksEl.classList.contains('open'));
+  });
+  navlinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navlinksEl.classList.remove('open');
+    nav.classList.remove('menu-open');
+  }));
+}
+
+document.getElementById('langtoggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.body.classList.toggle('lang-fr', b.dataset.l === 'fr');
+  document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x===b));
+  localStorage.setItem('za3fran_lang', b.dataset.l);
+  setImgAlts(b.dataset.l);
+});
+function setImgAlts(l){ document.querySelectorAll('img[data-alt-fr]').forEach(i=>{ i.alt = l === 'fr' ? i.dataset.altFr : i.dataset.altEn; }); }
+(function(){
+  const saved = localStorage.getItem('za3fran_lang');
+  if (saved === 'fr') {
+    document.body.classList.add('lang-fr');
+    document.querySelectorAll('#langtoggle button').forEach(x=>x.classList.toggle('active', x.dataset.l === 'fr'));
+    setImgAlts('fr');
+  }
+})();
+
+document.querySelectorAll('.disc-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelectorAll('.disc-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.disc-panel').forEach(p=>p.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelector('.disc-panel[data-panel="'+item.dataset.target+'"]').classList.add('active');
+  });
+});
+
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('is-visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.reveal').forEach(el=>{el.style.transition='none';el.classList.add('is-visible');});
+}
+
+// ── WAITLIST (EmailJS) ──
+const EMAILJS_PUBLIC_KEY = 'b1vodEoZjP84BKQWg';
+const EMAILJS_SERVICE_ID = 'service_intaecp';
+const EMAILJS_TEMPLATE_USER = 'template_zsiefip';
+const EMAILJS_TEMPLATE_ADMIN = 'template_bo06e03';
+if (typeof emailjs !== 'undefined') { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+
+function openModal(toolName){
+  document.querySelectorAll('.m_tool').forEach(cb => { cb.checked = (toolName && cb.value === toolName); });
+  document.getElementById('mform').style.display='block';
+  document.getElementById('msuc').classList.remove('show');
+  document.getElementById('m_err').textContent='';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+
+async function submitWL(){
+  const isFr = document.body.classList.contains('lang-fr');
+  const errEl = document.getElementById('m_err');
+  errEl.textContent = '';
+  const name = document.getElementById('m_name').value.trim();
+  const email = document.getElementById('m_email').value.trim();
+  const country = document.getElementById('m_country').value;
+  const role = document.getElementById('m_role').value;
+  const message = document.getElementById('m_msg').value.trim();
+  const tools = Array.from(document.querySelectorAll('.m_tool:checked')).map(c=>c.value);
+  if(!name || !email){ errEl.textContent = isFr ? 'Veuillez renseigner votre prénom et email.' : 'Please enter your first name and email.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = isFr ? 'Email non valide.' : 'Please enter a valid email.'; return; }
+  const btns = document.querySelectorAll('.mbtn');
+  btns.forEach(b=>b.disabled=true);
+  const toolsLabel = tools.length ? tools.join(', ') : (isFr ? 'tous nos outils' : 'all our tools');
+  try {
+    const baseParams = { user_name:name, user_email:email, user_tools:toolsLabel, user_country:country||'—', user_role:role||'—', user_message:message||'—', reply_to:'hello@za3fran.io', admin_email:'hello@za3fran.io', submitted_at:new Date().toLocaleString('en-GB',{timeZone:'Africa/Casablanca'}) };
+    if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
+    // Save to the waitlist database in parallel — non-fatal if it fails,
+    // since the email notification (below) is still the primary signal.
+    fetch('/api/submit-waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, country, role, tools, message, language: isFr ? 'fr' : 'en' })
+    }).catch(()=>{});
+    const tasks = [
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_USER, baseParams).then(r=>({type:'user',ok:true,r})).catch(e=>({type:'user',ok:false,e})),
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ADMIN, baseParams).then(r=>({type:'admin',ok:true,r})).catch(e=>({type:'admin',ok:false,e}))
+    ];
+    const results = await Promise.allSettled(tasks);
+    const settled = results.map(r=>r.value||r.reason);
+    const ok = settled.some(s=>s.ok);
+    if (ok) {
+      document.getElementById('mform').style.display='none';
+      document.getElementById('msuc').classList.add('show');
+      setTimeout(()=>{
+        document.getElementById('m_name').value=''; document.getElementById('m_email').value='';
+        document.getElementById('m_country').value=''; document.getElementById('m_role').value='';
+        document.getElementById('m_msg').value='';
+        document.querySelectorAll('.m_tool').forEach(c=>c.checked=false);
+      },200);
+    } else { throw new Error('All email sends failed'); }
+    btns.forEach(b=>b.disabled=false);
+  } catch (err) {
+    errEl.textContent = isFr ? "Une erreur s'est produite. Réessayez ou écrivez-nous à hello@za3fran.io." : "Something went wrong. Try again or email us at hello@za3fran.io.";
+    btns.forEach(b=>b.disabled=false);
+  }
+}
+
+// ── GA4 CTA TRACKING ──
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href^="/validator"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'validator_cta'})));
+  document.querySelectorAll('a[href="/scorecard"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'scorecard_cta'})));
+  document.querySelectorAll('a[href="#contact"]').forEach(el=>el.addEventListener('click',()=>gtag('event','cta_click',{event_category:'engagement',event_label:'contact_click'})));
+});
+</script>
+</body>
+</html>

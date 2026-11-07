@@ -3,8 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Za3fran Digital — The Platform</title>
-<meta name="description" content="Za3fran Digital — an AI-powered ecosystem of interconnected tools for building and running restaurants. Concept Validator, Business Plan Essentials, Menu Engineer, and more.">
+<title>Comment ça marche — Za3fran Digital</title>
+<meta name="description" content="Valider, revoir, construire : trois étapes disponibles aujourd’hui, du Scorecard gratuit au business plan pour votre banque.">
+<!-- og -->
+<link rel="canonical" href="https://www.za3fran.io/platform">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Za3fran">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Comment ça marche — Za3fran">
+<meta property="og:description" content="Valider, revoir, construire : trois étapes disponibles aujourd’hui, du Scorecard gratuit au business plan pour votre banque.">
+<meta property="og:url" content="https://www.za3fran.io/platform">
+<meta property="og:image" content="https://www.za3fran.io/assets/og-share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Comment ça marche — Za3fran">
+<meta name="twitter:description" content="Valider, revoir, construire : trois étapes disponibles aujourd’hui, du Scorecard gratuit au business plan pour votre banque.">
+<meta name="twitter:image" content="https://www.za3fran.io/assets/og-share.png">
+<!-- /og -->
 <!-- EmailJS SDK for waitlist auto-response emails -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Currency localisation: server-side IP detection via /api/currency (bypasses Netskope) -->
@@ -272,6 +288,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 }
 @media(max-width:480px){ .foot-grid{grid-template-columns:1fr;} }
 </style>
+<script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
 </head>
 <body>
 
@@ -347,129 +364,56 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     </div>
     <div class="navlinks">
       <a href="/pricing" data-en>Pricing</a><a href="/pricing" data-fr>Tarifs</a>
-      <a href="#pricing" class="navcta" data-en>Get Started</a><a href="#pricing" class="navcta" data-fr>Commencer</a>
+      <a href="/scorecard" class="navcta" data-en>Test my concept</a><a href="/scorecard" class="navcta" data-fr>Tester mon concept</a>
     </div>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero tint-a">
+<section class="tint-a">
   <div class="wash w1"></div>
   <div class="wash w2"></div>
-  <div class="wrap">
-    <h1><span data-en>One profile.<br><em>Every tool.</em></span><span data-fr>Un profil.<br><em>Tous les outils.</em></span></h1>
-    <p class="sub"><span data-en>An AI-powered ecosystem built for restaurant and hospitality project owners — concept validation, financial planning, menu engineering, staffing and marketing, and pre-opening execution, all built from one shared concept profile. Start free with a first read on your concept, and grow into a complete, structured project file without ever re-entering your data.</span><span data-fr>Un écosystème d'outils IA pensé pour les porteurs de projets F&amp;B — validation de concept, planification financière, ingénierie de menu, staffing et marketing, et exécution pré-ouverture, le tout à partir d'un profil concept partagé. Commencez gratuitement avec une première lecture de votre concept, et développez un dossier de projet complet et structuré sans jamais ressaisir vos données.</span></p>
-    <div class="hero-tools-line">
-      <span data-en>Concept Scorecard</span><span data-fr>Concept Scorecard</span>
-      <span>Concept Validator</span>
-      <span>Business Plan Essentials</span>
-      <span>Menu Engineer</span>
-      <span data-en>Financial Builder</span><span data-fr>Financial Builder</span>
-      <span data-en>Staffing &amp; Marketing</span><span data-fr>Staffing &amp; Marketing</span>
-      <span data-en>Pre-Opening Tool</span><span data-fr>Outil Pré-Ouverture</span>
-      <span>Business Plan Pro</span>
-    </div>
-    <div class="hero-ctas">
-      <a href="/scorecard" class="btn-primary" data-en>Start Free — Get My Scorecard</a><a href="/scorecard" class="btn-primary" data-fr>Commencer — Score gratuit</a>
-      <a href="#journey" class="link-secondary" data-en>See how it works ↓</a><a href="#journey" class="link-secondary" data-fr>Comment ça marche ↓</a>
+  <div class="wrap hero-simple" style="padding-top:150px;padding-bottom:40px">
+    <div class="section-tag"><span data-en>How it works</span><span data-fr>Comment ça marche</span></div>
+    <h1 style="font-size:clamp(34px,5vw,58px);margin-top:14px"><span data-en>Test your concept.<br><em>Then build the file for your bank.</em></span><span data-fr>Testez votre concept.<br><em>Puis construisez le dossier pour votre banque.</em></span></h1>
+    <p class="sub measure" style="color:var(--muted);margin-top:20px;line-height:1.7"><span data-en>Three steps, all available today, one project file: your answers are entered once and carry from the Validator to the business plan and the menu.</span><span data-fr>Trois étapes, toutes disponibles aujourd'hui, un seul dossier de projet : vos réponses sont saisies une fois et suivent du Validator au business plan puis au menu.</span></p>
+    <div class="hero-ctas" style="margin-top:28px">
+      <a href="/scorecard" class="btn-primary" data-en>Test my concept for free</a><a href="/scorecard" class="btn-primary" data-fr>Tester mon concept gratuitement</a>
+      <a href="/pricing" class="link-secondary" data-en>See the offers →</a><a href="/pricing" class="link-secondary" data-fr>Voir les offres →</a>
     </div>
   </div>
 </section>
 
-<!-- START POINTS -->
-<section class="tint-a" id="start">
+<!-- THREE STEPS -->
+<section class="tint-b" id="steps">
   <div class="wrap">
-    <div class="section-tag reveal"><span data-en>Start where you are</span><span data-fr>Partez de là où vous en êtes</span></div>
-    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px"><span data-en>Where are you<br><em>starting from?</em></span><span data-fr>D’où<br><em>partez-vous ?</em></span></h2>
-    <div class="doors reveal">
-      <div class="door">
-        <div class="d-tag"><span data-en>Live</span><span data-fr>Disponible</span></div>
-        <h3><span data-en>A worked-out concept</span><span data-fr>Un concept abouti</span></h3>
-        <p><span data-en>You know the format, the area and roughly the numbers. Test it: a score out of 100, financial viability computed from your own figures, and a risk register.</span><span data-fr>Vous connaissez le format, le quartier et à peu près les chiffres. Testez-le : un score sur 100, une viabilité financière calculée à partir de vos chiffres et un registre des risques.</span></p>
-        <a href="/validator" class="d-cta"><span data-en>Open the Validator →</span><span data-fr>Ouvrir le Validator →</span></a>
-      </div>
-      <div class="door">
-        <div class="d-tag"><span data-en>Coming soon · Casablanca first</span><span data-fr>Bientôt · Casablanca d’abord</span></div>
-        <h3><span data-en>A concept, no location yet</span><span data-fr>Un concept, pas encore de lieu</span></h3>
-        <p><span data-en>The Concept Studio will shortlist two or three districts, with the reasons and what to check on the ground. Meanwhile, get a free first read of your concept.</span><span data-fr>Le Concept Studio proposera une sélection de deux ou trois quartiers, avec les raisons et ce qu’il faut vérifier sur place. En attendant, obtenez une première lecture gratuite de votre concept.</span></p>
-        <a href="#" class="d-cta" onclick="openModal('Concept Studio');return false;"><span data-en>Join the Studio waitlist →</span><span data-fr>Rejoindre la liste d’attente du Studio →</span></a>
-      </div>
-      <div class="door">
-        <div class="d-tag"><span data-en>Coming soon · Casablanca first</span><span data-fr>Bientôt · Casablanca d’abord</span></div>
-        <h3><span data-en>An idea and a city</span><span data-fr>Une idée et une ville</span></h3>
-        <p><span data-en>The Concept Studio will guide you step by step — positioning, customers, format, offer, pricing, ambience, name options — and write the concept you then validate.</span><span data-fr>Le Concept Studio vous guidera pas à pas — positionnement, clientèle, format, offre, prix, ambiance, pistes de nom — et rédigera le concept que vous validerez ensuite.</span></p>
-        <a href="#" class="d-cta" onclick="openModal('Concept Studio');return false;"><span data-en>Join the Studio waitlist →</span><span data-fr>Rejoindre la liste d’attente du Studio →</span></a>
-      </div>
-    </div>
-
-    <div class="flow reveal">
-      <div class="flow-step">
-        <div class="fs-n"><span data-en>1 · Create</span><span data-fr>1 · Créer</span></div>
-        <h4>Concept Studio</h4>
-        <p><span data-en>Design the concept and shortlist the district.</span><span data-fr>Concevoir le concept et présélectionner le quartier.</span></p>
-        <span class="j-status soon"><span data-en>Coming Soon</span><span data-fr>Bientôt</span></span>
-      </div>
-      <div class="flow-step">
-        <div class="fs-n"><span data-en>2 · Validate</span><span data-fr>2 · Valider</span></div>
-        <h4>Concept Validator</h4>
-        <p><span data-en>An independent score and figures computed from yours.</span><span data-fr>Un score indépendant et des chiffres calculés à partir des vôtres.</span></p>
-        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
-      </div>
-      <div class="flow-step">
-        <div class="fs-n"><span data-en>3 · Review</span><span data-fr>3 · Revoir</span></div>
-        <h4><span data-en>Readiness review</span><span data-fr>Revue de préparation</span></h4>
-        <p><span data-en>Adjust the concept, decide each risk, up to 5 re-assessments.</span><span data-fr>Ajuster le concept, trancher chaque risque, jusqu’à 5 réévaluations.</span></p>
-        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
-      </div>
-      <div class="flow-step">
-        <div class="fs-n"><span data-en>4 · Build</span><span data-fr>4 · Construire</span></div>
-        <h4><span data-en>Business plan · Menu</span><span data-fr>Business plan · Menu</span></h4>
-        <p><span data-en>Your plan dossier for the bank, then a costed menu.</span><span data-fr>Votre dossier de business plan pour la banque, puis un menu chiffré.</span></p>
-        <span class="j-status live"><span data-en>Live</span><span data-fr>Disponible</span></span>
-      </div>
-      <div class="flow-step">
-        <div class="fs-n"><span data-en>5 · Monitor</span><span data-fr>5 · Piloter</span></div>
-        <h4><span data-en>Operator tools</span><span data-fr>Outils opérateur</span></h4>
-        <p><span data-en>Follow your numbers once you are open.</span><span data-fr>Suivre vos chiffres une fois ouvert.</span></p>
-        <span class="j-status soon"><span data-en>Later</span><span data-fr>Plus tard</span></span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="tint-b">
-  <div class="wrap">
-    <div class="section-tag reveal"><span data-en>The Architecture</span><span data-fr>L'architecture</span></div>
-    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px"><span data-en>Every tool speaks<br>the <em>same language.</em></span><span data-fr>Chaque outil parle<br>le <em>même langage.</em></span></h2>
-    <p class="measure reveal" style="color:var(--muted);margin-top:18px;line-height:1.7"><span data-en>Instead of six disconnected apps, Za3fran Digital is one shared concept profile that every tool reads from and writes back to.</span><span data-fr>Plutôt que six applications déconnectées, Za3fran Digital est un profil concept partagé que chaque outil lit et enrichit.</span></p>
-
     <div class="how-grid reveal">
       <div class="how-cell">
         <div class="hn">01</div>
-        <h3><span data-en>Fill it in once</span><span data-fr>Une seule saisie</span></h3>
-        <p><span data-en>Your concept, cuisine, ticket price, target audience and location are captured a single time, at the start of your journey.</span><span data-fr>Votre concept, cuisine, ticket moyen, audience et localisation sont saisis une seule fois, dès le début.</span></p>
+        <h3><span data-en>Validate</span><span data-fr>Valider</span></h3>
+        <p><span data-en>Start with the free Scorecard, then the Concept Validator: a score out of 100, financial viability computed from your own figures, a competition read and a risk register.</span><span data-fr>Commencez par le Scorecard gratuit, puis le Concept Validator : un score sur 100, une viabilité financière calculée à partir de vos chiffres, une lecture de la concurrence et un registre des risques.</span></p>
       </div>
       <div class="how-cell">
         <div class="hn">02</div>
-        <h3><span data-en>Every tool starts pre-loaded</span><span data-fr>Chaque outil démarre pré-chargé</span></h3>
-        <p><span data-en>Run the Validator, then Business Plan Essentials, then Menu Engineer — each one opens already knowing your project.</span><span data-fr>Lancez le Validator, puis Business Plan Essentials, puis l'Ingénieur de Menu — chacun connaît déjà votre projet.</span></p>
+        <h3><span data-en>Review</span><span data-fr>Revoir</span></h3>
+        <p><span data-en>A guided readiness review: adjust your figures in the concept workshop, decide each point raised, and update your report, with up to 5 re-assessments included.</span><span data-fr>Une revue de préparation guidée : ajustez vos chiffres dans l'atelier concept, arbitrez chaque point soulevé, puis mettez votre rapport à jour, avec jusqu'à 5 réévaluations incluses.</span></p>
       </div>
       <div class="how-cell">
         <div class="hn">03</div>
-        <h3><span data-en>Outputs build on each other</span><span data-fr>Les livrables s'enrichissent entre eux</span></h3>
-        <p><span data-en>Validator data becomes your Business Plan's financial baseline, and your Menu Engineer's costing base. Nothing is wasted.</span><span data-fr>Les données du Validator deviennent la base financière du Business Plan, et la base de costing du Menu Engineer. Rien n'est perdu.</span></p>
+        <h3><span data-en>Build</span><span data-fr>Construire</span></h3>
+        <p><span data-en>Business Plan Essentials: a plan for your bank on your own figures, with a plan PDF, a one-page summary, a presentation and an Excel workbook. Menu Engineer can follow, as an add-on.</span><span data-fr>Business Plan Essentials : un plan pour votre banque sur vos propres chiffres, avec un plan en PDF, une synthèse d'une page, une présentation et un classeur Excel. Menu Engineer peut suivre, en complément.</span></p>
       </div>
     </div>
+    <p class="measure reveal" style="color:var(--muted);margin-top:30px;font-size:14px;line-height:1.7"><span data-en>From the Validator to the business plan and the menu, your data carries over: nothing to re-enter.</span><span data-fr>Du Validator au business plan puis au menu, vos données suivent : rien à ressaisir.</span></p>
   </div>
 </section>
 
 <!-- JOURNEY -->
 <section class="tint-a" id="journey">
   <div class="wrap">
-    <div class="section-tag reveal"><span data-en>The Project Owner Journey</span><span data-fr>Le parcours porteur de projet</span></div>
-    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px;margin-bottom:16px"><span data-en>From free read to<br><em>a complete project file.</em></span><span data-fr>De la lecture gratuite au<br><em>dossier de projet complet.</em></span></h2>
-    <p class="measure reveal" style="color:var(--muted);margin-bottom:50px;line-height:1.7"><span data-en>Each step is useful on its own — but run in sequence, they build into a complete, structured project file.</span><span data-fr>Chaque étape est utile seule — mais enchaînées, elles construisent un dossier de projet complet et structuré.</span></p>
+    <div class="section-tag reveal"><span data-en>The tools</span><span data-fr>Les outils</span></div>
+    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:680px;margin-bottom:16px"><span data-en>Four tools,<br><em>available today.</em></span><span data-fr>Quatre outils,<br><em>disponibles aujourd'hui.</em></span></h2>
+    
 
     <div class="journey-rail reveal">
       <a href="/scorecard" class="j-item live">
@@ -492,129 +436,14 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         <span class="j-price" data-en data-menu-price="en">€399</span><span class="j-price" data-fr data-menu-price="fr">399€</span>
         <span class="j-price" style="color:var(--muted);font-weight:400;"> · <span data-en data-menu-loyalty-price="en">€349</span><span data-fr data-menu-loyalty-price="fr">349€</span> <span data-en>loyalty rate</span><span data-fr>tarif fidélité</span></span>
       </a>
-      <div class="j-item">
-        <div class="j-top"><span class="j-name">Financial Builder</span><span class="j-status soon" data-en>Coming Soon</span><span class="j-status soon" data-fr>Bientôt</span></div>
-        <p class="j-desc"><span data-en>Investor-grade P&amp;L modelling — startup costs, multi-scenario revenue projections, break-even and cash flow.</span><span data-fr>Modélisation P&amp;L investisseurs — coûts de lancement, scénarios multiples, point mort et trésorerie.</span></p>
-      </div>
-      <div class="j-item">
-        <div class="j-top"><span class="j-name" data-en>Staffing &amp; Marketing Plan</span><span class="j-name" data-fr>Staffing &amp; Plan Marketing</span><span class="j-status soon" data-en>Coming Soon</span><span class="j-status soon" data-fr>Bientôt</span></div>
-        <p class="j-desc"><span data-en>Right team structure, service model, and a launch marketing plan — built from your concept and capacity data.</span><span data-fr>Structure d'équipe, modèle de service, plan marketing de lancement.</span></p>
-      </div>
-      <div class="j-item">
-        <div class="j-top"><span class="j-name" data-en>Pre-Opening Project Tool</span><span class="j-name" data-fr>Outil Pré-Ouverture</span><span class="j-status soon" data-en>Coming Soon</span><span class="j-status soon" data-fr>Bientôt</span></div>
-        <p class="j-desc"><span data-en>Countdown checklists, permits, training timeline and soft-opening protocol — the last-mile execution layer.</span><span data-fr>Checklists compte à rebours, permis, formation, protocole de soft-opening.</span></p>
-      </div>
-      <div class="j-item">
-        <div class="j-top"><span class="j-name">Business Plan Pro</span><span class="j-status headline" data-en>Coming Soon · Headline</span><span class="j-status headline" data-fr>Bientôt · Produit phare</span></div>
-        <p class="j-desc"><span data-en>The full investor package — modeled financials from every upstream tool you've completed, not benchmark estimates. The complete project dossier.</span><span data-fr>Le dossier investisseur complet — financiers modélisés depuis tous les outils réalisés, pas des estimations.</span></p>
-        <span class="j-price" data-en data-bp-pro-price="en">€1,499–€1,999</span><span class="j-price" data-fr data-bp-pro-price="fr">1 499€–1 999€</span>
-      </div>
     </div>
 
     <div style="text-align:center;margin-top:44px" class="reveal">
-      <a href="#" onclick="openModal();return false;" class="link-secondary"><span data-en>Join the waitlist for tools in development →</span><span data-fr>Rejoindre la liste d'attente →</span></a>
+      <p style="color:var(--muted);font-size:14px;line-height:1.7"><span data-en><strong>Coming later:</strong> Concept Studio, Financial Builder, Staffing Builder, Marketing Plan, Business Plan Pro. <a href="#" onclick="openModal();return false;" class="link-secondary">Tell me when they are ready →</a></span><span data-fr><strong>À venir :</strong> Concept Studio, Financial Builder, Staffing Builder, Plan marketing, Business Plan Pro. <a href="#" onclick="openModal();return false;" class="link-secondary">Me prévenir à leur sortie →</a></span></p>
     </div>
   </div>
 </section>
 
-<!-- PRICING TEASER -->
-<section class="tint-b" id="pricing">
-  <div class="wrap">
-    <div class="section-tag reveal"><span data-en>Start Here</span><span data-fr>Commencer ici</span></div>
-    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:640px"><span data-en>Three ways to<br><em>get started.</em></span><span data-fr>Trois façons de<br><em>commencer.</em></span></h2>
-
-    <div class="price-grid reveal">
-      <div class="price-col">
-        <div class="p-name">Scorecard</div>
-        <div class="p-cost" data-en>Free</div><div class="p-cost" data-fr>Gratuit</div>
-        <div class="p-note"><span data-en>Under 4 minutes</span><span data-fr>Moins de 4 minutes</span></div>
-        <ul>
-          <li><span data-en>Concept score out of 100</span><span data-fr>Score de concept sur 100</span></li>
-          <li><span data-en>5 sub-scores</span><span data-fr>5 sous-scores</span></li>
-          <li><span data-en>Your biggest blind spot</span><span data-fr>Votre principal angle mort</span></li>
-        </ul>
-        <a href="/scorecard" class="p-cta"><span data-en>Get my score</span><span data-fr>Obtenir mon score</span></a>
-      </div>
-      <div class="price-col">
-        <div class="p-name">Validator</div>
-        <div class="p-cost" data-en data-price="en">€199</div><div class="p-cost" data-fr data-price="fr">199€</div>
-        <div class="p-note"><span data-en>Score computed from your figures</span><span data-fr>Score calculé à partir de vos chiffres</span></div>
-        <ul>
-          <li><span data-en>Market fit &amp; competitor read</span><span data-fr>Adéquation marché &amp; concurrence</span></li>
-          <li><span data-en>Financial viability signal</span><span data-fr>Signal de viabilité financière</span></li>
-          <li><span data-en>Risk register</span><span data-fr>Registre des risques</span></li>
-          <li><span data-en>Guided review + 5 re-assessments</span><span data-fr>Revue guidée + 5 réévaluations</span></li>
-        </ul>
-        <a href="/validator" class="p-cta"><span data-en>Validate my concept</span><span data-fr>Valider mon concept</span></a>
-      </div>
-      <div class="price-col feat">
-        <div class="p-name" data-en>Validator + Business Plan</div><div class="p-name" data-fr>Validator + Business Plan</div>
-        <div class="p-cost" data-bundle-price>€599</div>
-        <div class="p-note"><span data-en><span data-bundle-save-en>Save €99</span> vs. separate</span><span data-fr><span data-bundle-save-fr>Économisez 99€</span> vs séparé</span></div>
-        <ul>
-          <li><span data-en>Validation report, online and PDF</span><span data-fr>Rapport de validation, en ligne et en PDF</span></li>
-          <li><span data-en>Business plan for your bank</span><span data-fr>Business plan pour votre banque</span></li>
-          <li><span data-en>PDF, presentation and Excel files</span><span data-fr>Fichiers PDF, présentation et Excel</span></li>
-        </ul>
-        <a href="/validator?bundle=bundle_bp" class="p-cta"><span data-en>Start the bundle</span><span data-fr>Démarrer le bundle</span></a>
-      </div>
-    </div>
-
-    <div class="next-step-grid reveal">
-      <div class="next-step-box">
-        <h4><span data-en>Already have a Validator report?</span><span data-fr>Vous avez déjà un rapport Validator ?</span></h4>
-        <p><span data-en>Add Business Plan Essentials on its own using your access code — your concept data carries over automatically.</span><span data-fr>Ajoutez Business Plan Essentials seul avec votre code d'accès — vos données de concept sont reprises automatiquement.</span></p>
-        <a href="/business-plan"><span data-en>Add Business Plan Essentials — </span><span data-fr>Ajouter Business Plan Essentials — </span><span data-en data-bp-standalone-price="en">€499</span><span data-fr data-bp-standalone-price="fr">499€</span><span data-en> →</span><span data-fr> →</span></a>
-      </div>
-      <div class="next-step-box">
-        <h4><span data-en>Ready to go further?</span><span data-fr>Prêt à aller plus loin ?</span></h4>
-        <p><span data-en>Explore Menu Engineering, loyalty rates, and every bundle combination — see the full picture before you decide.</span><span data-fr>Explorez le Menu Engineering, les tarifs fidélité et toutes les combinaisons de bundles — voyez l'ensemble avant de décider.</span></p>
-        <a href="/pricing"><span data-en>See all prices and bundles →</span><span data-fr>Voir tous les prix et bundles →</span></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SAMPLE -->
-<section class="tint-a">
-  <div class="wrap">
-    <div class="section-tag reveal"><span data-en>What You'll Receive</span><span data-fr>Ce que vous recevrez</span></div>
-    <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px);max-width:640px;margin-bottom:8px"><span data-en>Real output,<br>not a <em>generic template.</em></span><span data-fr>Un vrai livrable,<br>pas un <em>modèle générique.</em></span></h2>
-
-    <div class="sample-panel reveal">
-      <div class="sample-label"><span data-en>Concept Validator — Sample Output</span><span data-fr>Concept Validator — Exemple de livrable</span></div>
-      <div class="sample-grid">
-        <div class="score-ring"><div class="sr-num">72</div><div class="sr-lbl">/100</div></div>
-        <div class="sample-metric"><div class="sm-num">78</div><div class="sm-lbl" data-en>Concept Clarity</div><div class="sm-lbl" data-fr>Clarté du concept</div></div>
-        <div class="sample-metric"><div class="sm-num">61</div><div class="sm-lbl" data-en>Market Fit</div><div class="sm-lbl" data-fr>Adéquation marché</div></div>
-        <div class="sample-metric"><div class="sm-num">70</div><div class="sm-lbl" data-en>Financial Viability</div><div class="sm-lbl" data-fr>Viabilité financière</div></div>
-      </div>
-      <div style="margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--copper-bright)">
-        ↳ <span data-en>Next: Business Plan Essentials opens with your concept already filled in</span><span data-fr>Ensuite : Business Plan Essentials s'ouvre avec votre concept déjà renseigné</span>
-      </div>
-    </div>
-
-    <div class="sample-more-grid reveal">
-      <div class="sample-more-card">
-        <p class="sml"><span data-en>Business Plan Essentials — Sample Output</span><span data-fr>Business Plan Essentials — Exemple de livrable</span></p>
-        <ul>
-          <li><span data-en>Business plan for your bank, built on your own figures</span><span data-fr>Business plan pour votre banque, établi sur vos propres chiffres</span></li>
-          <li><span data-en>Financing plan, 3-year forecast and 24-month cash plan in your currency</span><span data-fr>Plan de financement, prévisions 3 ans et trésorerie 24 mois dans votre devise</span></li>
-          <li><span data-en>Private preparation report: decisions, advice, sources</span><span data-fr>Rapport de préparation privé : décisions, conseils, sources</span></li>
-          <li><span data-en>Plan PDF, one-page summary, presentation (PDF and PowerPoint), Excel workbook</span><span data-fr>Plan en PDF, synthèse d'une page, présentation (PDF et PowerPoint), classeur Excel</span></li>
-        </ul>
-      </div>
-      <div class="sample-more-card">
-        <p class="sml"><span data-en>Menu Engineer — Sample Output</span><span data-fr>Menu Engineer — Exemple de livrable</span></p>
-        <ul>
-          <li><span data-en>Costed recipe matrix — food cost %, margin, live formulas</span><span data-fr>Matrice de recettes chiffrée — % food cost, marge, formules dynamiques</span></li>
-          <li><span data-en>Stars / Plowhorses / Puzzles / Dogs profitability map</span><span data-fr>Cartographie de rentabilité Stars / Plowhorses / Puzzles / Dogs</span></li>
-          <li><span data-en>Sourcing plan by category</span><span data-fr>Plan de sourcing par catégorie</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FAQ -->
 <section class="tint-b">
@@ -638,10 +467,6 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <div class="faq-item">
         <h4><span data-en>Is Menu Engineer available yet?</span><span data-fr>Menu Engineer est-il disponible ?</span></h4>
         <p><span data-en>Yes — Menu Engineer is live. It uses your Validator data to generate a costed recipe matrix, pricing strategy, and sourcing by category, delivered as a strategy report and a working Excel workbook.</span><span data-fr>Oui — Menu Engineer est disponible. Il utilise vos données Validator pour générer une matrice de recettes chiffrée, une stratégie de prix et du sourcing par catégorie, livrés sous forme de rapport stratégique et de classeur Excel opérationnel.</span></p>
-      </div>
-      <div class="faq-item">
-        <h4><span data-en>When will Financial Builder and the other tools launch?</span><span data-fr>Quand sortiront Financial Builder et les autres outils ?</span></h4>
-        <p><span data-en>They're in active development, in the order shown above. Join the waitlist and you'll be notified the moment each one goes live.</span><span data-fr>Ils sont en développement actif, dans l'ordre affiché ci-dessus. Rejoignez la liste d'attente pour être notifié dès leur lancement.</span></p>
       </div>
       <div class="faq-item">
         <h4><span data-en>Can consultants use these tools for their own clients?</span><span data-fr>Les consultants peuvent-ils utiliser ces outils pour leurs clients ?</span></h4>

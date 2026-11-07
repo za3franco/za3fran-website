@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Za3fran</title>
 <meta name="description" content="Choose your Za3fran tool package. From concept validation to full business planning and menu engineering.">
+<!-- og -->
+<link rel="canonical" href="https://www.za3fran.io/pricing">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Za3fran">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Tarifs — Za3fran">
+<meta property="og:description" content="Scorecard gratuit, Concept Validator, Validator + Business Plan : trois offres, un seul chemin.">
+<meta property="og:url" content="https://www.za3fran.io/pricing">
+<meta property="og:image" content="https://www.za3fran.io/assets/og-share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tarifs — Za3fran">
+<meta name="twitter:description" content="Scorecard gratuit, Concept Validator, Validator + Business Plan : trois offres, un seul chemin.">
+<meta name="twitter:image" content="https://www.za3fran.io/assets/og-share.png">
+<!-- /og -->
 <!-- EmailJS SDK for waitlist auto-response emails -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Currency localisation: server-side IP detection via /api/currency (matches homepage pattern) -->
@@ -227,6 +243,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
   .navlinks{gap:18px;font-size:13px;}
 }
 </style>
+<script>/* default language from the browser (saved choice wins) */try{if(!localStorage.getItem('za3fran_lang')){var _l=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];localStorage.setItem('za3fran_lang',Array.prototype.some.call(_l,function(x){return /^(fr|ar)/i.test(x||'')})?'fr':'en');}}catch(e){}</script>
 </head>
 <body>
 
@@ -310,13 +327,28 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 <div class="hero">
   <p class="eyebrow"><span data-en>Pricing &amp; Packages</span><span data-fr>Tarifs &amp; Formules</span></p>
   <h1><span data-en>The right tools,<br>for <em>where you are.</em></span><span data-fr>Les bons outils,<br>selon <em>votre étape.</em></span></h1>
-  <p class="sub"><span data-en>Start with the Concept Validator. Add tools as your project grows. Every package includes professional AI-generated deliverables in your language and currency.</span><span data-fr>Commencez avec le Concept Validator. Ajoutez des outils au fil de votre projet. Chaque formule inclut des livrables professionnels générés par IA, dans votre langue et votre devise.</span></p>
+  <p class="sub"><span data-en>Start with the free Scorecard, validate with the Concept Validator, then build your plan. Every package includes professional AI-generated deliverables in your language and currency.</span><span data-fr>Commencez par le Scorecard gratuit, validez avec le Concept Validator, puis construisez votre plan. Chaque formule inclut des livrables professionnels générés par IA, dans votre langue et votre devise.</span></p>
 </div>
 
 <!-- ── NEW USERS ──────────────────────────────────────── -->
 <section class="pricing-section">
-  <p class="section-title"><span data-en>New to Za3fran Digital — Start here</span><span data-fr>Nouveau chez Za3fran Digital — Commencez ici</span></p>
+  <p class="section-title"><span data-en>Start here</span><span data-fr>Commencez ici</span></p>
   <div class="cards-grid col-3">
+    <div class="card">
+      <p class="card-label"><span data-en>Free</span><span data-fr>Gratuit</span></p>
+      <p class="card-name">Concept Scorecard</p>
+      <p class="card-desc"><span data-en>A first read on your concept: 10 questions, a score out of 100 with five sub-scores, and your single biggest blind spot.</span><span data-fr>Une première lecture de votre concept : 10 questions, un score sur 100 avec cinq sous-scores, et votre principal angle mort.</span></p>
+      <div class="card-price">
+        <p class="price-main"><span data-en>Free</span><span data-fr>Gratuit</span></p>
+        <p class="price-alt"><span data-en>No account to create</span><span data-fr>Sans compte à créer</span></p>
+      </div>
+      <ul class="card-includes">
+        <li><span data-en>4 minutes of questions, the report in your inbox within a minute</span><span data-fr>4 minutes de questions, le rapport dans votre boîte mail dans la minute</span></li>
+        <li><span data-en>Score out of 100 with 5 sub-scores</span><span data-fr>Score sur 100 avec 5 sous-scores</span></li>
+        <li><span data-en>What works, what to sharpen, 5 critical questions</span><span data-fr>Ce qui fonctionne, ce qu'il faut affiner, 5 questions critiques</span></li>
+      </ul>
+      <a href="/scorecard" class="btn btn-outline"><span data-en>Get my free Scorecard</span><span data-fr>Obtenir mon Scorecard gratuit</span></a>
+    </div>
 
     <div class="card">
       <p class="card-label"><span data-en>Entry</span><span data-fr>Entrée</span></p>
@@ -338,7 +370,7 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     </div>
 
     <div class="card featured">
-      <span class="badge"><span data-en>Most popular</span><span data-fr>Le plus populaire</span></span>
+      <span class="badge"><span data-en>Recommended to start</span><span data-fr>Recommandé pour commencer</span></span>
       <p class="card-label"><span data-en>Bundle</span><span data-fr>Formule</span></p>
       <p class="card-name"><span data-en>Validator + Business Plan</span><span data-fr>Validator + Business Plan</span></p>
       <p class="card-desc"><span data-en>Validate your concept and get a complete business plan in one step. From idea to a structured document without additional forms.</span><span data-fr>Validez votre concept et obtenez un business plan complet en une seule étape. De l'idée au document structuré, sans formulaire supplémentaire.</span></p>
@@ -358,6 +390,18 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <a href="/validator?bundle=bundle_bp" class="btn btn-primary"><span data-en>Get Validator + Business Plan</span><span data-fr>Obtenir Validator + Business Plan</span></a>
     </div>
 
+  </div>
+  <div class="cov-note">
+    <span data-en><strong>Market coverage, before you buy.</strong> Morocco — Casablanca, Marrakech and Rabat — is covered today: its reference values are built in, each marked verified or researched. For another Moroccan city, anything we cannot source is flagged in your report. For another country, tell us before you buy and we will confirm what is covered. <a href="/methodology#coverage">Coverage and sources →</a></span><span data-fr><strong>Couverture des marchés, avant l’achat.</strong> Le Maroc — Casablanca, Marrakech et Rabat — est couvert aujourd’hui : ses valeurs de référence sont intégrées, chacune marquée vérifiée ou étudiée. Pour une autre ville marocaine, tout ce que nous ne pouvons pas sourcer est signalé dans votre rapport. Pour un autre pays, dites-le-nous avant d’acheter et nous confirmerons ce qui est couvert. <a href="/methodology#coverage">Couverture et sources →</a></span>
+  </div>
+</section>
+
+<!-- ── RETURNING USERS ──────────────────────────────── -->
+<section class="pricing-section">
+  <p class="section-title"><span data-en>Already a client? Other bundles and add-ons</span><span data-fr>Déjà client ? Autres formules et compléments</span></p>
+
+  <div class="cards-grid col-2">
+
     <div class="card">
       <p class="card-label"><span data-en>Bundle</span><span data-fr>Formule</span></p>
       <p class="card-name"><span data-en>Validator + Menu Engineer</span><span data-fr>Validator + Menu Engineer</span></p>
@@ -369,25 +413,18 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       </div>
       <ul class="card-includes">
         <li><span data-en>Everything in Concept Validator</span><span data-fr>Tout le Concept Validator</span></li>
-        <li><span data-en>Branded menu document (print-ready)</span><span data-fr>Document menu personnalisé (prêt à imprimer)</span></li>
         <li><span data-en>Strategy report — pricing, sourcing, Stars/Plowhorses/Puzzles/Dogs</span><span data-fr>Rapport stratégique — prix, sourcing, Stars/Plowhorses/Puzzles/Dogs</span></li>
         <li><span data-en>Costing workbook — recipe tabs, sales-mix recap, market list (XLSX)</span><span data-fr>Classeur de costing — onglets recettes, récap sales-mix, liste de marché (XLSX)</span></li>
-        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
       </ul>
       <a href="/validator?bundle=bundle_menu" class="btn btn-outline"><span data-en>Get Validator + Menu</span><span data-fr>Obtenir Validator + Menu</span></a>
     </div>
 
   </div>
 
-  <div class="spacer"></div>
-
-  <div class="cards-grid col-2">
-
-    <div class="card featured">
-      <span class="badge"><span data-en>Best value</span><span data-fr>Meilleure offre</span></span>
+    <div class="card">
       <p class="card-label"><span data-en>Full Journey Bundle</span><span data-fr>Formule Parcours Complet</span></p>
       <p class="card-name"><span data-en>Validator + Business Plan + Menu Engineer</span><span data-fr>Validator + Business Plan + Menu Engineer</span></p>
-      <p class="card-desc"><span data-en>The complete project launch package. Validate your concept, produce a structured business plan, and engineer your menu — all from a single intake form.</span><span data-fr>Le pack complet de lancement de projet. Validez votre concept, produisez un business plan structuré, et concevez votre menu — à partir d'un seul formulaire.</span></p>
+      <p class="card-desc"><span data-en>The complete project launch package. Validate your concept, produce a structured business plan, and engineer your menu — from the same project data, without re-entering it.</span><span data-fr>Le pack complet de lancement de projet. Validez votre concept, produisez un business plan structuré, et concevez votre menu — à partir d'un seul formulaire.</span></p>
       <div class="card-price">
         <p class="price-main" data-price-main="bundle_full">€849</p>
         <p class="price-alt" data-price-alt="bundle_full">MAD 8,490 · $949</p>
@@ -399,31 +436,13 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
         <li><span data-en>Menu Engineer — recipe costing workbook, strategy report</span><span data-fr>Menu Engineer — classeur de costing, rapport stratégique</span></li>
         <li><span data-en>Sourcing by food category included</span><span data-fr>Sourcing par catégorie d'aliments inclus</span></li>
         <li><span data-en>All outputs in your language and currency</span><span data-fr>Tous les livrables dans votre langue et devise</span></li>
-        <li><span data-en>1 free Menu regeneration included</span><span data-fr>1 régénération menu gratuite incluse</span></li>
       </ul>
       <a href="/validator?bundle=bundle_full" class="btn btn-primary"><span data-en>Get the Full Bundle</span><span data-fr>Obtenir la formule complète</span></a>
     </div>
 
-    <div class="card" style="justify-content:center;">
-      <p class="card-label"><span data-en>Coming soon</span><span data-fr>Bientôt disponible</span></p>
-      <p class="card-name">Financial Builder</p>
-      <p class="card-desc"><span data-en>Investor-grade P&amp;L modeling, multi-scenario projections, and break-even analysis. Replaces benchmark estimates with your real numbers.</span><span data-fr>Modélisation P&amp;L de niveau investisseur, projections multi-scénarios et analyse du seuil de rentabilité. Remplace les estimations benchmark par vos vrais chiffres.</span></p>
-      <div class="card-price">
-        <p class="price-main" data-price-main="financial_teaser" style="font-size:24px;color:var(--muted);">€499–€799</p>
-        <p class="price-alt"><span data-en>Phase 6 — 2026</span><span data-fr>Phase 6 — 2026</span></p>
-      </div>
-      <button class="notify-btn" onclick="openModal('Financial Builder')"><span data-en>Notify me when available →</span><span data-fr>Me prévenir à la sortie →</span></button>
-    </div>
-
   </div>
-  <div class="cov-note">
-    <span data-en><strong>Market coverage, before you buy.</strong> Morocco — Casablanca, Marrakech and Rabat — is covered today: its reference values are built in, each marked verified or researched. For another Moroccan city, anything we cannot source is flagged in your report. For another country, tell us before you buy and we will confirm what is covered. <a href="/methodology#coverage">Coverage and sources →</a></span><span data-fr><strong>Couverture des marchés, avant l’achat.</strong> Le Maroc — Casablanca, Marrakech et Rabat — est couvert aujourd’hui : ses valeurs de référence sont intégrées, chacune marquée vérifiée ou étudiée. Pour une autre ville marocaine, tout ce que nous ne pouvons pas sourcer est signalé dans votre rapport. Pour un autre pays, dites-le-nous avant d’acheter et nous confirmerons ce qui est couvert. <a href="/methodology#coverage">Couverture et sources →</a></span>
-  </div>
-</section>
+  <div class="spacer"></div>
 
-<!-- ── RETURNING USERS ──────────────────────────────── -->
-<section class="pricing-section">
-  <p class="section-title"><span data-en>Already have a Validator report?</span><span data-fr>Vous avez déjà un rapport Validator ?</span></p>
 
   <div class="returning-note">
     <div class="returning-note-icon">→</div>
@@ -465,7 +484,6 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <ul class="card-includes">
         <li><span data-en>Strategy report — pricing, sourcing, menu engineering matrix</span><span data-fr>Rapport stratégique — prix, sourcing, matrice d'ingénierie de menu</span></li>
         <li><span data-en>Costing workbook — recipe tabs, sales-mix recap, market list (XLSX)</span><span data-fr>Classeur de costing — onglets recettes, récap sales-mix, liste de marché (XLSX)</span></li>
-        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
         <li><span data-en>Uses your existing Validator concept data</span><span data-fr>Utilise vos données de concept Validator existantes</span></li>
       </ul>
       <a href="/menu-engineer" class="btn btn-outline"><span data-en>Add Menu Engineer</span><span data-fr>Ajouter Menu Engineer</span></a>
@@ -484,7 +502,6 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
       <ul class="card-includes">
         <li><span data-en>Strategy report — pricing, sourcing, menu engineering matrix</span><span data-fr>Rapport stratégique — prix, sourcing, matrice d'ingénierie de menu</span></li>
         <li><span data-en>Costing workbook — recipe tabs, sales-mix recap, market list (XLSX)</span><span data-fr>Classeur de costing — onglets recettes, récap sales-mix, liste de marché (XLSX)</span></li>
-        <li><span data-en>1 free regeneration included</span><span data-fr>1 régénération gratuite incluse</span></li>
         <li><span data-en>Enriched by your full Validator + BP data</span><span data-fr>Enrichi par vos données complètes Validator + BP</span></li>
       </ul>
       <a href="/menu-engineer?loyalty=true" class="btn btn-primary"><span data-en>Add Menu Engineer (loyalty)</span><span data-fr>Ajouter Menu Engineer (fidélité)</span></a>
@@ -494,6 +511,10 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
 </section>
 
 <!-- ── DELIVERABLES ─────────────────────────────────── -->
+<section class="pricing-section">
+  <p class="cov-note" style="margin:0 auto;max-width:760px;text-align:center"><span data-en><strong>Coming later:</strong> Concept Studio, Financial Builder, Staffing Builder, Marketing Plan, Business Plan Pro. No date or price announced. <a href="#" onclick="openModal('Concept Studio');return false;" style="color:var(--copper-bright)">Tell me when they are ready →</a></span><span data-fr><strong>À venir :</strong> Concept Studio, Financial Builder, Staffing Builder, Plan marketing, Business Plan Pro. Ni date ni prix annoncés. <a href="#" onclick="openModal('Concept Studio');return false;" style="color:var(--copper-bright)">Me prévenir à leur sortie →</a></span></p>
+</section>
+
 <section class="pricing-section">
   <p class="section-title"><span data-en>What each tool delivers</span><span data-fr>Ce que livre chaque outil</span></p>
   <div class="deliverables-grid">
@@ -535,10 +556,6 @@ footer{border-top:1px solid rgba(255,255,255,.08);padding:56px 0 40px;background
     <div class="faq-item">
       <h4><span data-en>Can I buy tools separately later?</span><span data-fr>Puis-je acheter les outils séparément plus tard ?</span></h4>
       <p><span data-en>Yes. If you've already done the Validator, you can add the Business Plan or Menu Engineer at any time using your access code. The loyalty rate applies when you already hold both the Validator and Business Plan.</span><span data-fr>Oui. Si vous avez déjà fait le Validator, vous pouvez ajouter le Business Plan ou le Menu Engineer à tout moment avec votre code d'accès. Le tarif fidélité s'applique si vous avez déjà le Validator et le Business Plan.</span></p>
-    </div>
-    <div class="faq-item">
-      <h4><span data-en>What is a Menu regeneration?</span><span data-fr>Qu'est-ce qu'une régénération de menu ?</span></h4>
-      <p><span data-en>Every Menu Engineer purchase includes one free regeneration — if you want to adjust the concept direction, menu style, or brand inputs, you can update your choices and regenerate all three deliverables. Additional regenerations are €49 each, triggered directly from your report.</span><span data-fr>Chaque achat Menu Engineer inclut une régénération gratuite — pour ajuster la direction du concept, le style ou les éléments de marque, vous pouvez modifier vos choix et régénérer les trois livrables. Les régénérations supplémentaires sont à 49€ chacune, déclenchées directement depuis votre rapport.</span></p>
     </div>
     <div class="faq-item">
       <h4><span data-en>What languages and currencies are supported?</span><span data-fr>Quelles langues et devises sont prises en charge ?</span></h4>
