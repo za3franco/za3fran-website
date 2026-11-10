@@ -275,8 +275,9 @@ function showState(id) {
   document.getElementById(id).classList.add('active');
 }
 
-async function fetchCheckoutStatus(sessionId) {
-  const res = await fetch('/api/checkout-status?session_id=' + encodeURIComponent(sessionId));
+// statusQuery: 'session_id=…' (Stripe) or 'pay=…[&transaction_id=…]' (YouCan Pay, payments in MAD).
+async function fetchCheckoutStatus(statusQuery) {
+  const res = await fetch('/api/checkout-status?' + statusQuery);
   if (!res.ok) throw new Error('checkout-status error ' + res.status);
   return res.json();
 }
@@ -342,7 +343,14 @@ function pollForAccessCode(sessionId, attempts) {
 
 (async function init() {
   const params = new URLSearchParams(window.location.search);
-  const sessionId = params.get('session_id');
+  const q = new URLSearchParams();
+  if (params.get('session_id')) q.set('session_id', params.get('session_id'));
+  else if (params.get('pay')) {
+    q.set('pay', params.get('pay'));
+    const tx = params.get('transaction_id') || params.get('transactionId');
+    if (tx) q.set('transaction_id', tx);
+  }
+  const sessionId = q.toString();
 
   if (!sessionId) {
     showState('state-missing');
@@ -359,7 +367,7 @@ function pollForAccessCode(sessionId, attempts) {
   } catch (err) {
     console.error(err);
     // Fail soft into the generic confirmed state rather than an error
-    // page — the payment succeeded (that's why Stripe sent them here);
+    // page — the payment succeeded (that's why the payment page sent them here);
     // we just couldn't enrich the message. Email is still coming.
     renderConfirmed({ purchase_type: 'default', ready: false });
     document.getElementById('dashWait').classList.add('show');

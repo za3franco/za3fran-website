@@ -16,6 +16,8 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { getLineItem, getDisplayPrice, normalizeCurrency } from '../lib/currency.js';
+import { providerFor } from '../lib/youcanpay.js';
+import { createYoucanCheckout } from '../lib/payments.js';
 
 const stripe    = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase  = createClient(
@@ -71,6 +73,19 @@ export default async function handler(req, res) {
     const conceptName = submission?.concept_name || 'Your Concept';
     const customerEmail = submission?.email;
     const customerName  = submission?.name;
+
+    // ── Payments in MAD → YouCan Pay (same metadata as the Stripe session) ──
+    if (providerFor(currency) === 'youcanpay') {
+      const { checkoutUrl } = await createYoucanCheckout({
+        req, kind: 'business_plan', product: 'essentials', currency,
+        email: customerEmail, name: customerName, language: lang, cancelPath: '/business-plan',
+        meta: {
+          type: 'business_plan_essentials', reportId: report.id, submissionId: report.submission_id,
+          accessCode: accessCode.toUpperCase().trim(), currency, language: lang, conceptName, customerName: customerName || '',
+        },
+      });
+      return res.status(200).json({ checkoutUrl });
+    }
 
     // ── Stripe line item (configured price, or inline price from lib/currency.js) ──
     const lineItem = getLineItem('essentials', currency);

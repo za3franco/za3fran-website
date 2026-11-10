@@ -13,7 +13,9 @@
     "api/validator-pdf.js":         { "maxDuration": 60, "memory": 1536, "includeFiles": "node_modules/@sparticuz/chromium/bin/**" },
     "api/brain-inbox.js":           { "maxDuration": 60 },
     "api/brain-extract.js":         { "maxDuration": 300, "memory": 1536 },
-    "api/brain-watch.js":           { "maxDuration": 300 }
+    "api/brain-watch.js":           { "maxDuration": 300 },
+    "api/webhook-youcanpay.js":     { "maxDuration": 800 },
+    "api/checkout-status.js":       { "maxDuration": 800 }
   },
   "crons": [
     { "path": "/api/brain-extract", "schedule": "*/15 * * * *" },

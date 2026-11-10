@@ -182,7 +182,9 @@ async function withRetry(fn, attempts = 3, delayMs = 1500) {
 }
 
 // ── Async report processing ───────────────────────────────────
-async function processReport(customerEmail, sessionId, purchaseType, submissionId = null, { fromStatus = 'pending_payment' } = {}) {
+// Exported (11 Nov 2026) so YouCan Pay payments (api/webhook-youcanpay.js, lib/payment-fulfil.js) run the
+// exact same fulfilment. recoverUrl: relaunch link for the failure notice (default: the Stripe one).
+export async function processReport(customerEmail, sessionId, purchaseType, submissionId = null, { fromStatus = 'pending_payment', recoverUrl = null } = {}) {
   console.log(`[processReport] Starting for: ${customerEmail}, type: ${purchaseType}`);
 
   // ── Step 1: Look up submission (with retry — see withRetry above) ──
@@ -242,7 +244,7 @@ async function processReport(customerEmail, sessionId, purchaseType, submissionI
       await supabase.from('validator_submissions').update({ status: 'report_error' }).eq('id', submission.id);
       await notifyZa3fran(`Validator v2 report failed — ${submission.concept_name || submission.id} (paid)`,
         qaNotice(`${submission.concept_name || ''} (submission ${submission.id}, ${customerEmail})`, r && r.errors)
-        + (sessionId ? `<p><a href="https://www.za3fran.io/api/webhook-validator?recover=${encodeURIComponent(sessionId)}">Relancer la génération et la livraison / Relaunch generation and delivery</a></p>` : ''));
+        + ((recoverUrl || sessionId) ? `<p><a href="${recoverUrl || `https://www.za3fran.io/api/webhook-validator?recover=${encodeURIComponent(sessionId)}`}">Relancer la génération et la livraison / Relaunch generation and delivery</a></p>` : ''));
       return;
     }
     reportHtml = r.html;

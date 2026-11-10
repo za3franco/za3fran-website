@@ -19,6 +19,8 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { getLineItem, normalizeCurrency } from '../lib/currency.js';
+import { providerFor } from '../lib/youcanpay.js';
+import { createYoucanCheckout } from '../lib/payments.js';
 
 const stripe   = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -149,6 +151,19 @@ export default async function handler(req, res) {
 
     // ── Create Stripe checkout session ──
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://za3fran.io';
+
+    // ── Payments in MAD → YouCan Pay (same metadata as the Stripe session) ──
+    if (providerFor(currency) === 'youcanpay') {
+      const { checkoutUrl } = await createYoucanCheckout({
+        req, kind: 'menu_engineer', product: priceTierKey, currency,
+        email, name: '', language, cancelPath: '/menu-engineer',
+        meta: {
+          type: 'menu_engineer', intakeId: runId, projectId: project.id, validatorAccessCode: code,
+          currency, language, priceTier, conceptName,
+        },
+      });
+      return res.status(200).json({ checkoutUrl });
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',

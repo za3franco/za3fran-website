@@ -28,6 +28,8 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { waitUntil } from '@vercel/functions';
+import { confirmAndFulfil } from '../lib/payment-fulfil.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -43,17 +45,33 @@ export default async function handler(req, res) {
   }
 
   const sessionId = (req.query.session_id || '').toString().trim();
-  if (!sessionId) {
+  const payId = (req.query.pay || '').toString().trim();
+  if (!sessionId && !payId) {
     return res.status(400).json({ error: 'session_id is required' });
   }
 
-  // ── Step 1: Retrieve the Stripe session — always fast, always available ──
+  // ── Step 1: the Stripe session, or a YouCan Pay payment row (payments in MAD, lib/payments.js)
+  //    that carries the same metadata ──
   let session;
-  try {
-    session = await stripe.checkout.sessions.retrieve(sessionId);
-  } catch (err) {
-    console.error('[checkout-status] Stripe session retrieve failed:', err.message);
-    return res.status(404).json({ error: 'Session not found' });
+  if (payId) {
+    const { data: p } = await supabase.from('payments').select('id, status, email, meta, created_at').eq('id', payId).maybeSingle();
+    if (!p) return res.status(404).json({ error: 'Session not found' });
+    // Back from YouCan's page with a transaction id: confirm it now (re-read from YouCan's API,
+    // claimed atomically), in case the webhook is late or missing.
+    const txId = (req.query.transaction_id || '').toString().trim();
+    if (p.status === 'pending' && txId) {
+      waitUntil(confirmAndFulfil({ paymentId: p.id, transactionId: txId, source: 'return' })
+        .then((r) => console.log(`[checkout-status] ${p.id}: ${JSON.stringify(r)}`))
+        .catch((e) => console.error('[checkout-status] fulfil error', e)));
+    }
+    session = { metadata: p.meta || {}, customer_email: p.email, created: Math.floor(new Date(p.created_at).getTime() / 1000) };
+  } else {
+    try {
+      session = await stripe.checkout.sessions.retrieve(sessionId);
+    } catch (err) {
+      console.error('[checkout-status] Stripe session retrieve failed:', err.message);
+      return res.status(404).json({ error: 'Session not found' });
+    }
   }
 
   const meta = session.metadata || {};

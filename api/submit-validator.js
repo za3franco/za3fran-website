@@ -20,6 +20,8 @@
 import Stripe from 'stripe';
 import { getLineItem, normalizeCurrency } from '../lib/currency.js';
 import CR from '../lib/concept-record.js';
+import { providerFor } from '../lib/youcanpay.js';
+import { createYoucanCheckout } from '../lib/payments.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -130,6 +132,24 @@ export default async function handler(req, res) {
     return res.status(500).json({
       error: 'We could not save your submission. Please try again — if this keeps happening, contact hello@za3fran.io.',
     });
+  }
+
+  // ── STEP 2a: payments in MAD → YouCan Pay (Stripe cannot charge most Moroccan cards in dirhams) ──
+  if (providerFor(currency) === 'youcanpay') {
+    try {
+      const { checkoutUrl } = await createYoucanCheckout({
+        req, kind: 'validator', product: purchaseType, currency,
+        email: data.email, name: data.name, language: data.language, cancelPath: '/validator',
+        meta: {
+          submitter_name: data.name, concept_name: data.concept_name, city: data.city,
+          currency, language: data.language || 'en', purchase_type: purchaseType, submission_id: submissionId || '',
+        },
+      });
+      return res.status(200).json({ checkoutUrl });
+    } catch (e) {
+      console.error('[submit-validator] YouCan Pay checkout error:', e && e.message || e);
+      return res.status(500).json({ error: 'Payment session creation failed' });
+    }
   }
 
   // ── STEP 2: Create Stripe checkout session ──
