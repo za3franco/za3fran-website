@@ -2,8 +2,9 @@
 // Reads visitor IP from Vercel request headers (bypasses Netskope entirely)
 // Returns JSON: { currency: 'MAD'|'EUR'|'USD', country: 'XX', source: '...' }
 
-const MAD_COUNTRIES = ['MA','DZ','TN','LY','EG','MR'];
-const EUR_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO','IS','AL','BA','ME','MK','RS','TR'];
+// Morocco only (10 Nov 2026): MAD payments go through YouCan Pay; the other Maghreb/Egypt visitors pay in EUR on Stripe.
+const MAD_COUNTRIES = ['MA'];
+const EUR_COUNTRIES = ['DZ','TN','LY','EG','MR','AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO','IS','AL','BA','ME','MK','RS','TR'];
 
 function resolveCurrency(countryCode) {
   if (!countryCode) return 'EUR';
