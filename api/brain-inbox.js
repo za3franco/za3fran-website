@@ -19,6 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import { waitUntil } from '@vercel/functions';
 import BI from '../lib/brain-inbox.js';
 import RUN from '../lib/brain-inbox-run.js';
+import RG from '../lib/brain-ranges.js';
 
 export const config = { maxDuration: 60 };
 
@@ -393,6 +394,37 @@ async function reviewAction(res, b) {
   return send(res, 200, { ok: true, resolved: rows.length });
 }
 
+
+// ── Fourchettes par format (Studio lot 0) ───────────────────────────────────────────────────────────────
+async function rangesList(res) {
+  const { data: fmts } = await W(() => supabase.from('brain_concept_formats').select('slug, name_fr, family').in('slug', RG.FORMATS));
+  const { data: vals } = await W(() => supabase.from('brain_parameter_values')
+    .select('parameter_key, format_key, qualifier, low, high, source_class, status, observed_at')
+    .in('parameter_key', ['concept.ticket', 'concept.seats', 'concept.surface_m2']).in('format_key', RG.FORMATS).in('status', ['researched', 'verified']));
+  const by = {}; (fmts || []).forEach((f) => { by[f.slug] = f; });
+  const out = RG.FORMATS.filter((k) => by[k]).map((k) => {
+    const current = {};
+    (vals || []).filter((v) => v.format_key === k).forEach((v) => {
+      const f = RG.FIELDS.find((x) => x.param === v.parameter_key && x.qualifier === (v.qualifier || ''));
+      if (f) current[f.id] = { low: v.low, high: v.high, observed_at: v.observed_at };
+    });
+    return { slug: k, name: by[k].name_fr, family: by[k].family, reference: RG.REFS[k] || RG.NO_REF, current };
+  });
+  return send(res, 200, { formats: out, fields: RG.FIELDS.map((f) => ({ id: f.id, label: f.label, unit: f.unit })) });
+}
+
+async function rangeSave(res, b) {
+  const { payloads, errors } = RG.buildPayloads(String(b.format_key || ''), b.values || {});
+  if (errors.length) return send(res, 422, { error: 'invalid', fields: errors });
+  let saved = 0;
+  for (const p of payloads) {
+    const { error } = await supabase.rpc('brain_add_value', { p });
+    if (error) return send(res, 500, { error: 'brain_write', detail: error.message, saved });
+    saved += 1;
+  }
+  return send(res, 200, { ok: true, saved });
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -418,6 +450,7 @@ export default async function handler(req, res) {
       if (action === 'queue') return queue(res);
       if (action === 'item') return itemDetail(res, req.query.id);
       if (action === 'search') return search(res, req.query.q);
+      if (action === 'ranges') return rangesList(res);
       return send(res, 400, { error: 'bad_action' });
     }
     if (req.method !== 'POST') return send(res, 405, { error: 'method' });
@@ -428,6 +461,7 @@ export default async function handler(req, res) {
       case 'prices': return pricesAction(res, b);
       case 'item': return itemAction(req, res, b);
       case 'review': return reviewAction(res, b);
+      case 'range': return rangeSave(res, b);
       default: return send(res, 400, { error: 'bad_action' });
     }
   } catch (e) {

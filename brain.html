@@ -118,8 +118,20 @@ table.prices td.x{width:30px;text-align:right;}
 table.prices tr.rej td{text-decoration:line-through;color:var(--muted);}
 table.prices button{background:none;border:none;color:var(--muted);font-size:1.05rem;}
 
+
+/* ── Fourchettes ── */
+#rgForm,#rgList{padding-bottom:130px;}
+.rg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.rg-done{color:var(--ok);font-size:.8rem;font-weight:700;white-space:nowrap;}
+.rg-ref{background:var(--black);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:8px;padding:10px 12px;font-size:.84rem;color:var(--muted);margin:12px 0;}
+.rg-ref b{color:var(--copper-bright);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:4px;}
+.rg-f{margin-top:12px;}
+.rg-f .lab{font-size:.78rem;font-weight:700;margin-bottom:5px;}
+.rg-f .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rg-f .cur{font-size:.74rem;color:var(--muted);margin-top:4px;}
+
 /* ── Tabs ── */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(3,1fr);height:calc(var(--tabh) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(16,26,48,.97);border-top:1px solid var(--line2);}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(4,1fr);height:calc(var(--tabh) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(16,26,48,.97);border-top:1px solid var(--line2);}
 nav.tabs button{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.72rem;font-weight:500;position:relative;}
 nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;}
 nav.tabs button.active{color:var(--copper-bright);}
@@ -224,6 +236,12 @@ ul.mlist li:last-child{border-bottom:none;}
     <div id="itemBody"></div>
   </section>
 
+  <!-- ── Ranges ── -->
+  <section id="v-ranges" class="hidden">
+    <div id="rgList"></div>
+    <div id="rgForm" class="hidden"></div>
+  </section>
+
   <!-- ── Search ── -->
   <section id="v-search" class="hidden">
     <h1><span data-en>What does the Brain know?</span><span data-fr>Que sait le Brain ?</span></h1>
@@ -237,6 +255,7 @@ ul.mlist li:last-child{border-bottom:none;}
 <nav class="tabs" id="tabs" aria-label="Brain">
   <button type="button" data-v="add" class="active"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-en>Add</span><span data-fr>Ajouter</span></button>
   <button type="button" data-v="review"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg><span data-en>Review</span><span data-fr>À revoir</span><span class="badge" id="badge"></span></button>
+  <button type="button" data-v="ranges"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span data-en>Ranges</span><span data-fr>Fourchettes</span></button>
   <button type="button" data-v="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span data-en>Search</span><span data-fr>Rechercher</span></button>
 </nav>
 
@@ -338,14 +357,70 @@ $('gateForm').addEventListener('submit', function(e){
 var VIEW = 'add', ITEM = null, pollTimer = null;
 function show(v){
   VIEW = v;
-  ['add', 'review', 'item', 'search'].forEach(function(x){ $('v-' + x).classList.toggle('hidden', x !== v); });
+  ['add', 'review', 'item', 'ranges', 'search'].forEach(function(x){ $('v-' + x).classList.toggle('hidden', x !== v); });
   document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.v === v || (v === 'item' && b.dataset.v === 'review')); });
   window.scrollTo(0, 0);
   if (v === 'review' || v === 'add') loadQueue();
+  if (v === 'ranges') loadRanges();
 }
 $('tabs').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; history.replaceState(null, '', '/brain' + (b.dataset.v === 'add' ? '' : '#' + b.dataset.v)); show(b.dataset.v); });
 $('refreshBtn').addEventListener('click', function(){ if (VIEW === 'item' && ITEM) openItem(ITEM); else loadQueue(); });
 $('backBtn').addEventListener('click', function(){ ITEM = null; history.replaceState(null, '', '/brain#review'); show('review'); });
+
+
+// ── Fourchettes par format ───────────────────────────────────────────────────────────────────────────
+var RG = null, RG_IDX = -1;
+function rgFilled(f){ return Object.keys(f.current || {}).length; }
+function loadRanges(){
+  $('rgForm').classList.add('hidden'); $('rgList').classList.remove('hidden');
+  $('rgList').innerHTML = '<p class="small"><span class="spinner"></span></p>';
+  api('GET', { action: 'ranges' }).then(function(j){
+    if (!j.formats) { $('rgList').innerHTML = '<p class="err">' + t('Could not load.', 'Chargement impossible.') + '</p>'; return; }
+    RG = j; renderRgList();
+  });
+}
+function renderRgList(){
+  var done = RG.formats.filter(function(f){ return rgFilled(f) > 0; }).length;
+  $('rgList').innerHTML = '<h1>' + t('Ranges by format', 'Fourchettes par format') + '</h1>'
+    + '<p class="small" style="margin:6px 0 14px">' + t('Your field judgment for Casablanca: a low and a high figure. Leave a field empty if you do not know. ', 'Ton jugement de terrain pour Casablanca : un bas et un haut. Laisse vide ce que tu ne sais pas. ') + done + ' / ' + RG.formats.length + '</p>'
+    + RG.formats.map(function(f, i){
+      var n = rgFilled(f);
+      return '<div class="card tap" data-i="' + i + '"><div class="rg-row"><div class="t">' + esc(f.name) + '</div>' + (n ? '<span class="rg-done">✓ ' + n + '/5</span>' : '<span class="small">' + t('to fill', 'à remplir') + '</span>') + '</div></div>';
+    }).join('');
+}
+$('rgList').addEventListener('click', function(e){ var c = e.target.closest('.card.tap'); if (c) openRange(Number(c.dataset.i)); });
+function openRange(i){
+  RG_IDX = i; var f = RG.formats[i];
+  $('rgList').classList.add('hidden'); $('rgForm').classList.remove('hidden'); window.scrollTo(0, 0);
+  $('rgForm').innerHTML = '<button class="back" type="button" id="rgBack">← ' + t('All formats', 'Tous les formats') + '</button>'
+    + '<h1>' + esc(f.name) + '</h1><p class="small">' + (i + 1) + ' / ' + RG.formats.length + '</p>'
+    + '<div class="rg-ref"><b>' + t('What I found (5 Nov)', 'Ce que j\'ai trouvé (5 nov.)') + '</b>' + esc(f.reference) + '</div>'
+    + RG.fields.map(function(fl){
+      var c = f.current[fl.id] || {};
+      return '<div class="rg-f"><div class="lab">' + t(esc(fl.label[0]), esc(fl.label[1])) + (fl.unit ? ' <span class="small">(' + esc(fl.unit) + ')</span>' : '') + '</div>'
+        + '<div class="two"><input type="number" inputmode="decimal" step="any" data-f="' + fl.id + '" data-k="low" value="' + (c.low != null ? esc(c.low) : '') + '" placeholder="' + tt('low', 'bas') + '">'
+        + '<input type="number" inputmode="decimal" step="any" data-f="' + fl.id + '" data-k="high" value="' + (c.high != null ? esc(c.high) : '') + '" placeholder="' + tt('high', 'haut') + '"></div></div>';
+    }).join('')
+    + '<div class="err" id="rgErr"></div>'
+    + '<div class="sticky-acts"><button class="btn ghost" type="button" id="rgSkip">' + t('Skip', 'Passer') + '</button><button class="btn primary" type="button" id="rgSave">' + t('Save and next', 'Enregistrer et suivant') + '</button></div>';
+}
+function rgNext(){ if (RG_IDX + 1 < RG.formats.length) openRange(RG_IDX + 1); else loadRanges(); }
+$('rgForm').addEventListener('click', function(e){
+  if (e.target.closest('#rgBack')) return loadRanges();
+  if (e.target.closest('#rgSkip')) return rgNext();
+  var sv = e.target.closest('#rgSave'); if (!sv) return;
+  var f = RG.formats[RG_IDX], values = {};
+  $('rgForm').querySelectorAll('input[data-f]').forEach(function(inp){ (values[inp.dataset.f] = values[inp.dataset.f] || {})[inp.dataset.k] = inp.value; });
+  sv.disabled = true; $('rgErr').textContent = '';
+  api('POST', null, { action: 'range', format_key: f.slug, values: values }).then(function(j){
+    sv.disabled = false;
+    if (j.error === 'invalid') { $('rgErr').textContent = tt('Check the figures: ', 'Vérifie les chiffres : ') + j.fields.map(function(x){ return x.field; }).join(', '); return; }
+    if (!j.ok) { $('rgErr').textContent = tt('Something went wrong. Try again.', 'Une erreur est survenue. Réessaie.'); return; }
+    toast(j.saved ? t('Saved', 'Enregistré') : t('Nothing to save', 'Rien à enregistrer'));
+    Object.keys(values).forEach(function(id){ var v = values[id]; if (v.low !== '' || v.high !== '') f.current[id] = { low: v.low !== '' ? v.low : v.high, high: v.high !== '' ? v.high : v.low }; });
+    rgNext();
+  });
+});
 
 // ── Add ──────────────────────────────────────────────────────────────────────────────────────────────
 var FILES = [];
@@ -711,7 +786,7 @@ function start(){
   takeShare().then(function(){
     var h = location.hash;
     if (h.indexOf('#item=') === 0) openItem(h.slice(6));
-    else show(h === '#review' ? 'review' : h === '#search' ? 'search' : 'add');
+    else show(h === '#review' ? 'review' : h === '#search' ? 'search' : h === '#ranges' ? 'ranges' : 'add');
   });
 }
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/brain-sw.js', { scope: '/brain' }).catch(function(){});
