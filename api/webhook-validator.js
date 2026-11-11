@@ -363,6 +363,12 @@ export async function processReport(customerEmail, sessionId, purchaseType, subm
       }
     }
 
+    // D9: carry the consent given on the form over to the project (never cleared here).
+    if (projectId && submission.benchmark_consent_at) {
+      await supabase.from('za3fran_projects').update({ benchmark_consent_at: submission.benchmark_consent_at })
+        .eq('id', projectId).is('benchmark_consent_at', null);
+    }
+
     console.log(`User + project records created/verified for ${customerEmail}`);
   } catch (err) {
     console.error('User/project creation failed (non-fatal):', err.message);

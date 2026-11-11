@@ -22,6 +22,7 @@ import { getLineItem, normalizeCurrency } from '../lib/currency.js';
 import CR from '../lib/concept-record.js';
 import { providerFor } from '../lib/youcanpay.js';
 import { createYoucanCheckout } from '../lib/payments.js';
+import BC from '../lib/benchmark-consent.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -113,6 +114,8 @@ export default async function handler(req, res) {
         language:        data.language,
         purchase_type:   purchaseType,   // ← stored so webhook knows what was bought
         status:          'pending_payment',
+        // D9: consent to anonymised benchmarks — only an explicit tick is stored, with its date.
+        ...BC.consentFields(data.benchmark_consent),
         submitted_at:    data.submitted_at || new Date().toISOString(),
       }),
     });

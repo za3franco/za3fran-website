@@ -110,6 +110,9 @@ table.fig td.ind{padding-left:18px;}
 .note{background:rgba(201,134,42,.07);border:1px solid rgba(201,134,42,.22);border-radius:12px;padding:13px 15px;font-size:13px;color:var(--white);margin:12px 0;}
 .note.info{background:rgba(43,99,184,.10);border-color:rgba(43,99,184,.3);}
 
+.consent-d9{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.55;color:var(--muted);cursor:pointer;}
+.consent-d9 input{margin-top:3px;flex:none;width:18px;height:18px;accent-color:var(--copper);}
+.consent-d9 a{color:var(--copper-bright);}
 .bar{position:sticky;bottom:0;z-index:50;background:rgba(15,31,61,.94);backdrop-filter:blur(10px);border-top:1px solid rgba(43,99,184,.25);padding:12px 0;margin-top:10px;}
 .bar .wrap{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;}
 .bar .status{margin-right:auto;font-size:12.5px;color:var(--muted);}
@@ -505,6 +508,11 @@ footer .foot-bottom a:hover{color:var(--white);}
       <div id="placesList" style="margin-top:10px"></div>
       <p class="hint"><span data-en>Suggestions from Google Maps, shown here only. Add the ones that compete with you, then enter the prices from their current menu.</span><span data-fr>Suggestions issues de Google Maps, affichées ici seulement. Ajoutez celles qui vous font concurrence, puis saisissez les prix de leur carte actuelle.</span></p>
     </div>
+  </section>
+
+  <!-- D9 benchmark consent -->
+  <section class="card" id="d9card">
+    <label class="consent-d9" for="benchmarkConsent"><input type="checkbox" id="benchmarkConsent"><span><span data-en>I agree that my figures, anonymised and aggregated with those of several other projects, may serve as a benchmark. <a href="/privacy#benchmarks">Details</a></span><span data-fr>J'accepte que mes chiffres, anonymisés et agrégés avec ceux de plusieurs autres projets, servent de repère. <a href="/privacy#benchmarks">Détails</a></span></span></label>
   </section>
 
   <!-- Preview -->
@@ -1122,7 +1130,7 @@ async function api(action){
   const btn = { save:'btnSave', preview:'btnCheck', submit:'btnSubmit' }[action];
   const b = $(btn); const old = b.innerHTML; b.disabled = true; b.innerHTML = `<span class="spinner"></span>${b.innerHTML}`;
   try {
-    const r = await fetch('/api/bp-intake', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ code: state.code, action: action === 'preview' ? 'preview' : action, intake: collect() }) });
+    const r = await fetch('/api/bp-intake', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ code: state.code, action: action === 'preview' ? 'preview' : action, intake: collect(), benchmark_consent: $('benchmarkConsent').checked }) });
     const j = await r.json().catch(()=>({}));
     if (r.status === 422 && j.error === 'invalid_input') {
       $('saveStatus').textContent = T('Please check:', 'Merci de vérifier :') + ' ' + j.errors.map(errText).join(' · ');
@@ -1160,6 +1168,7 @@ async function open(code){
       $('gate').classList.remove('hidden'); $('gateErr').textContent = msg; $('gateErr').classList.remove('hidden'); return;
     }
     state.code = code; state.data = j; state.plan = j.plan || null;
+    $('benchmarkConsent').checked = !!(j.project && j.project.benchmark_consent);
     if (!savedLang && j.project.language === 'fr') setLang('fr');
     history.replaceState(null, '', '?code=' + encodeURIComponent(code));
     $('gate').classList.add('hidden'); $('form').classList.remove('hidden'); $('bar').classList.remove('hidden');

@@ -59,7 +59,7 @@ async function findProject(req, res, code) {
   if (t.lockedAt && Date.now() - t.lockedAt < LOCKOUT_MS) { res.status(429).json({ error: 'locked' }); return null; }
   if (!/^[A-Z0-9]{6,12}$/.test(code)) { res.status(400).json({ error: 'missing_code' }); return null; }
   const p = await withRetry(() => supabase.from('za3fran_projects')
-    .select('id, user_id, concept_name, currency, language, crr_status, validator_submission_id').eq('access_code', code).maybeSingle());
+    .select('id, user_id, concept_name, currency, language, crr_status, validator_submission_id, benchmark_consent_at').eq('access_code', code).maybeSingle());
   if (p.error) { res.status(502).json({ error: 'lookup_failed' }); return null; }
   if (!p.data) {
     t.n += 1; if (t.n >= MAX_ATTEMPTS) t.lockedAt = Date.now(); attempts[ip] = t;
@@ -217,7 +217,7 @@ export default async function handler(req, res) {
         }
       }
       return res.status(200).json({
-        project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status },
+        project: { concept_name: project.concept_name, currency: project.currency, language: project.language, crr_status: project.crr_status, benchmark_consent: !!project.benchmark_consent_at },
         concept: { seats: v.seats ?? null, ticket: v.ticket ?? null, covers: v.covers ?? null, city: v.city ?? null, neighbourhood: v.neighbourhood ?? null, concept_type: v.concept_type ?? null },
         format_default: I.formatFor(v.concept_type, {}),
         brain: market ? await brainHints(market) : { market_levels: [], rent_benchmark: false, guarantee_cap: null, loan_programmes: [], ramadan: false, payroll: null },
@@ -244,6 +244,16 @@ export default async function handler(req, res) {
     }
     const { intake, errors } = I.normalizeIntake(body.intake, { payroll });
     if (errors.length) return res.status(422).json({ error: 'invalid_input', errors });
+
+    // D9: the consent box of the intake. true records the date once; false (box unticked) withdraws it; absent changes nothing.
+    if (typeof body.benchmark_consent === 'boolean') {
+      const wanted = body.benchmark_consent;
+      if (wanted !== !!project.benchmark_consent_at) {
+        const upd = await withRetry(() => supabase.from('za3fran_projects')
+          .update({ benchmark_consent_at: wanted ? new Date().toISOString() : null }).eq('id', project.id));
+        if (upd.error) console.error('[bp-intake] consent update failed (non-fatal):', upd.error.message);
+      }
+    }
 
     const row = { project_id: project.id, intake, status: 'draft', updated_at: new Date().toISOString() };
     let summary = null, resolverVersion = null;
