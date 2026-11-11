@@ -170,3 +170,14 @@ test('no page names a single payment provider any more; privacy names both', () 
   assert.match(p, /YouCan Pay/);
   assert.match(p, /Stripe/);
 });
+
+test('test price: only the exact test e-mail, only while both test env vars are set', async () => {
+  const P = await import('../lib/payments.js');
+  env({ YOUCANPAY_TEST_EMAIL: 'me+t@x.ma', YOUCANPAY_TEST_AMOUNT_MAD: '10' }, () => {
+    assert.equal(P.isTestBuyer('ME+t@x.ma '), true);
+    assert.equal(P.isTestBuyer('me@x.ma'), false);
+    assert.equal(P.isTestBuyer(''), false);
+  });
+  env({ YOUCANPAY_TEST_EMAIL: 'me+t@x.ma', YOUCANPAY_TEST_AMOUNT_MAD: null }, () => assert.equal(P.isTestBuyer('me+t@x.ma'), false));
+  env({ YOUCANPAY_TEST_EMAIL: null, YOUCANPAY_TEST_AMOUNT_MAD: '10' }, () => assert.equal(P.isTestBuyer(''), false));
+});
