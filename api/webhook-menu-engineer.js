@@ -191,7 +191,6 @@ export async function fulfilMenuEngineer({ customerEmail, meta, paymentRef }) {
   <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Accéder à mon tableau de bord →</a>
 </div>
 <p style="color:#888880;font-size:13px;margin:0 0 8px;">Lien direct : <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-<p style="color:#888880;font-size:13px;margin:0 0 24px;">1 régénération gratuite est incluse avec votre achat, accessible depuis votre rapport.</p>
 <p style="color:#888880;font-size:13px;margin:0;">Questions ? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
 </div>
 <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">
@@ -223,7 +222,6 @@ export async function fulfilMenuEngineer({ customerEmail, meta, paymentRef }) {
   <a href="${dashboardUrl}" style="display:inline-block;background:none;border:1px solid #C9862A;color:#C9862A;text-decoration:none;padding:12px 32px;font-size:13px;border-radius:2px;">Go to my project dashboard →</a>
 </div>
 <p style="color:#888880;font-size:13px;margin:0 0 8px;">Direct link: <a href="${reportUrl}" style="color:#C9862A;">${reportUrl}</a></p>
-<p style="color:#888880;font-size:13px;margin:0 0 24px;">1 free regeneration is included with your purchase, accessible from your report.</p>
 <p style="color:#888880;font-size:13px;margin:0;">Questions? <a href="mailto:hello@za3fran.io" style="color:#C9862A;">hello@za3fran.io</a></p>
 </div>
 <div style="background:#0F1F3D;padding:24px 40px;text-align:center;">

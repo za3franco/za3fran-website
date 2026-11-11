@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Pilotage — Za3fran</title>
+<link rel="icon" href="/assets/logo.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap');
+:root{
+  --black:#0a0e18; --charcoal:#101a30; --charcoal2:#152242;
+  --copper:#C9862A; --copper-bright:#E7A63E;
+  --navy:#153B73; --navy-bright:#2B63B8; --navy-deep:#0F1F3D;
+  --white:#FAFAF7; --muted:#8b93a8;
+  --line:rgba(250,250,247,.08); --ok:#5FB98A; --warn:#E7A63E; --bad:#E0715F;
+}
+body:not(.lang-fr) [data-fr]:not(option){display:none;}
+body.lang-fr [data-en]:not(option){display:none;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--copper-bright);text-decoration:none}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;letter-spacing:.01em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,24,.94);backdrop-filter:blur(8px);z-index:10}
+.brand{display:flex;align-items:center;gap:8px;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white)}
+.brand img{width:28px;height:28px}
+.brand small{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-left:6px}
+.navr{display:flex;gap:8px;align-items:center}
+.pill{border:1px solid var(--line);background:var(--charcoal);color:var(--white);border-radius:100px;padding:7px 13px;font:inherit;font-size:12.5px;cursor:pointer}
+.pill.on{background:var(--copper);color:var(--black);border-color:var(--copper)}
+.pill:disabled{opacity:.5}
+.meta{color:var(--muted);font-size:12px;padding:14px 0 4px}
+section{padding:18px 0}
+h2{font-size:26px;margin-bottom:12px}
+h2 em{color:var(--copper-bright);font-style:italic}
+.grid{display:grid;gap:12px}
+.g5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--charcoal);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kl{color:var(--muted);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+.kv{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.1;margin-top:6px;color:var(--white)}
+.kv small{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);margin-left:4px}
+.ks{color:var(--muted);font-size:12.5px;margin-top:4px}
+.ks b{color:var(--white);font-weight:500}
+.up{color:var(--ok)} .down{color:var(--bad)}
+.bar{height:8px;background:rgba(250,250,247,.07);border-radius:10px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--copper),var(--copper-bright));border-radius:10px}
+.bar.ok i{background:var(--ok)}
+.prog{margin-top:12px}
+.prog .row{display:flex;justify-content:space-between;font-size:13px}
+.chart{width:100%;height:170px;display:block}
+.chart text{fill:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--muted);font-weight:500;text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap}
+.tbl{overflow-x:auto}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:100px;background:var(--charcoal2);color:var(--muted)}
+.tag.y{background:rgba(231,166,62,.14);color:var(--copper-bright)}
+.tag.s{background:rgba(43,99,184,.2);color:#9fbef0}
+.tag.m{background:rgba(95,185,138,.15);color:var(--ok)}
+.empty{color:var(--muted);font-size:13px;padding:10px 0}
+.note{color:var(--muted);font-size:12px;margin-top:10px}
+.alert{border:1px solid rgba(224,113,95,.4);background:rgba(224,113,95,.08);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:13px}
+form.add{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:10px}
+input,select,textarea{background:var(--black);border:1px solid var(--line);color:var(--white);border-radius:10px;padding:10px;font:inherit;font-size:14px;width:100%}
+button.cta{background:var(--copper);color:var(--black);border:0;border-radius:100px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer}
+.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px}
+details summary{cursor:pointer;color:var(--muted);font-size:13px;padding:6px 0}
+#gate{max-width:380px;margin:12vh auto 0;padding:0 16px;text-align:center}
+#gate h1{font-size:40px;margin-bottom:6px}
+#gate p{color:var(--muted);margin-bottom:18px}
+#gate input{text-align:center;font-size:18px;letter-spacing:.2em;margin-bottom:12px}
+#gate .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
+#app{display:none;padding-bottom:60px}
+.loading{color:var(--muted);padding:30px 0;text-align:center}
+@media (max-width:520px){.kv{font-size:27px}h2{font-size:23px}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>Pilotage</h1>
+  <p id="g-txt">Code personnel (le même que /brain)</p>
+  <input id="g-code" type="password" inputmode="numeric" autocomplete="current-password">
+  <button class="cta" id="g-btn" style="width:100%">Entrer</button>
+  <div class="err" id="g-err"></div>
+</div>
+
+<div id="app">
+  <nav>
+    <a class="brand" href="/"><img src="/assets/logo.png" alt="" onerror="this.style.display='none'">Za3fran<small>Pilotage</small></a>
+    <div class="navr">
+      <button class="pill" id="b-ref">↻</button>
+      <span id="langtoggle"><button class="pill" data-l="fr">FR</button> <button class="pill" data-l="en">EN</button></span>
+    </div>
+  </nav>
+  <div class="wrap" id="root"><div class="loading">…</div></div>
+</div>
+
+<script>
+var LANG = 'fr';
+try { var sv = localStorage.getItem('za3fran_lang'); if (sv === 'en') LANG = 'en'; } catch (e) {}
+function t(en, fr){ return LANG === 'fr' ? fr : en; }
+var DATA = null;
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function num(n, d){ if (n == null || isNaN(n)) return '—'; return Number(n).toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d || 0 }); }
+function mad(n){ return n == null ? '—' : num(Math.round(n)) + ' MAD'; }
+function pct(x){ return x == null ? '—' : num(x * 100, 0) + ' %'; }
+function dt(iso, withTime){ if (!iso) return ''; var d = new Date(iso); return d.toLocaleDateString(LANG === 'fr' ? 'fr-FR' : 'en-GB', { day:'2-digit', month:'short', year: withTime ? undefined : 'numeric', timeZone:'Africa/Casablanca' }) + (withTime ? ' ' + d.toLocaleTimeString(LANG === 'fr' ? 'fr-FR' : 'en-GB', { hour:'2-digit', minute:'2-digit', timeZone:'Africa/Casablanca' }) : ''); }
+var LABELS = {
+  validator:['Validator','Validator'], bundle:['Validator + business plan','Validator + business plan'], bundle_menu:['Validator + Menu Engineer','Validator + Menu Engineer'],
+  bundle_full:['Full bundle','Pack complet'], essentials:['Business plan','Business plan'], menu:['Menu Engineer','Menu Engineer'], menu_loyalty:['Menu Engineer (loyalty)','Menu Engineer (fidélité)'],
+  accompagnement:['Concept support','Accompagnement concept'], conseil:['Consulting','Conseil'], client_mystere:['Mystery guest','Client mystère'], design:['Design','Design'], autre:['Other','Autre'], other:['Other','Autre']
+};
+function lab(k){ var l = LABELS[k]; return l ? t(l[0], l[1]) : k; }
+function src(s){ return s === 'youcanpay' ? '<span class="tag y">YouCan Pay</span>' : s === 'stripe' ? '<span class="tag s">Stripe</span>' : '<span class="tag m">' + t('Manual','Manuel') + '</span>'; }
+function money(b){ // bucket → "12 345 MAD" (+ currencies when not converted)
+  if (!b) return '—';
+  var s = mad(b.mad);
+  if (b.unconverted) s += ' <small>+ ' + Object.keys(b.byCurrency).filter(function(c){ return c !== 'MAD'; }).map(function(c){ return num(b.byCurrency[c]) + ' ' + c; }).join(', ') + '</small>';
+  return s;
+}
+
+function api(method, body){
+  return fetch('/api/dashboard', { method: method, headers: body ? { 'Content-Type':'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, credentials:'same-origin' })
+    .then(function(r){ return r.json().then(function(j){ j._status = r.status; return j; }); });
+}
+
+function kpi(label, bucket, sub){
+  return '<div class="card"><div class="kl">' + label + '</div><div class="kv">' + (bucket ? num(Math.round(bucket.mad)) + '<small>MAD</small>' : '—') + '</div>'
+    + '<div class="ks"><b>' + (bucket ? bucket.count : 0) + '</b> ' + t('sale(s)','vente(s)') + (sub || '') + '</div></div>';
+}
+
+function bars(series, opts){
+  var keys = Object.keys(series); var vals = keys.map(function(k){ return series[k].mad || 0; });
+  var max = Math.max.apply(null, vals.concat([1])); var W = 600, H = 150, pad = 18, bw = (W - 10) / keys.length;
+  var g = '';
+  keys.forEach(function(k, i){
+    var h = Math.round((vals[i] / max) * (H - pad - 14)); var x = 5 + i * bw;
+    g += '<rect x="' + (x + 1.5) + '" y="' + (H - pad - h) + '" width="' + Math.max(2, bw - 3) + '" height="' + Math.max(vals[i] ? 2 : 0, h) + '" rx="2" fill="' + (vals[i] ? '#E7A63E' : 'rgba(250,250,247,.08)') + '"><title>' + k + ' — ' + mad(vals[i]) + ' · ' + series[k].count + '</title></rect>';
+    if (opts.labelEvery && i % opts.labelEvery === 0 && keys.length - 1 - i >= opts.labelEvery / 2 || i === keys.length - 1) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 4) + '" text-anchor="middle">' + opts.fmt(k) + '</text>';
+  });
+  g += '<text x="5" y="10">' + mad(max) + '</text>';
+  return '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' + g + '</svg>';
+}
+
+function progress(label, done, target){
+  var r = Math.min(1, target ? done / target : 0);
+  return '<div class="prog"><div class="row"><span>' + label + '</span><span><b>' + done + '</b> / ' + target + '</span></div><div class="bar' + (done >= target ? ' ok' : '') + '"><i style="width:' + (r * 100) + '%"></i></div></div>';
+}
+
+function act(label, c, extra){
+  return '<div class="card"><div class="kl">' + label + '</div><div class="kv">' + (c ? num(c.all) : '—') + '</div><div class="ks">' + (c ? t('This month','Ce mois') + ' <b>' + c.month + '</b> · ' + t('this week','cette semaine') + ' <b>' + c.week + '</b> · ' + t('today','aujourd’hui') + ' <b>' + c.today + '</b>' : t('Unavailable','Indisponible')) + (extra || '') + '</div></div>';
+}
+
+function render(){
+  var d = DATA, s = d.sales, a = d.activity, h = '';
+  h += '<div class="meta">' + t('Live figures, updated ','Chiffres en direct, mis à jour le ') + dt(d.generated_at, true) + ' · ' + t('test purchases excluded: ','achats de test exclus : ') + s.tests.count + '</div>';
+  if (d.errors.stripe) h += '<div class="alert">' + t('Stripe could not be read: ','Stripe n’a pas pu être lu : ') + esc(d.errors.stripe) + '</div>';
+
+  // Revenue
+  var lm = s.periods.lastMonth, m = s.periods.month;
+  var trend = lm.mad ? ' · <span class="' + (m.mad >= lm.mad ? 'up' : 'down') + '">' + (m.mad >= lm.mad ? '▲' : '▼') + ' ' + pct(Math.abs(m.mad - lm.mad) / lm.mad) + '</span> ' + t('vs last month','vs mois dernier') : '';
+  h += '<section><h2>' + t('Sales and <em>revenue</em>','Ventes et <em>chiffre d’affaires</em>') + '</h2><div class="grid g5">'
+    + kpi(t('Today','Aujourd’hui'), s.periods.today, ' · ' + t('yesterday ','hier ') + num(Math.round(s.periods.yesterday.mad)) + ' MAD')
+    + kpi(t('This week','Cette semaine'), s.periods.week)
+    + kpi(t('This month','Ce mois'), m, trend)
+    + kpi(t('This year','Cette année'), s.periods.year)
+    + kpi(t('Since the start','Depuis le début'), s.periods.all, s.avgBasketMad ? ' · ' + t('average basket ','panier moyen ') + mad(s.avgBasketMad) : '')
+    + '</div>';
+  h += '<div class="card" style="margin-top:12px"><div class="row" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span class="kl">' + t('Month vs target','Mois en cours vs objectif') + '</span><span>' + money(m) + ' / ' + mad(s.monthlyTargetMad) + '</span></div><div class="bar' + (s.monthProgress >= 1 ? ' ok' : '') + '"><i style="width:' + Math.min(100, (s.monthProgress || 0) * 100) + '%"></i></div><div class="note">' + t('Target = revenue needed per month at the viability threshold (launch plan). Salary to replace: 40,000–70,000 MAD a month.','Objectif = CA mensuel du seuil de viabilité (plan de lancement). Salaire à remplacer : 40 000 à 70 000 MAD par mois.') + '</div></div></section>';
+
+  // Launch threshold
+  if (s.threshold) {
+    var th = s.threshold;
+    h += '<section><h2>' + t('Launch <em>threshold</em>','Seuil de <em>viabilité</em>') + '</h2><div class="card"><div class="ks">' + (th.started ? t('Day ','Jour ') + th.daysElapsed + ' / 90 · ' : t('Starts ','Démarre le ') + dt(th.launchDate) + ' · ') + t('window ','fenêtre ') + dt(th.launchDate) + ' → ' + dt(th.endDate) + '</div>'
+      + '<div class="bar"><i style="width:' + (th.daysElapsed / 90 * 100) + '%;background:var(--navy-bright)"></i></div>'
+      + progress(t('Paid Validators (incl. bundles)','Validators payés (packs compris)'), th.validators.done, th.validators.target)
+      + progress(t('of which bundles','dont packs'), th.bundles.done, th.bundles.target)
+      + progress(t('Concept support (entered by hand)','Accompagnements concept (saisis à la main)'), th.accompaniments.done, th.accompaniments.target)
+      + '<div class="note">' + t('Revenue in the window: ','CA dans la fenêtre : ') + money(th.revenue) + '</div></div></section>';
+  }
+
+  // Charts
+  h += '<section class="grid g2"><div class="card"><div class="kl">' + t('Last 30 days','30 derniers jours') + '</div>' + bars(s.daily, { labelEvery: 7, fmt: function(k){ return k.slice(8) + '/' + k.slice(5, 7); } }) + '</div>'
+    + '<div class="card"><div class="kl">' + t('Last 12 months','12 derniers mois') + '</div>' + bars(s.monthly, { labelEvery: 2, fmt: function(k){ return k.slice(5) + '/' + k.slice(2, 4); } }) + '</div></section>';
+
+  // Products and channels
+  var prods = Object.keys(s.byProduct).sort(function(x, y){ return s.byProduct[y].mad - s.byProduct[x].mad; });
+  var tot = s.periods.all.mad || 1;
+  h += '<section class="grid g2"><div class="card"><div class="kl">' + t('By product (all time)','Par produit (depuis le début)') + '</div>'
+    + (prods.length ? '<div class="tbl"><table><tr><th>' + t('Product','Produit') + '</th><th class="n">' + t('Sales','Ventes') + '</th><th class="n">' + t('Revenue','CA') + '</th><th class="n">%</th></tr>'
+      + prods.map(function(k){ var b = s.byProduct[k]; return '<tr><td>' + lab(k) + '</td><td class="n">' + b.count + '</td><td class="n">' + mad(b.mad) + '</td><td class="n">' + pct(b.mad / tot) + '</td></tr>'; }).join('') + '</table></div>'
+      : '<div class="empty">' + t('No sale yet.','Aucune vente pour l’instant.') + '</div>') + '</div>';
+  var srcs = Object.keys(s.bySource);
+  h += '<div class="card"><div class="kl">' + t('By payment channel','Par canal de paiement') + '</div>'
+    + (srcs.length ? '<div class="tbl"><table><tr><th>' + t('Channel','Canal') + '</th><th class="n">' + t('Sales','Ventes') + '</th><th class="n">' + t('Revenue','CA') + '</th></tr>'
+      + srcs.map(function(k){ var b = s.bySource[k]; return '<tr><td>' + src(k) + '</td><td class="n">' + b.count + '</td><td class="n">' + money(b) + '</td></tr>'; }).join('') + '</table></div>'
+      : '<div class="empty">—</div>')
+    + '<div class="note">' + t('Gross amounts paid, minus Stripe refunds. Fees not deducted (Stripe about 2.9 %; YouCan Pay 3.9 % + 2 MAD on Moroccan cards, 30 % held 28 days).','Montants payés bruts, remboursements Stripe déduits. Commissions non déduites (Stripe environ 2,9 % ; YouCan Pay 3,9 % + 2 MAD sur carte marocaine, 30 % retenus 28 jours).') + '</div></div></section>';
+
+  // Activity and funnel
+  h += '<section><h2>' + t('Users and <em>funnel</em>','Utilisateurs et <em>parcours</em>') + '</h2><div class="grid g5">'
+    + act(t('Free Scorecards','Scorecards gratuits'), a.scorecards)
+    + act(t('Validator forms','Formulaires Validator'), a.validatorForms)
+    + act(t('Validators paid','Validators payés'), a.validatorPaid, a.conversion != null ? '<br>' + t('Form → payment: ','Formulaire → paiement : ') + '<b>' + pct(a.conversion) + '</b>' : '')
+    + act(t('Customers','Clients'), a.users)
+    + act(t('Projects','Projets'), a.projects)
+    + '</div><div class="grid g5" style="margin-top:12px">'
+    + '<div class="card"><div class="kl">' + t('Readiness reviews','Revues de préparation') + '</div><div class="kv">' + a.reviewsStarted + '</div><div class="ks">' + t('started · cleared ','commencées · validées ') + '<b>' + a.reviewsCleared + '</b></div></div>'
+    + '<div class="card"><div class="kl">' + t('Business plans','Business plans') + '</div><div class="kv">' + a.plansGenerated + '</div><div class="ks">' + t('generated · waiting for figures ','générés · en attente des chiffres ') + '<b>' + a.plansAwaitingFigures + '</b></div></div>'
+    + '<div class="card"><div class="kl">Menu Engineer</div><div class="kv">' + a.menusGenerated + '</div><div class="ks">' + t('reports generated','rapports générés') + '</div></div>'
+    + '<div class="card"><div class="kl">' + t('Studio waitlist','Liste d’attente Studio') + '</div><div class="kv">' + a.waitlist + '</div><div class="ks">' + t('sign-ups','inscrits') + '</div></div>'
+    + '</div>';
+  if (!a.scorecards) h += '<div class="note">' + t('Scorecards come from the Brevo list; it could not be read.','Les Scorecards viennent de la liste Brevo, qui n’a pas pu être lue.') + '</div>';
+  h += '</section>';
+
+  // Follow-up
+  h += '<section><h2>' + t('To <em>follow up</em>','À <em>relancer</em>') + '</h2>';
+  if (a.failed.length) h += '<div class="alert">' + t('Paid but report failed: ','Payé mais rapport en échec : ') + a.failed.map(function(f){ return esc(f.concept) + ' (' + esc(f.email) + ')'; }).join(', ') + ' — ' + t('use the relaunch link in the e-mail sent to hello@za3fran.io.','utilise le lien de relance de l’e-mail reçu sur hello@za3fran.io.') + '</div>';
+  h += '<div class="card"><div class="kl">' + t('Validator form filled, not paid (last 30 days)','Formulaire Validator rempli, non payé (30 derniers jours)') + '</div>'
+    + (a.abandoned.length ? '<div class="tbl"><table><tr><th>' + t('Date','Date') + '</th><th>' + t('Name','Nom') + '</th><th>' + t('Concept','Concept') + '</th><th>' + t('Product','Produit') + '</th><th></th></tr>'
+      + a.abandoned.map(function(x){ return '<tr><td>' + dt(x.date, true) + '</td><td>' + esc(x.name) + '<br><small style="color:var(--muted)">' + esc(x.email) + '</small></td><td>' + esc(x.concept) + (x.city ? '<br><small style="color:var(--muted)">' + esc(x.city) + '</small>' : '') + '</td><td>' + lab(x.product) + '</td><td><a href="mailto:' + esc(x.email) + '?subject=' + encodeURIComponent(t('Your concept on Za3fran','Ton concept sur Za3fran')) + '">' + t('Write','Écrire') + ' →</a></td></tr>'; }).join('') + '</table></div>'
+      : '<div class="empty">' + t('Nobody to follow up.','Personne à relancer.') + '</div>')
+    + '<div class="note">' + t('These people gave their e-mail to get the Validator; a short personal message is fine, no mailing.','Ces personnes ont donné leur e-mail pour obtenir le Validator ; un court message personnel est possible, pas d’envoi groupé.') + '</div></div></section>';
+
+  // Recent sales
+  h += '<section><h2>' + t('Latest <em>sales</em>','Dernières <em>ventes</em>') + '</h2><div class="card">'
+    + (d.recent.length ? '<div class="tbl"><table><tr><th>Date</th><th>' + t('Customer','Client') + '</th><th>' + t('Product','Produit') + '</th><th>' + t('Channel','Canal') + '</th><th class="n">' + t('Amount','Montant') + '</th></tr>'
+      + d.recent.map(function(x){ return '<tr><td>' + dt(x.date, true) + '</td><td>' + esc(x.name || x.email) + (x.concept ? '<br><small style="color:var(--muted)">' + esc(x.concept) + '</small>' : '') + '</td><td>' + lab(x.product) + '</td><td>' + src(x.source) + '</td><td class="n">' + num(x.amount - x.refunded) + ' ' + x.currency + (x.refunded ? '<br><small class="down">' + t('refunded ','remboursé ') + num(x.refunded) + '</small>' : '') + '</td></tr>'; }).join('') + '</table></div>'
+      : '<div class="empty">' + t('No sale yet. They will appear here the minute they are paid.','Aucune vente pour l’instant. Elles apparaîtront ici à la minute où elles sont payées.') + '</div>') + '</div></section>';
+
+  // Manual sales
+  var today = new Date().toISOString().slice(0, 10);
+  h += '<section><h2>' + t('Sales <em>outside the site</em>','Ventes <em>hors site</em>') + '</h2><div class="card"><div class="ks">' + t('Concept support, consulting, mystery guest, design: enter them here so the revenue and the threshold are complete.','Accompagnement, conseil, client mystère, design : saisis-les ici pour que le CA et le seuil soient complets.') + '</div>'
+    + '<form class="add" id="f-add"><input type="date" name="sold_on" value="' + today + '" required>'
+    + '<select name="kind">' + d.kinds.map(function(k){ return '<option value="' + k + '">' + lab(k) + '</option>'; }).join('') + '</select>'
+    + '<input name="client" placeholder="' + t('Client','Client') + '"><input name="amount" inputmode="decimal" placeholder="' + t('Amount','Montant') + '" required>'
+    + '<select name="currency"><option>MAD</option><option>EUR</option><option>USD</option></select>'
+    + '<input name="note" placeholder="' + t('Note (optional)','Note (facultatif)') + '"><button class="cta" type="submit">' + t('Add','Ajouter') + '</button></form>'
+    + (d.offline.length ? '<div class="tbl" style="margin-top:12px"><table><tr><th>Date</th><th>' + t('Type','Type') + '</th><th>' + t('Client','Client') + '</th><th class="n">' + t('Amount','Montant') + '</th><th></th></tr>'
+      + d.offline.map(function(o){ return '<tr><td>' + esc(o.sold_on) + '</td><td>' + lab(o.kind) + '</td><td>' + esc(o.client || '') + (o.note ? '<br><small style="color:var(--muted)">' + esc(o.note) + '</small>' : '') + '</td><td class="n">' + num(o.amount_minor / 100) + ' ' + o.currency + '</td><td class="n"><button class="del" data-del="' + o.id + '" title="' + t('Delete','Supprimer') + '">×</button></td></tr>'; }).join('') + '</table></div>' : '')
+    + '</div></section>';
+
+  // Zahir Guest
+  if (d.zahir) {
+    var z = d.zahir, mrr = Object.keys(z.mrrByCurrency).map(function(c){ return num(z.mrrByCurrency[c]) + ' ' + c; }).join(' + ') || '0';
+    h += '<section><h2>Zahir <em>Guest</em></h2><div class="grid g3"><div class="card"><div class="kl">' + t('Paying subscriptions','Abonnements payants') + '</div><div class="kv">' + z.active + '</div><div class="ks">' + t('in free trial ','en essai gratuit ') + '<b>' + z.trialing + '</b>' + (z.tests ? ' · ' + t('tests excluded ','tests exclus ') + z.tests : '') + '</div></div>'
+      + '<div class="card"><div class="kl">' + t('Monthly recurring revenue','Revenu mensuel récurrent') + '</div><div class="kv" style="font-size:26px">' + mrr + '</div><div class="ks">' + t('after discounts, Stripe','après remises, Stripe') + '</div></div>'
+      + '<div class="card"><div class="kl">' + t('By plan','Par formule') + '</div><div class="ks">' + (Object.keys(z.tiers).map(function(k){ return esc(k) + ' <b>' + z.tiers[k] + '</b>'; }).join(' · ') || '—') + '</div></div></div></section>';
+  }
+
+  // Tests and sources
+  h += '<section><details><summary>' + t('Excluded test purchases','Achats de test exclus') + ' (' + s.tests.count + ')</summary><div class="card tbl">'
+    + (d.tests.length ? '<table>' + d.tests.map(function(x){ return '<tr><td>' + dt(x.date) + '</td><td>' + lab(x.product) + '</td><td>' + esc(x.concept) + '</td><td>' + src(x.source) + '</td><td>' + esc(x.testReason) + '</td></tr>'; }).join('') + '</table>' : '<div class="empty">—</div>') + '</div></details>'
+    + '<div class="note">' + (d.rates ? t('Euro and dollar sales converted to MAD at the day’s rate (','Ventes en euros et dollars converties en MAD au taux du jour (') + esc(d.rates.source) + ' : 1 EUR = ' + num(d.rates.EUR, 2) + ' MAD, 1 USD = ' + num(d.rates.USD, 2) + ' MAD).' : t('Exchange rates unavailable: euro and dollar amounts are shown apart.','Taux de change indisponibles : les montants en euros et dollars sont affichés à part.'))
+    + ' ' + t('Test purchases: amount 0, your own e-mails, test projects, YouCan Pay test price or test mode.','Achats de test : montant 0, tes propres e-mails, projets de test, prix de test ou mode test YouCan Pay.') + '</div></section>';
+
+  document.getElementById('root').innerHTML = h;
+  var f = document.getElementById('f-add');
+  if (f) f.addEventListener('submit', function(e){
+    e.preventDefault(); var fd = new FormData(f), body = { action:'add' }; fd.forEach(function(v, k){ body[k] = v; });
+    f.querySelector('button').disabled = true;
+    api('POST', body).then(function(j){ if (!j.ok) alertBox(t('Not saved: check the date and the amount.','Non enregistré : vérifie la date et le montant.')); load(); });
+  });
+  document.querySelectorAll('[data-del]').forEach(function(b){ b.addEventListener('click', function(){
+    if (b.dataset.confirm !== '1') { b.dataset.confirm = '1'; b.textContent = t('Delete?','Supprimer ?'); return; }
+    api('POST', { action:'delete', id: b.dataset.del }).then(load);
+  }); });
+}
+function alertBox(msg){ var r = document.getElementById('root'); r.insertAdjacentHTML('afterbegin', '<div class="alert">' + esc(msg) + '</div>'); }
+
+var timer = null;
+function load(){
+  var b = document.getElementById('b-ref'); b.disabled = true;
+  return api('GET').then(function(j){
+    b.disabled = false;
+    if (j._status === 401) return showGate();
+    if (!j.ok) { document.getElementById('root').innerHTML = '<div class="alert">' + t('The dashboard could not load: ','Le tableau de bord n’a pas pu se charger : ') + esc(j.message || j.error) + '</div>'; return; }
+    DATA = j; render();
+  }).catch(function(){ b.disabled = false; });
+}
+function showApp(preloaded){ document.getElementById('gate').style.display = 'none'; document.getElementById('app').style.display = 'block'; setLang(LANG); if (!preloaded) load(); clearInterval(timer); timer = setInterval(function(){ if (!document.hidden) load(); }, 60000); }
+function showGate(){ document.getElementById('app').style.display = 'none'; document.getElementById('gate').style.display = 'block'; gateText(); }
+function gateText(){ document.getElementById('g-txt').textContent = t('Personal code (same as /brain)', 'Code personnel (le même que /brain)'); document.getElementById('g-btn').textContent = t('Enter','Entrer'); }
+
+function setLang(l){
+  LANG = l; try { localStorage.setItem('za3fran_lang', l); } catch (e) {}
+  document.body.classList.toggle('lang-fr', l === 'fr');
+  document.documentElement.lang = l;
+  document.querySelectorAll('#langtoggle button').forEach(function(x){ x.classList.toggle('on', x.dataset.l === l); });
+  if (DATA) render(); gateText();
+}
+document.getElementById('langtoggle').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) setLang(b.dataset.l); });
+document.getElementById('b-ref').addEventListener('click', load);
+document.addEventListener('visibilitychange', function(){ if (!document.hidden && DATA) load(); });
+
+function login(){
+  var code = document.getElementById('g-code').value.trim(); var err = document.getElementById('g-err'); err.textContent = '';
+  if (!code) return;
+  fetch('/api/brain-inbox', { method:'POST', headers:{ 'Content-Type':'application/json' }, credentials:'same-origin', body: JSON.stringify({ action:'login', code: code }) })
+    .then(function(r){ return r.json(); }).then(function(j){
+      if (j.ok) return showApp();
+      err.textContent = j.error === 'locked' ? t('Too many attempts. Try again in ' + j.retry_in_min + ' min.', 'Trop d’essais. Réessaie dans ' + j.retry_in_min + ' min.') : t('Wrong code.', 'Code incorrect.') + (j.left != null ? ' ' + t(j.left + ' attempt(s) left.', j.left + ' essai(s) restant(s).') : '');
+    });
+}
+document.getElementById('g-btn').addEventListener('click', login);
+document.getElementById('g-code').addEventListener('keydown', function(e){ if (e.key === 'Enter') login(); });
+
+gateText();
+api('GET').then(function(j){ if (j._status === 401) showGate(); else if (j.ok) { DATA = j; showApp(true); } else showApp(); }).catch(showGate);
+</script>
+</body>
+</html>

@@ -575,5 +575,22 @@ document.getElementById('langtoggle').addEventListener('click', e=>{
 });
 </script>
 
+<!-- payment did not go through (YouCan Pay error URL ?paiement=echec) -->
+<div id="pay-fail" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#2a1a10;border-bottom:2px solid #C9862A;color:#FAFAF7;padding:14px 48px 14px 16px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;text-align:center">
+  <span data-en>Your payment did not go through and nothing was charged. You can try again; if your card keeps being refused, write to us on <a href="https://wa.me/212648960306" style="color:#E7A63E">WhatsApp</a>.</span><span data-fr>Le paiement n’a pas abouti et rien n’a été débité. Vous pouvez réessayer ; si votre carte est refusée à nouveau, écrivez-nous sur <a href="https://wa.me/212648960306" style="color:#E7A63E">WhatsApp</a>.</span>
+  <button type="button" aria-label="Close" onclick="document.getElementById('pay-fail').style.display='none'" style="position:absolute;right:12px;top:10px;background:none;border:0;color:#FAFAF7;font-size:22px;cursor:pointer">×</button>
+</div>
+<script>
+(function(){
+  try {
+    var p = new URLSearchParams(location.search);
+    if (p.get('paiement') !== 'echec') return;
+    document.getElementById('pay-fail').style.display = 'block';
+    if (window.gtag) gtag('event', 'payment_failed', { event_label: location.pathname });
+    p.delete('paiement'); var q = p.toString();
+    history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
