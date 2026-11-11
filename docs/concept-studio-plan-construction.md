@@ -1,6 +1,6 @@
-# Concept Studio — plan de construction (v1.0, 11 nov. 2026)
+# Concept Studio — plan de construction (v1.1, 11 nov. 2026)
 
-*Rédigé à partir de la méthode validée (`claude/concept-studio-methode.md` v0.3, décisions D1–D9), des profils et parcours (`claude/concept-studio-profils-parcours.md`), de la stratégie maîtresse v1.6 (§3.19 et §16) et du code en ligne (commit `8c9aa4b`). Toutes les données citées ont été relues dans Supabase le 11 nov. 2026. Les décisions encore ouvertes sont au §9.*
+*Rédigé à partir de la méthode validée (`claude/concept-studio-methode.md` v0.3, décisions D1–D9), des profils et parcours (`claude/concept-studio-profils-parcours.md`), de la stratégie maîtresse v1.6 (§3.19 et §16) et du code en ligne (commit `8c9aa4b`). Toutes les données citées ont été relues dans Supabase le 11 nov. 2026. Décisions d'Arnaud du 11 nov. au §9.*
 
 ---
 
@@ -140,7 +140,7 @@ Chaque lot se fait dans son propre chat, se termine par des tests verts, un dép
 
 | Lot | Contenu | Ce qu'Arnaud fait | Porte de sortie |
 |---|---|---|---|
-| **0 — Fondations de données** | Traits structurés des 29 formats tirés des 380 lignes (chaque trait rattaché à sa ligne) ; archétypes des 13 quartiers ; paramètres `concept.ticket/seats/surface_m2` et import des fourchettes ; case de consentement D9 + ligne de confidentialité | Remplir la page des fourchettes (§9, Q3) ; relire les traits dans `/brain` quand il veut (non bloquant) | Toutes les fourchettes des formats de priorité 1 et 2 présentes ; requêtes de sélection testées |
+| **0 — Fondations de données** | Traits structurés des 29 formats tirés des 380 lignes (chaque trait rattaché à sa ligne) ; archétypes des 13 quartiers ; paramètres `concept.ticket/seats/surface_m2` et import des fourchettes ; case de consentement D9 + ligne de confidentialité | Remplir la page des fourchettes, 12 formats d'abord (§9, Q3) ; relire les traits dans `/brain` quand il veut (non bloquant) | Toutes les fourchettes des formats de priorité 1 et 2 présentes ; requêtes de sélection testées |
 | **1 — Sélection et chiffres en code** | `studio-route`, `studio-select`, `studio-figures`, `studio-brain` ; 8 profils fictifs de test (P1 à P7 + « un bar à vin comme Canaille ») ; sortie lisible | Lire les 8 sorties : les pistes et les quartiers ont-ils du sens pour un opérateur ? | Arnaud valide les sorties ; aucun format interdit proposé ; chiffres = moteur |
 | **2 — Textes des cartes** | `studio-writer` et ses contrôles ; **mesure du coût réel par parcours** sur les 8 profils | Lire les cartes de 3 profils | Toutes les cartes passent les contrôles ; coût d'un parcours P1 ≤ 2,50 € (sinon on réduit avant d'aller plus loin) |
 | **3 — Session et interface (usage interne)** | `studio.html`, `api/studio.js`, `studio_sessions`, `studio_cards`, réponses libres classées par Haiku, retour en arrière, reprise par code ; ouvert seulement aux codes de test | Jouer P1 et P7 sur son téléphone ; **l'utiliser comme copilote de ses accompagnements** (§9, Q4) | Parcours complets sans erreur JS, rendu FR/EN téléphone et ordinateur |
@@ -152,15 +152,15 @@ Chaque lot se fait dans son propre chat, se termine par des tests verts, un dép
 
 Le lot 6 peut avancer en parallèle des lots 1 à 4 si un chat se libère. Tous les prix MAD restent sous le plafond journalier YouCan actuel (5 000 MAD).
 
-## 9. Décisions à prendre par Arnaud
+## 9. Décisions d'Arnaud (11 nov. 2026)
 
-| # | Question | Proposition de Claude |
+| # | Question | Décision |
 |---|---|---|
-| Q1 | À quel moment le porteur paie-t-il ? | Les 6 questions d'entrée et le routage sont gratuits (aucun appel au modèle) ; le paiement intervient avant la première carte écrite. Le chemin « Localisation seule » (P3) est vendu 99 € ; s'il veut ensuite l'approfondissement, il paie la différence (150 €). |
-| Q2 | Case de consentement D9 : avant le lancement du 17 nov. ou après ? | **Avant** : changement minime, et chaque projet du lancement compte pour les repères. Sinon ces premiers projets sont perdus pour D9. |
-| Q3 | Fourchettes par format (A9) | Indispensables pour chiffrer un porteur qui ne connaît pas ses chiffres. Arnaud remplit d'abord les **12 formats de priorité 1 et 2 les plus courants** ; je refais la page pour qu'elle se remplisse au téléphone en ≈ 20 minutes, avec mes repères sourcés déjà affichés. |
-| Q4 | Studio interne comme copilote des « Accompagnements concept » dès le lot 3 | Oui : Arnaud s'en sert pendant ses accompagnements payants ; ce qu'il corrige améliore l'outil avant la mise en ligne publique. |
-| Q5 | Seuil N des repères porteurs (D9) | 5 projets minimum par format et par ville ; repère porteurs préféré à la fourchette d'Arnaud à partir de 10 projets. |
+| Q1 | À quel moment le porteur paie-t-il ? | **Décidé :** les 6 questions d'entrée et le routage sont gratuits (aucun appel au modèle) ; paiement avant la première carte écrite. « Localisation seule » (P3) à 99 € ; montée vers le Studio complet pour la différence (150 €). |
+| Q2 | Case de consentement D9 avant le lancement du 17 nov. ? | **Décidé : oui, avant le 17 nov.** (Validator, intake du business plan, ligne de confidentialité FR/EN). |
+| Q3 | Fourchettes par format (A9) | **Décidé :** Claude refait la page pour le téléphone (≈ 20 min, repères sourcés déjà affichés) ; Arnaud remplit d'abord les **12 formats les plus courants**, puis les autres. |
+| Q4 | Studio interne comme copilote des « Accompagnements concept » dès le lot 3 | **Décidé : oui.** |
+| Q5 | Seuil N des repères porteurs (D9) | **Ouvert** (à trancher au lot 7). Proposition : 5 projets minimum par format et par ville ; repère porteurs préféré à la fourchette d'Arnaud à partir de 10 projets. |
 
 ## 10. Risques et parades
 
