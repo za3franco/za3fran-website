@@ -295,7 +295,9 @@ async function factAction(res, b) {
   const P = await params();
   const { data: fact } = await W(() => supabase.from('brain_inbox_facts').select('*').eq('id', b.id).maybeSingle());
   if (!fact) return send(res, 404, { error: 'not_found' });
-  if (fact.status !== 'proposed') return send(res, 409, { error: 'already_reviewed', status: fact.status });
+  // An « added » (researched) fact can still be verified later; anything else already reviewed is final.
+  const upgrade = fact.status === 'added' && b.op === 'verify';
+  if (fact.status !== 'proposed' && !upgrade) return send(res, 409, { error: 'already_reviewed', status: fact.status });
   const now = new Date().toISOString();
   if (b.op === 'reject') {
     await W(() => supabase.from('brain_inbox_facts').update({ status: 'rejected', reviewed_at: now }).eq('id', fact.id).eq('status', 'proposed'));

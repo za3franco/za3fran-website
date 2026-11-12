@@ -633,12 +633,15 @@ $('reviewList').addEventListener('click', function(e){
 
 // ── Item ─────────────────────────────────────────────────────────────────────────────────────────────
 var DETAIL = null;
-function openItem(id){
-  ITEM = id; history.replaceState(null, '', '/brain#item=' + id); show('item');
-  $('itemBody').innerHTML = '<div class="empty"><span class="spinner"></span></div>';
+function openItem(id, keep){
+  var y = window.pageYOffset;
+  ITEM = id; history.replaceState(null, '', '/brain#item=' + id);
+  if (keep && VIEW === 'item') { /* refresh in place: no spinner, no jump to the top */ }
+  else { show('item'); $('itemBody').innerHTML = '<div class="empty"><span class="spinner"></span></div>'; }
   return api('GET', { action: 'item', id: id }).then(function(j){
     if (!j.item) { $('itemBody').innerHTML = '<div class="empty">' + t('Not found.', 'Introuvable.') + '</div>'; return; }
     DETAIL = j; renderItem();
+    if (keep) window.scrollTo(0, y);
     clearTimeout(pollTimer);
     if (['uploading', 'received', 'extracting'].indexOf(j.item.status) >= 0) pollTimer = setTimeout(function(){ if (ITEM === id && VIEW === 'item') openItem(id); }, 6000);
   });
@@ -659,8 +662,9 @@ function factHtml(f){
   var st = { added: ['Added', 'Ajouté', 'ok'], verified: ['Added and verified', 'Ajouté et validé', 'ok'], rejected: ['Rejected', 'Rejeté', 'bad'] }[f.status];
   return '<div class="card fact' + (done ? ' done' : '') + '" id="f-' + f.id + '"><div class="st">' + esc(f.statement) + '</div>' +
     (f.quote ? '<div class="q">« ' + esc(f.quote) + ' »</div>' : '') + map +
-    (done ? '<div class="meta"><span class="tag ' + st[2] + '">' + t(st[0], st[1]) + '</span></div>'
-      : '<div class="acts"><button class="btn ok sm" type="button" data-f="' + f.id + '" data-op="add">' + t('Add', 'Ajouter') + '</button>' +
+    (done ? '<div class="meta"><span class="tag ' + st[2] + '">' + t(st[0], st[1]) + '</span>' + (!p && f.status !== 'rejected' ? '<span class="small">' + t('knowledge only (searchable, not a value)', 'connaissance seule (consultable, pas une valeur)') + '</span>' : '') + '</div>' +
+        (f.status === 'added' ? '<div class="acts"><button class="btn primary sm" type="button" data-f="' + f.id + '" data-op="verify">' + t('Validate', 'Valider') + '</button></div><div class="err" id="fe-' + f.id + '"></div>' : '')
+      : (!p ? '<div class="small" style="margin-top:6px">' + t('No Brain parameter: kept as knowledge (searchable), not used as a value. « Correct » lets you link one.', 'Aucun paramètre du Brain : gardé comme connaissance (consultable), pas utilisé comme valeur. « Corriger » permet d\'en lier un.') + '</div>' : '') + '<div class="acts"><button class="btn ok sm" type="button" data-f="' + f.id + '" data-op="add">' + t('Add', 'Ajouter') + '</button>' +
         '<button class="btn primary sm" type="button" data-f="' + f.id + '" data-op="verify">' + t('Add and verify', 'Ajouter et valider') + '</button>' +
         '<button class="btn ghost sm" type="button" data-f="' + f.id + '" data-op="open-edit">' + t('Correct', 'Corriger') + '</button>' +
         '<button class="btn danger sm" type="button" data-f="' + f.id + '" data-op="reject">' + t('Reject', 'Rejeter') + '</button></div><div class="err" id="fe-' + f.id + '"></div>') +
@@ -740,12 +744,12 @@ $('itemBody').addEventListener('click', function(e){
     }
     b.disabled = true;
     api('POST', null, body).then(function(j){
-      if (j.ok) { if (body.op === 'edit' && j.unmapped) toast(errText(j.unmapped)); else if (op === 'add' || op === 'verify') toast(op === 'verify' ? t('Added and verified.', 'Ajouté et validé.') : t('Added to the Brain.', 'Ajouté au Brain.')); return openItem(id); }
+      if (j.ok) { if (body.op === 'edit' && j.unmapped) toast(errText(j.unmapped)); else if (op === 'add' || op === 'verify') toast(op === 'verify' ? t('Added and verified.', 'Ajouté et validé.') : t('Added to the Brain.', 'Ajouté au Brain.')); return openItem(id, true); }
       b.disabled = false; var el = $('fe-' + fid); if (el) el.innerHTML = errText(j.error, j.message); else toast(errText(j.error, j.message));
     });
     return;
   }
-  if (b.dataset.price) { b.disabled = true; api('POST', null, { action: 'prices', item_id: id, op: 'reject', ids: [b.dataset.price] }).then(function(){ openItem(id); }); return; }
+  if (b.dataset.price) { b.disabled = true; api('POST', null, { action: 'prices', item_id: id, op: 'reject', ids: [b.dataset.price] }).then(function(){ openItem(id, true); }); return; }
   if (b.dataset.prices) { b.disabled = true; api('POST', null, { action: 'prices', item_id: id, op: b.dataset.prices }).then(function(j){ if (j.ok) toast(b.dataset.prices === 'add' ? t(j.updated + ' prices added.', j.updated + ' prix ajoutés.') : t('Prices rejected.', 'Prix rejetés.')); openItem(id); }); return; }
   if (b.dataset.rights) { b.disabled = true; api('POST', null, { action: 'item', id: id, op: 'rights', answer: b.dataset.rights }).then(function(){ openItem(id); }); return; }
   if (b.dataset.item) {
