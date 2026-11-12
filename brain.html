@@ -228,6 +228,9 @@ ul.mlist li:last-child{border-bottom:none;}
     <h2><span data-en>Brain review list</span><span data-fr>Points de revue du Brain</span></h2>
     <p class="small"><span data-en>The figures the tools use today, grouped by format. Validate = verified by you. « Something is off » = your comment goes to Claude, who corrects it (the value stays in use meanwhile).</span><span data-fr>Les chiffres que les outils utilisent aujourd'hui, regroupés par format. Valider = vérifié par vous. « Quelque chose cloche » = votre commentaire part à Claude, qui corrige (la valeur reste utilisée d'ici là).</span></p>
     <div id="reviewList" style="margin-top:12px"></div>
+    <h2><span data-en>Format traits and district types</span><span data-fr>Traits des formats et types de quartier</span></h2>
+    <p class="small"><span data-en>Claude's reading of the catalogue (not blocking, nothing waits for it). Validate if it looks right; otherwise tell Claude in the chat.</span><span data-fr>Lecture du catalogue par Claude (non bloquant, rien n'attend). Validez si ça vous semble juste ; sinon dites-le à Claude dans le chat.</span></p>
+    <div id="traitsList" style="margin-top:12px"></div>
   </section>
 
   <!-- ── Item ── -->
@@ -361,6 +364,7 @@ function show(v){
   document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.v === v || (v === 'item' && b.dataset.v === 'review')); });
   window.scrollTo(0, 0);
   if (v === 'review' || v === 'add') loadQueue();
+  if (v === 'review') loadTraits();
   if (v === 'ranges') loadRanges();
 }
 $('tabs').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; history.replaceState(null, '', '/brain' + (b.dataset.v === 'add' ? '' : '#' + b.dataset.v)); show(b.dataset.v); });
@@ -628,6 +632,46 @@ $('reviewList').addEventListener('click', function(e){
       if (!QUEUE.review.length) renderReview();
       toast(b.dataset.op === 'approve' ? t('Validated.', 'Validé.') : t('Sent to Claude.', 'Envoyé à Claude.'));
     } else { card.style.opacity = 1; toast(errText(j.error)); }
+  });
+});
+
+
+// ── Traits and archetypes (review, never blocking) ──
+var TL = { key_skill: { kitchen: ['Kitchen', 'Cuisine'], floor: ['Front of house', 'Salle'], bar: ['Bar', 'Bar'], management: ['Management', 'Gestion'] },
+  beginner_difficulty: { low: ['Low', 'Faible'], medium: ['Medium', 'Moyenne'], high: ['High', 'Élevée'], very_high: ['Very high', 'Très élevée'] },
+  investor_needs_operator: { yes: ['Yes', 'Oui'], franchise_ok: ['Franchise possible', 'Franchise possible'], no: ['No', 'Non'] },
+  extraction: { required: ['Required', 'Exigée'], desirable: ['Desirable', 'Souhaitable'], no: ['No', 'Non'] },
+  alcohol: { core: ['At the core', 'Au cœur du modèle'], possible: ['Possible', 'Possible'], no: ['No', 'Non'] },
+  regulatory_flag: { none: ['None', 'Aucun'], watch: ['To watch', 'À surveiller'], strong: ['Strong', 'Fort'] } };
+var ARCH = { A: ['Offices, weekday lunch', 'Bureaux, déjeuner de semaine'], B: ['Affluent residential', 'Résidentiel aisé'], C: ['Evening out, lively centre', 'Sortie du soir, centre animé'], D: ['Seafront, leisure', 'Front de mer, loisirs'], E: ['Transit', 'Transit'] };
+var TROWS = [['archetypes', ['Types of district', 'Types de quartier']], ['key_skill', ['Key skill', 'Compétence clé']], ['beginner_difficulty', ['Difficulty for a beginner', 'Difficulté pour un débutant']], ['investor_needs_operator', ['Investor needs an operator', 'Investisseur : besoin d\'un exploitant']],
+  ['extraction', ['Extraction', 'Extraction']], ['alcohol', ['Alcohol', 'Alcool']], ['services', ['Typical services', 'Services typiques']], ['regulatory_flag', ['Regulatory flag', 'Drapeau réglementaire']]];
+function traitVal(k, v){
+  if (k === 'archetypes') return v.split(',').map(function(a){ return a + ' · ' + tt(ARCH[a][0], ARCH[a][1]); }).join(' ; ');
+  if (k === 'services') return v.split(',').map(function(x){ var s = SVC[x]; return s ? tt(s[0], s[1]) : x; }).join(', ');
+  var m = TL[k] && TL[k][v]; return m ? tt(m[0], m[1]) : v;
+}
+function loadTraits(){
+  return api('GET', { action: 'traits' }).then(function(j){
+    if (!j.formats) return;
+    var h = j.formats.map(function(f){
+      var rows = TROWS.filter(function(r){ return f.traits[r[0]]; }).map(function(r){ var t0 = f.traits[r[0]]; return '<li><span class="small">' + tt(r[1][0], r[1][1]) + '</span> : <b>' + esc(traitVal(r[0], t0.value)) + '</b>' + (t0.inference ? ' <span class="small">(' + tt('deduced', 'déduit') + ')</span>' : '') + '</li>'; }).join('');
+      var flags = (f.traits.thin_sheet && f.traits.thin_sheet.value === 'yes' ? '<span class="tag">' + tt('thin sheet', 'fiche mince') + '</span>' : '') + (f.traits.proposable && f.traits.proposable.value === 'no' ? '<span class="tag bad">' + tt('never proposed spontaneously', 'jamais proposé spontanément') + '</span>' : '');
+      return '<div class="card"><div class="t">' + esc(f.name_fr) + '</div><div class="meta" style="margin-top:4px">' + flags + '</div><ul class="mlist">' + rows + '</ul>' +
+        '<div class="row" style="margin-top:10px"><button class="btn ok sm" type="button" data-tr="format" data-id="' + esc(f.slug) + '">' + t('Validate', 'Valider') + '</button></div></div>';
+    }).join('');
+    var d = j.districts.map(function(x){
+      return '<div class="card"><div class="t">' + esc(x.district) + '</div><ul class="mlist">' + x.archetypes.map(function(a){ return '<li><b>' + a.a + ' · ' + tt(ARCH[a.a][0], ARCH[a.a][1]) + '</b> <span class="small">(' + tt('deduced', 'déduit') + ')</span>' + (a.note ? '<div class="small">' + esc(a.note) + '</div>' : '') + '</li>'; }).join('') + '</ul>' +
+        '<div class="row" style="margin-top:10px"><button class="btn ok sm" type="button" data-tr="district" data-id="' + esc(x.district) + '">' + t('Validate', 'Valider') + '</button></div></div>';
+    }).join('');
+    $('traitsList').innerHTML = (h || d) ? '<h3>' + t('Formats', 'Formats') + '</h3>' + h + '<h3>' + t('Districts', 'Quartiers') + '</h3>' + d : '<div class="empty">' + t('Nothing waiting.', 'Rien en attente.') + '</div>';
+  });
+}
+$('traitsList').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-tr]'); if (!b) return;
+  var card = b.closest('.card'); card.style.opacity = .5;
+  api('POST', null, { action: 'traits_review', kind: b.dataset.tr, id: b.dataset.id }).then(function(j){
+    if (j.ok) { card.remove(); toast(t('Validated.', 'Validé.')); } else { card.style.opacity = 1; toast(errText(j.error)); }
   });
 });
 

@@ -397,6 +397,46 @@ async function reviewAction(res, b) {
 }
 
 
+// ── Traits des formats et archétypes des quartiers (Studio lot 0): review, never blocking ──────────────
+async function traitsList(res) {
+  const [{ data: tr }, { data: ar }] = await Promise.all([
+    W(() => supabase.from('brain_concept_traits').select('trait, value, inference, status, format_id, brain_concept_formats(slug, name_fr, priority)').eq('status', 'researched')),
+    W(() => supabase.from('brain_district_archetypes').select('archetype, rank, note, status, brain_markets(district)').eq('status', 'researched').order('rank')),
+  ]);
+  const fm = {};
+  (tr || []).forEach((r) => {
+    const f = r.brain_concept_formats; if (!f) return;
+    const o = fm[f.slug] = fm[f.slug] || { slug: f.slug, name_fr: f.name_fr, priority: f.priority, traits: {} };
+    o.traits[r.trait] = { value: r.value, inference: r.inference };
+  });
+  const dm = {};
+  (ar || []).forEach((r) => {
+    const d = r.brain_markets && r.brain_markets.district; if (!d) return;
+    (dm[d] = dm[d] || { district: d, archetypes: [] }).archetypes.push({ a: r.archetype, note: r.note });
+  });
+  return send(res, 200, {
+    formats: Object.values(fm).sort((a, b) => (a.priority - b.priority) || a.name_fr.localeCompare(b.name_fr)),
+    districts: Object.values(dm).sort((a, b) => a.district.localeCompare(b.district)),
+  });
+}
+
+async function traitsReview(res, b) {
+  const now = new Date().toISOString();
+  if (b.kind === 'format' && typeof b.id === 'string') {
+    const { data: f } = await W(() => supabase.from('brain_concept_formats').select('id').eq('slug', b.id).maybeSingle());
+    if (!f) return send(res, 404, { error: 'not_found' });
+    await W(() => supabase.from('brain_concept_traits').update({ status: 'verified', reviewer: 'arnaud', reviewed_at: now }).eq('format_id', f.id).eq('status', 'researched'));
+    return send(res, 200, { ok: true });
+  }
+  if (b.kind === 'district' && typeof b.id === 'string') {
+    const { data: m } = await W(() => supabase.from('brain_markets').select('id').eq('district', b.id).maybeSingle());
+    if (!m) return send(res, 404, { error: 'not_found' });
+    await W(() => supabase.from('brain_district_archetypes').update({ status: 'verified', reviewer: 'arnaud', reviewed_at: now }).eq('market_id', m.id).eq('status', 'researched'));
+    return send(res, 200, { ok: true });
+  }
+  return send(res, 400, { error: 'bad_request' });
+}
+
 // ── Fourchettes par format (Studio lot 0) ───────────────────────────────────────────────────────────────
 async function rangesList(res) {
   const { data: fmts } = await W(() => supabase.from('brain_concept_formats').select('slug, name_fr, family').in('slug', RG.FORMATS));
@@ -453,6 +493,7 @@ export default async function handler(req, res) {
       if (action === 'item') return itemDetail(res, req.query.id);
       if (action === 'search') return search(res, req.query.q);
       if (action === 'ranges') return rangesList(res);
+      if (action === 'traits') return traitsList(res);
       return send(res, 400, { error: 'bad_action' });
     }
     if (req.method !== 'POST') return send(res, 405, { error: 'method' });
@@ -464,6 +505,7 @@ export default async function handler(req, res) {
       case 'item': return itemAction(req, res, b);
       case 'review': return reviewAction(res, b);
       case 'range': return rangeSave(res, b);
+      case 'traits_review': return traitsReview(res, b);
       default: return send(res, 400, { error: 'bad_action' });
     }
   } catch (e) {
