@@ -1,4 +1,4 @@
-# ZA3FRAN — HANDOFF BRIEF #30 (draft, 12 nov. 2026)
+# ZA3FRAN — HANDOFF BRIEF #30 (12 nov. 2026)
 
 **Next task:** Concept Studio **lot 1** (selection and figures in code on 8 fictitious profiles) once Arnaud has filled the ranges. **Model:** Opus-tier for lot 1 design, Sonnet for code.
 
@@ -16,12 +16,15 @@ Live (commit 52448c5, deployed after bf11d0c):
 2. Traits are stored as `researched`, each tied to a catalogue line or flagged `inference`; Arnaud's review never blocks.
 
 ## Tasks next chat
-1. Arnaud: fill the 12 formats in `/brain#ranges`; test D9 box; review traits/archetypes. Claude then checks rows in `brain_parameter_values` and `benchmark_consent_at`.
+1. Arnaud, at his own pace: fill the 12 formats in `/brain` (Fourchettes); test the D9 box later (checklist A13); review traits/archetypes. Lot 1 can start without waiting. Claude then checks rows in `brain_parameter_values` and `benchmark_consent_at`.
 2. Lot 1: `lib/studio-route.js`, `studio-select.js`, `studio-figures.js` on 8 fictitious profiles (build plan `docs/concept-studio-plan-construction.md`).
 3. Fix before lot 4: webhook-validator project/record duplicate handling (see instructions).
 
 ## Open cleanup
-Benchmark item `5d3b4248…`: 28 facts still proposed; 44 unmapped. « Barèmes fiscaux » view not located in code — ask Arnaud. A commit trailer (503af87) carries a placeholder session id (harmless).
+Benchmark item `5d3b4248…`: 28 facts still proposed; 44 unmapped. « Barèmes fiscaux »: handled by Arnaud in `/brain` (closed). A commit trailer (503af87) carries a placeholder session id (harmless).
 
 ## Instructions
-The complete updated Project instructions are to be produced at the end of this chat (version of 12 Nov 2026), with these additions merged: lot 0 state above, tables `brain_concept_traits` / `brain_district_archetypes`, Fourchettes tab, D9 live, Brain app fixes.
+The complete updated Project instructions (version of 12 Nov 2026) are in `docs/project-instructions.md` and in the Project docs as `claude/project-instructions-2026-11-12-b30.md`; Arnaud pastes them over the existing text.
+
+## Opening message for the next chat
+« Reprends à partir du Handoff Brief #30 (claude/handoff-brief-30.md). Pushes sur main autorisés. »
